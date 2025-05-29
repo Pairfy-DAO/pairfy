@@ -1,5 +1,6 @@
 <template>
     <header>
+        <HeaderTopComp />
         <HeaderNavComp :items="[
             { label: 'Trending', route: '/docs' },
             { label: 'Categories', route: '/categories' },
@@ -7,15 +8,24 @@
             { label: 'Sellers', route: '/sell' },
             { label: 'Support', route: '/support' }
         ]" />
-
-        <HeaderTopComp />
     </header>
+
+    <DrawerComp v-model="userDrawer" position="right" width="320px" :overlay="false">
+        
+    </DrawerComp>
 </template>
 
 <script setup>
 
+const userDrawer = ref(false)
+ 
+function openDrawer(e) {
+    userDrawer.value = !userDrawer.value
+}
 
-
+onMounted(()=>{
+    openDrawer()
+})
 </script>
 
 <style scoped>
