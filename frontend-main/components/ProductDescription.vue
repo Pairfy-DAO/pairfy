@@ -56,6 +56,7 @@ onBeforeUnmount(() => {
 <style lang="css" scoped>
 ::v-deep(.editor-class) {
     line-height: 2rem;
+    text-align: justify;
     color: var(--text-b);
 }
 

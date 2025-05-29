@@ -1,13 +1,18 @@
-export const useAuthStore = defineStore("user", () => {
-  const isAuthenticated = useState<boolean>("isAuthenticated", () => false);
-  const user = useState<any>("user", () => null);
+export const useAuthStore = defineStore("auth", () => {
+  const user = ref<any>(null);
+  const isAuthenticated = ref(false);
+
+  const authDrawer = ref(false);
+  const userDrawer = ref(false);
+
   const loading = ref(false);
   const error = ref<string | null>(null);
-  
-  const login = async (credentials: {
-    signature: string;
-    address: string;
-  }) => {
+
+  const setAuthDrawer = (value: boolean) => {
+    authDrawer.value = value;
+  };
+
+  const login = async (credentials: { signature: string; address: string }) => {
     loading.value = true;
 
     try {
@@ -19,7 +24,7 @@ export const useAuthStore = defineStore("user", () => {
           throw new Error(JSON.stringify(response._data.data));
         },
       });
-      
+
       //await fetchProfile();
     } catch (err: any) {
       throw new Error(err.message);
@@ -111,5 +116,8 @@ export const useAuthStore = defineStore("user", () => {
     logout,
     verify,
     fetchProfile,
+    authDrawer,
+    userDrawer,
+    setAuthDrawer
   };
 });

@@ -8,23 +8,19 @@
             { label: 'Sellers', route: '/sell' },
             { label: 'Support', route: '/support' }
         ]" />
-    </header>
 
-    <DrawerComp v-model="userDrawer" position="right" width="320px" :overlay="false">
-        
-    </DrawerComp>
+        <DrawerComp v-model="auth.authDrawer" @update:modelValue="auth.authDrawer = $event" position="right" width="320px" :overlay="false">
+            <AuthView v-if="!auth.isAuthenticated" />
+        </DrawerComp>
+    </header>
 </template>
 
 <script setup>
 
-const userDrawer = ref(false)
- 
-function openDrawer(e) {
-    userDrawer.value = !userDrawer.value
-}
+const auth = useAuthStore()
 
-onMounted(()=>{
-    openDrawer()
+onMounted(() => {
+    auth.setAuthDrawer(true)
 })
 </script>
 
