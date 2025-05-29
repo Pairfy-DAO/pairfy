@@ -1,19 +1,17 @@
-export const useAuthStore = defineStore("auth", () => {
+export const useAuthStore = defineStore("user", () => {
   const isAuthenticated = useState<boolean>("isAuthenticated", () => false);
-  const seller = useState<any>("seller", () => null);
+  const user = useState<any>("user", () => null);
   const loading = ref(false);
   const error = ref<string | null>(null);
   
   const login = async (credentials: {
-    email: string;
-    password: string;
     signature: string;
     address: string;
   }) => {
     loading.value = true;
 
     try {
-      await $fetch("/api/seller/login-seller", {
+      await $fetch("/api/user/login-user", {
         method: "POST",
         body: credentials,
         credentials: "include",
@@ -21,7 +19,8 @@ export const useAuthStore = defineStore("auth", () => {
           throw new Error(JSON.stringify(response._data.data));
         },
       });
-      await fetchProfile();
+      
+      //await fetchProfile();
     } catch (err: any) {
       throw new Error(err.message);
     } finally {
@@ -37,7 +36,7 @@ export const useAuthStore = defineStore("auth", () => {
     loading.value = true;
 
     try {
-      const response: any = await $fetch("/api/seller/create-seller", {
+      const response: any = await $fetch("/api/user/create-user", {
         method: "POST",
         body: credentials,
         async onResponseError({ response }) {
@@ -57,16 +56,16 @@ export const useAuthStore = defineStore("auth", () => {
     if (!import.meta.server) return;
 
     try {
-      const data = await $fetch("/api/seller/current-seller", {
+      const data = await $fetch("/api/user/current-user", {
         method: "GET",
         credentials: "include",
       });
 
-      seller.value = data;
+      user.value = data;
       isAuthenticated.value = true;
     } catch (err: any) {
       isAuthenticated.value = false;
-      seller.value = null;
+      user.value = null;
     }
   };
 
@@ -74,7 +73,7 @@ export const useAuthStore = defineStore("auth", () => {
     loading.value = true;
 
     try {
-      const response = await $fetch("/api/seller/verify-seller", {
+      const response = await $fetch("/api/user/verify-user", {
         method: "POST",
         body: body,
         async onResponseError({ response }) {
@@ -92,19 +91,19 @@ export const useAuthStore = defineStore("auth", () => {
 
   const logout = async () => {
     try {
-      await $fetch("/api/seller/logout-seller", {
+      await $fetch("/api/user/logout-user", {
         method: "GET",
         credentials: "include",
       });
     } catch {}
 
     isAuthenticated.value = false;
-    seller.value = null;
+    user.value = null;
   };
 
   return {
     isAuthenticated,
-    seller,
+    user,
     loading,
     error,
     login,

@@ -29,14 +29,15 @@ body {
   --shadow-b: 0 1px 2px 0 rgba(0, 0, 0, 0.12);
 
   --background-a: #ffffff;
-  --background-b: #f5f5f7;
-  --background-c: #f0f0f2;
+  --background-b: #F9F9F9;
 
   --text-a: #1d1d1f;
   --text-b: #65686c;
   --text-w: #ffffff;
 
-  --border-a: #00000029;
+  --border-a: #ededed;
+  --border-b: #D4D4D4;
+  
   --primary-a: var(--orange-a);
 
   --radius-a: 4px;
@@ -46,17 +47,17 @@ body {
   --radius-e: 28px;
   --radius-f: 999px;
 
-  --orange-a: #ff6900;
+  --orange-a: #ff6c37;
 
-  --blue-a: #3a86ff;
-  --gray-a: #3e3e3e;
-  --red-a: #ff3d00;
-  --yellow-a: #ffca28;
-  --yellow-b: #ffe082;
-  --green-a: #43a047;
-  --purple-a: #b85cff;
-  --pink-a: #ff5e87;
-  --black-a: #1e1e1e;
+  --blue-a: #2f5aff;
+  --gray-a: #2c2c2e;
+  --red-a: #e63946;
+  --yellow-a: #f4b400;
+  --yellow-b: #f9d976;
+  --green-a: #2e7d32;
+  --purple-a: #6c5ce7;
+  --pink-a: #ff6b81;
+  --black-a: #121212;
 
   --transition-a: 0.2s ease-in-out;
 }
