@@ -20,7 +20,7 @@
 const auth = useAuthStore()
 
 onMounted(() => {
-    auth.setAuthDrawer(true)
+    //auth.setAuthDrawer(true)
 })
 </script>
 

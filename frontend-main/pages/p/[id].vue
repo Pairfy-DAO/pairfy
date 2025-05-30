@@ -273,7 +273,7 @@ onBeforeUnmount(() => {
   right: 5rem;
   height: 100vh;
   width: inherit;
-  z-index: 11000;
+  z-index: 10000;
   position: fixed;
   overflow: hidden;
   box-sizing: border-box;

@@ -1,5 +1,5 @@
 <template>
-    <button :class="{ contrast: isContrast }">
+    <button :class="{ contrast: isContrast }" @click="auth.setAuthDrawer(true)">
         Connect Wallet
     </button>
 </template>
@@ -8,6 +8,9 @@
 const route = useRoute()
 
 const isContrast = computed(() =>  ['p-id', 's'].includes(route.name))
+
+const auth = useAuthStore()
+
 
 </script>
 
@@ -18,7 +21,6 @@ button {
     cursor: pointer;
     font-weight: 600;
     white-space: nowrap;
-    background: white;
     color: var(--text-a);
     padding: 0.75rem 1rem;
     border: 2px solid white;
@@ -26,11 +28,14 @@ button {
     font-size: var(--text-size-1);
     border-radius: var(--radius-e);
     transition: var(--transition-a);
+    background: var(--background-a);
 }
 
 button:hover {
     opacity: 0.9
 }
+
+
 
 button.contrast {
     border: 2px solid var(--primary-a);

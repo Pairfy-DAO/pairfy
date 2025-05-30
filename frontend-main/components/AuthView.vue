@@ -15,7 +15,8 @@
             </button>
 
             <span class="terms">
-                By logging in with your wallet you accept the usage policy of the dapp and understand the CIP-30 standard.
+                By logging in with your wallet you accept the usage policy of the dapp and understand the CIP-30
+                standard.
             </span>
         </div>
 
@@ -56,7 +57,12 @@ const connectWallet = async (name) => {
 
         const [signature, address] = await wallet.sign()
 
-        await auth.login({ signature, address, terms_accepted: true })
+        await auth.login({
+            signature, address,
+            wallet_name: "lace",
+            country: "US",
+            terms_accepted: true
+        })
 
         router.push({ name: 'index', query: {} })
     } catch (err) {

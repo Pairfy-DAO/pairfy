@@ -7,7 +7,7 @@ export const useWalletStore = defineStore("wallet", () => {
   const walletName = ref<string | null>(null);
 
   const getMessage = () => {
-    const message = "SIGN TO AUTHENTICATE YOUR PUBLIC SIGNATURE"; //env variable
+    const message = "PLEASE SIGN TO AUTHENTICATE YOUR PUBLIC SIGNATURE"; //env variable
 
     return Buffer.from(message, "utf8").toString("hex");
   };
