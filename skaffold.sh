@@ -2,7 +2,12 @@
 
 #chmod +x skaffold.sh
 
-./common/publish.sh
+if [ "$1" == "-n" ]; then
+  echo "Building"
+else
+  echo "Building & Publishing"
+  ./common/publish.sh
+fi
 
 set -euo pipefail
 

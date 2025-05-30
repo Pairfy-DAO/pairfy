@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { ApiError, ApiGraphQLError, ERROR_CODES, logger } from "./index";
+import { ApiError, ERROR_CODES, logger } from "./index";
 
 export interface SellerToken {
   id: string;

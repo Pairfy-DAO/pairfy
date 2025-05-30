@@ -34,3 +34,5 @@ export * from "./findMediasByProductId";
 export * from "./sortMediaByPosition";
 export * from "./userAuth";
 export * from "./getUserNickname";
+export * from "./findUserByPubKeyhash";
+export * from "./isValidSignatureCIP30";

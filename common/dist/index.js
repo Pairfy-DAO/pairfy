@@ -50,3 +50,5 @@ __exportStar(require("./findMediasByProductId"), exports);
 __exportStar(require("./sortMediaByPosition"), exports);
 __exportStar(require("./userAuth"), exports);
 __exportStar(require("./getUserNickname"), exports);
+__exportStar(require("./findUserByPubKeyhash"), exports);
+__exportStar(require("./isValidSignatureCIP30"), exports);

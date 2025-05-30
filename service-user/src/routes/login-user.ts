@@ -7,29 +7,35 @@ import {
   createToken,
   ApiError,
   ERROR_CODES,
-  getUserNickname
+  getUserNickname,
+  isValidSignatureCIP30,
+  findUserByPubKeyhash
 } from "@pairfy/common";
 import { getPubKeyHash } from "../utils/crypto.js";
 
-import verifyDataSignature from "@cardano-foundation/cardano-verify-datasignature";
+export const loginUserMiddlewares: any = []; //validateParams
 
-const loginUserMiddlewares: any = []; //validateParams
+export const loginUserHandler = async (req: Request, res: Response) => {
+  const timestamp = Date.now();
 
-const loginUserHandler = async (req: Request, res: Response) => {
   let connection = null;
 
   try {
     let params = req.body;
 
+    console.log(params);
+
     const hexAddress = Cardano.Address.from_hex(params.address);
 
     const address32: string = hexAddress.to_bech32();
 
-    const pubKeyHash = getPubKeyHash(hexAddress);
-
     const message = "PLEASE SIGN TO AUTHENTICATE YOUR PUBLIC SIGNATURE";
 
-    const verifySignature: boolean = verifyDataSignature(
+    const pubKeyHash = getPubKeyHash(hexAddress);
+
+    const username = getUserNickname();
+
+    const verifySignature = isValidSignatureCIP30(
       params.signature.signature,
       params.signature.key,
       message,
@@ -48,8 +54,6 @@ const loginUserHandler = async (req: Request, res: Response) => {
 
     await connection.beginTransaction();
 
-    const username = getUserNickname();
-
     const schemeData = `
     INSERT INTO users (
       pubkeyhash,
@@ -58,17 +62,17 @@ const loginUserHandler = async (req: Request, res: Response) => {
       country,
       terms_accepted,
       public_ip,
+      wallet_name,
+      created_at,
+      updated_at,
       schema_v
      ) 
-     VALUES (?, ?, ?, ?, ?, ?, ?)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON DUPLICATE KEY UPDATE
-      pubkeyhash = pubkeyhash,
-      username = username,
-      address = address,
-      country = country,
-      terms_accepted = terms_accepted,
+      wallet_name = VALUES(wallet_name),
       public_ip = VALUES(public_ip),
-      schema_v = schema_v;
+      updated_at = VALUES(updated_at),
+      schema_v = schema_v + 1;
      `;
 
     const schemeValue = [
@@ -78,6 +82,9 @@ const loginUserHandler = async (req: Request, res: Response) => {
       params.country,
       params.terms_accepted,
       req.publicAddress,
+      params.wallet_name,
+      timestamp,
+      timestamp,
       0,
     ];
 
@@ -85,12 +92,13 @@ const loginUserHandler = async (req: Request, res: Response) => {
 
     ///////////////////////////////////////////////////////////////////
 
-    const [rows] = await connection.execute(
-      "SELECT * FROM users WHERE pubkeyhash = ?",
-      [pubKeyHash]
-    );
+    const USER = await findUserByPubKeyhash(connection, pubKeyHash);
 
-    const USER = rows[0];
+    if (!USER) {
+      throw new ApiError(500, "Internal signature verification error", {
+        code: ERROR_CODES.INTERNAL_ERROR,
+      });
+    }
 
     const tokenData: UserToken = {
       pubkeyhash: USER.pubkeyhash,
@@ -118,10 +126,10 @@ const loginUserHandler = async (req: Request, res: Response) => {
 
     res.status(200).send({ success: true, data: userData });
   } catch (err: any) {
-    if (connection)  await connection.rollback();
+    if (connection) await connection.rollback();
+
+    throw err;
   } finally {
     if (connection) connection.release();
   }
 };
-
-export { loginUserMiddlewares, loginUserHandler };

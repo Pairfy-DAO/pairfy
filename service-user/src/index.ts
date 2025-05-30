@@ -54,7 +54,7 @@ const main = async () => {
       route.currentUserHandler
     );
 
-    app.get("/api/user/logout-user", route.logoutHandler);
+    app.get("/api/user/logout-user", route.logoutUserHandler);
 
     app.get("/api/user/ping", (req, res) => {
       res.status(200).send("Test OK");
