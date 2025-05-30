@@ -3,7 +3,7 @@ import database from "./database/index.js";
 import compression from "compression";
 import { logger } from "@pairfy/common";
 import { catchError } from "./utils/index.js";
-import { ApiError, errorHandler } from "@pairfy/common";
+import { ApiError, errorHandler, ERROR_EVENTS } from "@pairfy/common";
 import { app } from "./app.js";
 
 const main = async () => {
@@ -28,6 +28,8 @@ const main = async () => {
       }
     }
 
+    ERROR_EVENTS.forEach((e: string) => process.on(e, (err) => catchError(err)));
+
     const databasePort = parseInt(process.env.DATABASE_PORT as string);
 
     database.connect({
@@ -37,20 +39,7 @@ const main = async () => {
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
     });
-
-    const errorEvents: string[] = [
-      "exit",
-      "SIGINT",
-      "SIGTERM",
-      "SIGQUIT",
-      "uncaughtException",
-      "unhandledRejection",
-      "SIGHUP",
-      "SIGCONT",
-    ];
-
-    errorEvents.forEach((e: string) => process.on(e, (err) => catchError(err)));
-
+    
     app.post(
       "/api/seller/create-seller",
 

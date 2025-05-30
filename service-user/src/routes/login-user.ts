@@ -1,17 +1,20 @@
-import database from "../database";
 import Cardano from "@emurgo/cardano-serialization-lib-nodejs";
-import { loginUserMiddleware } from "../validators/login-user";
-import { UserToken, userMiddleware } from "../utils/user";
-import { getPubKeyHash } from "../utils/crypto";
-import { createToken } from "../utils/token";
-import { BadRequestError } from "../errors";
+import database from "../database/index.js";
 import { Request, Response } from "express";
-import { getUsername } from "../utils/nano";
-import { logger } from "../utils";
 
-const verifyDataSignature = require("@cardano-foundation/cardano-verify-datasignature");
+import {
+  UserToken,
+  userMiddleware,
+  createToken,
+  ApiError,
+  ERROR_CODES,
+} from "@pairfy/common";
+import { getPubKeyHash } from "../utils/crypto";
 
-const loginUserMiddlewares: any = [userMiddleware, loginUserMiddleware];
+import verifyDataSignature from "@cardano-foundation/cardano-verify-datasignature";
+import { getUsername } from "../utils/nano.js";
+
+const loginUserMiddlewares: any = [userMiddleware]; //validateParams
 
 const loginUserHandler = async (req: Request, res: Response) => {
   let connection = null;
@@ -19,30 +22,28 @@ const loginUserHandler = async (req: Request, res: Response) => {
   try {
     let params = req.body;
 
-    console.log(params);
+    const hexAddress = Cardano.Address.from_hex(params.address);
 
-    console.log(req.publicAddress, req.ip);
+    const address32: string = hexAddress.to_bech32();
 
-    const address = Cardano.Address.from_hex(params.address);
-
-    const address32: string = address.to_bech32();
-
-    const pubkeyhash = getPubKeyHash(address);
-
-    const signature = params.signature;
+    const pubKeyHash = getPubKeyHash(hexAddress);
 
     const message = "PLEASE SIGN TO AUTHENTICATE YOUR PUBLIC SIGNATURE";
 
-    const verifySignature = verifyDataSignature(
-      signature.signature,
-      signature.key,
+    const verifySignature: boolean = verifyDataSignature(
+      params.signature.signature,
+      params.signature.key,
       message,
       address32
     );
 
     if (!verifySignature) {
-      throw new BadRequestError("CredentialError");
+      throw new ApiError(401, "Signature error", {
+        code: ERROR_CODES.INVALID_SIGNATURE,
+      });
     }
+
+    /////////////////////////////////////////////////////////////////
 
     connection = await database.client.getConnection();
 
@@ -72,7 +73,7 @@ const loginUserHandler = async (req: Request, res: Response) => {
      `;
 
     const schemeValue = [
-      pubkeyhash,
+      pubKeyHash,
       username,
       address32,
       params.country,
@@ -87,7 +88,7 @@ const loginUserHandler = async (req: Request, res: Response) => {
 
     const [rows] = await connection.execute(
       "SELECT * FROM users WHERE pubkeyhash = ?",
-      [pubkeyhash]
+      [pubKeyHash]
     );
 
     const USER = rows[0];
@@ -96,6 +97,7 @@ const loginUserHandler = async (req: Request, res: Response) => {
       pubkeyhash: USER.pubkeyhash,
       role: "USER",
       address: USER.address,
+      wallet_name: params. wallet_name,
       country: USER.country,
       username: USER.username,
     };
@@ -108,24 +110,18 @@ const loginUserHandler = async (req: Request, res: Response) => {
       jwt: token,
     };
 
-    await connection.commit();
-
     const userData = {
       ...tokenData,
       token,
     };
 
-    res.status(200).send({ success: true, data: userData });
-  } catch (err) {
-    logger.error(err);
+    await connection.commit();
 
-    if (connection) {
-      await connection.rollback();
-    }
+    res.status(200).send({ success: true, data: userData });
+  } catch (err: any) {
+    if (connection)  await connection.rollback();
   } finally {
-    if (connection) {
-      connection.release();
-    }
+    if (connection) connection.release();
   }
 };
 

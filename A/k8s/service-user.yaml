@@ -1,36 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: service-seller
+  name: service-user
 spec:
   replicas: 1
   selector:
     matchLabels:
-      role: service-seller
+      role: service-user
   template:
     metadata:
       labels:
-        role: service-seller
+        role: service-user
     spec:
       containers:
-        - name: service-seller
-          image: pairfy/service-seller
+        - name: service-user
+          image: pairfy/service-user
           env:
             - name: NODE_ENV
-              value: development                                                                                                                
+              value: development      
             - name: DATABASE_NAME
-              value: service_seller       
+              value: service_user       
             - name: DATABASE_USER
-              value: marketplace 
+              value: marketplace                                                                                   
             - name: TOKEN_EXPIRATION
-              value: "7d" 
+              value: "7d"
             - name : REDIS_RATELIMIT_URL
-              value: "redis://redis-limiter:6379"
+              value: "redis://redis-limiter:6379"                  
             - name: AGENT_JWT_KEY
               valueFrom:
                 secretKeyRef:
                   name: agent-token-secret
-                  key: AGENT_TOKEN_KEY             
+                  key: AGENT_TOKEN_KEY                                                                                                                                          
             - name: DATABASE_HOST  
               valueFrom:
                 configMapKeyRef:
@@ -45,8 +45,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: database-password-secret
-                  key: password
-
+                  key: password       
           resources:
             limits:
               memory: "500Mi"
@@ -56,12 +55,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-seller
+  name: service-user
 spec:
   selector:
-    role: service-seller
+    role: service-user
   ports:
-    - name: service-seller
+    - name: service-user
       protocol: TCP
-      port: 8000
-      targetPort: 8000
+      port: 8005
+      targetPort: 8005

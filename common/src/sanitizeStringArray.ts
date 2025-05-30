@@ -1,7 +1,7 @@
 import sanitizeHtml from 'sanitize-html'
 
 
-export function sanitizeArrayStrings(input: unknown): boolean {
+export function sanitizeStringArray(input: unknown): boolean {
   const clean = (str: string) => {
     const trimmed = str.trim()
     return sanitizeHtml(trimmed, {

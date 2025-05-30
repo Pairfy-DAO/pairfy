@@ -24,7 +24,7 @@ export * from "./findProductById";
 export * from "./findProductBySku";
 export * from "./countries";
 export * from "./tiptapValidator";
-export * from "./sanitize";
+export * from "./sanitizeStringArray";
 export * from "./categories";
 export * from "./minio";
 export * from "./insertMedia";

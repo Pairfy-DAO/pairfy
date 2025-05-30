@@ -15,7 +15,7 @@
             </button>
 
             <span class="terms">
-                By signing publicly with your wallet you agree to the platform's usage policy and the CIP-30 standard.
+                By logging in with your wallet you accept the usage policy of the dapp and understand the CIP-30 standard.
             </span>
         </div>
 

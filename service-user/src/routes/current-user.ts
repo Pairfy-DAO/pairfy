@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { userMiddleware } from "../utils/user";
+import { userMiddleware } from "@pairfy/common";
 
 const currentUserMiddlewares: any = [userMiddleware];
 

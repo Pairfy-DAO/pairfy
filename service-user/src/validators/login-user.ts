@@ -1,10 +1,7 @@
 import { z } from 'zod';
-import { Request, Response, NextFunction } from 'express';
-import { BadRequestError } from '../errors';
-
 
 const schema = z.object({
-  
+
   signature: z.object({
     key: z.string()
       .regex(/^[a-f0-9]+$/i, 'Key must be a hex string')
@@ -29,17 +26,4 @@ const schema = z.object({
 
 }).strict();
 
-// Middleware
-export const loginUserMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const result = schema.safeParse(req.body);
 
-  if (!result.success) {
-    throw new BadRequestError("WrongParams" + result.error.flatten());
-  }
-
-  next();
-};

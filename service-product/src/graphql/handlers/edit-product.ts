@@ -6,7 +6,7 @@ import {
   findProductById,
   findProductBySeller,
   findProductBySku,
-  sanitizeArrayStrings,
+  sanitizeStringArray,
   sanitizeTiptapContent,
   SellerToken,
   updateProduct,
@@ -28,7 +28,7 @@ export const editProduct = async (_: any, args: any, context: any) => {
       });
     }
     
-    args.editProductInput.bullet_list = sanitizeArrayStrings(
+    args.editProductInput.bullet_list = sanitizeStringArray(
       args.editProductInput.bullet_list
     );
 

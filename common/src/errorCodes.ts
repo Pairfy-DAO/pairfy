@@ -38,3 +38,15 @@ export const ERROR_CODES = {
     DUPLICATE_OPERATION: "DUPLICATE_OPERATION",
     RESOURCE_LOCKED: "RESOURCE_LOCKED",
   };
+
+
+  export const ERROR_EVENTS = [
+    "exit",
+    "SIGINT",
+    "SIGTERM",
+    "SIGQUIT",
+    "uncaughtException",
+    "unhandledRejection",
+    "SIGHUP",
+    "SIGCONT",
+  ];
