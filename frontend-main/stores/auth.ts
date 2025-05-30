@@ -12,7 +12,13 @@ export const useAuthStore = defineStore("auth", () => {
     authDrawer.value = value;
   };
 
-  const login = async (credentials: { signature: string; address: string }) => {
+  const login = async (credentials: {
+    signature: string;
+    address: string;
+    wallet_name: string;
+    country: string;
+    terms_accepted: boolean;
+  }) => {
     loading.value = true;
 
     try {
@@ -26,30 +32,6 @@ export const useAuthStore = defineStore("auth", () => {
       });
 
       //await fetchProfile();
-    } catch (err: any) {
-      throw new Error(err.message);
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  const register = async (credentials: {
-    email: string;
-    password: string;
-    terms_accepted: boolean;
-  }) => {
-    loading.value = true;
-
-    try {
-      const response: any = await $fetch("/api/user/create-user", {
-        method: "POST",
-        body: credentials,
-        async onResponseError({ response }) {
-          throw new Error(JSON.stringify(response._data.data));
-        },
-      });
-
-      return response;
     } catch (err: any) {
       throw new Error(err.message);
     } finally {
@@ -74,6 +56,30 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  
+  const register = async (credentials: {
+    email: string;
+    password: string;
+    terms_accepted: boolean;
+  }) => {
+    loading.value = true;
+
+    try {
+      const response: any = await $fetch("/api/user/create-user", {
+        method: "POST",
+        body: credentials,
+        async onResponseError({ response }) {
+          throw new Error(JSON.stringify(response._data.data));
+        },
+      });
+
+      return response;
+    } catch (err: any) {
+      throw new Error(err.message);
+    } finally {
+      loading.value = false;
+    }
+  };
   const verify = async (body: { token: string }) => {
     loading.value = true;
 
@@ -118,6 +124,6 @@ export const useAuthStore = defineStore("auth", () => {
     fetchProfile,
     authDrawer,
     userDrawer,
-    setAuthDrawer
+    setAuthDrawer,
   };
 });

@@ -29,6 +29,7 @@ import lace from '@/assets/icon/lace.svg'
 import nami from '@/assets/icon/nami.svg'
 
 const config = useRuntimeConfig()
+const router = useRouter()
 
 const toastRef = ref(null);
 const displayMessage = (message, type, duration) => {
@@ -58,7 +59,8 @@ const connectWallet = async (name) => {
         const [signature, address] = await wallet.sign()
 
         await auth.login({
-            signature, address,
+            signature,
+            address,
             wallet_name: "lace",
             country: "US",
             terms_accepted: true
