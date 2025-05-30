@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS sellers (
   address VARCHAR(200) DEFAULT NULL,
   username VARCHAR(50) NOT NULL,
   email VARCHAR(100) NOT NULL,
+  wallet_name varchar(50) NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   verified BOOLEAN DEFAULT FALSE,
   country VARCHAR(10) NOT NULL,

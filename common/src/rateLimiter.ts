@@ -3,7 +3,7 @@ import Redis from "ioredis";
 import jwt from "jsonwebtoken";
 import { logger } from "./logger";
 import { ApiError } from "./errorHandler";
-import { ERROR_CODES } from "./errorCodes";
+import { ERROR_CODES } from "./errorUtils";
 
 interface RateLimiterOptions {
   redisClient?: Redis;
