@@ -33,3 +33,4 @@ export * from "./findProductBySeller";
 export * from "./findMediasByProductId";
 export * from "./sortMediaByPosition";
 export * from "./userAuth";
+export * from "./getUserNickname";

@@ -7,13 +7,13 @@ import {
   createToken,
   ApiError,
   ERROR_CODES,
+  getUserNickname
 } from "@pairfy/common";
-import { getPubKeyHash } from "../utils/crypto";
+import { getPubKeyHash } from "../utils/crypto.js";
 
 import verifyDataSignature from "@cardano-foundation/cardano-verify-datasignature";
-import { getUsername } from "../utils/nano.js";
 
-const loginUserMiddlewares: any = [userMiddleware]; //validateParams
+const loginUserMiddlewares: any = []; //validateParams
 
 const loginUserHandler = async (req: Request, res: Response) => {
   let connection = null;
@@ -48,7 +48,7 @@ const loginUserHandler = async (req: Request, res: Response) => {
 
     await connection.beginTransaction();
 
-    const username = getUsername();
+    const username = getUserNickname();
 
     const schemeData = `
     INSERT INTO users (
@@ -96,7 +96,7 @@ const loginUserHandler = async (req: Request, res: Response) => {
       pubkeyhash: USER.pubkeyhash,
       role: "USER",
       address: USER.address,
-      wallet_name: params. wallet_name,
+      wallet_name: params.wallet_name,
       country: USER.country,
       username: USER.username,
     };

@@ -1,9 +1,9 @@
-import * as route from "./routes";
+import * as route from "./routes/index.js";
 import compression from "compression";
-import database from "./database";
+import database from "./database/index.js";
 import { ApiError, errorHandler, ERROR_EVENTS } from "@pairfy/common";
-import { catchError } from "./utils";
-import { app } from "./app";
+import { catchError } from "./utils/index.js";
+import { app } from "./app.js";
 
 const main = async () => {
   try {

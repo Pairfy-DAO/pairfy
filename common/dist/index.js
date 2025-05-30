@@ -49,3 +49,4 @@ __exportStar(require("./findProductBySeller"), exports);
 __exportStar(require("./findMediasByProductId"), exports);
 __exportStar(require("./sortMediaByPosition"), exports);
 __exportStar(require("./userAuth"), exports);
+__exportStar(require("./getUserNickname"), exports);
