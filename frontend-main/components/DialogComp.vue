@@ -45,12 +45,13 @@ defineExpose({ open, close });
   z-index: 20000;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .dialog-box {
   background: var(--background-a);
   border-radius: var(--radius-c);
+  box-shadow: var(--shadow-b);
   min-width: 300px;
   padding: 1.5rem;
 }

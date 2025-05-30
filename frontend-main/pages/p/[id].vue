@@ -269,8 +269,8 @@ onBeforeUnmount(() => {
 
 
 .fixed-box {
-  top: 10rem;
-  right: 6rem;
+  top: 2rem;
+  right: 5rem;
   height: 100vh;
   width: inherit;
   z-index: 11000;
@@ -281,6 +281,7 @@ onBeforeUnmount(() => {
 
 .right-scroll {
   height: 100%;
+  padding-top: 124px;
   overflow-y: auto;
 }
 
@@ -361,7 +362,7 @@ onBeforeUnmount(() => {
 }
 
 .product-brand {
-  font-size: var(--text-size-2);
+  font-size: var(--text-size-3);
   font-weight: 700;
 }
 

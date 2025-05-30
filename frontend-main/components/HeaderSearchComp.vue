@@ -92,8 +92,7 @@ const selectSuggestion = (item: ProductSuggestion) => {
     border-radius: var(--radius-f);
     transition: var(--transition-a);
     background: var(--background-b);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .search-input:focus-within {

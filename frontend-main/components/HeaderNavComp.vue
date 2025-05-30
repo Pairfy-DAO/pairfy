@@ -59,7 +59,7 @@ watch(() => route.path, (newPath) => {
   box-sizing: border-box;
   color: var(--text-w);
   position: fixed;
-  z-index: 10000;
+  z-index: 11000;
   display: flex;
   height: 4rem;
   top: 1rem;
@@ -94,7 +94,7 @@ watch(() => route.path, (newPath) => {
 
 .SubMenu.contrast {
   background: var(--background-a);
-  box-shadow: var(--shadow-b);
+  position: absolute;
   top: 2rem;
 }
 

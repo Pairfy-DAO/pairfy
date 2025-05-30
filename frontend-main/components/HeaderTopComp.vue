@@ -45,7 +45,7 @@ const isContrast = computed(() => ['p-id', 's'].includes(route.name))
     box-sizing: border-box;
     color: var(--text-a);
     position: fixed;
-    z-index: 10000;
+    z-index: 12000;
     height: 2rem;
     width: 100%;
     top: 0;
