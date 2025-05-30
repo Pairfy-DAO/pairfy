@@ -2,7 +2,7 @@ import { ApiError, ERROR_CODES, logger } from "./index";
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-interface UserToken {
+export interface UserToken {
   pubkeyhash: string;
   role: string;
   address: string;

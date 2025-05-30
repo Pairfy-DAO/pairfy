@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-interface UserToken {
+export interface UserToken {
     pubkeyhash: string;
     role: string;
     address: string;
@@ -16,4 +16,3 @@ declare global {
 }
 export declare const userMiddleware: (req: Request, res: Response, next: NextFunction) => void;
 export declare const userRequiredMiddleware: (req: Request, _res: Response, next: NextFunction) => void;
-export {};
