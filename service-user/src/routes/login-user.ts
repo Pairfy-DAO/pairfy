@@ -1,7 +1,6 @@
 import Cardano from "@emurgo/cardano-serialization-lib-nodejs";
 import database from "../database/index.js";
 import { Request, Response } from "express";
-
 import {
   UserToken,
   userMiddleware,

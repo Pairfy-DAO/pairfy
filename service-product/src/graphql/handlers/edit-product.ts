@@ -7,13 +7,12 @@ import {
   findProductBySeller,
   findProductBySku,
   sanitizeStringArray,
-  sanitizeTiptapContent,
   SellerToken,
   updateProduct,
 } from "@pairfy/common";
 import { verifyParams } from "../../validators/edit-product.js";
 import { checkFileGroup } from "../../utils/media.js";
-import { applyDiscount } from "../../utils/index.js";
+import { applyDiscount, sanitizeTiptapContent } from "../../utils/index.js";
 
 export const editProduct = async (_: any, args: any, context: any) => {
   let connection = null;

@@ -10,8 +10,6 @@ const main = async () => {
   try {
     const requiredEnvVars = [
       "NODE_ENV",
-      "EXPRESS_PORT",
-      "EXPRESS_TIMEOUT",
       "AGENT_JWT_KEY",
       "TOKEN_EXPIRATION",
       "DATABASE_HOST",
@@ -94,8 +92,8 @@ const main = async () => {
 
     app.use(compression());
 
-    app.listen(process.env.EXPRESS_PORT, () =>
-      logger.info(`express server listening in ${process.env.EXPRESS_PORT}`)
+    app.listen(8000, () =>
+      logger.info(`express server listening in 8000`)
     );
   } catch (e) {
     catchError(e);

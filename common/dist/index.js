@@ -48,3 +48,4 @@ __exportStar(require("./updateProduct"), exports);
 __exportStar(require("./findProductBySeller"), exports);
 __exportStar(require("./findMediasByProductId"), exports);
 __exportStar(require("./sortMediaByPosition"), exports);
+__exportStar(require("./userAuth"), exports);

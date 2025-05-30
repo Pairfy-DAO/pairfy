@@ -32,3 +32,4 @@ export * from "./updateProduct";
 export * from "./findProductBySeller";
 export * from "./findMediasByProductId";
 export * from "./sortMediaByPosition";
+export * from "./userAuth";

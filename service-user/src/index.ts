@@ -1,9 +1,9 @@
 import * as route from "./routes";
 import compression from "compression";
 import database from "./database";
+import { ApiError, errorHandler, ERROR_EVENTS } from "@pairfy/common";
 import { catchError } from "./utils";
 import { app } from "./app";
-import { ApiError, errorHandler, ERROR_EVENTS } from "@pairfy/common";
 
 const main = async () => {
   try {
@@ -15,6 +15,7 @@ const main = async () => {
       "DATABASE_USER",
       "DATABASE_PASSWORD",
       "DATABASE_NAME",
+      "REDIS_RATELIMIT_URL"
     ];
 
     for (const varName of requiredEnvVars) {
@@ -23,7 +24,9 @@ const main = async () => {
       }
     }
 
-    ERROR_EVENTS.forEach((e: string) => process.on(e, (err) => catchError(err)));
+    ERROR_EVENTS.forEach((e: string) =>
+      process.on(e, (err) => catchError(err))
+    );
 
     const databasePort = parseInt(process.env.DATABASE_PORT as string);
 
