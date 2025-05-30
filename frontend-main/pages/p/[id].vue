@@ -327,7 +327,7 @@ onBeforeUnmount(() => {
 }
 
 .product-name {
-  font-size: var(--text-size-3);
+  font-size: var(--text-size-4);
   margin-top: 0.5rem;
   line-height: 2rem;
   font-weight: 400;
@@ -361,7 +361,7 @@ onBeforeUnmount(() => {
 }
 
 .product-brand {
-  font-size: var(--text-size-3);
+  font-size: var(--text-size-2);
   font-weight: 700;
 }
 
