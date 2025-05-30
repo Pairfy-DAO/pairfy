@@ -10,7 +10,7 @@
         ]" />
 
         <DrawerComp v-model="auth.authDrawer" @update:modelValue="auth.authDrawer = $event" position="right" width="320px" :overlay="false">
-            <AuthView v-if="!auth.isAuthenticated" />
+            <AuthView />
         </DrawerComp>
     </header>
 </template>
@@ -19,9 +19,6 @@
 
 const auth = useAuthStore()
 
-onMounted(() => {
-    //auth.setAuthDrawer(true)
-})
 </script>
 
 <style scoped>

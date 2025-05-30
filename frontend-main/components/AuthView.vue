@@ -66,15 +66,14 @@ const connectWallet = async (name) => {
             terms_accepted: true
         })
 
-        router.push({ name: 'index', query: {} })
+        auth.authDrawer = false
     } catch (err) {
         console.error(err);
 
-        displayMessage(err, 'error', 200_000)
+        displayMessage(err, 'error', 20_000)
 
     }
 }
-
 </script>
 
 <style lang="css" scoped>

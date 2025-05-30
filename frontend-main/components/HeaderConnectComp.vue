@@ -1,5 +1,5 @@
 <template>
-    <button :class="{ contrast: isContrast }" @click="auth.setAuthDrawer(true)">
+    <button :class="{ contrast: isContrast }" @click="auth.authDrawer = true">
         Connect Wallet
     </button>
 </template>
@@ -10,7 +10,6 @@ const route = useRoute()
 const isContrast = computed(() =>  ['p-id', 's'].includes(route.name))
 
 const auth = useAuthStore()
-
 
 </script>
 

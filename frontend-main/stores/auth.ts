@@ -8,108 +8,73 @@ export const useAuthStore = defineStore("auth", () => {
   const loading = ref(false);
   const error = ref<string | null>(null);
 
-  const setAuthDrawer = (value: boolean) => {
-    authDrawer.value = value;
-  };
-
-  const login = async (credentials: {
+  const login = async (params: {
     signature: string;
     address: string;
     wallet_name: string;
     country: string;
     terms_accepted: boolean;
   }) => {
+    if (import.meta.server) return;
+
     loading.value = true;
 
     try {
       await $fetch("/api/user/login-user", {
         method: "POST",
-        body: credentials,
+        body: params,
         credentials: "include",
         async onResponseError({ response }) {
           throw new Error(JSON.stringify(response._data.data));
         },
       });
 
-      //await fetchProfile();
+      await fetchUser();
     } catch (err: any) {
-      throw new Error(err.message);
+      throw err;
     } finally {
       loading.value = false;
     }
   };
 
-  const fetchProfile = async () => {
-    if (!import.meta.server) return;
+  const fetchUser = async () => {
+    if (import.meta.server) return;
 
     try {
       const data = await $fetch("/api/user/current-user", {
         method: "GET",
         credentials: "include",
+        async onResponseError({ response }) {
+          throw new Error(JSON.stringify(response._data.data));
+        },
       });
+
+      console.log(data);
 
       user.value = data;
       isAuthenticated.value = true;
     } catch (err: any) {
+      console.error(err);
+
       isAuthenticated.value = false;
       user.value = null;
     }
   };
 
-  
-  const register = async (credentials: {
-    email: string;
-    password: string;
-    terms_accepted: boolean;
-  }) => {
-    loading.value = true;
-
-    try {
-      const response: any = await $fetch("/api/user/create-user", {
-        method: "POST",
-        body: credentials,
-        async onResponseError({ response }) {
-          throw new Error(JSON.stringify(response._data.data));
-        },
-      });
-
-      return response;
-    } catch (err: any) {
-      throw new Error(err.message);
-    } finally {
-      loading.value = false;
-    }
-  };
-  const verify = async (body: { token: string }) => {
-    loading.value = true;
-
-    try {
-      const response = await $fetch("/api/user/verify-user", {
-        method: "POST",
-        body: body,
-        async onResponseError({ response }) {
-          throw new Error(JSON.stringify(response._data.data));
-        },
-      });
-
-      return response;
-    } catch (err: any) {
-      throw new Error(err.message);
-    } finally {
-      loading.value = false;
-    }
-  };
-
   const logout = async () => {
+    if (import.meta.server) return;
+
     try {
       await $fetch("/api/user/logout-user", {
         method: "GET",
         credentials: "include",
       });
-    } catch {}
-
-    isAuthenticated.value = false;
-    user.value = null;
+    } catch (err: any) {
+      throw err;
+    } finally {
+      isAuthenticated.value = false;
+      user.value = null;
+    }
   };
 
   return {
@@ -118,12 +83,9 @@ export const useAuthStore = defineStore("auth", () => {
     loading,
     error,
     login,
-    register,
     logout,
-    verify,
-    fetchProfile,
+    fetchUser,
     authDrawer,
     userDrawer,
-    setAuthDrawer,
   };
 });

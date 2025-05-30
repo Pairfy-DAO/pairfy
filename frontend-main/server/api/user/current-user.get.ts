@@ -3,19 +3,24 @@ import { throwRemoteError } from "~/server/utils/fetch";
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
 
-  const body = await readBody(event);
-  
+  const cookies = parseCookies(event);
+  const sessionCookie = cookies.session;
+
   try {
     const response = await $fetch(
-      `${config.serviceSellerBase}/seller/create-seller`,
+      `${config.serviceUserBase}/user/current-user`,
       {
-        method: "POST",
-        body,
-        async onResponseError({ response }) {
-          throw new Error(JSON.stringify(response._data));
+        method: "GET",
+        credentials: "include",
+        headers: {
+          Cookie: sessionCookie ? `session=${sessionCookie}` : "",
         },
+        async onResponseError({ response }) {
+          console.log(response)
+          throw new Error(JSON.stringify(response._data));
+        }
       }
-    );
+    )
 
     return response;
   } catch (err: any) {

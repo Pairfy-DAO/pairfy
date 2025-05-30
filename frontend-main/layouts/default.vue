@@ -11,9 +11,7 @@
 
 const auth = useAuthStore()
 
-if (import.meta.server) {
-  await auth.fetchProfile()
-}
+await auth.fetchUser()
 </script>
 
 <style scoped>
