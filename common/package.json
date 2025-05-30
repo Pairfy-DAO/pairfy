@@ -1,6 +1,6 @@
 {
   "name": "@pairfy/common",
-  "version": "1.0.210",
+  "version": "1.0.212",
   "description": "Common shared package",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

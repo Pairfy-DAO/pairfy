@@ -10,7 +10,7 @@
         "database": "node setup.cjs"
     },
     "dependencies": {
-        "@pairfy/common": "^1.0.210",
+        "@pairfy/common": "^1.0.212",
         "mysql2": "^3.14.0"
     },
     "devDependencies": {
