@@ -16,9 +16,13 @@
         <ProductDescription />
       </div>
 
+      <div class="center-column">
+        <div class="trigger" ref="triggerRef" />
+      </div>
 
       <div class="right-column">
-        <div class="fixed-box">
+
+        <div class="fixed-box" :class="{ fixed: isFixed }">
           <div class="right-scroll" ref="rightScrollRef">
 
             <div class="product-brand">
@@ -43,7 +47,7 @@
               Model. <span>Check variations.</span>
             </div>
 
-            <ProductModel v-for="n in 1" :key="n" :id="product.id" :model="product.model"
+            <ProductModel v-for="n in 10" :key="n" :id="product.id" :model="product.model"
               :condition="product.condition_" :color="product.color" :price="product.price" :discount="product.discount"
               :discount_percent="product.discount_percent" :discount_value="product.discount_value" />
 
@@ -67,7 +71,6 @@
 
             <div class="busy-box" />
 
-
           </div>
         </div>
       </div>
@@ -78,16 +81,30 @@
 <script setup>
 import Lenis from 'lenis'
 import { gql } from 'graphql-tag'
+import { useIntersectionObserver } from '@vueuse/core'
 
 const route = useRoute();
 
 const productStore = useProductStore()
 const product = computed(() => productStore.product)
-const media = computed(() => productStore.media)
 
 const toastRef = ref(null);
-
 const dialogRef = ref(null);
+
+const isFixed = ref(false)
+const triggerRef = ref(null)
+
+//unobserve
+function observeTrigger() {
+  useIntersectionObserver(
+    triggerRef,
+    ([entry]) => {
+      isFixed.value = !entry.isIntersecting
+    },
+    {
+      threshold: 1
+    })
+}
 
 let lenis = null
 
@@ -159,7 +176,7 @@ const getProductError = ref(null)
 
 let pollIntervalId = null
 
-async function fetchProduct() {
+const fetchProduct = async () => {
   try {
     const { data } = await $apollo.query({
       query: GET_PRODUCT_QUERY,
@@ -179,6 +196,21 @@ async function fetchProduct() {
     loading.value = false
   }
 }
+
+onMounted(() => {
+  fetchProduct() //watch
+  observeTrigger()
+  addLenis()
+  addScrollListener()
+  showGetProductError()
+  fetchProductPolling()
+})
+
+onBeforeUnmount(() => {
+  removeLenis()
+  removeScrollListener()
+  clearIntervals()
+})
 
 function fetchProductPolling() {
   pollIntervalId = setInterval(fetchProduct, 30_000)
@@ -224,28 +256,12 @@ function removeScrollListener() {
 function showGetProductError() {
   if (getProductError.value) displayMessage(getProductError.value, 'error')
 }
-
-
-onMounted(() => {
-  fetchProduct()
-  addLenis()
-  addScrollListener()
-  showGetProductError()
-  fetchProductPolling()
-})
-
-onBeforeUnmount(() => {
-  removeLenis()
-  removeScrollListener()
-  clearIntervals()
-})
 </script>
 
 <style scoped>
 .product-page {
   width: 100%;
   display: flex;
-  padding-top: 10rem;
   justify-content: center;
 }
 
@@ -254,12 +270,18 @@ onBeforeUnmount(() => {
   width: inherit;
   box-sizing: border-box;
   max-width: var(--body-a);
-  grid-template-columns: 1fr 350px;
+  grid-template-columns: 1fr 3rem 350px;
 }
 
 .left-column {
   width: inherit;
+  width: inherit;
+  margin-top: 4rem;
   box-sizing: border-box;
+}
+
+.center-column {
+  width: inherit;
 }
 
 .right-column {
@@ -267,22 +289,33 @@ onBeforeUnmount(() => {
   box-sizing: border-box;
 }
 
+.trigger {
+  height: 1px;
+  width: 100%;
+}
 
 .fixed-box {
-  top: 2rem;
-  right: 5rem;
   height: 100vh;
   width: inherit;
   z-index: 10000;
-  position: fixed;
   overflow: hidden;
+  position: sticky;
   box-sizing: border-box;
+  transform: translateY(0rem);
+  transition: transform 0.6s ease-in-out;
+}
+
+.fixed-box.fixed {
+  top: 0rem;
+  position: fixed;
+  transform: translateY(2rem);
+  transition: transform 0.3s ease-in-out;
 }
 
 .right-scroll {
   height: 100%;
-  padding-top: 124px;
   overflow-y: auto;
+  padding-top: 4rem;
 }
 
 .right-scroll {

@@ -3,7 +3,7 @@
     <ul class="SubMenu-body" :class="{ contrast: isContrast }">
       <img class="icon" v-if="!isContrast" src="@/assets/brand/icon-white.svg" alt="" @click="navigateTo('/')">
       <img class="icon" v-if="isContrast" src="@/assets/brand/icon.svg" alt="" @click="navigateTo('/')">
-      
+
       <li v-for="item in items" :key="item.label" @click="navigateTo(item.route)" :class="{ contrast: isContrast }">
         {{ item.label }}
       </li>
@@ -54,7 +54,6 @@ watch(() => route.path, (newPath) => {
 }
 
 .SubMenu {
-  width: 100%;
   justify-content: center;
   box-sizing: border-box;
   color: var(--text-w);
@@ -62,6 +61,7 @@ watch(() => route.path, (newPath) => {
   z-index: 11000;
   display: flex;
   height: 4rem;
+  width: 100%;
   top: 1rem;
 }
 
@@ -93,9 +93,9 @@ watch(() => route.path, (newPath) => {
 
 
 .SubMenu.contrast {
+  margin-top: 2rem;
+  position: initial;
   background: var(--background-a);
-  position: absolute;
-  top: 2rem;
 }
 
 .SubMenu-body.contrast {
