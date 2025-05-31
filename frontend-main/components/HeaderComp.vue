@@ -1,13 +1,7 @@
 <template>
     <header>
-        <HeaderTopComp />
-        <HeaderNavComp :items="[
-            { label: 'Trending', route: '/docs' },
-            { label: 'Categories', route: '/categories' },
-            { label: 'Docs', route: '/docs' },
-            { label: 'Sellers', route: '/sell' },
-            { label: 'Support', route: '/support' }
-        ]" />
+        <HeaderTop/>
+        <HeaderContent/>
 
         <DrawerComp v-model="auth.authDrawer" @update:modelValue="auth.authDrawer = $event" position="right" width="320px" :overlay="false">
             <AuthView />

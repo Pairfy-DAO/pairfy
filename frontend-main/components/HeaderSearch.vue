@@ -64,7 +64,7 @@ const emitSearch = () => {
             ...router.currentRoute.value.query,
             prompt: trimmed,
             vectorized: false
-        }
+        } as any
     })
 }
 
@@ -77,7 +77,7 @@ const selectSuggestion = (item: ProductSuggestion) => {
 
 <style scoped>
 .header-search {
-    width: 50%;
+    width: 100%;
     margin: 0 auto;
     position: relative;
 }

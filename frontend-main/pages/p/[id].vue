@@ -47,7 +47,7 @@
               Model. <span>Check variations.</span>
             </div>
 
-            <ProductModel v-for="n in 10" :key="n" :id="product.id" :model="product.model"
+            <ProductModel v-for="n in 1" :key="n" :id="product.id" :model="product.model"
               :condition="product.condition_" :color="product.color" :price="product.price" :discount="product.discount"
               :discount_percent="product.discount_percent" :discount_value="product.discount_value" />
 

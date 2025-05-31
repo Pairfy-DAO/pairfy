@@ -3,7 +3,7 @@
         <h2 class="title">All about this item</h2>
         <ul class="bullet-list">
             <li class="bullet-item" v-for="(item, index) in bullets" :key="index">
-                <span class="checkmark">*</span>
+                <span class="checkmark">•</span>
                 <span class="text">{{ item }}</span>
             </li>
         </ul>
@@ -20,10 +20,10 @@ const bullets = computed(() => product.value.bullet_list)
 
 <style scoped>
 .ProductBullet {
-    background: var(--primary-a);
     border-radius: var(--radius-d);
+    background: var(--primary-a);
     color: var(--text-w);
-    padding: 1rem;
+    padding: 1.5rem;
 }
 
 .title {
@@ -48,7 +48,6 @@ const bullets = computed(() => product.value.bullet_list)
     color: var(--text-w);
     margin-right: 0.5rem;
     font-weight: bold;
-    line-height: 1.5;
 }
 
 .text {
