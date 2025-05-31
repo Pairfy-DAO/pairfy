@@ -15,13 +15,14 @@
       </div>
 
 
-      <div class="center-column flex center"> 
+      <div class="center-column flex center">
         <HeaderSearch v-if="isContrast" />
       </div>
 
 
       <div class="right-column flex end">
         <HeaderConnect v-if="!auth.isAuthenticated" />
+        <HeaderAvatar v-if="auth.isAuthenticated" />
       </div>
 
     </div>
@@ -112,6 +113,7 @@ watch(() => route.path, (newPath) => {
   margin-top: 2rem;
   position: initial;
   background: var(--background-a);
+  border-bottom: 1px solid var(--border-a);
 }
 
 .HeaderContent-body.contrast {
