@@ -38,7 +38,7 @@ const auth = useAuthStore()
     border-radius: 50%;
     align-items: center;
     justify-content: center;
-    background: var(--background-a);
+    background: var(--background-b);
 }
 
 .profile-name {
