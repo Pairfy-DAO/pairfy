@@ -49,11 +49,10 @@ export const useAuthStore = defineStore("auth", () => {
         },
       });
 
-      const user = response.userData;
-      
+      const userData = response.userData;
+
       if (user) {
-        console.log(user);
-        user.value = user;
+        user.value = userData;
         isAuthenticated.value = true;
       }
     } catch (err: any) {
