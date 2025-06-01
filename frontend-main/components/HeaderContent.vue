@@ -21,8 +21,10 @@
 
 
       <div class="right-column flex end">
+        <ClientOnly>
         <HeaderConnect v-if="!auth.isAuthenticated" />
         <HeaderAvatar v-if="auth.isAuthenticated" />
+      </ClientOnly>
       </div>
 
     </div>

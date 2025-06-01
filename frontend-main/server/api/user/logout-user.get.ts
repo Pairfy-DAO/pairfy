@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     const response = await $fetch(
-      `${config.serviceUserBase}/user/current-user`,
+      `${config.serviceUserBase}/user/logout-user`,
       {
         method: "GET",
         credentials: "include",

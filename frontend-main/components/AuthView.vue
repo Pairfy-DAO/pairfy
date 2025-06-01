@@ -29,7 +29,6 @@ import lace from '@/assets/icon/lace.svg'
 import nami from '@/assets/icon/nami.svg'
 
 const config = useRuntimeConfig()
-const router = useRouter()
 
 const toastRef = ref(null);
 const displayMessage = (message, type, duration) => {

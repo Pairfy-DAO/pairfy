@@ -4,7 +4,11 @@
         <HeaderContent/>
 
         <DrawerComp v-model="auth.authDrawer" @update:modelValue="auth.authDrawer = $event" position="right" width="320px" :overlay="false">
-            <AuthView />
+            <AuthView v-if="auth.authDrawer"/>
+        </DrawerComp>
+
+        <DrawerComp v-model="auth.userDrawer" @update:modelValue="auth.userDrawer = $event" position="right" width="320px" :overlay="false">
+            <UserView v-if="auth.userDrawer"/>
         </DrawerComp>
     </header>
 </template>

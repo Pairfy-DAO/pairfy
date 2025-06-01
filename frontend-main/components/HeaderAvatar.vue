@@ -1,5 +1,5 @@
 <template>
-    <div class="HeaderAvatar">
+    <div class="HeaderAvatar" @click="auth.userDrawer = true">
         <div class="HeaderAvatar-icon">
             <svg width="24" height="24" fill="#888" viewBox="0 0 24 24">
                 <path

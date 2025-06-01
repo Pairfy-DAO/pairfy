@@ -9,7 +9,7 @@ const route = useRoute()
 
 const isContrast = computed(() =>  ['p-id', 's'].includes(route.name))
 
-const auth = useAuthStore()
+
 
 </script>
 
@@ -33,8 +33,6 @@ button {
 button:hover {
     opacity: 0.9
 }
-
-
 
 button.contrast {
     border: 2px solid var(--primary-a);
