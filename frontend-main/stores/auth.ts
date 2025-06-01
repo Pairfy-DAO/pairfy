@@ -41,7 +41,7 @@ export const useAuthStore = defineStore("auth", () => {
     if (import.meta.server) return;
 
     try {
-      const data: any = await $fetch("/api/user/current-user", {
+      const response: any = await $fetch("/api/user/current-user", {
         method: "GET",
         credentials: "include",
         async onResponseError({ response }) {
@@ -49,8 +49,13 @@ export const useAuthStore = defineStore("auth", () => {
         },
       });
 
-      user.value = data.userData;
-      isAuthenticated.value = true;
+      const user = response.userData;
+      
+      if (user) {
+        console.log(user);
+        user.value = user;
+        isAuthenticated.value = true;
+      }
     } catch (err: any) {
       console.error(err);
 
@@ -67,6 +72,8 @@ export const useAuthStore = defineStore("auth", () => {
         method: "GET",
         credentials: "include",
       });
+
+      userDrawer.value = false;
     } catch (err: any) {
       throw err;
     } finally {

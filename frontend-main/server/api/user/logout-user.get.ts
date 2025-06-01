@@ -21,6 +21,8 @@ export default defineEventHandler(async (event) => {
       }
     )
 
+    setCookie(event, "session", "", {});
+
     return response;
   } catch (err: any) {
     throwRemoteError(err);

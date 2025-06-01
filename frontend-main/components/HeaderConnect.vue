@@ -7,9 +7,9 @@
 <script setup>
 const route = useRoute()
 
+const auth = useAuthStore()
+
 const isContrast = computed(() =>  ['p-id', 's'].includes(route.name))
-
-
 
 </script>
 
