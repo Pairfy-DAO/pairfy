@@ -4,7 +4,7 @@
             <SearchPrompt />
             <DividerComp />
             <ProductGrid title="Results" />
-            <DividerComp />
+            <DividerComp invisible/>
         </main>
     </div>
 </template>
