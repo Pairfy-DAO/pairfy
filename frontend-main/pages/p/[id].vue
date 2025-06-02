@@ -2,7 +2,7 @@
   <div class="product-page">
     <ToastComp ref="toastRef" />
 
-    <DialogComp ref="dialogRef">
+    <DialogComp ref="cardanoDialogRef">
       <p>Contenido del diálogo</p>
     </DialogComp>
 
@@ -17,12 +17,12 @@
       </div>
 
       <div class="center-column">
-        <div class="trigger" ref="triggerRef" />
+        <div class="trigger" ref="rightPanelTrigger" />
       </div>
 
       <div class="right-column">
 
-        <div class="fixed-box" :class="{ fixed: isFixed }">
+        <div class="fixed-box" :class="{ fixed: isRightPanelFixed }">
           <div class="right-scroll" ref="rightScrollRef">
 
             <div class="product-brand">
@@ -79,7 +79,6 @@
 </template>
 
 <script setup>
-import Lenis from 'lenis'
 import { gql } from 'graphql-tag'
 import { useIntersectionObserver } from '@vueuse/core'
 
@@ -89,16 +88,12 @@ const productStore = useProductStore()
 const product = computed(() => productStore.product)
 
 const toastRef = ref(null);
-const dialogRef = ref(null);
+const cardanoDialogRef = ref(null);
 
-const isFixed = ref(false)
-const triggerRef = ref(null)
+const isRightPanelFixed = ref(false)
+const rightPanelTrigger = ref(null)
 
 let observer;
-
-let lenis = null
-
-let frameId;
 
 const rightScrollRef = ref(null)
 
@@ -108,7 +103,10 @@ const syncScroll = () => {
   }
 }
 
+useLenis()
 useLenisMultiple([rightScrollRef])
+
+/////////////////////////////////
 
 const GET_PRODUCT_QUERY = gql`
   query GetProduct($getProductVariable: GetProductInput!) {
@@ -174,7 +172,6 @@ watch(
 
 onMounted(() => {
   observeTrigger()
-  addLenis()
   addScrollListener()
   showGetProductError()
   fetchProductPolling()
@@ -182,7 +179,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   deleteObserver()
-  removeLenis()
   removeScrollListener()
   clearIntervals()
 })
@@ -209,9 +205,9 @@ async function fetchProduct() {
 
 function observeTrigger() { 
   const { stop } = useIntersectionObserver(
-    triggerRef,
+    rightPanelTrigger,
     ([entry]) => {
-      isFixed.value = !entry.isIntersecting
+      isRightPanelFixed.value = !entry.isIntersecting
     },
     {
       threshold: 1
@@ -235,29 +231,11 @@ function clearIntervals() {
   clearInterval(pollIntervalId)
 }
 
-function addLenis() {
-  lenis = new Lenis({
-    smooth: true,
-  })
-
-  const raf = (time) => {
-    lenis?.raf(time)
-    frameId = requestAnimationFrame(raf)
-  }
-
-  frameId = requestAnimationFrame(raf)
-}
-
-function removeLenis() {
-  if (frameId) cancelAnimationFrame(frameId)
-  lenis?.destroy()
-}
-
 function displayMessage(message, type, duration) {
   toastRef.value?.showToast(message, type, duration)
 }
 function openChildDialog() {
-  dialogRef.value?.open();
+  cardanoDialogRef.value?.open();
 }
 
 function addScrollListener() {

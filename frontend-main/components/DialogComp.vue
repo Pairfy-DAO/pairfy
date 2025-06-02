@@ -19,8 +19,6 @@
 </template>
 
 <script setup>
-import { ref, defineExpose } from 'vue';
-
 const visible = ref(false);
 
 function open() {
