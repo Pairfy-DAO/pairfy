@@ -2,10 +2,9 @@
   <div class="product-page">
     <ToastComp ref="toastRef" />
 
-    <DialogComp ref="cardanoDialogRef">
+    <DialogComp v-model="productStore.cardanoDialog" @update:modelValue="productStore.cardanoDialog = $event">
       <p>Contenido del diálogo</p>
     </DialogComp>
-
 
     <div class="container" v-if="product">
       <div class="left-column">
@@ -55,7 +54,7 @@
               Finish. <span>Choose your network.</span>
             </div>
 
-            <BuyButton @click="openChildDialog">
+            <BuyButton @click="productStore.showCardanoDialog(true)">
               <template #icon>
                 <img class="icon" src="@/assets/icon/cardano.svg" alt="">
               </template>
@@ -88,7 +87,6 @@ const productStore = useProductStore()
 const product = computed(() => productStore.product)
 
 const toastRef = ref(null);
-const cardanoDialogRef = ref(null);
 
 const isRightPanelFixed = ref(false)
 const rightPanelTrigger = ref(null)
@@ -203,7 +201,7 @@ async function fetchProduct() {
   }
 }
 
-function observeTrigger() { 
+function observeTrigger() {
   const { stop } = useIntersectionObserver(
     rightPanelTrigger,
     ([entry]) => {
@@ -233,9 +231,6 @@ function clearIntervals() {
 
 function displayMessage(message, type, duration) {
   toastRef.value?.showToast(message, type, duration)
-}
-function openChildDialog() {
-  cardanoDialogRef.value?.open();
 }
 
 function addScrollListener() {

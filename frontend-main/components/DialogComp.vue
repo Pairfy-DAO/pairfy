@@ -1,9 +1,9 @@
 <template>
-  <div class="dialog-backdrop" v-if="visible" @click="close">
+  <div class="dialog-backdrop" v-if="modelValue" @click="emitClose">
     <div class="dialog-box" @click.stop>
 
       <div class="header flex">
-        <button class="flex center" @click="close">
+        <button class="flex center" @click="emitClose">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
             class="lucide lucide-x-icon lucide-x">
@@ -19,14 +19,25 @@
 </template>
 
 <script setup>
-const visible = ref(false);
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
+  }
+});
+
+const emit = defineEmits(['update:modelValue']);
+
+function emitClose() {
+  emit('update:modelValue', false);
+}
 
 function open() {
-  visible.value = true;
+  emit('update:modelValue', true);
 }
 
 function close() {
-  visible.value = false;
+  emit('update:modelValue', false);
 }
 
 defineExpose({ open, close });
@@ -60,8 +71,8 @@ button {
   border: none;
 }
 
-.header{
-  justify-content: flex-end; 
+.header {
+  justify-content: flex-end;
   width: 100%;
 }
 </style>
