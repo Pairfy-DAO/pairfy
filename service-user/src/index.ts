@@ -1,9 +1,15 @@
 import * as route from "./routes/index.js";
 import compression from "compression";
 import database from "./database/index.js";
-import { ApiError, errorHandler, ERROR_EVENTS } from "@pairfy/common";
+import { Request, Response } from "express";
 import { catchError } from "./utils/index.js";
 import { app } from "./app.js";
+import {
+  ApiError,
+  errorHandler,
+  ERROR_EVENTS,
+  RateLimiter,
+} from "@pairfy/common";
 
 const main = async () => {
   try {
@@ -15,7 +21,7 @@ const main = async () => {
       "DATABASE_USER",
       "DATABASE_PASSWORD",
       "DATABASE_NAME",
-      "REDIS_RATELIMIT_URL"
+      "REDIS_RATELIMIT_URL",
     ];
 
     for (const varName of requiredEnvVars) {
@@ -38,10 +44,19 @@ const main = async () => {
       database: process.env.DATABASE_NAME,
     });
 
+    const rateLimiter = new RateLimiter({
+      source: "service-user",
+      redisUrl: process.env.REDIS_RATELIMIT_URL as string,
+      jwtSecret: process.env.AGENT_JWT_KEY as string,
+      maxRequests: 100,
+      windowSeconds: 60,
+    });
+
     app.post(
       "/api/user/login-user",
 
-      route.loginUserMiddlewares,
+      rateLimiter.middlewareIp(),
+      ...route.loginUserMiddlewares,
 
       route.loginUserHandler
     );
@@ -49,16 +64,27 @@ const main = async () => {
     app.get(
       "/api/user/current-user",
 
-      route.currentUserMiddlewares,
+      rateLimiter.middlewareIp(),
+      ...route.currentUserMiddlewares,
 
       route.currentUserHandler
     );
 
-    app.get("/api/user/logout-user", route.logoutUserHandler);
+    app.get(
+      "/api/user/logout-user",
 
-    app.get("/api/user/ping", (req, res) => {
-      res.status(200).send("Test OK");
-    });
+      rateLimiter.middlewareIp(),
+      
+     route.logoutUserHandler
+    );
+
+    app.get(
+      "/api/user/ping",
+      rateLimiter.middlewareIp(),
+      (req: Request, res: Response) => {
+        res.status(200).json({ success: true, data: { message: "Test OK" } });
+      }
+    );
 
     app.all("*", (req, _res, next) => {
       next(
