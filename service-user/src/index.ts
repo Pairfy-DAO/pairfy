@@ -14,6 +14,7 @@ import {
 const main = async () => {
   try {
     const requiredEnvVars = [
+      "NODE_ENV",
       "AGENT_JWT_KEY",
       "TOKEN_EXPIRATION",
       "DATABASE_HOST",
@@ -49,7 +50,7 @@ const main = async () => {
       redisUrl: process.env.REDIS_RATELIMIT_URL as string,
       jwtSecret: process.env.AGENT_JWT_KEY as string,
       maxRequests: 100,
-      windowSeconds: 60,
+      windowSeconds: 120,
     });
 
     app.post(
