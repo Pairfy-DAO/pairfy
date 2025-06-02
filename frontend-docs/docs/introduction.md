@@ -16,15 +16,23 @@ Pairfy was funded in Cardano Catalyst round 11.
 - Community-governed with chain vote (DAO model).
 - The **liquidity pool** to reduce the price of products.
 - Use of Cardano Network – Midnight Network 🔥.
+- Free shipping always included.
+- ADA Guarantee as purchase protection.
 - Each trade is managed by an isolated smart-contract.
-- Any member of the community can be a seller.
-- Community repository of products and templates.
+- Any member of the community can be a seller (DAO member).
+- Community repository of products and page templates.
 - Seller incentive program.
 - Open-source development (Apache 2.0).
 - Integration of AI models.
 - Product search by AI vectorized semantics.
 - Use of collective intelligence that enables strategic cooperation and mutual benefit for ecosystem members 
 (market investigation, supplier analysis, development, innovation, etc).
+
+#### Community-driven open source alternative to
+
+- Amazon
+- Shopify
+- Dropshipping companies
 
 #### Competitive factors
 

@@ -8,7 +8,7 @@ const ioredis_1 = __importDefault(require("ioredis"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const logger_1 = require("./logger");
 const errorHandler_1 = require("./errorHandler");
-const errorCodes_1 = require("./errorCodes");
+const errorUtils_1 = require("./errorUtils");
 class RateLimiter {
     constructor(options) {
         this.luaScript = `
@@ -107,21 +107,21 @@ class RateLimiter {
                 const agentId = this.verifyToken(req);
                 if (!agentId) {
                     return next(new errorHandler_1.ApiError(401, "Invalid session or token", {
-                        code: errorCodes_1.ERROR_CODES.UNAUTHORIZED,
+                        code: errorUtils_1.ERROR_CODES.UNAUTHORIZED,
                     }));
                 }
                 const key = `ratelimit:${this.source}:agent:${agentId}`;
                 const result = await this.redis.eval(this.luaScript, 1, key, this.maxRequests, this.windowSeconds);
                 if (result === 0) {
                     return next(new errorHandler_1.ApiError(429, "Too many requests, try again later", {
-                        code: errorCodes_1.ERROR_CODES.RATE_LIMIT_EXCEEDED,
+                        code: errorUtils_1.ERROR_CODES.RATE_LIMIT_EXCEEDED,
                     }));
                 }
                 return next();
             }
             catch (error) {
                 return next(new errorHandler_1.ApiError(503, "Service temporarily unavailable", {
-                    code: errorCodes_1.ERROR_CODES.SERVICE_UNAVAILABLE,
+                    code: errorUtils_1.ERROR_CODES.SERVICE_UNAVAILABLE,
                 }));
             }
         };
@@ -135,14 +135,14 @@ class RateLimiter {
                 const result = await this.redis.eval(this.luaScript, 1, key, this.maxRequests, this.windowSeconds);
                 if (result === 0) {
                     return next(new errorHandler_1.ApiError(429, "Too many requests from this IP", {
-                        code: errorCodes_1.ERROR_CODES.RATE_LIMIT_EXCEEDED,
+                        code: errorUtils_1.ERROR_CODES.RATE_LIMIT_EXCEEDED,
                     }));
                 }
                 return next();
             }
             catch (error) {
                 return next(new errorHandler_1.ApiError(503, "Service temporarily unavailable", {
-                    code: errorCodes_1.ERROR_CODES.SERVICE_UNAVAILABLE,
+                    code: errorUtils_1.ERROR_CODES.SERVICE_UNAVAILABLE,
                 }));
             }
         };

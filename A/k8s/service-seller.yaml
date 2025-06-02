@@ -17,16 +17,20 @@ spec:
           image: pairfy/service-seller
           env:
             - name: NODE_ENV
-              value: development                                             
+              value: development                                                                                                                
+            - name: DATABASE_NAME
+              value: service_seller       
+            - name: DATABASE_USER
+              value: marketplace 
+            - name: TOKEN_EXPIRATION
+              value: "7d" 
+            - name : REDIS_RATELIMIT_URL
+              value: "redis://redis-limiter:6379"
             - name: AGENT_JWT_KEY
               valueFrom:
                 secretKeyRef:
                   name: agent-token-secret
-                  key: AGENT_TOKEN_KEY
-            - name: EXPRESS_PORT
-              value: "8000"
-            - name: EXPRESS_TIMEOUT
-              value: "120000"                                                                  
+                  key: AGENT_TOKEN_KEY             
             - name: DATABASE_HOST  
               valueFrom:
                 configMapKeyRef:
@@ -41,15 +45,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: database-password-secret
-                  key: password   
-            - name: DATABASE_NAME
-              value: service_seller       
-            - name: DATABASE_USER
-              value: marketplace 
-            - name: TOKEN_EXPIRATION
-              value: "7d" 
-            - name : REDIS_RATELIMIT_URL
-              value: "redis://redis-limiter:6379"
+                  key: password
 
           resources:
             limits:

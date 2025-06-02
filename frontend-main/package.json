@@ -36,7 +36,6 @@
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@types/sortablejs": "^1.15.8",
-    "@vueuse/core": "^13.1.0",
-    "@vueuse/nuxt": "^13.1.0"
+    "@vueuse/core": "^13.1.0"
   }
 }

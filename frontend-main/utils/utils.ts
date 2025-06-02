@@ -19,3 +19,10 @@ export function formatUSD(amount: number) {
 
   return formatted.replace(/\$/g, "").trim();
 }
+
+export function truncateText(text: string, maxLength: number) {
+  if (typeof text !== 'string') return '';
+  if (maxLength <= 3) return '.'.repeat(maxLength);
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength - 3).trim() + '...';
+}

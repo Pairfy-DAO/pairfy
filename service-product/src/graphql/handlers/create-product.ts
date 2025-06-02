@@ -7,7 +7,7 @@ import {
   findProductById,
   findProductBySku,
   createEvent,
-  sanitizeArrayStrings,
+  sanitizeStringArray,
 } from "@pairfy/common";
 import { verifyParams } from "../../validators/create-product.js";
 import { checkFileGroup } from "../../utils/media.js";
@@ -30,7 +30,7 @@ export const createProduct = async (_: any, args: any, context: any) => {
       });
     }
 
-    args.createProductInput.bullet_list = sanitizeArrayStrings(
+    args.createProductInput.bullet_list = sanitizeStringArray(
       args.createProductInput.bullet_list
     );
 

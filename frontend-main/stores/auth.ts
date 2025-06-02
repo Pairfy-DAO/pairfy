@@ -1,116 +1,116 @@
 export const useAuthStore = defineStore("auth", () => {
-  const isAuthenticated = useState<boolean>("isAuthenticated", () => false);
-  const seller = useState<any>("seller", () => null);
+  const user = ref<any>(null);
+  const isAuthenticated = ref(false);
+
+  const authDrawer = ref(false);
+  const userDrawer = ref(false);
+
+  const toastMessage = ref<ToastMessage | null>(null);
+
   const loading = ref(false);
   const error = ref<string | null>(null);
-  
-  const login = async (credentials: {
-    email: string;
-    password: string;
+
+  type ToastType = "success" | "error" | "info" | "default";
+
+  type ToastMessage = {
+    message: string;
+    type: ToastType;
+    duration: number;
+  };
+
+  const showToast = (message: string, type: ToastType, duration: number) => {
+    toastMessage.value = {
+      message,
+      type,
+      duration,
+    };
+  };
+
+  const login = async (params: {
     signature: string;
     address: string;
-  }) => {
-    loading.value = true;
-
-    try {
-      await $fetch("/api/seller/login-seller", {
-        method: "POST",
-        body: credentials,
-        credentials: "include",
-        async onResponseError({ response }) {
-          throw new Error(JSON.stringify(response._data.data));
-        },
-      });
-      await fetchProfile();
-    } catch (err: any) {
-      throw new Error(err.message);
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  const register = async (credentials: {
-    email: string;
-    password: string;
+    wallet_name: string;
+    country: string;
     terms_accepted: boolean;
   }) => {
+    if (import.meta.server) return;
+
     loading.value = true;
 
     try {
-      const response: any = await $fetch("/api/seller/create-seller", {
+      await $fetch("/api/user/login-user", {
         method: "POST",
-        body: credentials,
+        body: params,
+        credentials: "include",
         async onResponseError({ response }) {
           throw new Error(JSON.stringify(response._data.data));
         },
       });
 
-      return response;
+      await fetchUser();
     } catch (err: any) {
-      throw new Error(err.message);
+      throw err;
     } finally {
       loading.value = false;
     }
   };
 
-  const fetchProfile = async () => {
-    if (!import.meta.server) return;
+  const fetchUser = async () => {
+    if (import.meta.server) return;
 
     try {
-      const data = await $fetch("/api/seller/current-seller", {
+      const response: any = await $fetch("/api/user/current-user", {
         method: "GET",
         credentials: "include",
-      });
-
-      seller.value = data;
-      isAuthenticated.value = true;
-    } catch (err: any) {
-      isAuthenticated.value = false;
-      seller.value = null;
-    }
-  };
-
-  const verify = async (body: { token: string }) => {
-    loading.value = true;
-
-    try {
-      const response = await $fetch("/api/seller/verify-seller", {
-        method: "POST",
-        body: body,
         async onResponseError({ response }) {
           throw new Error(JSON.stringify(response._data.data));
         },
       });
 
-      return response;
+      const userData = response.userData;
+
+      if (userData) {
+        user.value = userData;
+        isAuthenticated.value = true;
+      }
     } catch (err: any) {
-      throw new Error(err.message);
-    } finally {
-      loading.value = false;
+      console.error(err);
+      
+      showToast(err.message, "error", 10_000);
+      isAuthenticated.value = false;
+      user.value = null;
     }
   };
 
   const logout = async () => {
+    if (import.meta.server) return;
+
     try {
-      await $fetch("/api/seller/logout-seller", {
+      await $fetch("/api/user/logout-user", {
         method: "GET",
         credentials: "include",
       });
-    } catch {}
 
-    isAuthenticated.value = false;
-    seller.value = null;
+      userDrawer.value = false;
+    } catch (err: any) {
+      throw err;
+    } finally {
+      isAuthenticated.value = false;
+      user.value = null;
+    }
   };
 
   return {
     isAuthenticated,
-    seller,
+    user,
     loading,
     error,
     login,
-    register,
     logout,
-    verify,
-    fetchProfile,
+    fetchUser,
+    authDrawer,
+    userDrawer,
+    toastMessage,
+    showToast,
   };
 });

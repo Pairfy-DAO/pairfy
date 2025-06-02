@@ -2,41 +2,32 @@
 
 set -e
 
-cd "$(dirname "$0")/.." # Mover al root del proyecto (si ejecutas desde ./common)
+cd "$(dirname "$0")/.."
 
 PACKAGE_DIR="./common"
 PACKAGE_NAME=$(node -p "require('$PACKAGE_DIR/package.json').name")
 CURRENT_VERSION=$(node -p "require('$PACKAGE_DIR/package.json').version")
 
-echo "🔍 Verificando si hubo cambios en $PACKAGE_NAME desde la última publicación..."
+echo "🔍 Checking for changes in $PACKAGE_NAME since the last release..."
 
-# Verificar si hay cambios sin commitear
 if git diff --quiet HEAD -- $PACKAGE_DIR; then
-  echo "✅ No hay cambios en $PACKAGE_DIR. No se publicará nada."
+  echo "✅ No changes in $PACKAGE_DIR. Nothing will be published."
   exit 0
 fi
 
-# Verificar si la versión ya está publicada
 if npm view $PACKAGE_NAME@$CURRENT_VERSION > /dev/null 2>&1; then
-  echo "🟡 La versión $CURRENT_VERSION ya está publicada."
+  echo "🟡 Version $CURRENT_VERSION is already published."
 
   cd $PACKAGE_DIR
-
   npm run pub
-
   echo "⏳ SLEEP ..."
-
   sleep 15
 
 else
-  echo "🚀 Publicando versión $CURRENT_VERSION..."
+  echo "🚀 Publishing version $CURRENT_VERSION..."
 
   cd $PACKAGE_DIR
-
   npm run pub
-  
   echo "⏳ SLEEP ..."
-
   sleep 15
-
 fi

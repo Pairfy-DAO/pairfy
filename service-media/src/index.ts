@@ -2,9 +2,17 @@ import compression from "compression";
 import database from "./database/index.js";
 import * as route from "./routes/index.js";
 import { catchError, errorEvents } from "./utils/index.js";
-import { ApiError, ERROR_CODES, errorHandler, logger, RateLimiter } from "@pairfy/common";
 import { ensureBucketExists, minioClient } from "./database/minio.js";
+import { Request, Response } from "express";
 import { app } from "./app.js";
+import {
+  ApiError,
+  ERROR_CODES,
+  errorHandler,
+  logger,
+  RateLimiter,
+} from "@pairfy/common";
+
 
 const main = async () => {
   try {
@@ -16,7 +24,7 @@ const main = async () => {
       "MINIO_USE_SSL",
       "MINIO_ACCESS_KEY",
       "MINIO_SECRET_KEY",
-      "INTERNAL_ENDPOINT_SECRET"
+      "INTERNAL_ENDPOINT_SECRET",
     ];
 
     for (const key of requiredEnv) {
@@ -48,16 +56,16 @@ const main = async () => {
     });
 
     const rateLimiter = new RateLimiter({
-      source: 'service-media',
+      source: "service-media",
       redisUrl: process.env.REDIS_RATELIMIT_URL as string,
       jwtSecret: process.env.AGENT_JWT_KEY as string,
       maxRequests: 100,
-      windowSeconds: 60
+      windowSeconds: 120,
     });
 
     app.post(
       "/api/media/create-files",
-      
+
       rateLimiter.middlewareJwt(),
       ...route.createFilesMiddlewares,
 
@@ -80,7 +88,7 @@ const main = async () => {
 
       route.verifyGroupHandler
     );
- 
+
     app.get(
       "/api/media/get-file/groups/:groupId/:filename",
       rateLimiter.middlewareIp(),
@@ -88,9 +96,13 @@ const main = async () => {
       route.getFileHandler
     );
 
-    app.get("/api/media/ping", (req, res) => {
-      res.status(200).json({ success: true, data: { message: "Test OK" } });
-    });
+    app.get(
+      "/api/media/ping",
+      rateLimiter.middlewareIp(),
+      (req: Request, res: Response) => {
+        res.status(200).json({ success: true, data: { message: "Test OK" } });
+      }
+    );
 
     app.all("*", (req, _res, next) => {
       next(

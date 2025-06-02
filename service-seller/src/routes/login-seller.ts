@@ -9,7 +9,8 @@ import {
   SellerToken,
   sellerMiddleware,
   findSellerByEmail,
-  updateSeller
+  updateSeller,
+  isValidSignatureCIP30
 } from "@pairfy/common";
 import { getPubKeyHash } from "../utils/blockchain.js";
 import  verifyDataSignature  from '@cardano-foundation/cardano-verify-datasignature';
@@ -31,7 +32,7 @@ const loginSellerHandler = async (req: Request, res: Response) => {
 
     const message = "SIGN TO AUTHENTICATE YOUR PUBLIC SIGNATURE";
 
-    const verifySignature: boolean = verifyDataSignature(
+    const verifySignature = isValidSignatureCIP30(
       params.signature.signature,
       params.signature.key,
       message,

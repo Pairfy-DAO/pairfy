@@ -15,7 +15,7 @@
 
 <style scoped>
 .ProductButton {
-    border: 1px solid var(--border-a);
+    border: 1px solid var(--border-b);
     transition: var(--transition-a);
     border-radius: var(--radius-c);
     font-weight: 600;

@@ -80,7 +80,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeyDown))
 .wrapper {
   position: fixed;
   inset: 0;
-  z-index: 10000;
+  z-index: 15000;
 }
 
 .overlay {

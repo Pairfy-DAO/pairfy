@@ -1,9 +1,9 @@
 <template>
-    <div class="ProductDescription">
+    <div class="ProductBullet">
         <h2 class="title">All about this item</h2>
         <ul class="bullet-list">
             <li class="bullet-item" v-for="(item, index) in bullets" :key="index">
-                <span class="checkmark">✔</span>
+                <span class="checkmark">•</span>
                 <span class="text">{{ item }}</span>
             </li>
         </ul>
@@ -19,16 +19,17 @@ const bullets = computed(() => product.value.bullet_list)
 </script>
 
 <style scoped>
-.ProductDescription {
-    background: var(--background-b);
-    border-radius: var(--radius-c);
+.ProductBullet {
+    border-radius: var(--radius-d);
+    background: var(--primary-a);
+    color: var(--text-w);
     padding: 1.5rem;
 }
 
 .title {
-    font-size: var(--text-size-4); 
+    font-size: var(--text-size-3);
     margin-bottom: 16px;
-    font-weight: 700; 
+    font-weight: 700;
 }
 
 .bullet-list {
@@ -44,14 +45,13 @@ const bullets = computed(() => product.value.bullet_list)
 }
 
 .checkmark {
-    color: var(--green-a);
+    color: var(--text-w);
     margin-right: 0.5rem;
     font-weight: bold;
-    line-height: 1.5;
 }
 
 .text {
-    font-size: var(--text-size-2);
+    font-size: var(--text-size-1);
     line-height: 1.5;
 }
 </style>

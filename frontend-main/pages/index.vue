@@ -8,10 +8,18 @@ import Lenis from 'lenis'
 let lenis: Lenis | null = null
 let frameId: number
 
+onMounted(() => {
+  addLenis()
+})
+
+onBeforeUnmount(() => {
+  removeLenis()
+})
+
 function addLenis() {
   lenis = new Lenis({
     smooth: true,
-  })
+  } as any)
 
   const raf = (time: number) => {
     lenis?.raf(time)
@@ -27,20 +35,11 @@ function removeLenis() {
   lenis?.destroy()
 }
 
-
-onMounted(() => {
-  addLenis()
-})
-
-onBeforeUnmount(() => {
-  removeLenis()
-})
-
-
 useHead({
   title: 'Pairfy - Cardano marketplace',
   meta: [
     { name: 'description', content: 'Buy and sell products on Cardano blockchain.' }
   ]
 })
+
 </script>

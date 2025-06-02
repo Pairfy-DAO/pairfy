@@ -16,9 +16,13 @@
         <ProductDescription />
       </div>
 
+      <div class="center-column">
+        <div class="trigger" ref="triggerRef" />
+      </div>
 
       <div class="right-column">
-        <div class="fixed-box">
+
+        <div class="fixed-box" :class="{ fixed: isFixed }">
           <div class="right-scroll" ref="rightScrollRef">
 
             <div class="product-brand">
@@ -67,7 +71,6 @@
 
             <div class="busy-box" />
 
-
           </div>
         </div>
       </div>
@@ -78,16 +81,20 @@
 <script setup>
 import Lenis from 'lenis'
 import { gql } from 'graphql-tag'
+import { useIntersectionObserver } from '@vueuse/core'
 
 const route = useRoute();
 
 const productStore = useProductStore()
 const product = computed(() => productStore.product)
-const media = computed(() => productStore.media)
 
 const toastRef = ref(null);
-
 const dialogRef = ref(null);
+
+const isFixed = ref(false)
+const triggerRef = ref(null)
+
+let observer;
 
 let lenis = null
 
@@ -159,6 +166,27 @@ const getProductError = ref(null)
 
 let pollIntervalId = null
 
+watch(
+  () => route.params.id,
+  (id) => fetchProduct(),
+  { immediate: true }
+)
+
+onMounted(() => {
+  observeTrigger()
+  addLenis()
+  addScrollListener()
+  showGetProductError()
+  fetchProductPolling()
+})
+
+onBeforeUnmount(() => {
+  deleteObserver()
+  removeLenis()
+  removeScrollListener()
+  clearIntervals()
+})
+
 async function fetchProduct() {
   try {
     const { data } = await $apollo.query({
@@ -174,9 +202,28 @@ async function fetchProduct() {
     productStore.setProductData(data.getProduct)
   } catch (err) {
     getProductError.value = err
-    showGetProductError()
   } finally {
     loading.value = false
+  }
+}
+
+function observeTrigger() { 
+  const { stop } = useIntersectionObserver(
+    triggerRef,
+    ([entry]) => {
+      isFixed.value = !entry.isIntersecting
+    },
+    {
+      threshold: 1
+    })
+
+  observer = stop
+}
+
+function deleteObserver() {
+  if (observer) {
+    observer()
+    observer = null
   }
 }
 
@@ -224,28 +271,12 @@ function removeScrollListener() {
 function showGetProductError() {
   if (getProductError.value) displayMessage(getProductError.value, 'error')
 }
-
-
-onMounted(() => {
-  fetchProduct()
-  addLenis()
-  addScrollListener()
-  showGetProductError()
-  fetchProductPolling()
-})
-
-onBeforeUnmount(() => {
-  removeLenis()
-  removeScrollListener()
-  clearIntervals()
-})
 </script>
 
 <style scoped>
 .product-page {
   width: 100%;
   display: flex;
-  padding-top: 10rem;
   justify-content: center;
 }
 
@@ -254,12 +285,18 @@ onBeforeUnmount(() => {
   width: inherit;
   box-sizing: border-box;
   max-width: var(--body-a);
-  grid-template-columns: 1fr 350px;
+  grid-template-columns: 1fr 3rem 350px;
 }
 
 .left-column {
   width: inherit;
+  width: inherit;
+  margin-top: 4rem;
   box-sizing: border-box;
+}
+
+.center-column {
+  width: inherit;
 }
 
 .right-column {
@@ -267,21 +304,33 @@ onBeforeUnmount(() => {
   box-sizing: border-box;
 }
 
+.trigger {
+  height: 1px;
+  width: 100%;
+}
 
 .fixed-box {
-  top: 10rem;
-  right: 6rem;
   height: 100vh;
   width: inherit;
-  z-index: 11000;
-  position: fixed;
+  z-index: 10000;
   overflow: hidden;
+  position: sticky;
   box-sizing: border-box;
+  transform: translateY(0rem);
+  transition: transform 0.6s ease-in-out;
+}
+
+.fixed-box.fixed {
+  top: 0rem;
+  position: fixed;
+  transform: translateY(2rem);
+  transition: transform 0.3s ease-in-out;
 }
 
 .right-scroll {
   height: 100%;
   overflow-y: auto;
+  padding-top: 4rem;
 }
 
 .right-scroll {
@@ -327,7 +376,7 @@ onBeforeUnmount(() => {
 }
 
 .product-name {
-  font-size: var(--text-size-3);
+  font-size: var(--text-size-4);
   margin-top: 0.5rem;
   line-height: 2rem;
   font-weight: 400;

@@ -6,14 +6,13 @@ import {
   findProductById,
   findProductBySeller,
   findProductBySku,
-  sanitizeArrayStrings,
-  sanitizeTiptapContent,
+  sanitizeStringArray,
   SellerToken,
   updateProduct,
 } from "@pairfy/common";
 import { verifyParams } from "../../validators/edit-product.js";
 import { checkFileGroup } from "../../utils/media.js";
-import { applyDiscount } from "../../utils/index.js";
+import { applyDiscount, sanitizeTiptapContent } from "../../utils/index.js";
 
 export const editProduct = async (_: any, args: any, context: any) => {
   let connection = null;
@@ -28,7 +27,7 @@ export const editProduct = async (_: any, args: any, context: any) => {
       });
     }
     
-    args.editProductInput.bullet_list = sanitizeArrayStrings(
+    args.editProductInput.bullet_list = sanitizeStringArray(
       args.editProductInput.bullet_list
     );
 

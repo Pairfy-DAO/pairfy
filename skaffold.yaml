@@ -121,7 +121,16 @@ build:
           - src: 'src/**/*.ts'
             dest: .
           - src: 'package.json'
-            dest: .            
+            dest: .         
+
+    - image: pairfy/service-user
+      context: service-user
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.{ts,js,json,vue}'
+            dest: .
 
 deploy:
   statusCheckDeadlineSeconds: 540
@@ -172,6 +181,12 @@ portForward:
     namespace: default
     port: 8004
     localPort: 8004    
+
+  - resourceType: service
+    resourceName: service-user
+    namespace: default
+    port: 8005
+    localPort: 8005  
 
   - resourceType: service
     resourceName: weaviate

@@ -59,7 +59,7 @@ const save = computed(() => discount.value ? `Save $${formatUSD(price.value - di
 
 <style scoped>
 .ProductModel {
-    border: 1px solid var(--border-a);    
+    border: 1px solid var(--border-b);    
     transition: var(--transition-a);
     border-radius: var(--radius-c);
     font-size: var(--text-size-1);

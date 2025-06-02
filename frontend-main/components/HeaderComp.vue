@@ -1,20 +1,38 @@
 <template>
     <header>
-        <HeaderNavComp :items="[
-            { label: 'Trending', route: '/docs' },
-            { label: 'Categories', route: '/categories' },
-            { label: 'Docs', route: '/docs' },
-            { label: 'Sellers', route: '/sell' },
-            { label: 'Support', route: '/support' }
-        ]" />
+        <ToastComp ref="toastRef" />
 
-        <HeaderTopComp />
+        <HeaderTop />
+        <HeaderContent />
+        
+        <DrawerComp v-model="auth.authDrawer" @update:modelValue="auth.authDrawer = $event" position="right"
+            width="320px" :overlay="false">
+            <AuthView v-if="auth.authDrawer" />
+        </DrawerComp>
+
+        <DrawerComp v-model="auth.userDrawer" @update:modelValue="auth.userDrawer = $event" position="right"
+            width="320px" :overlay="false">
+            <UserView v-if="auth.userDrawer" />
+        </DrawerComp>
     </header>
 </template>
 
 <script setup>
+const toastRef = ref(null);
 
+const auth = useAuthStore()
 
+const displayMessage = (message, type, duration) => {
+    toastRef.value?.showToast(message, type, duration)
+}
+
+onMounted(() => {
+  watch(() => auth.toastMessage, (value) => {
+    if(value){
+        displayMessage(value.message, value.type, value.duration);
+    }
+  });
+});
 
 </script>
 

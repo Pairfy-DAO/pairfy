@@ -1,17 +1,16 @@
 import * as route from "./routes/index.js";
 import database from "./database/index.js";
 import compression from "compression";
-import { logger } from "@pairfy/common";
+import { ApiError, errorHandler, ERROR_EVENTS } from "@pairfy/common";
+import { logger, RateLimiter } from "@pairfy/common";
 import { catchError } from "./utils/index.js";
-import { ApiError, errorHandler } from "@pairfy/common";
+import { Request, Response } from "express";
 import { app } from "./app.js";
 
 const main = async () => {
   try {
     const requiredEnvVars = [
       "NODE_ENV",
-      "EXPRESS_PORT",
-      "EXPRESS_TIMEOUT",
       "AGENT_JWT_KEY",
       "TOKEN_EXPIRATION",
       "DATABASE_HOST",
@@ -19,7 +18,7 @@ const main = async () => {
       "DATABASE_USER",
       "DATABASE_PASSWORD",
       "DATABASE_NAME",
-      "REDIS_RATELIMIT_URL"
+      "REDIS_RATELIMIT_URL",
     ];
 
     for (const key of requiredEnvVars) {
@@ -27,6 +26,10 @@ const main = async () => {
         throw new Error(`Missing environment variable: ${key}`);
       }
     }
+
+    ERROR_EVENTS.forEach((e: string) =>
+      process.on(e, (err) => catchError(err))
+    );
 
     const databasePort = parseInt(process.env.DATABASE_PORT as string);
 
@@ -38,23 +41,19 @@ const main = async () => {
       database: process.env.DATABASE_NAME,
     });
 
-    const errorEvents: string[] = [
-      "exit",
-      "SIGINT",
-      "SIGTERM",
-      "SIGQUIT",
-      "uncaughtException",
-      "unhandledRejection",
-      "SIGHUP",
-      "SIGCONT",
-    ];
-
-    errorEvents.forEach((e: string) => process.on(e, (err) => catchError(err)));
+    const rateLimiter = new RateLimiter({
+      source: "service-seller",
+      redisUrl: process.env.REDIS_RATELIMIT_URL as string,
+      jwtSecret: process.env.AGENT_JWT_KEY as string,
+      maxRequests: 100,
+      windowSeconds: 120,
+    });
 
     app.post(
       "/api/seller/create-seller",
 
-      route.createSellerMiddlewares,
+      rateLimiter.middlewareIp(),
+      ...route.createSellerMiddlewares,
 
       route.createSellerHandler
     );
@@ -62,7 +61,8 @@ const main = async () => {
     app.post(
       "/api/seller/verify-seller",
 
-      route.verifySellerMiddlewares,
+      rateLimiter.middlewareIp(),
+      ...route.verifySellerMiddlewares,
 
       route.verifySellerHandler
     );
@@ -70,7 +70,8 @@ const main = async () => {
     app.post(
       "/api/seller/login-seller",
 
-      route.loginSellerMiddlewares,
+      rateLimiter.middlewareIp(),
+      ...route.loginSellerMiddlewares,
 
       route.loginSellerHandler
     );
@@ -78,21 +79,26 @@ const main = async () => {
     app.get(
       "/api/seller/current-seller",
 
-      route.currentSellerMiddlewares,
+      rateLimiter.middlewareIp(),
+      ...route.currentSellerMiddlewares,
 
       route.currentSellerHandler
     );
 
     app.get(
       "/api/seller/logout-seller",
-
+      rateLimiter.middlewareIp(),
       route.logoutHandler
     );
 
-    app.get("/api/seller/ping", (req, res) => {
-      res.status(200).send("Test OK");
-    });
-
+    app.get(
+      "/api/seller/ping",
+      rateLimiter.middlewareIp(),
+      (req: Request, res: Response) => {
+        res.status(200).json({ success: true, data: { message: "Test OK" } });
+      }
+    );
+    
     app.all("*", (req, _res, next) => {
       next(
         new ApiError(404, `Route not found: ${req.method} ${req.originalUrl}`, {
@@ -105,9 +111,7 @@ const main = async () => {
 
     app.use(compression());
 
-    app.listen(process.env.EXPRESS_PORT, () =>
-      logger.info(`express server listening in ${process.env.EXPRESS_PORT}`)
-    );
+    app.listen(8000, () => logger.info(`express server listening in 8000`));
   } catch (e) {
     catchError(e);
   }

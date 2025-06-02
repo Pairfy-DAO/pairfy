@@ -22,8 +22,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, nextTick } from 'vue'
-
 const props = defineProps({
   text: { type: String, required: true },
   position: {

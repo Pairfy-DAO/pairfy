@@ -8,21 +8,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useAuthStore } from '@/stores/auth'
-
-const route = useRoute()
-
-const currentPath = computed(() => route.name)
 
 const auth = useAuthStore()
 
-const isCollapsed = ref(true)
-const isHovering = ref(false)
-
-if (import.meta.server) {
-  await auth.fetchProfile()
-}
+await auth.fetchUser()
 </script>
 
 <style scoped>
