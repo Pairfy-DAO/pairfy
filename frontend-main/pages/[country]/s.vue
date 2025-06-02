@@ -5,11 +5,9 @@
 </template>
 
 <script setup>
-import Lenis from 'lenis'
 import { gql } from 'graphql-tag'
 
-let lenis = null
-let frameId;
+useLenis()
 
 const SEARCH_PRODUCTS_QUERY = gql`
   query SearchProducts($searchProductsVariable: SearchProductsInput!) {
@@ -133,31 +131,8 @@ function displayMessage(message, type, duration) {
     toastRef.value?.showToast(message, type, duration)
 }
 
-function addLenis() {
-  lenis = new Lenis({
-    smooth: true,
-  })
-
-  const raf = (time) => {
-    lenis?.raf(time)
-    frameId = requestAnimationFrame(raf)
-  }
-
-  frameId = requestAnimationFrame(raf)
-}
-
-function removeLenis() {
-  if (frameId) cancelAnimationFrame(frameId)
-  lenis?.destroy()
-}
-
 onMounted(() => {
-    addLenis()
     showGetProductError()
-})
-
-onBeforeUnmount(() => {
-  removeLenis()
 })
 
 useHead({

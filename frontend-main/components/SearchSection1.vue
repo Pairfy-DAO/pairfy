@@ -4,6 +4,7 @@
             <SearchPrompt />
             <DividerComp />
             <ProductGrid title="Results" />
+            <DividerComp />
         </main>
     </div>
 </template>
@@ -13,12 +14,12 @@
     width: 100%; 
     display: flex;
     justify-content: center;
+    background: var(--background-b);
 }
 
 .SearchSection-body {
     max-width: var(--body-a);
     flex-direction: column;
-    margin-top: 6rem;
     width: inherit;
     display: flex;
  

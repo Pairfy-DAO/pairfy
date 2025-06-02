@@ -123,12 +123,12 @@ function submitPrompt() {
     position: relative;
     align-items: center;
     box-sizing: border-box;
-    background: transparent;
     padding-bottom: 0.75rem;
     box-shadow: var(--shadow-a);
-    border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: var(--radius-d);
+    background: var(--background-a);
     transition: var(--transition-a);
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .SearchPrompt-form:hover {
