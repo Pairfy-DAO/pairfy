@@ -72,7 +72,7 @@ const onLogout = async () => {
 
 .UserView-content {
     overflow-y: auto;
-    padding: 1rem;
+    padding: 0 1rem;
     flex: 1;
 }
 
