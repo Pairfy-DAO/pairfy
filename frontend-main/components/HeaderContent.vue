@@ -33,7 +33,7 @@
 
 
 <script setup lang="ts">
-const isContrast = computed(() => ['p-id', 's'].includes(route.name as string))
+const isContrast = computed(() => ['country-p-id', 'country-s'].includes(route.name as string))
 
 const auth = useAuthStore()
 

@@ -7,11 +7,16 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 
 const auth = useAuthStore()
 
 await auth.fetchUser()
+
+onMounted(() => {
+  auth.checkLocation() 
+})
+
 </script>
 
 <style scoped>

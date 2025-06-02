@@ -1,7 +1,7 @@
 <template>
     <div class="HeaderAvatar" @click="auth.userDrawer = true">
         <div class="HeaderAvatar-icon">
-            <svg width="24" height="24" fill="#888" viewBox="0 0 24 24">
+            <svg width="24" height="24" fill="#0003" viewBox="0 0 24 24">
                 <path
                     d="M12 12c2.7 0 4.5-1.8 4.5-4.5S14.7 3 12 3 7.5 4.8 7.5 7.5 9.3 12 12 12zm0 1.5c-3 0-9 1.5-9 4.5V21h18v-3c0-3-6-4.5-9-4.5z" />
             </svg>

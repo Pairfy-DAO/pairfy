@@ -82,7 +82,6 @@
   box-sizing: border-box;
   color: var(--text-b);
   padding: 4rem 1rem;
-  margin-top: 4rem;
   width: 100%;
 }
 

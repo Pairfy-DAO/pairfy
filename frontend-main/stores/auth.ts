@@ -5,6 +5,9 @@ export const useAuthStore = defineStore("auth", () => {
   const authDrawer = ref(false);
   const userDrawer = ref(false);
 
+  const country = ref<string | null>(null)
+  const locationDialog = ref(false);
+
   const toastMessage = ref<ToastMessage | null>(null);
 
   const loading = ref(false);
@@ -17,6 +20,25 @@ export const useAuthStore = defineStore("auth", () => {
     type: ToastType;
     duration: number;
   };
+
+  function checkLocation() {
+    if (import.meta.client) {
+      const storedCountry = localStorage.getItem('country')
+      if (storedCountry) {
+        country.value = storedCountry
+      } else {
+        locationDialog.value = true
+      }
+    }
+  }
+
+  function setLocation(value: string) {
+    if (import.meta.client) {
+      localStorage.setItem('country', value)
+      country.value = value
+      locationDialog.value = false
+    }
+  }
 
   const showToast = (message: string, type: ToastType, duration: number) => {
     toastMessage.value = {
@@ -112,5 +134,9 @@ export const useAuthStore = defineStore("auth", () => {
     userDrawer,
     toastMessage,
     showToast,
+    locationDialog,
+    checkLocation,
+    setLocation,
+    country
   };
 });

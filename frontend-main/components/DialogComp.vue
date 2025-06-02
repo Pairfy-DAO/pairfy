@@ -1,9 +1,9 @@
 <template>
-  <div class="dialog-backdrop" v-if="visible" @click="close">
+  <div class="dialog-backdrop" v-if="modelValue" @click="emitClose">
     <div class="dialog-box" @click.stop>
 
-      <div class="header flex">
-        <button class="flex center" @click="close">
+      <div class="header flex end">
+        <button class="flex center" v-if="props.closable" @click="emitClose">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
             class="lucide lucide-x-icon lucide-x">
@@ -19,16 +19,31 @@
 </template>
 
 <script setup>
-import { ref, defineExpose } from 'vue';
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
+  },
+  closable: {
+    type: Boolean,
+    default: true
+  }
+});
 
-const visible = ref(false);
+const emit = defineEmits(['update:modelValue']);
+
+function emitClose() {
+  if(props.closable){
+    emit('update:modelValue', false);
+  }
+}
 
 function open() {
-  visible.value = true;
+  emit('update:modelValue', true);
 }
 
 function close() {
-  visible.value = false;
+  emit('update:modelValue', false);
 }
 
 defineExpose({ open, close });
@@ -45,7 +60,7 @@ defineExpose({ open, close });
   z-index: 20000;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .dialog-box {
@@ -53,7 +68,6 @@ defineExpose({ open, close });
   border-radius: var(--radius-c);
   box-shadow: var(--shadow-b);
   min-width: 300px;
-  padding: 1.5rem;
 }
 
 button {
@@ -62,8 +76,7 @@ button {
   border: none;
 }
 
-.header{
-  justify-content: flex-end; 
+.header {
   width: 100%;
 }
 </style>

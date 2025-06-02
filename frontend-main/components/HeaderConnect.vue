@@ -9,7 +9,7 @@ const route = useRoute()
 
 const auth = useAuthStore()
 
-const isContrast = computed(() =>  ['p-id', 's'].includes(route.name))
+const isContrast = computed(() =>  ['country-p-id', 'country-s'].includes(route.name))
 
 </script>
 
