@@ -94,17 +94,7 @@ const dialogRef = ref(null);
 const isFixed = ref(false)
 const triggerRef = ref(null)
 
-//unobserve
-function observeTrigger() {
-  useIntersectionObserver(
-    triggerRef,
-    ([entry]) => {
-      isFixed.value = !entry.isIntersecting
-    },
-    {
-      threshold: 1
-    })
-}
+let observer;
 
 let lenis = null
 
@@ -176,7 +166,28 @@ const getProductError = ref(null)
 
 let pollIntervalId = null
 
-const fetchProduct = async () => {
+watch(
+  () => route.params.id,
+  (id) => fetchProduct(),
+  { immediate: true }
+)
+
+onMounted(() => {
+  observeTrigger()
+  addLenis()
+  addScrollListener()
+  showGetProductError()
+  fetchProductPolling()
+})
+
+onBeforeUnmount(() => {
+  deleteObserver()
+  removeLenis()
+  removeScrollListener()
+  clearIntervals()
+})
+
+async function fetchProduct() {
   try {
     const { data } = await $apollo.query({
       query: GET_PRODUCT_QUERY,
@@ -191,26 +202,30 @@ const fetchProduct = async () => {
     productStore.setProductData(data.getProduct)
   } catch (err) {
     getProductError.value = err
-    showGetProductError()
   } finally {
     loading.value = false
   }
 }
 
-onMounted(() => {
-  fetchProduct() //watch
-  observeTrigger()
-  addLenis()
-  addScrollListener()
-  showGetProductError()
-  fetchProductPolling()
-})
+function observeTrigger() { 
+  const { stop } = useIntersectionObserver(
+    triggerRef,
+    ([entry]) => {
+      isFixed.value = !entry.isIntersecting
+    },
+    {
+      threshold: 1
+    })
 
-onBeforeUnmount(() => {
-  removeLenis()
-  removeScrollListener()
-  clearIntervals()
-})
+  observer = stop
+}
+
+function deleteObserver() {
+  if (observer) {
+    observer()
+    observer = null
+  }
+}
 
 function fetchProductPolling() {
   pollIntervalId = setInterval(fetchProduct, 30_000)
