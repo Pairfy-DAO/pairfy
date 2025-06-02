@@ -3,17 +3,17 @@ import database from "../database/index.js";
 import { Request, Response } from "express";
 import {
   UserToken,
-  userMiddleware,
   createToken,
   ApiError,
   ERROR_CODES,
   getUserNickname,
   isValidSignatureCIP30,
-  findUserByPubKeyhash
+  findUserByPubKeyhash,
 } from "@pairfy/common";
 import { getPubKeyHash } from "../utils/crypto.js";
+import { verifyParams } from "../validators/login-user.js";
 
-export const loginUserMiddlewares: any = []; //validateParams
+export const loginUserMiddlewares: any = [];
 
 export const loginUserHandler = async (req: Request, res: Response) => {
   const timestamp = Date.now();
@@ -21,7 +21,15 @@ export const loginUserHandler = async (req: Request, res: Response) => {
   let connection = null;
 
   try {
-    let params = req.body;
+    const result = verifyParams.safeParse(req.body);
+
+    if (!result.success) {
+      throw new ApiError(401, "Unauthorized", {
+        code: ERROR_CODES.UNAUTHORIZED,
+      });
+    }
+
+    const params = result.data;
 
     console.log(params);
 
