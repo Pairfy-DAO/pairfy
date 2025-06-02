@@ -56,6 +56,7 @@ const isContrast = computed(() => ['country-p-id', 'country-s'].includes(route.n
     justify-content: center;
     box-sizing: border-box;
     color: var(--text-a);
+    font-weight: 600;
     position: fixed;
     z-index: 12000;
     height: 2rem;
@@ -73,7 +74,6 @@ const isContrast = computed(() => ['country-p-id', 'country-s'].includes(route.n
 .HeaderTop-price,
 .HeaderTop-network {
     margin-left: 2rem;
-    font-weight: 400;
 }
 
 .HeaderTop-network svg {
