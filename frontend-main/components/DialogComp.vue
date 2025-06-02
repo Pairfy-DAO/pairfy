@@ -33,7 +33,9 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 
 function emitClose() {
-  emit('update:modelValue', false);
+  if(props.closable){
+    emit('update:modelValue', false);
+  }
 }
 
 function open() {

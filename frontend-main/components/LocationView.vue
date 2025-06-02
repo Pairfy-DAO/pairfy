@@ -8,7 +8,9 @@
     </div>
     <div class="button-group">
       <button class="country-button" @click="selectCountry('us')">
-        <span class="flag">🇺🇸</span>
+        <span class="flag">
+          <img :src="US" alt="">
+        </span>
         <div class="country-info">
           <div class="country-name">United States</div>
           <div class="language">English</div>
@@ -19,12 +21,21 @@
 </template>
 
 <script setup>
+import US from '@pairfy/common-f/public/us.svg';
+
+const auth = useAuthStore()
+
+const route = useRoute()
+const router = useRouter()
+
 const selectCountry = (code) => {
-  if (code === 'us') {
-    window.location.href = 'https://example.com/us';
-  } else if (code === 'es') {
-    window.location.href = 'https://example.com/es';
-  }
+  auth.setLocation(code)
+
+  router.replace({
+    name: 'country',
+    params: { country: code },
+    query: { ...route.query }
+  })
 };
 </script>
 
@@ -39,6 +50,7 @@ const selectCountry = (code) => {
   gap: 1rem;
   display: flex;
   flex-wrap: wrap;
+  margin-top: 2rem;
 }
 
 .country-button {
@@ -54,12 +66,7 @@ const selectCountry = (code) => {
 }
 
 .country-button:hover {
-  background: #f5f5f5;
-}
-
-.flag {
-  width: 2rem;
-  font-size: 24px;
+  background: var(--background-b);
 }
 
 .country-info {
@@ -82,11 +89,13 @@ const selectCountry = (code) => {
 }
 
 .subtitle {
+  font-size: var(--text-size-1);
   line-height: 1.25rem;
+  color: var(--text-b);
   margin: 1rem 0;
 }
 
-.language{
+.language {
   margin-top: 0.25rem;
 }
 </style>

@@ -48,7 +48,7 @@ const route = useRoute()
 
 const onSelect = (id) => {
     router.push({
-        name: 'p-id',
+        name: 'country-p-id',
         params: { ...route.params, id }
     })
 }

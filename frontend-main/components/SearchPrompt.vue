@@ -1,7 +1,7 @@
 <template>
     <div class="SearchPrompt flex center">
 
-        <DrawerComp v-model="filterDrawer" position="left" width="320px" :overlay="false">
+        <DrawerComp v-model="filterDrawer" position="left" width="350px" :overlay="false">
             <SearchPanel @onApply="filterDrawer = false" />
         </DrawerComp>
 
@@ -71,7 +71,7 @@ function submitPrompt() {
     isSubmitting.value = true
 
     router.push({
-        name: 's',
+        name: 'country-s',
         query: {
             ...route.query,
             prompt: trimmed,

@@ -59,9 +59,9 @@ const emitSearch = () => {
     if (!trimmed) return
 
     router.push({
-        name: 's',
+        name: 'country-s',
         query: {
-            ...router.currentRoute.value.query,
+            ...route.query,
             prompt: trimmed,
             vectorized: false
         } as any

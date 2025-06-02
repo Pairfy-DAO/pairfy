@@ -58,7 +58,7 @@
 
         <div class="actions">
           <button type="submit">Apply Filters</button>
-          <button type="button" @click="resetFilters">Clear</button>
+          <button class="clear" type="button" @click="resetFilters">Clear</button>
         </div>
       </div>
     </form>
@@ -145,7 +145,7 @@ function applyFilters() {
     }
   });
 
-  router.push({ name: 's', query: { ...route.query, ...query } });
+  router.push({ name: 'country-s', params: { ...route.params }, query: { ...route.query, ...query } });
 
   storeFilterNumber()
 
@@ -160,6 +160,7 @@ function resetFilters() {
       delete cleanedQuery[key];
     }
   });
+
   router.push({ query: cleanedQuery });
 
   storeFilterNumber()
@@ -180,6 +181,7 @@ function resetFilters() {
 
 .title{
   font-size: var(--text-size-3);
+  margin-bottom: 2rem;
   font-weight: 700;
 }
 
@@ -249,6 +251,7 @@ select:focus {
 }
 
 button {
+  border: 1px solid var(--primary-a);
   transition: var(--transition-a);
   border-radius: var(--radius-f);
   background: var(--primary-a);
@@ -256,20 +259,21 @@ button {
   color: var(--text-w);
   font-weight: 600;
   cursor: pointer;
-  border: none;
 }
 
 button:hover {
+  color: var(--text-w);
   opacity: 0.8;
 }
 
-button[type="button"] {
-  background: var(--background-b);
-  color: var(--text-a);
+.clear{
+  color: var(--primary-a);
+  background: transparent;
+  border: 1px solid var(--primary-a);
 }
 
-button[type="button"]:hover {
-  background: var(--background-b);
+.clear:hover{
+  color: var(--primary-a);
 }
 
 .error {

@@ -136,6 +136,7 @@ export const useAuthStore = defineStore("auth", () => {
     showToast,
     locationDialog,
     checkLocation,
-    setLocation
+    setLocation,
+    country
   };
 });

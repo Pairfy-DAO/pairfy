@@ -18,6 +18,7 @@
 <script setup>
 
 const router = useRouter()
+const auth = useAuthStore()
 
 const prompt = ref('')
 const isSubmitting = ref(false)
@@ -71,7 +72,8 @@ function submitPrompt() {
     isSubmitting.value = true
 
     router.push({
-        name: 's',
+        name: 'country-s',
+        params: { country: auth.country },
         query: {
             prompt: trimmed,
             vectorized: true
