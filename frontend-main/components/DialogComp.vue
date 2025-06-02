@@ -60,7 +60,7 @@ defineExpose({ open, close });
   z-index: 20000;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .dialog-box {
