@@ -4,7 +4,11 @@
 
         <HeaderTop />
         <HeaderContent />
-        
+
+        <DialogComp v-model="auth.locationDialog" @update:modelValue="auth.locationDialog = $event" :closable="false">
+            <LocationView v-if="auth.locationDialog" />
+        </DialogComp> 
+ 
         <DrawerComp v-model="auth.authDrawer" @update:modelValue="auth.authDrawer = $event" position="right"
             width="320px" :overlay="false">
             <AuthView v-if="auth.authDrawer" />
@@ -27,11 +31,11 @@ const displayMessage = (message, type, duration) => {
 }
 
 onMounted(() => {
-  watch(() => auth.toastMessage, (value) => {
-    if(value){
-        displayMessage(value.message, value.type, value.duration);
-    }
-  });
+    watch(() => auth.toastMessage, (value) => {
+        if (value) {
+            displayMessage(value.message, value.type, value.duration);
+        }
+    });
 });
 
 </script>
