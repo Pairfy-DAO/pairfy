@@ -1,18 +1,28 @@
-import { defineStore } from "pinia";
+export const useProductStore = defineStore("product", () => {
+  const product = ref(null);
+  const media = ref([]);
 
-export const useProductStore = defineStore("product", {
-  state: () => ({
-    product: null,
-    media: [],
-  }),
-  actions: {
-    setProductData(data: any) {
-      this.product = data.product;
-      this.media = data.media;
-    },
-    clear() {
-      this.product = null;
-      this.media = [];
-    },
-  },
+  const cardanoDialog = ref(false);
+
+  function showCardanoDialog(data: any) {
+    cardanoDialog.value = data;
+  }
+
+  function setProductData(data: any) {
+    product.value = data.product;
+    media.value = data.media;
+  }
+
+  function clear() {
+    product.value = null;
+    media.value = [];
+  }
+
+  return {
+    product,
+    media,
+    clear,
+    setProductData,
+    showCardanoDialog
+  };
 });
