@@ -47,7 +47,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, defineEmits, defineProps, watch } from 'vue';
 import Sortable from 'sortablejs';
 
 const MAX_IMAGES = 10;
