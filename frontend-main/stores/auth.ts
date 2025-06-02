@@ -5,8 +5,26 @@ export const useAuthStore = defineStore("auth", () => {
   const authDrawer = ref(false);
   const userDrawer = ref(false);
 
+  const toastMessage = ref<ToastMessage | null>(null);
+
   const loading = ref(false);
   const error = ref<string | null>(null);
+
+  type ToastType = "success" | "error" | "info" | "default";
+
+  type ToastMessage = {
+    message: string;
+    type: ToastType;
+    duration: number;
+  };
+
+  const showToast = (message: string, type: ToastType, duration: number) => {
+    toastMessage.value = {
+      message,
+      type,
+      duration,
+    };
+  };
 
   const login = async (params: {
     signature: string;
@@ -57,7 +75,8 @@ export const useAuthStore = defineStore("auth", () => {
       }
     } catch (err: any) {
       console.error(err);
-
+      
+      showToast(err.message, "error", 10_000);
       isAuthenticated.value = false;
       user.value = null;
     }
@@ -91,5 +110,7 @@ export const useAuthStore = defineStore("auth", () => {
     fetchUser,
     authDrawer,
     userDrawer,
+    toastMessage,
+    showToast,
   };
 });

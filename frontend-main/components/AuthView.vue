@@ -1,6 +1,6 @@
 <template>
     <div class="AuthView">
-        <ToastComp ref="toastRef" />
+
         <p class="title">
             Login Wallet
         </p>
@@ -29,11 +29,6 @@ import lace from '@/assets/icon/lace.svg'
 import nami from '@/assets/icon/nami.svg'
 
 const config = useRuntimeConfig()
-
-const toastRef = ref(null);
-const displayMessage = (message, type, duration) => {
-    toastRef.value?.showToast(message, type, duration)
-}
 
 const auth = useAuthStore()
 const wallet = useWalletStore()
@@ -68,9 +63,8 @@ const connectWallet = async (name) => {
         auth.authDrawer = false
     } catch (err) {
         console.error(err);
-
-        displayMessage(err, 'error', 20_000)
-
+ 
+        auth.showToast(err.message, 'error', 10_000) 
     }
 }
 </script>
