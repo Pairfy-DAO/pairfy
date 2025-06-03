@@ -82,7 +82,6 @@ watch(() => route.path, (newPath) => {
   color: inherit;
   font-weight: 500;
   align-items: center;
-  padding: 0.75rem 0rem;
   max-width: var(--body-a);
   grid-template-columns: 1fr 1.25fr 0.5fr;
 }

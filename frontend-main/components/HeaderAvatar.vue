@@ -42,6 +42,6 @@ const auth = useAuthStore()
 
 .HeaderAvatar-name {
     font-size: var(--text-size-1);
-    font-weight: 500;
+    font-weight: 400;
 }
 </style>
