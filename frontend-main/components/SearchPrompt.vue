@@ -5,7 +5,8 @@
             <SearchPanel @onApply="filterDrawer = false" />
         </DrawerComp>
 
-        <form class="SearchPrompt-form" @submit.prevent="submitPrompt">
+        <form class="SearchPrompt-form" :class="{ 'focused': isFocused }" @focusin="isFocused = true"
+            @focusout="isFocused = false" @submit.prevent="submitPrompt">
             <div class="controls">
                 <div class="SearchPrompt-input flex">
                     <textarea v-model="prompt" aria-label="Prompt" @keydown.enter.exact.prevent="submitPrompt" rows="1"
@@ -51,6 +52,9 @@
 </template>
 
 <script setup>
+
+const isFocused = ref(false)
+
 const filterDrawer = ref(false)
 
 function openFilters(e) {
@@ -117,22 +121,26 @@ function submitPrompt() {
     display: flex;
     padding: 1rem;
     max-width: 50%;
-    margin-top: 4rem;
     margin: auto auto;
     padding-top: 1rem;
     position: relative;
     align-items: center;
     box-sizing: border-box;
     padding-bottom: 0.75rem;
-    box-shadow: var(--shadow-a);
     border-radius: var(--radius-d);
     background: var(--background-a);
     transition: var(--transition-a);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-b);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.SearchPrompt-form.focused {
+    border: 1px solid var(--primary-a);
 }
 
 .SearchPrompt-form:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--primary-a);
+    box-shadow: 0 4px 12px rgba(var(--primary-a-base), 0.1);
 }
 
 .SearchPrompt-input {

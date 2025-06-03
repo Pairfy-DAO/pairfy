@@ -115,7 +115,7 @@ watch(() => route.path, (newPath) => {
   position: initial;
   background: var(--background-a);
   border-bottom: 1px solid var(--border-a);
-}
+} 
 
 .HeaderContent-body.contrast {
   padding: 0.75rem 0;
@@ -123,7 +123,7 @@ watch(() => route.path, (newPath) => {
 }
 
 .HeaderContent-body li.contrast:hover {
-  color: var(--primary-a);
-  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-a);
+  background: rgba(255, 255, 255, 0.05);
 }
 </style>

@@ -6,6 +6,8 @@
       <CardanoForm />
     </DialogComp>
 
+    <AdRow />
+
     <div class="container" v-if="product">
       <div class="left-column">
         <ProductMedia />
@@ -13,6 +15,7 @@
         <ProductBullet />
         <DividerComp />
         <ProductDescription />
+        <DividerComp invisible />
       </div>
 
       <div class="center-column">
@@ -156,7 +159,7 @@ const GET_PRODUCT_QUERY = gql`
 
 const { $apollo } = useNuxtApp()
 
-const loading = ref(true)
+const productId = ref(null);
 
 const getProductError = ref(null)
 
@@ -164,7 +167,10 @@ let pollIntervalId = null
 
 watch(
   () => route.params.id,
-  (id) => fetchProduct(),
+  (id) => {
+    productId.value = id
+    fetchProduct()
+  },
   { immediate: true }
 )
 
@@ -187,7 +193,7 @@ async function fetchProduct() {
       query: GET_PRODUCT_QUERY,
       variables: {
         getProductVariable: {
-          id: route.params.id
+          id: productId.value
         }
       },
       fetchPolicy: 'no-cache'
@@ -196,8 +202,6 @@ async function fetchProduct() {
     productStore.setProductData(data.getProduct)
   } catch (err) {
     getProductError.value = err
-  } finally {
-    loading.value = false
   }
 }
 
@@ -250,15 +254,23 @@ function showGetProductError() {
 .product-page {
   width: 100%;
   display: flex;
+  align-items: center;
+  flex-direction: column;
   justify-content: center;
+  background: var(--background-b);
 }
 
 .container {
   display: grid;
   width: inherit;
+  margin-top: 2rem;
+  padding: 0 1.5rem;
   box-sizing: border-box;
   max-width: var(--body-a);
+  border-radius: var(--radius-b);
+  background: var(--background-a);
   grid-template-columns: 1fr 3rem 350px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .25);
 }
 
 .left-column {
@@ -338,7 +350,7 @@ function showGetProductError() {
 }
 
 .subtitle {
-  font-size: var(--text-size-4);
+  font-size: var(--text-size-3);
   margin-bottom: 2rem;
   margin-top: 2rem;
   font-weight: 600;
@@ -349,7 +361,7 @@ function showGetProductError() {
 }
 
 .product-name {
-  font-size: var(--text-size-4);
+  font-size: var(--text-size-3);
   margin-top: 0.5rem;
   line-height: 2rem;
   font-weight: 400;
@@ -383,7 +395,7 @@ function showGetProductError() {
 }
 
 .product-brand {
-  font-size: var(--text-size-3);
+  font-size: var(--text-size-2);
   font-weight: 700;
 }
 

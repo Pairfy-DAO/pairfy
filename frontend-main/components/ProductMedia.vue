@@ -117,7 +117,6 @@
 <script setup>
 import placeholderImage from '@/assets/placeholder/image.svg'
 import DialogComp from '@/components/DialogComp.vue'
-import { ref, computed } from 'vue'
 
 const productStore = useProductStore()
 const media = computed(() => productStore.media)

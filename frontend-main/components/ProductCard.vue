@@ -10,7 +10,7 @@
             <div class="ProductCard-title">
                 <span>{{ `${data.brand} -` }}</span>
                 <span>{{ `${truncateByWords(data.name, 15)}...` }}</span>
-            </div> 
+            </div>
 
             <div class="ProductCard-rating">
                 <RatingComp :rating="4" />
@@ -83,6 +83,7 @@ function getImageSrc(item) {
     border-radius: var(--radius-b);
     justify-content: space-between;
     background: var(--background-a);
+    transition: var(--transition-a);
     animation: fadeInUp 0.5s forwards;
     border: 1px solid var(--border-a);
 }
@@ -92,6 +93,10 @@ function getImageSrc(item) {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.ProductCard:hover {
+    box-shadow: var(--shadow-c)
 }
 
 .ProductCard-image {

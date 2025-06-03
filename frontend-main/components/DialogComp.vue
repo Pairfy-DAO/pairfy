@@ -65,7 +65,7 @@ defineExpose({ open, close });
 
 .dialog-box {
   background: var(--background-a);
-  border-radius: var(--radius-d);
+  border-radius: var(--radius-c);
   box-shadow: var(--shadow-b);
   overflow: hidden;
   min-width: 300px;
