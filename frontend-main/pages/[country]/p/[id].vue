@@ -3,7 +3,7 @@
     <ToastComp ref="toastRef" />
 
     <DialogComp v-model="productStore.cardanoDialog" @update:modelValue="productStore.cardanoDialog = $event">
-      <p>Contenido del diálogo</p>
+      <CardanoForm />
     </DialogComp>
 
     <div class="container" v-if="product">

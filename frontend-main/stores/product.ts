@@ -1,7 +1,7 @@
 export const useProductStore = defineStore("product", () => {
   const product = ref(null);
   const media = ref([]);
-  const cardanoDialog = ref(false);
+  const cardanoDialog = ref(true);
 
   function showCardanoDialog(value: boolean) {
     cardanoDialog.value = value;

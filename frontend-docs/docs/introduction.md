@@ -34,6 +34,7 @@ Pairfy was funded in Cardano Catalyst round 11.
 - Shopify
 - Dropshipping companies
 
+Pairfy is a open cooperative e-commerce platform where the community itself conducts research and integration of markets, suppliers, and products through its autonomous organization (DAO), allowing it to benefit from collective intelligence and generate an autonomous value-exchange ecosystem.
 #### Competitive factors
 
 The most competitive factor is the discount liquidity pool which is fueled by trade fees and ADA generated through staking.

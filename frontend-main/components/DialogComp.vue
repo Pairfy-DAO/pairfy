@@ -65,8 +65,9 @@ defineExpose({ open, close });
 
 .dialog-box {
   background: var(--background-a);
-  border-radius: var(--radius-c);
+  border-radius: var(--radius-d);
   box-shadow: var(--shadow-b);
+  overflow: hidden;
   min-width: 300px;
 }
 
@@ -78,5 +79,7 @@ button {
 
 .header {
   width: 100%;
+  padding: 1rem; 
+  box-sizing: border-box;
 }
 </style>
