@@ -130,7 +130,7 @@ function submitPrompt() {
     border-radius: var(--radius-d);
     background: var(--background-a);
     transition: var(--transition-a);
-    border: 1px solid var(--border-b);
+    border: 1px solid var(--border-a);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 

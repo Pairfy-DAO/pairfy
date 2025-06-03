@@ -1,7 +1,6 @@
 <template>
     <div class="AdRow">
-        <img src="@/assets/banner/banner1.png"
-            alt="">
+
     </div>
 </template>
 
@@ -11,11 +10,13 @@
 
 <style lang="css" scoped>
 .AdRow {
-    height: 100px;
+    width: 100%;
+    height: 8rem;
     overflow: hidden;
+    background: rgba(0, 0, 0, 0.1);
 }
 
 .AdRow img {
-    width: 100%;
+    width: inherit;
 }
 </style>

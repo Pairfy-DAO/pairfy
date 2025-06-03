@@ -263,7 +263,7 @@ function showGetProductError() {
 .container {
   display: grid;
   width: inherit;
-  margin-top: 2rem;
+  margin-top: 1rem;
   padding: 0 1.5rem;
   box-sizing: border-box;
   max-width: var(--body-a);
@@ -276,7 +276,7 @@ function showGetProductError() {
 .left-column {
   width: inherit;
   width: inherit;
-  margin-top: 4rem;
+  margin-top: 3rem;
   box-sizing: border-box;
 }
 
@@ -315,7 +315,7 @@ function showGetProductError() {
 .right-scroll {
   height: 100%;
   overflow-y: auto;
-  padding-top: 4rem;
+  padding-top: 3rem;
 }
 
 .right-scroll {
