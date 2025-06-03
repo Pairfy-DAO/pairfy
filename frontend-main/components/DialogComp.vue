@@ -73,6 +73,7 @@ defineExpose({ open, close });
 
 button {
   background: transparent;
+  color: var(--text-b);
   cursor: pointer;
   border: none;
 }

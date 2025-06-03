@@ -5,18 +5,15 @@
             <!-- Left Form -->
             <div class="form-left">
 
-                <div class="title">
-                    <span>Create Order</span>
+                <div class="titles">
+                    <span class="title">Purchase Order</span>
+                    <span class="legend">Effortlessly import products and update your inventory.</span>
                 </div>
 
-                <div class="subtitle">
-                    <span>Effortlessly import products and update your inventory.</span>
-                </div>
+
                 <!-- Steps -->
-                <div class="steps">
-                    <span class="step active">1. Details Shipment</span>
-                    <span class="step">2. Order Processing</span>
-                </div>
+                <StepperComp :steps="['Details Shipment', 'Package Shipping']" :activeStep="0" />
+
 
                 <div class="row-2">
                     <div class="field-group">
@@ -51,7 +48,9 @@
                 </div>
 
                 <div class="field-group">
-                    <label>Encrypted Address (AES-256)</label>
+                    <div class="subtitle">
+                        Encrypted Address (AES-256)
+                    </div>
                     <div class="address-grid">
                         <div v-for="(addr, idx) in store.addresses" :key="idx" class="address-card">
                             <input type="radio" :id="addr.label" :value="addr.label" v-model="store.selectedAddress" />
@@ -76,11 +75,13 @@
             </div>
 
             <!-- Right Panel -->
-            <div class="form-right">
-                <h4>Other Information</h4>
+            <div class="CardanoForm-right">
+                <div class="subtitle">
+                    <span>Order Summary</span>
+                </div>
                 <p><strong>Delivery date:</strong> {{ store.date }}</p>
                 <p><strong>Assign to:</strong> {{ store.assignTo }}</p>
-                <p><strong>Payment terms:</strong> ADA (Cash on Delivery)</p>
+                <p><strong>Payment:</strong> ADA</p>
                 <p><strong>Address:</strong> {{ selectedAddressDetails }}</p>
 
                 <p class="note">Specifications listed in this purchase order. If there are any discrepancies or issues,
@@ -96,6 +97,9 @@
                     <p><strong>Total:</strong> $422,548.50</p>
                 </div>
             </div>
+
+
+
         </div>
 
         <div class="actions">
@@ -138,6 +142,9 @@ const selectedAddressDetails = computed(() => {
     const found = store.addresses.find(a => a.label === store.selectedAddress)
     return found?.details || ''
 })
+
+const steps = ['Details Shipment', 'Package Shipping']
+const currentStep = ref(1)
 </script>
 
 <style scoped>
@@ -153,29 +160,27 @@ const selectedAddressDetails = computed(() => {
     gap: 1rem;
 }
 
+.titles {
+    display: flex;
+    flex-direction: column;
+}
+
+.legend {
+    font-size: var(--text-size-1);
+    color: var(--text-b);
+    margin-top: 0.5rem;
+}
+
 .title {
     font-size: var(--text-size-4);
     font-weight: 700;
 }
 
 .subtitle {
-    font-size: 0.9rem;
-    color: #666;
-}
+    font-size: var(--text-size-2);
+    line-height: 3rem; 
+    font-weight: 700;
 
-.steps {
-    display: flex;
-    gap: 16px;
-    font-size: 0.85rem;
-}
-
-.step {
-    color: #888;
-}
-
-.step.active {
-    font-weight: bold;
-    color: #2563eb;
 }
 
 .form-body {
@@ -200,10 +205,12 @@ const selectedAddressDetails = computed(() => {
 .field-group {
     display: flex;
     flex-direction: column;
+
     flex: 1;
 }
 
 .field-group label {
+    font-size: var(--text-size-1);
     font-weight: 600;
     margin-bottom: 1rem;
 }
@@ -235,7 +242,7 @@ select {
 .link-btn {
     background: none;
     border: none;
-    color: #2563eb;
+    color: var(--primary-a);
     font-size: 13px;
     cursor: pointer;
     margin-top: 4px;
@@ -250,9 +257,9 @@ select {
 
 .btn {
     padding: 8px 14px;
-    border: 1px solid #2563eb;
+    border: 1px solid var(--primary-a);
     background: #fff;
-    color: #2563eb;
+    color: var(--primary-a);
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
@@ -260,19 +267,19 @@ select {
 }
 
 .btn.primary {
-    background: #2563eb;
+    background: var(--primary-a);
     color: white;
     border: none;
 }
 
-.form-right {
+.CardanoForm-right {
     flex: 1;
-    background: #f9f9f9;
-    padding: 16px;
-    border-radius: 8px;
-    border: 1px solid #e0e0e0;
-    font-size: 13px;
+    padding: 1rem;
     min-width: 250px;
+    font-size: var(--text-size-1);
+    border-radius: var(--radius-c);
+    background: var(--background-b);
+    border: 1px solid var(--border-a);
 }
 
 .note {
