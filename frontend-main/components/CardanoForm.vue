@@ -1,51 +1,62 @@
 <template>
-    <div class="dialog-form">
+    <div class="CardanoForm">
 
-        <div class="form-body">
+        <div class="CardanoForm-body">
             <!-- Left Form -->
-            <div class="form-left">
+            <div class="CardanoForm-left">
 
-                <div class="titles">
-                    <span class="title">Purchase Order</span>
-                    <span class="legend">Effortlessly import products and update your inventory.</span>
+                <div class="CardanoForm-head">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-icon lucide-clipboard"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+                    <div class="titles">
+                        <span class="title">Purchase Order</span>
+                        <span class="legend">Effortlessly import products and update your inventory.</span>
+                    </div>
                 </div>
-
 
                 <!-- Steps -->
                 <StepperComp :steps="['Details Shipment', 'Package Shipping']" :activeStep="0" />
 
 
-                <div class="row-2">
-                    <div class="field-group">
-                        <label>Expected delivery date</label>
-                        <input type="date" v-model="store.date" readonly />
+                <div class="details">
+                    <div class="subtitle">
+                        <span>Order Summary</span>
                     </div>
+                    <div class="row-2">
+                        <div class="field-group">
+                            <label>Expected delivery date</label>
+                            <input type="date" v-model="store.date" readonly />
+                        </div>
+                        <div class="field-group">
+                            <label>Receiver alias</label>
+                            <select v-model="store.assignTo">
+                                <option>Name</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row-2">
+                        <div class="field-group">
+                            <label>Units</label>
+                            <select v-model="store.paymentTerms">
+                                <option>1</option>
+                            </select>
+                        </div>
+
+                        <div class="field-group">
+                            <label>Payment</label>
+                            <select v-model="store.paymentTerms">
+                                <option>ADA</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="field-group">
-                        <label>Receiver alias</label>
-                        <select v-model="store.assignTo">
-                            <option>Name</option>
-                        </select>
+                        <label>Note</label>
+                        <textarea rows="3" v-model="store.note" placeholder="Please review all items..."></textarea>
                     </div>
                 </div>
 
-                <div class="field-group">
-                    <label>Units</label>
-                    <select v-model="store.paymentTerms">
-                        <option>1</option>
-                    </select>
-                </div>
 
-                <div class="field-group">
-                    <label>Payment</label>
-                    <select v-model="store.paymentTerms">
-                        <option>ADA</option>
-                    </select>
-                </div>
-
-                <div class="field-group">
-                    <label>Note</label>
-                    <textarea rows="3" v-model="store.note" placeholder="Please review all items..."></textarea>
-                </div>
 
                 <div class="field-group">
                     <div class="subtitle">
@@ -148,27 +159,33 @@ const currentStep = ref(1)
 </script>
 
 <style scoped>
-.dialog-form {
+.CardanoForm {
     flex-direction: column;
     box-sizing: border-box;
-    max-width: 50vw;
+    padding-bottom: 0;
     min-width: 300px;
+    max-width: 50vw;
     padding: 1.5rem;
     padding-top: 0;
-    padding-bottom: 0;
     display: flex;
     gap: 1rem;
 }
 
+.CardanoForm-head {
+    display: flex;
+    align-items: center;
+}
+
 .titles {
     display: flex;
+    margin-left: 1rem;
     flex-direction: column;
 }
 
 .legend {
     font-size: var(--text-size-1);
     color: var(--text-b);
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
 }
 
 .title {
@@ -178,23 +195,27 @@ const currentStep = ref(1)
 
 .subtitle {
     font-size: var(--text-size-2);
-    line-height: 3rem; 
+    line-height: 3rem;
     font-weight: 700;
 
 }
 
-.form-body {
-    display: flex;
+.CardanoForm-body {
     flex-direction: row;
-    gap: 24px;
     flex-wrap: wrap;
+    display: flex;
+    gap: 2rem;
 }
 
-.form-left {
+.CardanoForm-left {
     flex: 2;
+    gap: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+}
+
+.CardanoForm-head svg {
+    width: 3rem;
 }
 
 .row-2 {
@@ -205,13 +226,12 @@ const currentStep = ref(1)
 .field-group {
     display: flex;
     flex-direction: column;
-
     flex: 1;
 }
 
 .field-group label {
     font-size: var(--text-size-1);
-    font-weight: 600;
+    font-weight: 500;
     margin-bottom: 1rem;
 }
 
