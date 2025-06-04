@@ -1,6 +1,8 @@
 <template>
-    <div class="AdRow">
-
+    <div class="AdRow flex center">
+        <div class="AdRow-body">
+       
+        </div>
     </div>
 </template>
 
@@ -13,10 +15,21 @@
     width: 100%;
     height: 8rem;
     overflow: hidden;
-    background: rgba(0, 0, 0, 0.1);
 }
 
 .AdRow img {
+    object-fit: cover;
     width: inherit;
+    height: 100%;
+}
+
+.AdRow-body {
+    width: 100%;
+    height: inherit;
+    max-width: var(--body-a);
+    background: rgba(128, 128, 128, 0.1);
+    background-image: url('@/assets/banner/1.png');
+    background-size: contain;
+    background-position: center;
 }
 </style>

@@ -33,7 +33,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 
 function emitClose() {
-  if(props.closable){
+  if (props.closable) {
     emit('update:modelValue', false);
   }
 }
@@ -80,7 +80,7 @@ button {
 
 .header {
   width: 100%;
-  padding: 1rem; 
+  padding: 1rem;
   box-sizing: border-box;
 }
 </style>

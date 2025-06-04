@@ -6,7 +6,12 @@
             <div class="CardanoForm-left">
 
                 <div class="CardanoForm-head">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-icon lucide-clipboard"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-clipboard-icon lucide-clipboard">
+                        <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                    </svg>
                     <div class="titles">
                         <span class="title">Purchase Order</span>
                         <span class="legend">Effortlessly import products and update your inventory.</span>
@@ -162,10 +167,10 @@ const currentStep = ref(1)
 .CardanoForm {
     flex-direction: column;
     box-sizing: border-box;
+    padding: 1.5rem;
     padding-bottom: 0;
     min-width: 300px;
     max-width: 50vw;
-    padding: 1.5rem;
     padding-top: 0;
     display: flex;
     gap: 1rem;
@@ -195,16 +200,15 @@ const currentStep = ref(1)
 
 .subtitle {
     font-size: var(--text-size-2);
-    line-height: 3rem;
+    margin-bottom: 1rem;
     font-weight: 700;
-
 }
 
 .CardanoForm-body {
     flex-direction: row;
     flex-wrap: wrap;
     display: flex;
-    gap: 2rem;
+    gap: 1.5rem;
 }
 
 .CardanoForm-left {
@@ -220,7 +224,7 @@ const currentStep = ref(1)
 
 .row-2 {
     display: flex;
-    gap: 16px;
+    gap: 1rem;
 }
 
 .field-group {
@@ -231,8 +235,8 @@ const currentStep = ref(1)
 
 .field-group label {
     font-size: var(--text-size-1);
+    line-height: 2rem;
     font-weight: 500;
-    margin-bottom: 1rem;
 }
 
 textarea,
