@@ -168,10 +168,6 @@ const store = reactive({
         {
             label: 'Northern Warehouse',
             details: '321 Commerce St, Toronto, ON M5J 2N8'
-        },
-        {
-            label: 'Western Warehouse',
-            details: '98 Sunset Blvd, Los Angeles, CA 90001'
         }
     ]
 })
