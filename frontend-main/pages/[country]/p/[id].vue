@@ -263,7 +263,7 @@ function showGetProductError() {
 .container {
   display: grid;
   width: inherit;
-  margin-top: 1rem;
+  margin-top: 2rem;
   padding: 0 1.5rem;
   box-sizing: border-box;
   max-width: var(--body-a);
