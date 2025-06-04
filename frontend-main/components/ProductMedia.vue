@@ -190,7 +190,6 @@ function getImageSrc(item) {
 
 <style scoped>
 .ProductMedia {
-  background: var(--background-a);
   border-radius: var(--radius-d);
   position: relative;
   display: flex;
@@ -233,8 +232,8 @@ function getImageSrc(item) {
 }
 
 .ProductMedia-image {
-  width: 500px;
-  height: 500px;
+  width: 600px;
+  height: 600px;
   display: flex;
   margin: 0 auto;
   position: relative;

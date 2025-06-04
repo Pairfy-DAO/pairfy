@@ -263,30 +263,33 @@ function showGetProductError() {
 .container {
   display: grid;
   width: inherit;
-  margin-top: 2rem;
-  padding: 0 1.5rem;
+  margin-top: 1rem;
   box-sizing: border-box;
   max-width: var(--body-a);
-  border-radius: var(--radius-b);
-  background: var(--background-a);
-  grid-template-columns: 1fr 3rem 350px;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .25);
+  grid-template-columns: 4fr 1rem 1fr;
+
 }
 
 .left-column {
   width: inherit;
-  width: inherit;
-  margin-top: 3rem;
+  padding: 1.5rem;
   box-sizing: border-box;
+  border-radius: var(--radius-b);
+  background: var(--background-a);
+  border: 1px solid var(--border-a);
 }
 
 .center-column {
+  background: var(--background-b);
   width: inherit;
 }
 
 .right-column {
-  width: 350px;
+  width: 375px;
   box-sizing: border-box;
+  border-radius: var(--radius-b);
+  background: var(--background-a);
+  border: 1px solid var(--border-a);
 }
 
 .trigger {
@@ -314,8 +317,9 @@ function showGetProductError() {
 
 .right-scroll {
   height: 100%;
+  padding: 1.5rem;
   overflow-y: auto;
-  padding-top: 3rem;
+  padding-top: 2rem;
 }
 
 .right-scroll {

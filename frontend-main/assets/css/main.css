@@ -28,6 +28,7 @@ body {
   --shadow-a: 0 6px 20px rgba(0, 0, 0, 0.08);
   --shadow-b: 0 1px 2px 0 rgba(0, 0, 0, 0.12);
   --shadow-c: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-d: 0 1px 2px 0 rgba(0, 0, 0, .25);
 
   --background-a: #ffffff;
   --background-b: #f7f8fa;
