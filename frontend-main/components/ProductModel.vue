@@ -26,7 +26,7 @@
 
 <script setup>
 import { formatUSD } from '~/utils/utils'
-import placeholderImage from '@/assets/placeholder/image.svg'
+import placeholderImage from '@/assets/icon/image.svg'
 
 function getImageSrc(item) {
   return item ? useMediaUrl(item) : placeholderImage

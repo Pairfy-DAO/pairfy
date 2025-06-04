@@ -6,12 +6,7 @@
             <div class="CardanoForm-left">
 
                 <div class="CardanoForm-head">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-clipboard-icon lucide-clipboard">
-                        <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
-                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-                    </svg>
+                    <img src="@/assets/icon/list.svg" alt="">
                     <div class="titles">
                         <span class="title">Purchase Order</span>
                         <span class="legend">Effortlessly import products and update your inventory.</span>
@@ -210,7 +205,7 @@ const currentStep = ref(1)
 
 .titles {
     display: flex;
-    margin-left: 1rem;
+    margin-left: 0.5rem;
     flex-direction: column;
 }
 
@@ -245,18 +240,14 @@ const currentStep = ref(1)
     flex-direction: column;
 }
 
-.CardanoForm-head svg {
-    width: 3rem;
-}
-
 .row-2 {
     display: flex;
     gap: 1rem;
 }
 
 .field-group {
-    display: flex;
     flex-direction: column;
+    display: flex;
     flex: 1;
 }
 
@@ -332,7 +323,7 @@ select {
     min-width: 250px;
     flex-direction: column;
     font-size: var(--text-size-1);
-    border-radius: var(--radius-b);
+    border-radius: var(--radius-c);
     background: var(--background-b);
     border: 1px solid var(--border-a);
 }

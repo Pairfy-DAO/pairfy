@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import placeholderImage from '@/assets/placeholder/image.svg'
+import placeholderImage from '@/assets/icon/image.svg'
 import { truncateByWords, formatUSD } from '~/utils/utils'
 
 const props = defineProps({
@@ -85,7 +85,7 @@ function getImageSrc(item) {
     background: var(--background-a);
     transition: var(--transition-a);
     animation: fadeInUp 0.5s forwards;
-    border: 1px solid var(--border-a);
+    border: 1px solid var(--border-b);
 }
 
 @keyframes fadeInUp {

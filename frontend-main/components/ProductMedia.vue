@@ -115,7 +115,7 @@
 </template>
 
 <script setup>
-import placeholderImage from '@/assets/placeholder/image.svg'
+import placeholderImage from '@/assets/icon/image.svg'
 import DialogComp from '@/components/DialogComp.vue'
 
 const productStore = useProductStore()
