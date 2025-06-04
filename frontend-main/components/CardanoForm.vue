@@ -6,7 +6,7 @@
             <div class="CardanoForm-left">
 
                 <div class="CardanoForm-head">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                    <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                         class="lucide lucide-clipboard-icon lucide-clipboard">
                         <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
@@ -24,19 +24,7 @@
 
                 <div class="details">
                     <div class="subtitle">
-                        <span>Order Summary</span>
-                    </div>
-                    <div class="row-2">
-                        <div class="field-group">
-                            <label>Expected delivery date</label>
-                            <input type="date" v-model="store.date" readonly />
-                        </div>
-                        <div class="field-group">
-                            <label>Receiver alias</label>
-                            <select v-model="store.assignTo">
-                                <option>Name</option>
-                            </select>
-                        </div>
+                        <span>Shipment Information</span>
                     </div>
 
                     <div class="row-2">
@@ -54,6 +42,17 @@
                             </select>
                         </div>
                     </div>
+
+
+                    <div class="row-2">
+                        <div class="field-group">
+                            <label>Receiver alias</label>
+                            <select v-model="store.assignTo">
+                                <option>Name</option>
+                            </select>
+                        </div>
+                    </div>
+
 
                     <div class="field-group">
                         <label>Note</label>
@@ -80,7 +79,9 @@
                 </div>
 
                 <div class="field-group">
-                    <label>Shipment</label>
+                    <div class="subtitle">
+                        Shipment
+                    </div>
                     <div class="shipment-grid">
                         <button class="btn">Fedex</button>
                         <button class="btn">US Postal Service</button>
@@ -92,30 +93,56 @@
 
             <!-- Right Panel -->
             <div class="CardanoForm-right">
-                <div class="subtitle">
-                    <span>Order Summary</span>
+
+                <div class="summary-head">
+
+                    <div class="subtitle">
+                        <span>Other information</span>
+                    </div>
+
+                    <div class="summary-top">
+                        <label for="delivery-date">Delivery date</label>
+                        <p id="delivery-date">{{ store.date }}</p>
+
+                        <label for="receiver">Receiver alias</label>
+                        <p id="receiver">{{ store.assignTo }}</p>
+
+                        <label for="payment">Payment</label>
+                        <p id="payment">ADA</p>
+
+                        <label for="address">Address</label>
+                        <p id="address">{{ selectedAddressDetails }}</p>
+                    </div>
+                    <DividerComp />
+
+                    <label for="note">Note</label>
+                    <p id="note">aaa</p>
+
+                    <DividerComp />
                 </div>
-                <p><strong>Delivery date:</strong> {{ store.date }}</p>
-                <p><strong>Assign to:</strong> {{ store.assignTo }}</p>
-                <p><strong>Payment:</strong> ADA</p>
-                <p><strong>Address:</strong> {{ selectedAddressDetails }}</p>
-
-                <p class="note">Specifications listed in this purchase order. If there are any discrepancies or issues,
-                    contact us immediately before processing the order.</p>
-
-                <h5>Products</h5>
-                <p class="empty">The product list is empty for now</p>
 
                 <div class="summary">
-                    <p><strong>Subtotal:</strong> $422,000.50</p>
-                    <p><strong>Total Qty:</strong> 2</p>
-                    <p><strong>Tax:</strong> 10%</p>
-                    <p><strong>Total:</strong> $422,548.50</p>
+                    <div class="summary-row">
+                        <span class="label">Subtotal:</span>
+                        <span class="value">$422,000.50</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="label">Total Qty:</span>
+                        <span class="value">2</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="label">Tax:</span>
+                        <span class="value">10%</span>
+                    </div>
+
+                    <DividerComp margin="1rem 0" />
+
+                    <div class="summary-row total">
+                        <span class="label">Total:</span>
+                        <span class="value">$422,548.50</span>
+                    </div>
                 </div>
             </div>
-
-
-
         </div>
 
         <div class="actions">
@@ -129,8 +156,8 @@
 import { reactive, computed } from 'vue'
 
 const store = reactive({
-    date: '2024-08-24',
-    assignTo: 'Alias',
+    date: '2024/08/24',
+    assignTo: 'Homer Simpson',
     paymentTerms: 'Cash',
     note: '',
     selectedAddress: 'Central Warehouse',
@@ -159,7 +186,7 @@ const selectedAddressDetails = computed(() => {
     return found?.details || ''
 })
 
-const steps = ['Details Shipment', 'Package Shipping']
+const steps = ['Details Shipment', 'Order processing', 'Package Shipping']
 const currentStep = ref(1)
 </script>
 
@@ -234,9 +261,10 @@ const currentStep = ref(1)
 }
 
 .field-group label {
-    font-size: var(--text-size-1);
-    line-height: 2rem;
-    font-weight: 500;
+    font-weight: 600;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-size: var(--text-size-0);
 }
 
 textarea,
@@ -248,6 +276,7 @@ select {
     font-size: 14px;
     width: 100%;
     box-sizing: border-box;
+    background: var(--background-b);
 }
 
 .address-grid {
@@ -298,10 +327,12 @@ select {
 
 .CardanoForm-right {
     flex: 1;
-    padding: 1rem;
+    display: flex;
+    overflow: hidden;
     min-width: 250px;
+    flex-direction: column;
     font-size: var(--text-size-1);
-    border-radius: var(--radius-c);
+    border-radius: var(--radius-b);
     background: var(--background-b);
     border: 1px solid var(--border-a);
 }
@@ -318,6 +349,10 @@ select {
     margin-top: 8px;
 }
 
+.summary-head {
+    padding: 1rem;
+}
+
 .summary p {
     margin: 4px 0;
 }
@@ -328,5 +363,61 @@ select {
     align-items: center;
     display: flex;
     gap: 1rem;
+}
+
+.summary {
+    background: var(--background-a);
+    box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.05);
+    margin-top: auto;
+    padding: 1.5rem;
+}
+
+.summary-top label {
+    font-size: var(--text-size-0);
+    font-weight: 500;
+    color: var(--text-b);
+}
+
+.summary-top p {
+    font-weight: 500;
+}
+
+
+
+
+
+
+
+
+
+.order-summary {
+    max-width: 400px;
+    padding: 20px;
+    margin: 40px auto;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+}
+
+.label {
+    font-weight: 500;
+}
+
+.value {
+    font-weight: 600;
+}
+
+.total {
+    font-weight: 700;
 }
 </style>

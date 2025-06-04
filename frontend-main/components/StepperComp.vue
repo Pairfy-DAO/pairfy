@@ -10,7 +10,7 @@
             </div>
 
 
-            <div class="connector" />
+            <div class="connector" v-if="index !== steps.length - 1" />
         </div>
     </div>
 </template>
@@ -18,7 +18,7 @@
 <script setup>
 import { ref } from 'vue'
 
-const steps = ['Details Shipment', 'Package shipping']
+const steps = ['Details Shipment', 'Order Processing', 'Package Shipping']
 const currentStep = ref(0)
 </script>
 
@@ -40,6 +40,7 @@ const currentStep = ref(0)
     width: 100%;
     height: 2px;
     margin: 0 1rem;
+    min-width: 2rem;
     background: var(--border-a);
 }
 
@@ -47,16 +48,17 @@ const currentStep = ref(0)
     background: var(--primary-a);
 }
 
-.circle {
+.circle { 
     width: 1.5rem;
-    height: 1.5rem;
     display: flex;
+    height: 1.5rem;
+    font-weight: 500;
     min-width: 1.5rem;
     border-radius: 50%;
-    color: var(--text-b);
-    font-weight: 600;
     align-items: center;
+    color: var(--text-b);
     justify-content: center;
+
     border: 1px solid var(--border-a);
 }
 
@@ -67,7 +69,7 @@ const currentStep = ref(0)
 
 .label {
     white-space: nowrap;
-    margin-left: 0.75rem;
+    margin-left: 0.5rem;
     color: var(--text-b);
 }
 
