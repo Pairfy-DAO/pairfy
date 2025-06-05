@@ -6,8 +6,6 @@
       <CardanoForm />
     </DialogComp>
 
-    <AdRow />
-
     <div class="container" v-if="productData">
       <div class="left-column">
         <ProductMedia />
@@ -28,7 +26,7 @@
           <div class="right-scroll" ref="rightScrollRef">
 
             <div class="product-brand">
-              {{ productData.brand }} 
+              {{ productData.brand }}
             </div>
 
             <div class="product-name">
@@ -43,6 +41,11 @@
               <span>4.3</span>
               <RatingComp :rating="4" />
               <span>(384)</span>
+            </div>
+
+            <div class="product-price">
+              <span>{{ formatUSD(productData.discount ? productData.discount_value : productData.price) }}</span>
+              <span>USD</span>
             </div>
 
             <div class="subtitle">
@@ -270,13 +273,13 @@ function showGetProductError() {
   margin-top: 1rem;
   box-sizing: border-box;
   max-width: var(--body-a);
-  grid-template-columns: 4fr 0.5rem 1fr;
+  grid-template-columns: 4fr 0.25rem 1fr;
 
 }
 
 .left-column {
   width: inherit;
-  padding: 1.5rem;
+  padding: 2rem;
   box-sizing: border-box;
   border-radius: var(--radius-b);
   background: var(--background-a);
@@ -373,6 +376,16 @@ function showGetProductError() {
   margin-top: 0.5rem;
   line-height: 2rem;
   font-weight: 400;
+}
+
+.product-price {
+  font-size: var(--text-size-6);
+  font-weight: 700;
+  margin-top: 1rem;
+}
+
+.product-price span:nth-child(2) {
+  margin-left: 0.5rem;
 }
 
 .product-rating {
