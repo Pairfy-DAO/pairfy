@@ -6,7 +6,7 @@
         {{ errorMessage || '-' }}
       </span>
     </label>
-    
+
     <input ref="inputRef" v-model="internalValue" :id="props.id" type="text" :placeholder="placeholder"
       :maxlength="maxLength" inputmode="text" @drop.prevent @blur="validate" :class="{ 'is-invalid': errorMessage }"
       :aria-invalid="!!errorMessage" :aria-describedby="`${props.id}-error`" class="InputName-input" />
@@ -97,7 +97,12 @@ onMounted(() => {
 }
 
 .InputName-input:focus-within {
-  border: 1px solid var(--primary-a, #2563eb);
+  border: 1px solid var(--primary-a);
+}
+
+input::placeholder {
+  color: var(--text-b);
+  opacity: 0.6;
 }
 
 input:focus::placeholder {

@@ -140,6 +140,7 @@ function handleClickOutside(e) {
 
 .placeholder {
   color: var(--text-b);
+  opacity: 0.6;
 }
 
 .InputSelect-options {

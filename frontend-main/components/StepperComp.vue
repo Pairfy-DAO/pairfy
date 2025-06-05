@@ -1,17 +1,20 @@
 <template>
     <div class="stepper flex">
-        <div v-for="(step, index) in steps" :key="index" class="step flex">
-            <div class="circle" :class="{ active: index === currentStep }">
-                {{ index + 1 }}
+
+        <div class="flex" v-for="(step, index) in steps" :key="index">
+            <div class="step flex">
+                <div class="circle" :class="{ active: index === currentStep }">
+                    {{ index + 1 }}
+                </div>
+
+                <div class="label" :class="{ active: index === currentStep }">
+                    {{ step }}
+                </div>
+
             </div>
-
-            <div class="label" :class="{ active: index === currentStep }">
-                {{ step }}
-            </div>
-
-
             <div class="connector" v-if="index !== steps.length - 1" />
         </div>
+
     </div>
 </template>
 
@@ -48,7 +51,7 @@ const currentStep = ref(0)
     background: var(--primary-a);
 }
 
-.circle { 
+.circle {
     width: 1.5rem;
     display: flex;
     height: 1.5rem;
