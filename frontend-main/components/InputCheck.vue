@@ -17,8 +17,6 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
-
 const props = defineProps({
   modelValue: {
     type: Boolean,
@@ -71,7 +69,6 @@ onMounted(() => {
     checkboxRef.value?.focus()
   }
 
-  // validar inicial
   validate(props.modelValue)
 })
 

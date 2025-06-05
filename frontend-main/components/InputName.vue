@@ -26,8 +26,6 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
-
 const props = defineProps({
   id: { type: String, default: 'input-name' },
   modelValue: { type: [String, null], default: null },
@@ -101,6 +99,7 @@ onMounted(() => {
   transition: var(--transition-a);
   background: var(--background-b);
   padding: 0.6rem 1rem;
+  height: 1.25rem;
   outline: none;
 }
 
@@ -110,7 +109,7 @@ onMounted(() => {
 
 input::placeholder {
   color: var(--text-b);
-  opacity: 0.6;
+  opacity: var(--placeholder-opacity);
 }
 
 input:focus::placeholder {

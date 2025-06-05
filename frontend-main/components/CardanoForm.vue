@@ -34,7 +34,7 @@
                         </div>
 
                         <div class="form-item">
-                            <InputSelect v-model="orderPayment" :options="orderPaymentOptions" label="Payment"
+                            <InputSelect v-model="orderPayment" :options="orderPaymentOptions" label="Payment in"
                                 @valid="orderPaymentValid = $event.valid" id="order-payment-select"
                                 placeholder="Assets">
                                 <template #option="{ option }">
@@ -52,18 +52,18 @@
 
                     <div class="form-item">
                         <label>Note</label>
-                        <textarea rows="3" v-model="store.note" placeholder="Please review all items..."></textarea>
+                        <textarea rows="3" v-model="store.note" placeholder=""></textarea>
                     </div>
                 </div>
 
                 <div class="CardanoForm-section">
-                    <div class="subtitle">
-                        Encrypted Address (AES-256)
+                    <div class="subtitle flex">
+                        <span> Encrypted Address (AES-256)
+                        </span>
                     </div>
 
                     <div class="form-item">
-                        <InputName label="Address"
-                            placeholder="Central Warehouse 534 Maple Street, Apt 4B, Springfield, IL 62704" />
+                        <InputName label="Address" placeholder="1234 Brickell Avenue, Suite 500, Miami, FL 33131" />
                     </div>
 
                     <div class="form-item">
@@ -73,7 +73,7 @@
 
                 <div class="CardanoForm-section">
                     <div class="subtitle">
-                        Shipment
+                        Shipment preference
                     </div>
                     <div class="form-item">
                         <div class="shipment-grid" styl>
@@ -103,18 +103,18 @@
                         <label for="address">Address</label>
                         <p id="address">{{ selectedAddressDetails }}</p>
 
-                        <label for="payment">Payment</label>
+                        <label for="payment">Payment in</label>
                         <p id="payment">ADA</p>
 
                         <DividerComp margin="1rem 0" />
 
-                        <label for="note">Note:</label>
+                        <label for="note">Note</label>
 
-                        <span class="note" id="note">
+                        <p class="note" id="note">
                             All purchases are covered by a guarantee in case of non-delivery or different
-                            specifications..
+                            specifications.
                             However, you should review the specifications before paying.
-                        </span>
+                        </p>
 
                         <DividerComp margin="1rem 0" />
                     </div>
@@ -131,13 +131,13 @@
                         <span class="value">2</span>
                     </div>
                     <div>
-                        <span class="label">Tax:</span>
-                        <span class="value">10%</span>
+                        <span class="label">Fee:</span>
+                        <span class="value">0.1</span>
                     </div>
 
                     <DividerComp margin="1rem 0" />
 
-                    <div class="summary-row total">
+                    <div class="total">
                         <span class="label">Total:</span>
                         <span class="value">$422,548.50</span>
                     </div>
@@ -147,6 +147,16 @@
         </div>
 
         <div class="CardanoForm-actions">
+            <a class="link flex" href="https://x.com/home" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-info-icon lucide-info">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 16v-4" />
+                    <path d="M12 8h.01" />
+                </svg>
+                <span> Learn how local encryption works.</span>
+            </a>
             <button class="btn">Cancel</button>
             <button class="btn primary">Next</button>
         </div>
@@ -179,15 +189,7 @@ const store = reactive({
     addresses: [
         {
             label: 'Central Warehouse',
-            details: '123 Maple Street, Apt 4B, Springfield, IL 62704'
-        },
-        {
-            label: 'European Warehouse',
-            details: '654 Logistics Ln, Hamburg 20457, Germany'
-        },
-        {
-            label: 'Northern Warehouse',
-            details: '321 Commerce St, Toronto, ON M5J 2N8'
+            details: '1234 Brickell Avenue, Suite 500, Miami, FL 33131'
         }
     ]
 })
@@ -241,6 +243,18 @@ const selectedAddressDetails = computed(() => {
     font-weight: 700;
 }
 
+.link {
+    font-size: var(--text-size-0);
+    text-decoration: none;
+    color: var(--text-b);
+    margin-left: 0.5rem;
+    font-weight: 400;
+}
+
+.link span {
+    margin-left: 0.5rem;
+}
+
 .CardanoForm-body {
     flex-direction: row;
     flex-wrap: wrap;
@@ -285,19 +299,6 @@ select {
     background: var(--background-b);
 }
 
-.address-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
-
-.address-card {
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 8px;
-    font-size: 13px;
-}
-
 .link-btn {
     background: none;
     border: none;
@@ -311,11 +312,11 @@ select {
 .shipment-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    gap: 1rem;
 }
 
 .btn {
-    padding: 8px 14px;
+    padding: 0.6rem 1rem;
     border: 1px solid var(--primary-a);
     background: #fff;
     color: var(--primary-a);
@@ -343,14 +344,8 @@ select {
     border: 1px solid var(--border-a);
 }
 
-.empty {
-    font-style: italic;
-    color: #888;
-    margin-top: 8px;
-}
-
 .CardanoForm-summary {
-    padding: 1rem;
+    padding: 1.5rem;
 }
 
 .CardanoForm-actions {
@@ -367,28 +362,34 @@ select {
 
 .summary-top label {
     font-size: var(--text-size-0);
-    font-weight: 500;
-    color: var(--text-b);
+    color: var(--text-a);
+    font-weight: 600;
 }
 
 .summary-top p {
     line-height: 1.5rem;
-    font-weight: 500;
+    color: var(--text-b);
+    font-weight: 400;
     margin: 0.5rem 0;
 }
 
 .summary-bottom {
-    background: var(--background-a);
     box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.05);
+    border-top-right-radius: var(--radius-d);
+    border-top-left-radius: var(--radius-d);
+    background: var(--background-a);
     margin-top: auto;
     padding: 1.5rem;
 }
 
 .note {
     font-size: var(--text-size-0);
+    line-height: 1.25rem !important;
     color: var(--text-b);
     text-align: justify;
-    font-weight: 300;
+    font-weight: 400;
+    display: flex;
+    width: 100%;
 }
 
 .summary-bottom div {
@@ -397,15 +398,15 @@ select {
     justify-content: space-between;
 }
 
-.summary-bottom.label {
+.summary-bottom .label {
     font-weight: 500;
 }
 
-.summary-bottom.value {
+.summary-bottom .value {
     font-weight: 600;
 }
 
-.summary-bottom.total {
+.summary-bottom .total {
     font-weight: 700;
 }
 </style>

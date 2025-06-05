@@ -72,10 +72,15 @@ defineExpose({ open, close });
 }
 
 button {
+  transition: var(--transition-a);
   background: transparent;
   color: var(--text-b);
   cursor: pointer;
   border: none;
+}
+
+button:hover {
+  color: var(--text-a);
 }
 
 .header {

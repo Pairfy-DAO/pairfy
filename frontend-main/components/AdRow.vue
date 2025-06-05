@@ -13,8 +13,9 @@
 <style lang="css" scoped>
 .AdRow {
     width: 100%;
-    height: 5rem;
+    height: 4rem;
     overflow: hidden;
+    margin-top: 1rem;
 }
 
 .AdRow img {
@@ -27,6 +28,6 @@
     width: 100%;
     height: inherit;
     max-width: var(--body-a);
-    background: white;
+    background: rgba(114, 114, 114, 0.123);
 }
 </style>

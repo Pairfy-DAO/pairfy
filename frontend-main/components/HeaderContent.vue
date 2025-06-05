@@ -4,7 +4,7 @@
 
       <div class="left-column flex">
         <img class="icon" v-if="!isContrast" src="@/assets/brand/icon-white.svg" alt="" @click="navigateTo('/')">
-        <img class="icon" v-if="isContrast" src="@/assets/brand/icon.svg" alt="" @click="navigateTo('/')">
+        <img class="icon" v-if="isContrast" src="@/assets/brand/icon-white.svg" alt="" @click="navigateTo('/')">
 
         <ul class="HeaderContent-nav">
 
@@ -113,17 +113,17 @@ watch(() => route.path, (newPath) => {
 .HeaderContent.contrast {
   margin-top: 2rem;
   position: initial;
-  background: var(--background-a);
+  background: var(--primary-a);
   border-bottom: 1px solid var(--border-a);
 } 
 
 .HeaderContent-body.contrast {
   padding: 0.75rem 0;
-  color: var(--text-a);
+  color: var(--text-w);
 }
 
 .HeaderContent-body li.contrast:hover {
-  color: var(--text-a);
-  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-w);
+  background: rgba(255, 255, 255, 0.1);
 }
 </style>

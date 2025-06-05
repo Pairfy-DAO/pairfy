@@ -83,9 +83,9 @@ function getImageSrc(item) {
     border-radius: var(--radius-b);
     justify-content: space-between;
     background: var(--background-a);
-    transition: var(--transition-a);
+    transition: box-shadow 0.3s ease;
     animation: fadeInUp 0.5s forwards;
-    border: 1px solid var(--border-b);
+    border: 1px solid var(--border-a);
 }
 
 @keyframes fadeInUp {
@@ -96,7 +96,7 @@ function getImageSrc(item) {
 }
 
 .ProductCard:hover {
-    box-shadow: var(--shadow-c)
+    box-shadow: var(--shadow-e)
 }
 
 .ProductCard-image {

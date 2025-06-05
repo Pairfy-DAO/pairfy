@@ -27,7 +27,7 @@ const auth = useAuthStore()
     padding: 0 0.5rem;
     align-items: center;
     border-radius: var(--radius-f);
-    border: 1px solid var(--border-b);
+    border: 1px solid rgb(255, 255, 255);
 }
 
 .HeaderAvatar-icon {

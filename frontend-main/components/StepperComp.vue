@@ -1,8 +1,8 @@
 <template>
-    <div class="stepper flex">
+    <div class="Stepper flex">
 
-        <div class="flex" v-for="(step, index) in steps" :key="index">
-            <div class="step flex">
+        <div class="Stepper-box flex" v-for="(step, index) in steps" :key="index">
+            <div class="Stepper-step flex">
                 <div class="circle" :class="{ active: index === currentStep }">
                     {{ index + 1 }}
                 </div>
@@ -10,40 +10,39 @@
                 <div class="label" :class="{ active: index === currentStep }">
                     {{ step }}
                 </div>
-
             </div>
-            <div class="connector" v-if="index !== steps.length - 1" />
+
+            <div class="connector" :class="{ completed: index === 0 }" v-if="index !== steps.length - 1" />
         </div>
 
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
 
 const steps = ['Details Shipment', 'Order Payment', 'Package Shipping']
 const currentStep = ref(0)
 </script>
 
 <style scoped>
-.stepper {
-    justify-content: space-between;
+.Stepper {
     font-size: var(--text-size-1);
+    justify-content: space-between;
     margin: 1rem 0;
+    width: 100%;
 }
 
-.step {
-    position: relative;
+.Stepper-box {}
+
+.Stepper-step {
     text-align: center;
     flex: 1;
 }
 
-/* Línea decorativa entre círculos */
 .connector {
-    width: 100%;
+    width: 2rem;
     height: 2px;
-    margin: 0 1rem;
-    min-width: 2rem;
+    margin-left: 1rem;
     background: var(--border-a);
 }
 
@@ -61,18 +60,18 @@ const currentStep = ref(0)
     align-items: center;
     color: var(--text-b);
     justify-content: center;
-
     border: 1px solid var(--border-a);
 }
 
 .circle.active {
+    border: 1px solid transparent;
     background: var(--primary-a);
     color: var(--text-w);
 }
 
 .label {
     white-space: nowrap;
-    margin-left: 0.5rem;
+    margin-left: 0.75rem;
     color: var(--text-b);
 }
 

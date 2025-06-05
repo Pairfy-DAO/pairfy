@@ -118,6 +118,7 @@ function handleClickOutside(e) {
   justify-content: space-between;
   padding: 0.6rem 1rem;
   align-items: center;
+  height: 1.25rem;
   cursor: pointer;
   display: flex;
   gap: 0.5rem;
@@ -140,7 +141,7 @@ function handleClickOutside(e) {
 
 .placeholder {
   color: var(--text-b);
-  opacity: 0.6;
+  opacity: var(--placeholder-opacity);
 }
 
 .InputSelect-options {
