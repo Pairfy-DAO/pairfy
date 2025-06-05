@@ -9,7 +9,7 @@
                     <img src="@/assets/icon/list.svg" alt="">
                     <div>
                         <span class="title">Purchase Order</span>
-                        <span class="legend">Effortlessly import products and update your inventory.</span>
+                        <span class="legend">Confirm your order and proceed to payment</span>
                     </div>
                 </div>
 
@@ -88,9 +88,7 @@
             </div>
             <!-- Right Panel -->
             <div class="CardanoForm-right">
-
-                <div class="summary-head">
-
+                <div class="CardanoForm-summary">
                     <div class="subtitle">
                         <span>Other information</span>
                     </div>
@@ -110,7 +108,7 @@
 
                         <DividerComp margin="1rem 0" />
 
-                        <label for="note">Note</label>
+                        <label for="note">Note:</label>
 
                         <span class="note" id="note">
                             All purchases are covered by a guarantee in case of non-delivery or different
@@ -119,22 +117,20 @@
                         </span>
 
                         <DividerComp margin="1rem 0" />
-
                     </div>
-
-
                 </div>
 
-                <div class="summary">
-                    <div class="summary-row">
+
+                <div class="summary-bottom">
+                    <div>
                         <span class="label">Subtotal:</span>
                         <span class="value">$422,000.50</span>
                     </div>
-                    <div class="summary-row">
+                    <div>
                         <span class="label">Total Qty:</span>
                         <span class="value">2</span>
                     </div>
-                    <div class="summary-row">
+                    <div>
                         <span class="label">Tax:</span>
                         <span class="value">10%</span>
                     </div>
@@ -146,10 +142,11 @@
                         <span class="value">$422,548.50</span>
                     </div>
                 </div>
+
             </div>
         </div>
 
-        <div class="actions">
+        <div class="CardanoForm-actions">
             <button class="btn">Cancel</button>
             <button class="btn primary">Next</button>
         </div>
@@ -352,15 +349,11 @@ select {
     margin-top: 8px;
 }
 
-.summary-head {
+.CardanoForm-summary {
     padding: 1rem;
 }
 
-.summary p {
-    margin: 4px 0;
-}
-
-.actions {
+.CardanoForm-actions {
     justify-content: flex-end;
     padding-bottom: 1rem;
     align-items: center;
@@ -368,11 +361,8 @@ select {
     gap: 1rem;
 }
 
-.summary {
-    background: var(--background-a);
-    box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.05);
-    margin-top: auto;
-    padding: 1.5rem;
+.summary-top {
+    margin-top: 1rem;
 }
 
 .summary-top label {
@@ -382,11 +372,17 @@ select {
 }
 
 .summary-top p {
+    line-height: 1.5rem;
     font-weight: 500;
+    margin: 0.5rem 0;
 }
 
-
-
+.summary-bottom {
+    background: var(--background-a);
+    box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.05);
+    margin-top: auto;
+    padding: 1.5rem;
+}
 
 .note {
     font-size: var(--text-size-0);
@@ -395,37 +391,21 @@ select {
     font-weight: 300;
 }
 
-
-
-
-.order-summary {
-    max-width: 400px;
-    padding: 20px;
-    margin: 40px auto;
-    border-radius: 12px;
-    background: #ffffff;
-    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
-}
-
-.summary-row {
+.summary-bottom div {
     display: flex;
+    padding: 0.5rem 0;
     justify-content: space-between;
-    padding: 8px 0;
 }
 
-.summary-row:last-child {
-    border-bottom: none;
-}
-
-.label {
+.summary-bottom.label {
     font-weight: 500;
 }
 
-.value {
+.summary-bottom.value {
     font-weight: 600;
 }
 
-.total {
+.summary-bottom.total {
     font-weight: 700;
 }
 </style>

@@ -1,25 +1,36 @@
 <template>
   <div class="InputName">
-    <label class="InputName-label" :for="props.id">
+    <label class="InputName-label" :for="id">
       <span>{{ label }}</span>
-      <span class="error-text" :class="{ visible: errorMessage }" :id="`${props.id}-error`">
+      <span class="error-text" :class="{ visible: errorMessage }" :id="`${id}-error`">
         {{ errorMessage || '-' }}
       </span>
     </label>
 
-    <input ref="inputRef" v-model="internalValue" :id="props.id" type="text" :placeholder="placeholder"
-      :maxlength="maxLength" inputmode="text" @drop.prevent @blur="validate" :class="{ 'is-invalid': errorMessage }"
-      :aria-invalid="!!errorMessage" :aria-describedby="`${props.id}-error`" class="InputName-input" />
+    <input
+      ref="inputRef"
+      v-model="internalValue"
+      :id="id"
+      type="text"
+      :placeholder="placeholder"
+      :maxlength="maxLength"
+      inputmode="text"
+      @drop.prevent
+      @blur="validate"
+      :class="{ 'is-invalid': errorMessage }"
+      :aria-invalid="!!errorMessage"
+      :aria-describedby="`${id}-error`"
+      class="InputName-input"
+    />
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, watch, onMounted } from 'vue'
-import type { PropType } from 'vue'
 
 const props = defineProps({
   id: { type: String, default: 'input-name' },
-  modelValue: { type: [String, null] as PropType<string | null>, default: null },
+  modelValue: { type: [String, null], default: null },
   label: { type: String, default: 'Name' },
   placeholder: { type: String, default: 'Nikola Tesla' },
   focus: { type: Boolean, default: false },
@@ -27,16 +38,13 @@ const props = defineProps({
   maxLength: { type: Number, default: 40 },
 })
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: string | null): void
-  (e: 'valid', payload: { valid: boolean; value: string | null }): void
-}>()
+const emit = defineEmits(['update:modelValue', 'valid'])
 
-const inputRef = ref<HTMLInputElement | null>(null)
+const inputRef = ref(null)
 const internalValue = ref(props.modelValue ?? '')
 const errorMessage = ref('')
 
-const cityRegex = /^[\p{L}\p{M}\s\-'.(),]+$/u
+const nameRegex = /^[\p{L}\p{M}\s\-'.(),]+$/u
 
 const messages = {
   required: '•',
@@ -44,8 +52,8 @@ const messages = {
   maxLength: `Maximum length is ${props.maxLength} characters.`,
 }
 
-const isEmpty = (val: string) => val.trim() === ''
-const emitValue = (val: string) => emit('update:modelValue', isEmpty(val) ? null : val)
+const isEmpty = (val) => val.trim() === ''
+const emitValue = (val) => emit('update:modelValue', isEmpty(val) ? null : val)
 
 const validate = () => {
   const val = internalValue.value
@@ -54,7 +62,7 @@ const validate = () => {
   const validators = [
     { condition: props.required && isEmpty(val), message: messages.required },
     { condition: val.length > props.maxLength, message: messages.maxLength },
-    { condition: !isEmpty(val) && !cityRegex.test(trimmed), message: messages.invalid },
+    { condition: !isEmpty(val) && !nameRegex.test(trimmed), message: messages.invalid },
   ]
 
   const error = validators.find(v => v.condition)?.message
@@ -96,7 +104,7 @@ onMounted(() => {
   outline: none;
 }
 
-.InputName-input:focus-within {
+.InputName-input:focus {
   border: 1px solid var(--primary-a);
 }
 
@@ -110,10 +118,6 @@ input:focus::placeholder {
 }
 
 input:hover {
-  border: 1px solid var(--primary-a);
-}
-
-input:focus-within {
   border: 1px solid var(--primary-a);
 }
 
