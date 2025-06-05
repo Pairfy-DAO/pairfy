@@ -94,10 +94,13 @@ function submitPrompt() {
 <style scoped>
 .SearchPrompt {
     width: 100%;
-    height: 20rem;
     display: flex;
+    height: 30rem;
+    margin-top: 1rem;
     flex-direction: column;
     box-sizing: border-box;
+    background: #faf9f5;
+    border-radius: var(--radius-d);
 }
 
 .controls {
@@ -127,11 +130,11 @@ function submitPrompt() {
     align-items: center;
     box-sizing: border-box;
     padding-bottom: 0.75rem;
+    box-shadow: var(--shadow-c);
     border-radius: var(--radius-d);
     background: var(--background-a);
     transition: var(--transition-a);
     border: 1px solid var(--border-a);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .SearchPrompt-form.focused {
@@ -140,7 +143,7 @@ function submitPrompt() {
 
 .SearchPrompt-form:hover {
     border: 1px solid var(--border-b);
-    box-shadow: 0 4px 12px rgba(0,0,0, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .SearchPrompt-input {
