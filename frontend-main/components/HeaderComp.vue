@@ -26,16 +26,8 @@ const toastRef = ref(null);
 
 const auth = useAuthStore()
 
-const displayMessage = (message, type, duration) => {
-    toastRef.value?.showToast(message, type, duration)
-}
-
 onMounted(() => {
-    watch(() => auth.toastMessage, (value) => {
-        if (value) {
-            displayMessage(value.message, value.type, value.duration);
-        }
-    });
+    watch(() => auth.toastMessage, ({ message, type, duration }) => toastRef.value?.showToast(message, type, duration));
 });
 
 </script>

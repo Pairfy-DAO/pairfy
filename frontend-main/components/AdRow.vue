@@ -13,7 +13,7 @@
 <style lang="css" scoped>
 .AdRow {
     width: 100%;
-    height: 8rem;
+    height: 6rem;
     overflow: hidden;
     margin-top: 1rem;
 }

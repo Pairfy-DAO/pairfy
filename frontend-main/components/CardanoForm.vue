@@ -47,7 +47,7 @@
                     </div>
 
                     <div class="form-item">
-                        <InputName label="Receiver Alias" />
+                        <InputName v-model="orderName" @valid="orderNameValid = $event.valid" label="Receiver Alias" />
                     </div>
 
                     <div class="form-item">
@@ -66,7 +66,8 @@
                     </div>
 
                     <div class="form-item">
-                        <InputPassword v-model="orderPassword" @valid="orderPasswordValid = $event.valid" />
+                        <InputPassword v-model="orderPassword" @valid="orderPasswordValid = $event.valid"
+                            placeholder="Password" />
                     </div>
                 </div>
 
@@ -75,12 +76,7 @@
                         Shipment preference
                     </div>
                     <div class="form-item">
-                        <div class="shipment-grid" styl>
-                            <button class="btn">Fedex</button>
-                            <button class="btn">US Postal Service</button>
-                            <button class="btn">DHL</button>
-                            <button class="btn">UPS</button>
-                        </div>
+                        <InputButtonGrid v-model="orderProvider" />
                     </div>
                 </div>
 
@@ -156,13 +152,15 @@
                 </svg>
                 <span> Learn how local encryption works.</span>
             </a>
-            <button class="btn">Cancel</button>
-            <button class="btn primary">Next</button>
+            <button class="btn" @click="product.cardanoDialog = false">Cancel</button>
+            <button class="btn primary" @click="onSubmit">Next</button>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+const product = useProductStore()
+
 const orderUnits = ref(null);
 const orderUnitsValid = ref(false)
 const orderUnitOptions = computed(() => {
@@ -179,13 +177,42 @@ const orderPaymentOptions = computed(() => [
     { label: 'ADA', value: 'ada' }
 ])
 
+const orderName = ref(null)
+const orderNameValid = ref(false)
+
 const orderNote = ref(null)
+
 
 const orderAddress = ref(null)
 const orderAddressValid = ref(true)
 
+
 const orderPassword = ref(null)
 const orderPasswordValid = ref(false)
+
+
+const orderProvider = ref(null)
+
+
+function isValidParams() {
+    const values = [orderUnitsValid.value, orderPaymentValid.value, orderNameValid.value, orderAddressValid.value, orderPasswordValid.value]
+
+    return !values.includes(false)
+}
+
+const onSubmit = () => {
+    if (!isValidParams()) {
+        console.log('INVALID')
+        product.showToast('INVALID PARAMS', 'error', 10_000)
+        return;
+    }
+
+    product.showToast('VALID', 'success', 10_000)
+}
+
+
+
+
 
 
 
@@ -318,12 +345,6 @@ select {
     cursor: pointer;
     margin-top: 4px;
     align-self: flex-start;
-}
-
-.shipment-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
 }
 
 .btn {

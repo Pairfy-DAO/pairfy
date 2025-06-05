@@ -2,13 +2,13 @@
   <div class="product-page">
     <ToastComp ref="toastRef" />
 
-    <DialogComp v-model="productStore.cardanoDialog" @update:modelValue="productStore.cardanoDialog = $event">
+    <DialogComp v-model="product.cardanoDialog" @update:modelValue="product.cardanoDialog = $event">
       <CardanoForm />
     </DialogComp>
 
     <AdRow />
 
-    <div class="container" v-if="product">
+    <div class="container" v-if="productData">
       <div class="left-column">
         <ProductMedia />
         <DividerComp />
@@ -28,15 +28,15 @@
           <div class="right-scroll" ref="rightScrollRef">
 
             <div class="product-brand">
-              {{ product.brand }}
+              {{ productData.brand }} 
             </div>
 
             <div class="product-name">
-              {{ product.name }}
+              {{ productData.name }}
             </div>
 
             <div class="product-sku">
-              <span>SKU {{ product.sku }}</span>
+              <span>SKU {{ productData.sku }}</span>
             </div>
 
             <div class="product-rating">
@@ -49,15 +49,16 @@
               Model. <span>Check variations.</span>
             </div>
 
-            <ProductModel v-for="n in 1" :key="n" :id="product.id" :model="product.model"
-              :condition="product.condition_" :color="product.color" :price="product.price" :discount="product.discount"
-              :discount_percent="product.discount_percent" :discount_value="product.discount_value" />
+            <ProductModel v-for="n in 1" :key="n" :id="productData.id" :model="productData.model"
+              :condition="productData.condition_" :color="productData.color" :price="productData.price"
+              :discount="productData.discount" :discount_percent="productData.discount_percent"
+              :discount_value="productData.discount_value" />
 
             <div class="subtitle">
               Finish. <span>Choose your network.</span>
             </div>
 
-            <BuyButton @click="productStore.showCardanoDialog(true)">
+            <BuyButton @click="product.showCardanoDialog(true)">
               <template #icon>
                 <img class="icon" src="@/assets/icon/cardano.svg" alt="">
               </template>
@@ -86,8 +87,9 @@ import { useIntersectionObserver } from '@vueuse/core'
 
 const route = useRoute();
 
-const productStore = useProductStore()
-const product = computed(() => productStore.product)
+const product = useProductStore()
+
+const productData = computed(() => product.product)
 
 const toastRef = ref(null);
 
@@ -175,6 +177,7 @@ watch(
 )
 
 onMounted(() => {
+  watchToast()
   observeTrigger()
   addScrollListener()
   showGetProductError()
@@ -199,10 +202,15 @@ async function fetchProduct() {
       fetchPolicy: 'no-cache'
     })
 
-    productStore.setProductData(data.getProduct)
+    product.setProductData(data.getProduct)
   } catch (err) {
     getProductError.value = err
   }
+}
+
+
+function watchToast() {
+  watch(() => product.toastMessage, ({ message, type, duration }) => toastRef.value?.showToast(message, type, duration));
 }
 
 function observeTrigger() {
@@ -233,10 +241,6 @@ function clearIntervals() {
   clearInterval(pollIntervalId)
 }
 
-function displayMessage(message, type, duration) {
-  toastRef.value?.showToast(message, type, duration)
-}
-
 function addScrollListener() {
   window.addEventListener('scroll', syncScroll)
 }
@@ -246,7 +250,7 @@ function removeScrollListener() {
 }
 
 function showGetProductError() {
-  if (getProductError.value) displayMessage(getProductError.value, 'error')
+  if (getProductError.value) product.showToast(getProductError.value, 'error', 10_000)
 }
 </script>
 
