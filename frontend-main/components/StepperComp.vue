@@ -18,7 +18,7 @@
 <script setup>
 import { ref } from 'vue'
 
-const steps = ['Details Shipment', 'Order Processing', 'Package Shipping']
+const steps = ['Details Shipment', 'Order Payment', 'Package Shipping']
 const currentStep = ref(0)
 </script>
 

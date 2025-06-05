@@ -111,8 +111,8 @@ function handleClickOutside(e) {
 }
 
 .InputSelect-dropdown {
-  border: 1px solid var(--border-b);
   border-radius: var(--input-radius);
+  border: 1px solid var(--border-b);
   background: var(--background-b);
   transition: var(--transition-a);
   justify-content: space-between;

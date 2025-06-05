@@ -27,9 +27,13 @@
     width: 100%;
     height: inherit;
     max-width: var(--body-a);
-    background: rgba(128, 128, 128, 0.1);
-    background-image: url('@/assets/banner/1.png');
-    background-size: contain;
-    background-position: center;
+    background: linear-gradient(
+    135deg,
+    #fff6e5 0%,
+    #fbe8f9 0%,
+    #e3f0ff 25%,
+    #e8f4fc 80%,
+    #e9fff0 100%
+  )
 }
 </style>

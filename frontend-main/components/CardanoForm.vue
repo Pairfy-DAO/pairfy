@@ -16,7 +16,7 @@
                 <!-- Steps -->
                 <StepperComp :steps="['Details Shipment', 'Package Shipping']" :activeStep="0" />
 
-                <div class="CardanoForm-form">
+                <div class="CardanoForm-section">
                     <div class="subtitle">
                         <span>Shipment Information</span>
                     </div>
@@ -35,7 +35,8 @@
 
                         <div class="form-item">
                             <InputSelect v-model="orderPayment" :options="orderPaymentOptions" label="Payment"
-                                @valid="orderPaymentValid = $event.valid" id="order-payment-select" placeholder="Asset">
+                                @valid="orderPaymentValid = $event.valid" id="order-payment-select"
+                                placeholder="Assets">
                                 <template #option="{ option }">
                                     <span class="flex">
                                         <span>{{ option.label }}</span>
@@ -45,20 +46,9 @@
                         </div>
                     </div>
 
-
-                    <div class="form-group">
-                        <div class="form-item">
-                            <InputSelect v-model="orderPayment" :options="orderPaymentOptions" label="Payment"
-                                @valid="orderPaymentValid = $event.valid" id="order-payment-select">
-                                <template #option="{ option }">
-                                    <span class="flex">
-                                        <span>{{ option.label }}</span>
-                                    </span>
-                                </template>
-                            </InputSelect>
-                        </div>
+                    <div class="form-item">
+                        <InputName label="Receiver Alias" />
                     </div>
-
 
                     <div class="form-item">
                         <label>Note</label>
@@ -66,37 +56,36 @@
                     </div>
                 </div>
 
-
-
-                <div class="form-item">
+                <div class="CardanoForm-section">
                     <div class="subtitle">
                         Encrypted Address (AES-256)
                     </div>
-                    <div class="address-grid">
-                        <div v-for="(addr, idx) in store.addresses" :key="idx" class="address-card">
-                            <input type="radio" :id="addr.label" :value="addr.label" v-model="store.selectedAddress" />
-                            <label :for="addr.label">
-                                <strong>{{ addr.label }}</strong><br />
-                                <small>{{ addr.details }}</small>
-                            </label>
-                        </div>
+
+                    <div class="form-item">
+                        <InputName label="Address"
+                            placeholder="Central Warehouse 534 Maple Street, Apt 4B, Springfield, IL 62704" />
                     </div>
-                    <button class="link-btn">+ Add Address</button>
+
+                    <div class="form-item">
+                        <InputName label="Password" placeholder="Passphrase" />
+                    </div>
                 </div>
 
-                <div class="form-item">
+                <div class="CardanoForm-section">
                     <div class="subtitle">
                         Shipment
                     </div>
-                    <div class="shipment-grid">
-                        <button class="btn">Fedex</button>
-                        <button class="btn">US Postal Service</button>
-                        <button class="btn">DHL</button>
-                        <button class="btn">UPS</button>
+                    <div class="form-item">
+                        <div class="shipment-grid" styl>
+                            <button class="btn">Fedex</button>
+                            <button class="btn">US Postal Service</button>
+                            <button class="btn">DHL</button>
+                            <button class="btn">UPS</button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
+            </div>
             <!-- Right Panel -->
             <div class="CardanoForm-right">
 
@@ -124,7 +113,8 @@
                         <label for="note">Note</label>
 
                         <span class="note" id="note">
-                            All purchases are covered by a guarantee in case of non-delivery in favor of the buyer.
+                            All purchases are covered by a guarantee in case of non-delivery or different
+                            specifications..
                             However, you should review the specifications before paying.
                         </span>
 
@@ -209,9 +199,6 @@ const selectedAddressDetails = computed(() => {
     const found = store.addresses.find(a => a.label === store.selectedAddress)
     return found?.details || ''
 })
-
-const steps = ['Details Shipment', 'Order processing', 'Package Shipping']
-const currentStep = ref(1)
 </script>
 
 <style scoped>
@@ -243,9 +230,7 @@ const currentStep = ref(1)
     font-weight: 700;
 }
 
-.form-group {
-    margin-bottom: 1rem;
-}
+.form-group {}
 
 .legend {
     font-size: var(--text-size-1);
@@ -256,7 +241,6 @@ const currentStep = ref(1)
 
 .subtitle {
     font-size: var(--text-size-2);
-    margin-bottom: 1rem;
     font-weight: 700;
 }
 
@@ -281,6 +265,7 @@ const currentStep = ref(1)
 
 .form-item {
     flex-direction: column;
+    margin-top: 1rem;
     display: flex;
     flex: 1;
 }
@@ -296,7 +281,7 @@ input,
 select {
     padding: 8px;
     border-radius: 6px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-b);
     font-size: 14px;
     width: 100%;
     box-sizing: border-box;
