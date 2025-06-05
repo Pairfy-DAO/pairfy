@@ -32,7 +32,7 @@
 
     <!-- Dropdown -->
 
-    <ul  class="InputSelect-options" v-if="isOpen" :id="`${props.id}-listbox`" role="listbox">
+    <ul class="InputSelect-options" v-if="isOpen" :id="`${props.id}-listbox`" role="listbox">
       <li v-for="option in options" :key="option.value" class="dropdown-item" @click.stop="select(option)"
         :id="`option-${option.value}`" role="option">
         <slot name="option" :option="option">
@@ -41,7 +41,7 @@
       </li>
     </ul>
 
-   <!-- Dropdown -->
+    <!-- Dropdown -->
   </div>
 </template>
 
@@ -60,12 +60,11 @@ const emit = defineEmits(['update:modelValue', 'valid'])
 const isOpen = ref(false)
 const dropdownRef = ref(null)
 const errorMessage = ref('')
-const selectedOption = computed(() =>props.options.find(opt => opt.value === props.modelValue))
+const selectedOption = computed(() => props.options.find(opt => opt.value === props.modelValue))
 
-watch(() => props.modelValue, (newVal) => validate(newVal))
+watch(() => props.modelValue, (newVal) => validate(newVal), { immediate: true })
 
 onMounted(() => {
-  validate(props.modelValue)
   document.addEventListener('click', handleClickOutside, { passive: true })
 })
 
@@ -116,9 +115,8 @@ function handleClickOutside(e) {
   background: var(--background-b);
   transition: var(--transition-a);
   justify-content: space-between;
-  padding: 0.6rem 1rem;
+  padding: 0.65rem 1rem;
   align-items: center;
-  height: 1.25rem;
   cursor: pointer;
   display: flex;
   gap: 0.5rem;

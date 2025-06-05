@@ -51,8 +51,7 @@
                     </div>
 
                     <div class="form-item">
-                        <label>Note</label>
-                        <textarea rows="3" v-model="store.note" placeholder=""></textarea>
+                        <InputTextarea v-model="orderNote" />
                     </div>
                 </div>
 
@@ -63,11 +62,11 @@
                     </div>
 
                     <div class="form-item">
-                        <InputName label="Address" placeholder="1234 Brickell Avenue, Suite 500, Miami, FL 33131" />
+                        <InputAddress v-model="orderAddress" @valid="orderAddressValid = $event.valid" />
                     </div>
 
                     <div class="form-item">
-                        <InputName label="Password" placeholder="Passphrase" />
+                        <InputPassword v-model="orderPassword" @valid="orderPasswordValid = $event.valid" />
                     </div>
                 </div>
 
@@ -179,6 +178,18 @@ const orderPaymentValid = ref(false)
 const orderPaymentOptions = computed(() => [
     { label: 'ADA', value: 'ada' }
 ])
+
+const orderNote = ref(null)
+
+const orderAddress = ref(null)
+const orderAddressValid = ref(true)
+
+const orderPassword = ref(null)
+const orderPasswordValid = ref(false)
+
+
+
+
 
 const store = reactive({
     date: '2024/08/24',

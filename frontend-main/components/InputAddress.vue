@@ -1,6 +1,6 @@
 <template>
-  <div class="InputName">
-    <label class="InputName-label" :for="id">
+  <div class="InputAddress">
+    <label class="InputAddress-label" :for="id">
       <span>{{ label }}</span>
       <span class="error-text" :class="{ visible: errorMessage }" :id="`${id}-error`">
         {{ errorMessage || '-' }}
@@ -16,23 +16,24 @@
       :maxlength="maxLength"
       inputmode="text"
       @drop.prevent
+      @blur="validate"
       :class="{ 'is-invalid': errorMessage }"
       :aria-invalid="!!errorMessage"
       :aria-describedby="`${id}-error`"
-      class="InputName-input"
+      class="InputAddress-input"
     />
   </div>
 </template>
 
 <script setup>
 const props = defineProps({
-  id: { type: String, default: 'input-name' },
+  id: { type: String, default: 'input-address' },
   modelValue: { type: [String, null], default: null },
-  label: { type: String, default: 'Name' },
-  placeholder: { type: String, default: 'Nikola Tesla' },
+  label: { type: String, default: 'Address' },
+  placeholder: { type: String, default: '1234 Brickell Avenue, Suite 500, Miami, FL 33131' },
   focus: { type: Boolean, default: false },
   required: { type: Boolean, default: true },
-  maxLength: { type: Number, default: 50 },
+  maxLength: { type: Number, default: 100 },
 })
 
 const emit = defineEmits(['update:modelValue', 'valid'])
@@ -41,11 +42,11 @@ const inputRef = ref(null)
 const internalValue = ref(props.modelValue ?? '')
 const errorMessage = ref('')
 
-const nameRegex = /^[\p{L}\p{M}\s\-'.(),]+$/u
+const addressRegex = /^[\p{L}\p{N}\p{M}\s\-'.(),#\/\\\n]+$/u
 
 const messages = {
   required: '•',
-  invalid: 'Only letters, spaces, and basic punctuation like - ’ . , ( ) are allowed.',
+  invalid: "Only letters, numbers, spaces, and common address symbols (- . , ’ ( ) # / \\) are allowed.",
   maxLength: `Maximum length is ${props.maxLength} characters.`,
 }
 
@@ -59,7 +60,7 @@ const validate = () => {
   const validators = [
     { condition: props.required && isEmpty(val), message: messages.required },
     { condition: val.length > props.maxLength, message: messages.maxLength },
-    { condition: !isEmpty(val) && !nameRegex.test(trimmed), message: messages.invalid },
+    { condition: !isEmpty(val) && !addressRegex.test(trimmed), message: messages.invalid },
   ]
 
   const error = validators.find(v => v.condition)?.message
@@ -80,17 +81,16 @@ watch(() => props.focus, (newVal) => {
   if (newVal) inputRef.value?.focus()
 }, { immediate: true })
 
-
 </script>
 
 <style scoped>
-.InputName {
+.InputAddress {
   flex-direction: column;
   display: flex;
   width: 100%;
 }
 
-.InputName-input {
+.InputAddress-input {
   border-radius: var(--input-radius);
   border: 1px solid var(--border-b);
   transition: var(--transition-a);
@@ -99,7 +99,7 @@ watch(() => props.focus, (newVal) => {
   outline: none;
 }
 
-.InputName-input:focus {
+.InputAddress-input:focus {
   border: 1px solid var(--primary-a);
 }
 
@@ -116,7 +116,7 @@ input:hover {
   border: 1px solid var(--primary-a);
 }
 
-.InputName-label {
+.InputAddress-label {
   justify-content: space-between;
   font-size: var(--text-size-0);
   margin-bottom: 0.75rem;
