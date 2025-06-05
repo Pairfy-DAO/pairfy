@@ -135,12 +135,12 @@ function submitPrompt() {
 }
 
 .SearchPrompt-form.focused {
-    border: 1px solid var(--primary-a);
+    border: 1px solid var(--border-b);
 }
 
 .SearchPrompt-form:hover {
-    border: 1px solid var(--primary-a);
-    box-shadow: 0 4px 12px rgba(var(--primary-a-base), 0.1);
+    border: 1px solid var(--border-b);
+    box-shadow: 0 4px 12px rgba(0,0,0, 0.15);
 }
 
 .SearchPrompt-input {

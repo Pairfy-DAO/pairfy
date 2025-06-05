@@ -13,7 +13,7 @@
 <style lang="css" scoped>
 .AdRow {
     width: 100%;
-    height: 4rem;
+    height: 8rem;
     overflow: hidden;
     margin-top: 1rem;
 }
@@ -28,6 +28,7 @@
     width: 100%;
     height: inherit;
     max-width: var(--body-a);
-    background: rgba(114, 114, 114, 0.123);
+    background-image: url('@/assets/banner/1.png');
+    background-position: center;
 }
 </style>
