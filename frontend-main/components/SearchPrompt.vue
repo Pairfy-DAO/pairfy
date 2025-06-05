@@ -127,7 +127,7 @@ function submitPrompt() {
     align-items: center;
     box-sizing: border-box;
     padding-bottom: 0.75rem;
-    border-radius: var(--radius-c);
+    border-radius: var(--radius-d);
     background: var(--background-a);
     transition: var(--transition-a);
     border: 1px solid var(--border-a);

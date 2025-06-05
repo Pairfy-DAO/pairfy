@@ -35,7 +35,7 @@ button:hover {
 }
 
 button.contrast {
-    border: 2px solid var(--primary-a);
+    border: 2px solid white;
     background: var(--primary-a);
     color: var(--text-w);
 }

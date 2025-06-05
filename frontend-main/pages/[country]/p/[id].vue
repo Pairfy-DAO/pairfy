@@ -287,7 +287,6 @@ function showGetProductError() {
 }
 
 .center-column {
-  background: var(--background-b);
   width: inherit;
 }
 

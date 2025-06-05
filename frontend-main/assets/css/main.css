@@ -43,7 +43,7 @@ body {
   --border-a: #ededed;
   --border-b: #D4D4D4;
   
-  --primary-a: var(--red-a);
+  --primary-a: var(--green-a);
   --primary-a-base: 255, 46, 77;
 
   --radius-a: 4px;
