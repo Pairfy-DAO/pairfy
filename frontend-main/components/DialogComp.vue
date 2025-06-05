@@ -47,6 +47,45 @@ function close() {
 }
 
 defineExpose({ open, close });
+
+let scrollY = 0
+let isLocked = false
+
+function lockScroll() {
+  if (isLocked) return
+  scrollY = window.scrollY
+  document.body.style.position = 'fixed'
+  document.body.style.top = `-${scrollY}px`
+  document.body.style.width = '100%'
+  isLocked = true
+}
+
+function unlockScroll() {
+  if (!isLocked) return
+  document.body.style.position = ''
+  document.body.style.top = ''
+  document.body.style.width = ''
+  window.scrollTo(0, scrollY)
+  isLocked = false
+}
+
+if (import.meta.client) {
+  watch(
+    () => props.modelValue,
+    (val) => {
+      if (val) lockScroll()
+      else unlockScroll()
+    }
+  )
+
+  onMounted(() => {
+    if (props.modelValue) lockScroll()
+  })
+  onBeforeUnmount(() => {
+    unlockScroll()
+  })
+}
+
 </script>
 
 <style scoped>
