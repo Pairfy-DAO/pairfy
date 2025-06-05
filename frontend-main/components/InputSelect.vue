@@ -1,112 +1,57 @@
 <template>
-  <div
-    class="p-InputSelect"
-    ref="dropdownRef"
-    @blur="validate(props.modelValue)"
-    @keydown.enter.prevent="toggleDropdown"
-    @keydown.space.prevent="toggleDropdown"
-    tabindex="0"
-  >
-    <label :for="props.id" class="title-text">{{ label }}</label>
+  <div class="InputSelect" ref="dropdownRef" @blur="validate(props.modelValue)" @keydown.enter.prevent="toggleDropdown"
+    @keydown.space.prevent="toggleDropdown" tabindex="0">
+    <label class="InputSelect-label" :for="props.id">
+      <span> {{ label }}</span>
+
+      <span class="error-text" :class="{ visible: errorMessage }" :id="`${props.id}-error`">
+        {{ errorMessage || '-' }}
+      </span>
+    </label>
 
     <!-- Display -->
-    <div
-      class="dropdown-display"
-      :class="{ 'is-invalid': errorMessage }"
-      role="combobox"
-      :aria-expanded="isOpen.toString()"
-      aria-haspopup="listbox"
-      :aria-controls="`${props.id}-listbox`"
-      @click="toggleDropdown"
-    >
+    <div class="InputSelect-dropdown" :class="{ 'is-invalid': errorMessage }" role="combobox"
+      :aria-expanded="isOpen.toString()" aria-haspopup="listbox" :aria-controls="`${props.id}-listbox`"
+      @click="toggleDropdown">
       <template v-if="selectedOption">
         <slot name="option" :option="selectedOption">
-          <span class="flex items-center gap-2">
-            <img
-              :src="`/flags/${selectedOption.code}.svg`"
-              @error="onFlagError"
-              class="flag-icon"
-              alt=""
-              aria-hidden="true"
-            />
-            {{ selectedOption.label }}
-          </span>
+          {{ selectedOption.label }}
         </slot>
       </template>
       <template v-else>
         <span class="placeholder">{{ placeholder }}</span>
       </template>
 
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="chevron-down-icon"
-        aria-hidden="true"
-      >
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron-down-icon"
+        aria-hidden="true">
         <path d="m6 9 6 6 6-6" />
       </svg>
     </div>
 
     <!-- Dropdown -->
-    <transition name="fade">
-      <ul
-        v-if="isOpen"
-        :id="`${props.id}-listbox`"
-        class="dropdown-list"
-        role="listbox"
-      >
-        <li
-          v-for="option in options"
-          :key="option.code"
-          class="dropdown-item"
-          @click.stop="select(option)"
-          :id="`option-${option.code}`"
-          role="option"
-        >
-          <slot name="option" :option="option">
-            <span class="flex items-center gap-2">
-              <img
-                :src="`/flags/${option.code}.svg`"
-                @error="onFlagError"
-                class="flag-icon"
-                alt=""
-                aria-hidden="true"
-              />
-              {{ option.label }}
-            </span>
-          </slot>
-        </li>
-      </ul>
-    </transition>
 
-    <!-- Error -->
-    <p
-      class="error-text"
-      :class="{ visible: errorMessage }"
-      :id="`${props.id}-error`"
-    >
-      {{ errorMessage || '-' }}
-    </p>
+    <ul v-if="isOpen" :id="`${props.id}-listbox`" class="dropdown-list" role="listbox">
+      <li v-for="option in options" :key="option.value" class="dropdown-item" @click.stop="select(option)"
+        :id="`option-${option.value}`" role="option">
+        <slot name="option" :option="option">
+          {{ option.label }}
+        </slot>
+      </li>
+    </ul>
+
+
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
-
 const props = defineProps({
   id: { type: String, default: 'input-select' },
   modelValue: { type: String, default: '' },
   label: { type: String, required: true },
   required: { type: Boolean, default: true },
   options: { type: Array, required: true },
-  placeholder: { type: String, default: 'Select one...' },
+  placeholder: { type: String, default: 'Select one' },
   invalid: { type: Boolean, default: false }
 })
 
@@ -116,7 +61,7 @@ const isOpen = ref(false)
 const dropdownRef = ref(null)
 const errorMessage = ref('')
 const selectedOption = computed(() =>
-  props.options.find(opt => opt.code === props.modelValue)
+  props.options.find(opt => opt.value === props.modelValue)
 )
 
 
@@ -129,14 +74,14 @@ function toggleDropdown() {
 }
 
 function select(option) {
-  emit('update:modelValue', option.code)
-  validate(option.code)
+  emit('update:modelValue', option.value)
+  validate(option.value)
   isOpen.value = false
 }
 
 function validate(value) {
   if (props.required && !value) {
-    errorMessage.value = 'This field is required.'
+    errorMessage.value = '•'
     emit('valid', { valid: false, value: null })
     return false
   }
@@ -151,10 +96,6 @@ function handleClickOutside(e) {
   }
 }
 
-function onFlagError(event) {
-  event.target.src = '/flags/default.svg'
-  console.warn(`⚠️ Flag not found for ${event.target.src}, loading default.`)
-}
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside, { passive: true })
@@ -182,28 +123,29 @@ watch(
 </script>
 
 <style scoped>
-.p-InputSelect {
+.InputSelect {
   font-size: var(--text-size-1);
-  display: flex;
   flex-direction: column;
-  width: 100%;
   position: relative;
+  display: flex;
+  width: 100%;
 }
 
-.dropdown-display {
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--border-a);
+.InputSelect-dropdown {
+  border: 1px solid var(--border-b);
   border-radius: var(--input-radius);
-  background: var(--background-a);
+  background: var(--background-b);
+  transition: var(--transition-a);
+  justify-content: space-between;
+  padding: 0.6rem 1rem;
+  align-items: center;
   cursor: pointer;
   display: flex;
-  align-items: center;
   gap: 0.5rem;
-  justify-content: space-between;
 }
 
-.dropdown-display.is-invalid {
-  border-color: var(--border-a);
+.InputSelect-dropdown:hover {
+  border: 1px solid var(--primary-a);
 }
 
 .chevron-down-icon {
@@ -213,7 +155,7 @@ watch(
   transition: transform 0.2s ease;
 }
 
-.dropdown-display[aria-expanded="true"] .chevron-down-icon {
+.InputSelect-dropdown[aria-expanded="true"] .chevron-down-icon {
   transform: rotate(180deg);
 }
 
@@ -228,7 +170,7 @@ watch(
   font-size: var(--text-size-1);
   box-shadow: var(--shadow-a);
   position: absolute;
-  top: calc(100% - 30px);
+  top: calc(100% - 0px);
   left: 0;
   right: 0;
   max-height: 200px;
@@ -251,41 +193,23 @@ watch(
   background: #f9f9f9;
 }
 
-.title-text {
+.InputSelect-label {
+  justify-content: space-between;
+  font-size: var(--text-size-0);
   margin-bottom: 0.75rem;
+  align-items: center;
+  display: flex;
 }
 
 .error-text {
-  animation: fadeIn 0.2s ease-in-out;
-  font-size: var(--text-size-0, 0.875rem);
+  font-size: var(--text-size-0);
   color: transparent;
+  font-weight: 300;
   opacity: 0;
 }
 
 .error-text.visible {
   opacity: 1;
   color: red;
-}
-
-.flag-icon {
-  width: 20px;
-  height: 14px;
-  object-fit: contain;
-}
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.2s;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 </style>

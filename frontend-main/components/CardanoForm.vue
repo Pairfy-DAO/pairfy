@@ -7,7 +7,7 @@
 
                 <div class="CardanoForm-head">
                     <img src="@/assets/icon/list.svg" alt="">
-                    <div class="titles">
+                    <div>
                         <span class="title">Purchase Order</span>
                         <span class="legend">Effortlessly import products and update your inventory.</span>
                     </div>
@@ -16,40 +16,51 @@
                 <!-- Steps -->
                 <StepperComp :steps="['Details Shipment', 'Package Shipping']" :activeStep="0" />
 
-
-                <div class="details">
+                <div class="CardanoForm-form">
                     <div class="subtitle">
                         <span>Shipment Information</span>
                     </div>
 
-                    <div class="row-2">
-                        <div class="field-group">
-                            <label>Units</label>
-                            <select v-model="store.paymentTerms">
-                                <option>1</option>
-                            </select>
+                    <div class="form-group">
+                        <div class="form-item">
+                            <InputSelect v-model="orderUnits" :options="orderUnitOptions" label="Total Units"
+                                @valid="orderUnitsValid = $event.valid" id="order-units-select" placeholder="Quantity">
+                                <template #option="{ option }">
+                                    <span class="flex">
+                                        <span>{{ option.label }}</span>
+                                    </span>
+                                </template>
+                            </InputSelect>
                         </div>
 
-                        <div class="field-group">
-                            <label>Payment</label>
-                            <select v-model="store.paymentTerms">
-                                <option>ADA</option>
-                            </select>
-                        </div>
-                    </div>
-
-
-                    <div class="row-2">
-                        <div class="field-group">
-                            <label>Receiver alias</label>
-                            <select v-model="store.assignTo">
-                                <option>Name</option>
-                            </select>
+                        <div class="form-item">
+                            <InputSelect v-model="orderPayment" :options="orderPaymentOptions" label="Payment"
+                                @valid="orderPaymentValid = $event.valid" id="order-payment-select">
+                                <template #option="{ option }">
+                                    <span class="flex">
+                                        <span>{{ option.label }}</span>
+                                    </span>
+                                </template>
+                            </InputSelect>
                         </div>
                     </div>
 
 
-                    <div class="field-group">
+                    <div class="form-group">
+                        <div class="form-item">
+                            <InputSelect v-model="orderPayment" :options="orderPaymentOptions" label="Payment"
+                                @valid="orderPaymentValid = $event.valid" id="order-payment-select">
+                                <template #option="{ option }">
+                                    <span class="flex">
+                                        <span>{{ option.label }}</span>
+                                    </span>
+                                </template>
+                            </InputSelect>
+                        </div>
+                    </div>
+
+
+                    <div class="form-item">
                         <label>Note</label>
                         <textarea rows="3" v-model="store.note" placeholder="Please review all items..."></textarea>
                     </div>
@@ -57,7 +68,7 @@
 
 
 
-                <div class="field-group">
+                <div class="form-item">
                     <div class="subtitle">
                         Encrypted Address (AES-256)
                     </div>
@@ -73,7 +84,7 @@
                     <button class="link-btn">+ Add Address</button>
                 </div>
 
-                <div class="field-group">
+                <div class="form-item">
                     <div class="subtitle">
                         Shipment
                     </div>
@@ -102,18 +113,26 @@
                         <label for="receiver">Receiver alias</label>
                         <p id="receiver">{{ store.assignTo }}</p>
 
+                        <label for="address">Address</label>
+                        <p id="address">{{ selectedAddressDetails }}</p>
+
                         <label for="payment">Payment</label>
                         <p id="payment">ADA</p>
 
-                        <label for="address">Address</label>
-                        <p id="address">{{ selectedAddressDetails }}</p>
+                        <DividerComp margin="1rem 0" />
+
+                        <label for="note">Note</label>
+                        
+                        <span class="note" id="note">
+                            All purchases are covered by a warranty for the buyer's benefit;
+                            however, you should
+                            review the specifications before paying.</span>
+
+                        <DividerComp margin="1rem 0" />
+
                     </div>
-                    <DividerComp />
 
-                    <label for="note">Note</label>
-                    <p id="note">aaa</p>
 
-                    <DividerComp />
                 </div>
 
                 <div class="summary">
@@ -148,7 +167,21 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, computed } from 'vue'
+const orderUnits = ref(null);
+const orderUnitsValid = ref(false)
+const orderUnitOptions = computed(() => {
+    return Array.from({ length: 10 }, (_, i) => ({
+        label: String(i + 1),
+        value: String(i + 1)
+    }))
+})
+
+
+const orderPayment = ref(null)
+const orderPaymentValid = ref(false)
+const orderPaymentOptions = computed(() => [
+    { label: 'ADA', value: 'ada' }
+])
 
 const store = reactive({
     date: '2024/08/24',
@@ -199,10 +232,19 @@ const currentStep = ref(1)
     align-items: center;
 }
 
-.titles {
+.CardanoForm-head div {
     display: flex;
     margin-left: 0.5rem;
     flex-direction: column;
+}
+
+.CardanoForm-head .title {
+    font-size: var(--text-size-4);
+    font-weight: 700;
+}
+
+.form-group {
+    margin-bottom: 1rem;
 }
 
 .legend {
@@ -211,10 +253,6 @@ const currentStep = ref(1)
     margin-top: 0.25rem;
 }
 
-.title {
-    font-size: var(--text-size-4);
-    font-weight: 700;
-}
 
 .subtitle {
     font-size: var(--text-size-2);
@@ -236,20 +274,19 @@ const currentStep = ref(1)
     flex-direction: column;
 }
 
-.row-2 {
+.form-group {
     display: flex;
     gap: 1rem;
 }
 
-.field-group {
+.form-item {
     flex-direction: column;
     display: flex;
     flex: 1;
 }
 
-.field-group label {
+.form-item label {
     font-weight: 600;
-    margin-top: 1rem;
     margin-bottom: 1rem;
     font-size: var(--text-size-0);
 }
@@ -324,12 +361,6 @@ select {
     border: 1px solid var(--border-a);
 }
 
-.note {
-    font-size: 12px;
-    color: #555;
-    margin-top: 8px;
-}
-
 .empty {
     font-style: italic;
     color: #888;
@@ -372,7 +403,12 @@ select {
 
 
 
-
+.note {
+    font-size: var(--text-size-0);
+    color: var(--text-b);
+    text-align: justify;
+    font-weight: 300;
+}
 
 
 

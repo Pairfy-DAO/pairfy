@@ -91,7 +91,7 @@ input::placeholder {
 }
 
 label {
-  font-size: var(--text-size-1);
+  font-size: var(--text-size-0);
   font-weight: 600;
 }
 

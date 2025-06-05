@@ -51,10 +51,10 @@ const isContrast = computed(() => ['country-p-id', 'country-s'].includes(route.n
 <style lang="css" scoped>
 .HeaderTop {
     font-size: var(--text-size-0);
-    background: var(--primary-a);
+    background: var(--background-b);
     justify-content: center;
     box-sizing: border-box;
-    color: var(--text-w);
+    color: var(--text-a);
     position: fixed;
     z-index: 12000;
     height: 2rem;
