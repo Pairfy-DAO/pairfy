@@ -101,14 +101,16 @@ function getImageSrc(item) {
 
 .ProductCard-image {
     width: 100%;
-    aspect-ratio: 4 / 3;
-    position: relative;
+    display: flex;
     overflow: hidden;
+    position: relative;
+    aspect-ratio: 4 / 3;
+    justify-content: center;
 }
 
 .ProductCard-image img {
-    width: 100%;
-    height: 100%;
+    width: 95%;
+    height: 95%;
     object-fit: contain;
 }
 
