@@ -35,7 +35,7 @@
 
                         <div class="form-item">
                             <InputSelect v-model="orderPayment" :options="orderPaymentOptions" label="Payment"
-                                @valid="orderPaymentValid = $event.valid" id="order-payment-select">
+                                @valid="orderPaymentValid = $event.valid" id="order-payment-select" placeholder="Asset">
                                 <template #option="{ option }">
                                     <span class="flex">
                                         <span>{{ option.label }}</span>
@@ -122,11 +122,11 @@
                         <DividerComp margin="1rem 0" />
 
                         <label for="note">Note</label>
-                        
+
                         <span class="note" id="note">
-                            All purchases are covered by a warranty for the buyer's benefit;
-                            however, you should
-                            review the specifications before paying.</span>
+                            All purchases are covered by a guarantee in case of non-delivery in favor of the buyer.
+                            However, you should review the specifications before paying.
+                        </span>
 
                         <DividerComp margin="1rem 0" />
 
@@ -353,7 +353,7 @@ select {
     flex: 1;
     display: flex;
     overflow: hidden;
-    min-width: 250px;
+    min-width: 300px;
     flex-direction: column;
     font-size: var(--text-size-1);
     border-radius: var(--radius-c);

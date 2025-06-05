@@ -1,6 +1,7 @@
 <template>
   <div class="InputSelect" ref="dropdownRef" @blur="validate(props.modelValue)" @keydown.enter.prevent="toggleDropdown"
     @keydown.space.prevent="toggleDropdown" tabindex="0">
+
     <label class="InputSelect-label" :for="props.id">
       <span> {{ label }}</span>
 
@@ -14,7 +15,7 @@
       :aria-expanded="isOpen.toString()" aria-haspopup="listbox" :aria-controls="`${props.id}-listbox`"
       @click="toggleDropdown">
       <template v-if="selectedOption">
-        <slot name="option" :option="selectedOption">
+        <slot name="selected" :option="selectedOption">
           {{ selectedOption.label }}
         </slot>
       </template>
@@ -31,7 +32,7 @@
 
     <!-- Dropdown -->
 
-    <ul v-if="isOpen" :id="`${props.id}-listbox`" class="dropdown-list" role="listbox">
+    <ul  class="InputSelect-options" v-if="isOpen" :id="`${props.id}-listbox`" role="listbox">
       <li v-for="option in options" :key="option.value" class="dropdown-item" @click.stop="select(option)"
         :id="`option-${option.value}`" role="option">
         <slot name="option" :option="option">
@@ -40,7 +41,7 @@
       </li>
     </ul>
 
-
+   <!-- Dropdown -->
   </div>
 </template>
 
@@ -51,8 +52,7 @@ const props = defineProps({
   label: { type: String, required: true },
   required: { type: Boolean, default: true },
   options: { type: Array, required: true },
-  placeholder: { type: String, default: 'Select one' },
-  invalid: { type: Boolean, default: false }
+  placeholder: { type: String, default: 'Select one' }
 })
 
 const emit = defineEmits(['update:modelValue', 'valid'])
@@ -60,13 +60,17 @@ const emit = defineEmits(['update:modelValue', 'valid'])
 const isOpen = ref(false)
 const dropdownRef = ref(null)
 const errorMessage = ref('')
-const selectedOption = computed(() =>
-  props.options.find(opt => opt.value === props.modelValue)
-)
+const selectedOption = computed(() =>props.options.find(opt => opt.value === props.modelValue))
 
+watch(() => props.modelValue, (newVal) => validate(newVal))
 
 onMounted(() => {
   validate(props.modelValue)
+  document.addEventListener('click', handleClickOutside, { passive: true })
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside)
 })
 
 function toggleDropdown() {
@@ -95,31 +99,6 @@ function handleClickOutside(e) {
     isOpen.value = false
   }
 }
-
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside, { passive: true })
-})
-
-onBeforeUnmount(() => {
-  document.removeEventListener('click', handleClickOutside)
-})
-
-watch(() => props.modelValue, (newVal) => {
-  validate(newVal)
-})
-
-watch(
-  () => props.invalid,
-  (val) => {
-    if (val) {
-      errorMessage.value = 'This field is required.'
-    } else if (!val && !props.required) {
-      errorMessage.value = ''
-    }
-  },
-  { immediate: true }
-)
 </script>
 
 <style scoped>
@@ -163,7 +142,7 @@ watch(
   color: var(--text-b);
 }
 
-.dropdown-list {
+.InputSelect-options {
   border-radius: var(--input-radius);
   border: 1px solid var(--border-a);
   background: var(--background-a);
