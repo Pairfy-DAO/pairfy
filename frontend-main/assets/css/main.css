@@ -54,16 +54,15 @@ body {
   --radius-f: 999px;
 
 
-  --blue-a:   #3483fa;
-  --yellow-a: #ffd500;
-
-  --orange-a: #ff8c32;
-  --green-a:  #00b37e;
-  --purple-a: #a25ddc;
-  --teal-a:   #00bcd4;
-  --black-a:  #000000;
-  --white-a:  #ffffff;
-  --gray-a:   #8e8e93;
+  --blue-a:   #2776ED;
+  
+  --blue-a:     #2776ED;
+  --yellow-a:   #FFD500;
+  --orange-a:   #FF8C32;
+  --green-a:    #00B37E;
+  --red-a:      #ED274F;
+  --purple-a:   #A25DDC;
+  --teal-a:     #00BCD4;
 
   
   --transition-a: 0.2s ease-in-out;

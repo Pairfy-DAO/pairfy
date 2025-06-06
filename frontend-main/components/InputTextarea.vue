@@ -45,4 +45,9 @@ textarea {
   background: var(--background-b);
   border: 1px solid var(--border-b);
 }
+
+textarea::placeholder{
+  color: var(--text-b);
+  opacity: var(--placeholder-opacity); 
+}
 </style>
