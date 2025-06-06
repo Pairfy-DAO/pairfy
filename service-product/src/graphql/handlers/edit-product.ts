@@ -12,7 +12,7 @@ import {
 } from "@pairfy/common";
 import { verifyParams } from "../../validators/edit-product.js";
 import { checkFileGroup } from "../../utils/media.js";
-import { applyDiscount, sanitizeTiptapContent } from "../../utils/index.js";
+import { applyDiscount, extractTextFromHTML, sanitizeTiptapContent } from "../../utils/index.js";
 
 export const editProduct = async (_: any, args: any, context: any) => {
   let connection = null;
@@ -26,7 +26,7 @@ export const editProduct = async (_: any, args: any, context: any) => {
         code: ERROR_CODES.VALIDATION_ERROR,
       });
     }
-    
+
     args.editProductInput.bullet_list = sanitizeStringArray(
       args.editProductInput.bullet_list
     );
@@ -108,7 +108,10 @@ export const editProduct = async (_: any, args: any, context: any) => {
       sku: params.sku,
       model: params.model,
       brand: params.brand,
-      description: params.description,
+      description: {
+        html: params.description,
+        text: extractTextFromHTML(params.description),
+      },
       category: params.category,
       bullet_list: params.bullet_list,
       color: params.color,
@@ -157,7 +160,11 @@ export const editProduct = async (_: any, args: any, context: any) => {
 
     await connection.commit();
 
-    return { success: true, message: "The product has been successfully updated and all changes have been saved." };
+    return {
+      success: true,
+      message:
+        "The product has been successfully updated and all changes have been saved.",
+    };
   } catch (error: any) {
     if (connection) await connection.rollback();
 

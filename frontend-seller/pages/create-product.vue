@@ -3,6 +3,9 @@
         <ToastComp ref="toastRef" />
 
         <div class="grid">
+
+            <!--GRID-ROW-->
+
             <div class="grid-row">
                 <div class="grid-title">
                     <span>Create</span>
@@ -38,6 +41,8 @@
                         @valid="productBrandValid = $event.valid" />
                 </div>
             </div>
+
+            <!--GRID-ROW-->
 
             <div class="grid-row">
                 <div class="grid-title">
@@ -81,6 +86,8 @@
                 </div>
             </div>
 
+            <!--GRID-ROW-->
+
             <div class="grid-row">
                 <div class="grid-title">
                     <span>Description</span>
@@ -104,6 +111,8 @@
                     <EditorComp v-model="productDescription" @valid="onEditorChange" />
                 </div>
             </div>
+
+            <!--GRID-ROW-->
 
             <div class="grid-row">
                 <div class="grid-title">
@@ -130,6 +139,8 @@
                 </div>
             </div>
 
+            <!--GRID-ROW-->
+
             <div class="grid-row">
                 <div class="grid-title">
                     <span>Upload Images</span>
@@ -151,6 +162,8 @@
                 </div>
                 <UploadImagesLocal v-model="productImages" @valid="onImagesChange" />
             </div>
+
+            <!--GRID-ROW-->
 
             <div class="grid-row">
                 <div class="grid-title">
@@ -174,6 +187,7 @@
                 </div>
             </div>
 
+            <!--GRID-ROW-->
 
             <div class="grid-row">
                 <div class="grid-title">
@@ -213,6 +227,8 @@
                 </div>
             </div>
 
+            <!--GRID-ROW-->
+
             <div class="grid-row">
                 <div class="grid-title">
                     <span>Discount</span>
@@ -238,6 +254,8 @@
                     <InputProductDiscount v-model="productDiscount" />
                 </div>
             </div>
+
+            <!--GRID-ROW-->
 
             <div class="grid-row">
                 <div class="grid-title">
@@ -372,12 +390,13 @@ const CREATE_PRODUCT_MUTATION = gql`
 `
 
 const onCreateProduct = async () => {
-    if(import.meta.server) return;
-    
+    if (import.meta.server) return;
+
     loading.value = true
 
     if (!isValidParams()) {
         const paramErrorMessage = `Some required details are missing. Please ensure all mandatory fields — such as product images, category, and description — are properly filled out before submitting.`
+        loading.value = false
         return displayMessage(paramErrorMessage, 'error', 30_000)
     }
 
@@ -386,8 +405,8 @@ const onCreateProduct = async () => {
         const uploadMedia = await useUploadMedia(productImages.value)
 
         if (!uploadMedia || !uploadMedia.success) {
-            displayMessage('Image upload failed. Please try again.', 'error', 30_000)
-            return
+            return displayMessage('Image upload failed. Please try again.', 'error', 30_000)
+            
         }
 
         const createProductVariable = {
