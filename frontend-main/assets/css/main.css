@@ -43,7 +43,7 @@ body {
   --border-a: #ededed;
   --border-b: #D4D4D4;
   
-  --primary-a: var(--green-a);
+  --primary-a: var(--red-a);
   --primary-a-base: 255, 46, 77;
 
   --radius-a: 4px;
@@ -53,13 +53,13 @@ body {
   --radius-e: 28px;
   --radius-f: 999px;
 
-  --red-a: #ff2e4d;
+  --red-a: #ff385c;
 
-  --orange-a: #ff7300;
+  --orange-a: #ff5e3a;
   --yellow-a: #ffd12e;
   --blue-a:   #2e6dff;
   --green-a:  #33aa77;
-  --purple-a: #9933cc;
+  --purple-a: #c03fa3;
   --teal-a:   #33bbbb;
   --black-a:  #000000;
   --white-a:  #ffffff;

@@ -14,6 +14,7 @@
     width: 100%; 
     display: flex;
     justify-content: center;
+    background: var(--background-b);
 }
 
 .SearchSection-body {

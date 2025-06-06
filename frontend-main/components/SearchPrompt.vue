@@ -100,7 +100,7 @@ function submitPrompt() {
     flex-direction: column;
     box-sizing: border-box;
     background: var(--background-a);
-    background-image: url('https://i02.appmifile.com/722_operator_sg/14/05/2025/dfbe8ed8c4fee8aa29dbaa9dc0ffebfc.jpg?thumb=1&w=2560&f=webp&q=85');
+    background-image: url('https://img.freepik.com/free-photo/happy-young-couple-holding-cardboard-boxes-hand_23-2148095492.jpg');
     border-radius: var(--radius-d);
 }
 
