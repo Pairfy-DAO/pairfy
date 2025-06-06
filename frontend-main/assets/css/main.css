@@ -32,12 +32,12 @@ body {
   --shadow-e: 0 12px 24px rgba(0, 0, 0, 0.1);
 
   --background-a: #ffffff;
-  --background-b: #f7f8fa;
+  --background-b: #F8F8FA;
 
 
 
-  --text-a: #333;
-  --text-b: #3339;
+  --text-a: #1d1d1f;
+  --text-b: #6e6e73;
   --text-w: #ffffff;
 
   --border-a: #ededed;
@@ -56,7 +56,6 @@ body {
 
   --blue-a:   #2776ED;
   
-  --blue-a:     #2776ED;
   --yellow-a:   #FFD500;
   --orange-a:   #FF8C32;
   --green-a:    #00B37E;
