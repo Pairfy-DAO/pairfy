@@ -72,7 +72,6 @@
                         </div>
 
                     </template>
-
                 </TableComp>
                 <!----------------CONTENT---------------->
             </template>
@@ -82,6 +81,7 @@
 </template>
 
 <script setup>
+import { gql } from 'graphql-tag'
 import placeholderImage from '@/assets/placeholder/image.svg'
 
 const router = useRouter()
@@ -125,17 +125,64 @@ const range = computed(() => {
     return `${start} - ${end} of ${productCount.value}`
 })
 
-const { data: initialData, error: getProductsError } = await useAsyncData('products', () =>
-    $fetch('/api/product/getProducts', {
-        method: 'POST',
-        credentials: 'include',
-        body: {},
-        headers: useRequestHeaders(['cookie']),
-        async onResponseError({ response }) {
-            throw new Error(JSON.stringify(response._data.data));
-        },
-    })
-)
+const { $productClient } = useNuxtApp()
+const getProductsError = ref(null)
+
+const GET_PRODUCTS_QUERY = gql`
+  query GetProducts($getProductsVariable: GetProductsInput!) {
+    getProducts(getProductsInput: $getProductsVariable) {
+      products {
+        id
+        status
+        moderated
+        thumbnail_url
+        name
+        price
+        sku
+        model
+        brand
+        category
+        condition_
+        discount
+        discount_value
+        discount_percent
+        created_at
+      }
+      nextCursor
+      hasPrevMore
+      hasNextMore
+      totalCount
+    }
+  }
+`
+
+async function fetchProducts(getProductsVariable) {
+    if(import.meta.server) return;
+
+    try {
+        const { data } = await $productClient.query({
+            query: GET_PRODUCTS_QUERY,
+            variables: {
+                getProductsVariable
+            },
+            fetchPolicy: 'no-cache'
+        })
+
+        const productList = data.getProducts;
+
+        products.value = productList.products
+        nextCursor.value = productList.nextCursor
+        productCount.value = productList.totalCount
+        hasPrevPage.value = productList.hasPrevMore
+        hasNextPage.value = productList.hasNextMore
+
+    } catch (err) {
+        console.log(err)
+        getProductsError.value = err
+    }
+}
+
+fetchProducts({})
 
 onMounted(() => {
     if (getProductsError.value) {
@@ -144,49 +191,17 @@ onMounted(() => {
     }
 })
 
-if (initialData.value) {
-    products.value = initialData.value.products
-    nextCursor.value = initialData.value.nextCursor
-    productCount.value = initialData.value.totalCount
-    hasPrevPage.value = initialData.value.hasPrevMore
-    hasNextPage.value = initialData.value.hasNextMore
-}
-
-const loadProducts = async ({ cursor = null, reverseCursor = null } = {}) => {
-    loading.value = true
-    try {
-        const data = await $fetch('/api/product/getProducts', {
-            method: 'POST',
-            credentials: 'include',
-            body: {
-                cursor: cursor || undefined,
-                reverseCursor: reverseCursor || undefined
-            }
-        })
-
-        products.value = data.products
-        nextCursor.value = data.nextCursor
-        productCount.value = data.totalCount
-        hasPrevPage.value = data.hasPrevMore
-        hasNextPage.value = data.hasNextMore
-    } catch (err) {
-        console.error('Load error:', err)
-    } finally {
-        loading.value = false
-    }
-}
-
 const handleOnNext = async (item) => {
     if (!hasNextPage.value) return
     const cursor = `${item.created_at}_${item.id}`
-    await loadProducts({ cursor })
+    await fetchProducts({ cursor })
     page.value += 1
 }
 
 const handleOnPrev = async (item) => {
     if (!hasPrevPage.value) return
     const reverseCursor = `${item.created_at}_${item.id}`
-    await loadProducts({ reverseCursor })
+    await fetchProducts({ reverseCursor })
     if (page.value > 1) page.value -= 1
 }
 
