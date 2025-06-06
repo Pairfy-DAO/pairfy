@@ -24,10 +24,10 @@ const auth = useAuthStore()
 .HeaderAvatar {
     gap: 1rem;
     display: flex;
+    cursor: pointer;
     padding: 0 0.5rem;
     align-items: center;
     border-radius: var(--radius-e);
-    border: 1px solid rgb(255, 255, 255);
 }
 
 .HeaderAvatar-icon {

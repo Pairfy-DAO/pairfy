@@ -1,5 +1,5 @@
 <template>
-    <div class="SearchPrompt flex center">
+    <div class="SearchPrompt center">
 
         <DrawerComp v-model="filterDrawer" position="left" width="350px" :overlay="false">
             <SearchPanel @onApply="filterDrawer = false" />
@@ -99,9 +99,12 @@ function submitPrompt() {
     margin-top: 1rem;
     flex-direction: column;
     box-sizing: border-box;
-    background: var(--background-a);
-    background-image: url('https://img.freepik.com/free-photo/happy-young-couple-holding-cardboard-boxes-hand_23-2148095492.jpg');
+    background-size: cover;
+    justify-content: flex-end;
+    background-repeat: no-repeat;
     border-radius: var(--radius-d);
+    background-position: center;
+    background-image: url('@/assets/banner/1.png');
 }
 
 .controls {
@@ -126,6 +129,7 @@ function submitPrompt() {
     padding: 1rem;
     max-width: 50%;
     margin: auto auto;
+    margin-bottom: 2rem;
     padding-top: 1rem;
     position: relative;
     align-items: center;

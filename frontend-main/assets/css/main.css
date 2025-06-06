@@ -23,7 +23,7 @@ body {
   --text-size-9: 56px;
   --text-size-10: 64px; /* Hero / page title */
 
-  --body-a: 1600px;
+  --body-a: 1650px;
 
   --shadow-a: 0 6px 20px rgba(0, 0, 0, 0.08);
   --shadow-b: 0 1px 2px 0 rgba(0, 0, 0, 0.12);
@@ -43,8 +43,8 @@ body {
   --border-a: #ededed;
   --border-b: #D4D4D4;
   
-  --primary-a: var(--red-a);
-  --primary-a-base: 255, 46, 77;
+  --primary-a: var(--blue-a);
+  --primary-a-base: 52, 131, 250;
 
   --radius-a: 4px;
   --radius-b: 6px;
@@ -53,18 +53,19 @@ body {
   --radius-e: 28px;
   --radius-f: 999px;
 
-  --red-a: #ff385c;
 
-  --orange-a: #ff5e3a;
-  --yellow-a: #ffd12e;
-  --blue-a:   #2e6dff;
-  --green-a:  #33aa77;
-  --purple-a: #c03fa3;
-  --teal-a:   #33bbbb;
+  --blue-a:   #3483fa;
+  --yellow-a: #ffd500;
+
+  --orange-a: #ff8c32;
+  --green-a:  #00b37e;
+  --purple-a: #a25ddc;
+  --teal-a:   #00bcd4;
   --black-a:  #000000;
   --white-a:  #ffffff;
   --gray-a:   #8e8e93;
 
+  
   --transition-a: 0.2s ease-in-out;
 
   --placeholder-opacity: 0.8

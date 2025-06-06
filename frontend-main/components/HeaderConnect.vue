@@ -42,7 +42,5 @@ button.contrast {
 
 button.contrast:hover {
     opacity: 0.8;
-    color: var(--text-w);
-    border: 2px solid var(--primary-a);
 }
 </style>

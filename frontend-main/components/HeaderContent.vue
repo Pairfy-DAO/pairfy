@@ -121,6 +121,7 @@ watch(() => route.path, (newPath) => {
   padding: 0.75rem 1rem;
   background: var(--primary-a);
   border-radius: var(--radius-c);
+  box-shadow: var(--shadow-b);
 }
 
 .HeaderContent-body li.contrast:hover {
