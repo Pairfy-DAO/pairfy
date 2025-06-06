@@ -99,7 +99,8 @@ function submitPrompt() {
     margin-top: 1rem;
     flex-direction: column;
     box-sizing: border-box;
-    background: #faf9f5;
+    background: var(--background-a);
+    background-image: url('https://i02.appmifile.com/722_operator_sg/14/05/2025/dfbe8ed8c4fee8aa29dbaa9dc0ffebfc.jpg?thumb=1&w=2560&f=webp&q=85');
     border-radius: var(--radius-d);
 }
 
