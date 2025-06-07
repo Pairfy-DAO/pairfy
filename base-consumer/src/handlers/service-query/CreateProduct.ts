@@ -1,7 +1,7 @@
 import database from "../../database/client.js";
 import {
   isProcessedEvent,
-  consumedEvent,
+  consumeEvent,
   logger,
   insertProduct,
 } from "@pairfy/common";
@@ -50,7 +50,7 @@ export const CreateProduct = async (
       throw new Error("CreateProductIndexError");
     }
 
-    await consumedEvent(connection, event, seq);
+    await consumeEvent(connection, event, seq);
 
     ///////////////////////////////////////////////////////
 

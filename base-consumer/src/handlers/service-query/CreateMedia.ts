@@ -1,7 +1,7 @@
 import database from "../../database/client.js";
 import {
   isProcessedEvent,
-  consumedEvent,
+  consumeEvent,
   logger,
   insertMedia
 } from "@pairfy/common";
@@ -43,7 +43,7 @@ export const CreateMedia = async (
       throw new Error("CreateMediaInsertError");
     }
 
-    await consumedEvent(connection, event, seq);
+    await consumeEvent(connection, event, seq);
 
     ///////////////////////////////////////////////////////
 

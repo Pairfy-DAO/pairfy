@@ -2,11 +2,11 @@
 
 #chmod +x skaffold.sh
 
-if [ "$1" == "-n" ]; then
-  echo "Building"
-else
+if [ "$1" == "--pub" ]; then
   echo "Building & Publishing"
   ./common/publish.sh
+else
+  echo "Building"
 fi
 
 set -euo pipefail

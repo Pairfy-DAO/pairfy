@@ -17,7 +17,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./createEvent"), exports);
 __exportStar(require("./insertSeller"), exports);
 __exportStar(require("./isProcessedEvent"), exports);
-__exportStar(require("./consumedEvent"), exports);
+__exportStar(require("./consumeEvent"), exports);
 __exportStar(require("./loadSql"), exports);
 __exportStar(require("./errorHandler"), exports);
 __exportStar(require("./logger"), exports);

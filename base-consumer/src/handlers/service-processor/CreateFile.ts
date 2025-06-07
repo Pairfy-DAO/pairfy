@@ -1,5 +1,5 @@
 
-import { isProcessedEvent, consumedEvent, logger } from "@pairfy/common";
+import { isProcessedEvent, consumeEvent, logger } from "@pairfy/common";
 import { processFile } from "./utils/media.js";
 import database from "../../database/client.js";
 
@@ -39,7 +39,7 @@ export const CreateFile = async (event: any, seq: number): Promise<boolean> => {
 
     ///////////////////////////////////////////////////////
 
-    await consumedEvent(connection, event, seq);
+    await consumeEvent(connection, event, seq);
 
     await connection.commit();
 
