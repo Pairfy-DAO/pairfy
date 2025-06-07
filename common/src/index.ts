@@ -12,7 +12,7 @@ export * from "./findSellerByEmail";
 export * from "./findSellerByEmailOrUsername";
 export * from "./findSellerByUsername";
 export * from "./password";
-export * from "./nano";
+export * from "./generateId";
 export * from "./sleep";
 export * from "./sellerAuth";
 export * from './updateSeller';

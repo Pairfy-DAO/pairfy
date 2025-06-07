@@ -28,7 +28,7 @@ __exportStar(require("./findSellerByEmail"), exports);
 __exportStar(require("./findSellerByEmailOrUsername"), exports);
 __exportStar(require("./findSellerByUsername"), exports);
 __exportStar(require("./password"), exports);
-__exportStar(require("./nano"), exports);
+__exportStar(require("./generateId"), exports);
 __exportStar(require("./sleep"), exports);
 __exportStar(require("./sellerAuth"), exports);
 __exportStar(require("./updateSeller"), exports);
