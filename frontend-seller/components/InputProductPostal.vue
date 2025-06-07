@@ -82,10 +82,7 @@ onMounted(() => {
 
 watch(() => props.modelValue, (val) => {
   if ((val ?? '') !== rawValue.value) rawValue.value = val ?? ''
-})
-
-watch(() => props.focus, (focus) => {
-  if (focus) inputRef.value?.focus()
+  validate()
 })
 </script>
 

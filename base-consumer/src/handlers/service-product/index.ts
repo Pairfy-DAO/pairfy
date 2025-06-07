@@ -1,7 +1,7 @@
 import database from "../../database/client.js";
 import {
   isProcessedEvent,
-  consumedEvent,
+  consumeEvent,
   logger,
   insertMedia,
   createEvent,
@@ -78,7 +78,7 @@ const ProcessedFile = async (event: any, seq: number): Promise<boolean> => {
 
     ///////////////////////////////////////////////////////
 
-    await consumedEvent(connection, event, seq);
+    await consumeEvent(connection, event, seq);
 
     await connection.commit();
 

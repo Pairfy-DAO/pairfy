@@ -1,11 +1,12 @@
 <template>
-    <div class="SearchPrompt flex center">
+    <div class="SearchPrompt center">
 
         <DrawerComp v-model="filterDrawer" position="left" width="350px" :overlay="false">
             <SearchPanel @onApply="filterDrawer = false" />
         </DrawerComp>
 
-        <form class="SearchPrompt-form" @submit.prevent="submitPrompt">
+        <form class="SearchPrompt-form" :class="{ 'focused': isFocused }" @focusin="isFocused = true"
+            @focusout="isFocused = false" @submit.prevent="submitPrompt">
             <div class="controls">
                 <div class="SearchPrompt-input flex">
                     <textarea v-model="prompt" aria-label="Prompt" @keydown.enter.exact.prevent="submitPrompt" rows="1"
@@ -51,6 +52,9 @@
 </template>
 
 <script setup>
+
+const isFocused = ref(false)
+
 const filterDrawer = ref(false)
 
 function openFilters(e) {
@@ -90,10 +94,17 @@ function submitPrompt() {
 <style scoped>
 .SearchPrompt {
     width: 100%;
-    height: 20rem;
     display: flex;
+    height: 30rem;
+    margin-top: 1rem;
     flex-direction: column;
     box-sizing: border-box;
+    background-size: cover;
+    justify-content: flex-end;
+    background-repeat: no-repeat;
+    border-radius: var(--radius-d);
+    background-position: center;
+    background-image: url('@/assets/banner/1.png');
 }
 
 .controls {
@@ -117,22 +128,27 @@ function submitPrompt() {
     display: flex;
     padding: 1rem;
     max-width: 50%;
-    margin-top: 4rem;
     margin: auto auto;
+    margin-bottom: 2rem;
     padding-top: 1rem;
     position: relative;
     align-items: center;
     box-sizing: border-box;
     padding-bottom: 0.75rem;
-    box-shadow: var(--shadow-a);
+    box-shadow: var(--shadow-c);
     border-radius: var(--radius-d);
     background: var(--background-a);
     transition: var(--transition-a);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-a);
+}
+
+.SearchPrompt-form.focused {
+    border: 1px solid var(--border-b);
 }
 
 .SearchPrompt-form:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-b);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .SearchPrompt-input {

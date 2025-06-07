@@ -115,13 +115,14 @@ const images = ref<UploadedImg[]>([...props.modelValue]);
 
 watch(() => props.modelValue, (newVal) => {
   images.value = [...newVal];
+  validate()
 });
- 
+
 const positions = computed(() => images.value.map((img) => img.id));
 
 const imageCounter = computed(() => images.value.length);
 
-const validate = () => {
+function validate() {
   const hasValidImage = images.value.length > 0;
   emit('valid', { valid: hasValidImage, value: { images: images.value, positions: positions.value } });
 };
@@ -213,12 +214,6 @@ const onFilesSelected = (event: Event) => {
 };
 
 onMounted(() => {
-
-  nextTick(() => {
-    validate();
-  });
-
-
   if (grid.value) {
     Sortable.create(grid.value, {
       animation: 200,
@@ -248,9 +243,9 @@ const removeImage = (id: string) => {
   const index = images.value.findIndex(img => img.id === id);
 
   if (index === -1) {
-  console.error("Image not found to remove", id);
-  return;
-}
+    console.error("Image not found to remove", id);
+    return;
+  }
 
   images.value.splice(index, 1);
   emit('update:modelValue', images.value);

@@ -1,7 +1,7 @@
 <template>
     <div class="ProductModel flex" :class="{ isCurrent }">
         <div class="icon flex">
-            <img src="https://m.media-amazon.com/images/I/61cCf94xIEL.__AC_SX300_SY300_QL70_FMwebp_.jpg" alt="">
+            <img :src="getImageSrc(product.media[0].resolutions.large)" alt="">
         </div>
 
         <div class="body">
@@ -25,10 +25,15 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { formatUSD } from '~/utils/utils'
+import placeholderImage from '@/assets/icon/image.svg'
 
+function getImageSrc(item) {
+  return item ? useMediaUrl(item) : placeholderImage
+}
 const route = useRoute()
+
+const product = useProductStore()
 
 const props = defineProps({
     id: String,
@@ -125,7 +130,7 @@ const save = computed(() => discount.value ? `Save $${formatUSD(price.value - di
 }
 
 .saved {
-    font-weight: 300;
+    font-weight: 400;
 }
 
 .divider {
@@ -137,6 +142,6 @@ const save = computed(() => discount.value ? `Save $${formatUSD(price.value - di
 
 .condition {
     text-transform: capitalize;
-    font-weight: 300;
+    font-weight: 400;
 }
 </style>

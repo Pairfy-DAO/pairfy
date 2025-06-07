@@ -33,7 +33,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 
 function emitClose() {
-  if(props.closable){
+  if (props.closable) {
     emit('update:modelValue', false);
   }
 }
@@ -47,6 +47,45 @@ function close() {
 }
 
 defineExpose({ open, close });
+
+let scrollY = 0
+let isLocked = false
+
+function lockScroll() {
+  if (isLocked) return
+  scrollY = window.scrollY
+  document.body.style.position = 'fixed'
+  document.body.style.top = `-${scrollY}px`
+  document.body.style.width = '100%'
+  isLocked = true
+}
+
+function unlockScroll() {
+  if (!isLocked) return
+  document.body.style.position = ''
+  document.body.style.top = ''
+  document.body.style.width = ''
+  window.scrollTo(0, scrollY)
+  isLocked = false
+}
+
+if (import.meta.client) {
+  watch(
+    () => props.modelValue,
+    (val) => {
+      if (val) lockScroll()
+      else unlockScroll()
+    }
+  )
+
+  onMounted(() => {
+    if (props.modelValue) lockScroll()
+  })
+  onBeforeUnmount(() => {
+    unlockScroll()
+  })
+}
+
 </script>
 
 <style scoped>
@@ -67,16 +106,25 @@ defineExpose({ open, close });
   background: var(--background-a);
   border-radius: var(--radius-c);
   box-shadow: var(--shadow-b);
+  overflow: hidden;
   min-width: 300px;
 }
 
 button {
+  transition: var(--transition-a);
   background: transparent;
+  color: var(--text-b);
   cursor: pointer;
   border: none;
 }
 
+button:hover {
+  color: var(--text-a);
+}
+
 .header {
   width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 </style>

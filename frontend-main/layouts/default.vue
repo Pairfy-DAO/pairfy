@@ -21,6 +21,7 @@ onMounted(() => {
 
 <style scoped>
 .layout {
+  background: var(--background-b); 
   flex-direction: column;
   height: 100vh;
 }

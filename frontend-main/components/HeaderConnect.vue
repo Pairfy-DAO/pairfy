@@ -35,14 +35,12 @@ button:hover {
 }
 
 button.contrast {
-    border: 2px solid var(--primary-a);
+    border: 2px solid white;
     background: var(--primary-a);
     color: var(--text-w);
 }
 
 button.contrast:hover {
     opacity: 0.8;
-    color: var(--text-w);
-    border: 2px solid var(--primary-a);
 }
 </style>

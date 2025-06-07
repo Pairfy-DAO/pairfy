@@ -1,7 +1,26 @@
 export const useProductStore = defineStore("product", () => {
   const product = ref(null);
   const media = ref([]);
-  const cardanoDialog = ref(false);
+
+  const cardanoDialog = ref(true);
+
+  const toastMessage = ref<ToastMessage | null>(null);
+
+  type ToastType = "success" | "error" | "info" | "default";
+
+  type ToastMessage = {
+    message: string;
+    type: ToastType;
+    duration: number;
+  };
+
+  const showToast = (message: string, type: ToastType, duration: number) => {
+    toastMessage.value = {
+      message,
+      type,
+      duration,
+    };
+  };
 
   function showCardanoDialog(value: boolean) {
     cardanoDialog.value = value;
@@ -22,7 +41,9 @@ export const useProductStore = defineStore("product", () => {
     media,
     clear,
     setProductData,
+    toastMessage,
     showCardanoDialog,
-    cardanoDialog
+    cardanoDialog,
+    showToast
   };
 });

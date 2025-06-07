@@ -4,7 +4,7 @@
 
       <div class="left-column flex">
         <img class="icon" v-if="!isContrast" src="@/assets/brand/icon-white.svg" alt="" @click="navigateTo('/')">
-        <img class="icon" v-if="isContrast" src="@/assets/brand/icon.svg" alt="" @click="navigateTo('/')">
+        <img class="icon" v-if="isContrast" src="@/assets/brand/icon-white.svg" alt="" @click="navigateTo('/')">
 
         <ul class="HeaderContent-nav">
 
@@ -71,20 +71,20 @@ watch(() => route.path, (newPath) => {
   color: var(--text-w);
   position: fixed;
   z-index: 11000;
-  height: 4rem;
   width: 100%;
   top: 1rem;
 }
 
 .HeaderContent-body {
+  gap: 1rem;
   display: grid;
   width: inherit;
   color: inherit;
   font-weight: 500;
   align-items: center;
-  padding: 0.75rem 0rem;
+  box-sizing: border-box;
   max-width: var(--body-a);
-  grid-template-columns: 1fr 1.25fr 0.5fr;
+  grid-template-columns: 1fr 1.5fr 0.25fr;
 }
 
 .HeaderContent-nav {
@@ -101,7 +101,7 @@ watch(() => route.path, (newPath) => {
   cursor: pointer;
   padding: 0.5rem 1rem;
   border-radius: var(--radius-f);
-  transition: background-color 0.2s;
+  transition: var(--transition-a);
 }
 
 .HeaderContent-body li:hover {
@@ -112,19 +112,20 @@ watch(() => route.path, (newPath) => {
 
 
 .HeaderContent.contrast {
-  margin-top: 2rem;
+  margin-top: 3rem;
   position: initial;
-  background: var(--background-a);
-  border-bottom: 1px solid var(--border-a);
-}
+} 
 
 .HeaderContent-body.contrast {
-  padding: 0.75rem 0;
-  color: var(--text-a);
+  color: var(--text-w);
+  padding: 0.75rem 1rem;
+  background: var(--primary-a);
+  border-radius: var(--radius-c);
+  box-shadow: var(--shadow-b);
 }
 
 .HeaderContent-body li.contrast:hover {
-  color: var(--primary-a);
-  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-w);
+  background: rgba(255, 255, 255, 0.1);
 }
 </style>

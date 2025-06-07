@@ -1,6 +1,6 @@
 import { Connection } from "mysql2/promise";
 
-export async function consumedEvent(
+export async function consumeEvent(
   connection: Connection,
   event: any,
   seq: number
@@ -13,6 +13,6 @@ export async function consumedEvent(
   const checkResult = "affectedRows" in result && result.affectedRows === 1;
 
   if (!checkResult) {
-    throw new Error("consumedEventError");
+    throw new Error("consumeEventError");
   }
 }

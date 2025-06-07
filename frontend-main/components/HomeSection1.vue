@@ -15,6 +15,6 @@
 <style lang="css" scoped>
 .HomeSection1 {
     height: 100vh;
-    background: var(--black-a);
+    background: black;
 }
 </style>

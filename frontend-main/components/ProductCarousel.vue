@@ -29,15 +29,7 @@ const props = defineProps<{
 }>()
 
 const images = [
-  "https://m.media-amazon.com/images/I/61gKkYQn6lL._AC_UY218_.jpg",
-  "https://m.media-amazon.com/images/I/71Ecl1RS5jL._AC_UY218_.jpg",
-  "https://m.media-amazon.com/images/I/81uVOWLKOxL._AC_UY218_.jpg",
-  "https://m.media-amazon.com/images/I/41UlY9ofudL._AC_UY218_.jpg",
-  "https://m.media-amazon.com/images/I/616klipzdtL._AC_UY218_.jpg",
-  "https://m.media-amazon.com/images/I/51Y8jzQuHGL._AC_UY218_.jpg",
-  "https://m.media-amazon.com/images/I/61gKkYQn6lL._AC_UY218_.jpg",
-  "https://m.media-amazon.com/images/I/81uVOWLKOxL._AC_UY218_.jpg",
-  "https://m.media-amazon.com/images/I/81uVOWLKOxL._AC_UY218_.jpg",
+
 ]
 
 const carousel = ref<HTMLElement | null>(null)

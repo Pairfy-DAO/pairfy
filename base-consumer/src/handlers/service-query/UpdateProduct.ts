@@ -3,10 +3,11 @@ import {
   isProcessedEvent,
   consumeEvent,
   logger,
-  insertMedia
+  updateProduct,
 } from "@pairfy/common";
+import { updateProductIndex } from "./utils/weaviate.js";
 
-export const CreateMedia = async (
+export const UpdateProduct = async (
   event: any,
   seq: number
 ): Promise<boolean> => {
@@ -20,7 +21,6 @@ export const CreateMedia = async (
     const processed = await isProcessedEvent(connection, event.id);
 
     if (processed) {
-      
       logger.error({
         service: "service-query-consumer",
         event: "event.repeated",
@@ -31,16 +31,29 @@ export const CreateMedia = async (
       return Promise.resolve(true);
     }
 
-    const dataParsed = JSON.parse(event.data);
+    const product = JSON.parse(event.data);
+
+    console.log(product.name);
 
     await connection.beginTransaction();
 
     ///////////////////////////////////////////////////////
 
-    const [insertResult] = await insertMedia(connection, dataParsed);
+    const updated = await updateProduct(
+      connection,
+      product.id,
+      product.schema_v - 1,
+      product
+    );
 
-    if (insertResult.affectedRows !== 1) {
-      throw new Error("CreateMediaInsertError");
+    if (updated.affectedRows !== 1) {
+      throw new Error("UpdateProductError");
+    }
+
+    const updateIndex = await updateProductIndex(product);
+
+    if(!updateIndex){
+      throw new Error("UpdateProductIndexError");
     }
 
     await consumeEvent(connection, event, seq);
@@ -52,9 +65,9 @@ export const CreateMedia = async (
     logger.info({
       service: "service-query-consumer",
       event: "event.consumed",
-      message: 'event consumed',
-      eventId: event.id
-    })
+      message: "event consumed",
+      eventId: event.id,
+    });
 
     response = Promise.resolve(true);
   } catch (error: any) {

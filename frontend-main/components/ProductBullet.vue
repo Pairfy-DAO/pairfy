@@ -21,8 +21,8 @@ const bullets = computed(() => product.value.bullet_list)
 <style scoped>
 .ProductBullet {
     border-radius: var(--radius-d);
-    background: var(--primary-a);
-    color: var(--text-w);
+    background: var(--background-b);
+    color: var(--text-a);
     padding: 1.5rem;
 }
 
@@ -45,7 +45,7 @@ const bullets = computed(() => product.value.bullet_list)
 }
 
 .checkmark {
-    color: var(--text-w);
+    color: var(--text-a);
     margin-right: 0.5rem;
     font-weight: bold;
 }

@@ -3,6 +3,9 @@
         <ToastComp ref="toastRef" />
 
         <div class="grid">
+
+            <!--GRID-ROW-->
+
             <div class="grid-row">
                 <div class="grid-title">
                     <span>Create</span>
@@ -22,8 +25,8 @@
                     Fill in the details to publish a new product.
                 </div>
                 <div class="grid-item">
-                    <InputProductName v-model="productName" id="create-product-name"
-                        placeholder="e.g. Headphones" @valid="productNameValid = $event.valid" />
+                    <InputProductName v-model="productName" id="create-product-name" placeholder="e.g. Headphones"
+                        @valid="productNameValid = $event.valid" />
                 </div>
                 <div class="grid-item">
                     <InputProductPrice v-model="productPrice" id="create-product-price"
@@ -38,6 +41,8 @@
                         @valid="productBrandValid = $event.valid" />
                 </div>
             </div>
+
+            <!--GRID-ROW-->
 
             <div class="grid-row">
                 <div class="grid-title">
@@ -81,6 +86,8 @@
                 </div>
             </div>
 
+            <!--GRID-ROW-->
+
             <div class="grid-row">
                 <div class="grid-title">
                     <span>Description</span>
@@ -104,6 +111,8 @@
                     <EditorComp v-model="productDescription" @valid="onEditorChange" />
                 </div>
             </div>
+
+            <!--GRID-ROW-->
 
             <div class="grid-row">
                 <div class="grid-title">
@@ -130,6 +139,8 @@
                 </div>
             </div>
 
+            <!--GRID-ROW-->
+
             <div class="grid-row">
                 <div class="grid-title">
                     <span>Upload Images</span>
@@ -151,6 +162,8 @@
                 </div>
                 <UploadImagesLocal v-model="productImages" @valid="onImagesChange" />
             </div>
+
+            <!--GRID-ROW-->
 
             <div class="grid-row">
                 <div class="grid-title">
@@ -174,6 +187,7 @@
                 </div>
             </div>
 
+            <!--GRID-ROW-->
 
             <div class="grid-row">
                 <div class="grid-title">
@@ -213,6 +227,8 @@
                 </div>
             </div>
 
+            <!--GRID-ROW-->
+
             <div class="grid-row">
                 <div class="grid-title">
                     <span>Discount</span>
@@ -239,6 +255,8 @@
                 </div>
             </div>
 
+            <!--GRID-ROW-->
+
             <div class="grid-row">
                 <div class="grid-title">
                     Publication
@@ -259,23 +277,18 @@
 <script setup>
 import categoryList from '@/assets/json/categories.json'
 import countryList from '@/assets/json/countries.json'
+import { gql } from 'graphql-tag'
 
 const toastRef = ref(null);
 
-const displayMessage = (message, type, duration) => {
-    toastRef.value?.showToast(message, type, duration)
-}
-
-const loading = ref(false)
-
 const categories = computed(() =>
-
     Object.values(categoryList).map(category => ({
         label: category.label,
         code: category.code,
     }))
-
 )
+
+const loading = ref(false)
 
 const countries = ref(countryList)
 
@@ -307,7 +320,7 @@ const productDescription = ref(null)
 const productDescriptionHTML = ref(null)
 const productDescriptionValid = ref(false)
 
-function onEditorChange(event) {
+const onEditorChange = (event) => {
     productDescriptionValid.value = event.valid
     productDescriptionHTML.value = event.value
 }
@@ -339,7 +352,7 @@ const productImagesValid = ref(false)
 const productImagesPosition = ref([])
 
 const onImagesChange = (event) => {
-    //test
+    /* TEST
 
     const areEqual = (arr1, arr2) => {
         if (arr1.length !== arr2.length) {
@@ -356,56 +369,47 @@ const onImagesChange = (event) => {
     };
 
     console.log("imagesCoherence", areEqual(productImages.value.map((e) => e.id), event.value.positions))
+ */
 
     productImagesPosition.value = event.value.positions
     productImagesValid.value = event.valid
 }
 
-const validateParams = () => {
-    const params = [
-        !productNameValid.value,
-        !productPriceValid.value,
-        !productSkuValid.value,
-        !productModelValid.value,
-        !productBrandValid.value,
-        !productOriginValid.value,
-        !productCityValid.value,
-        !productPostalValid.value,
-        !productDescriptionValid.value,
-        !productImagesValid.value,
-        !productBulletlistValid.value,
-        !productCategoryValid.value,
-        !productConditionValid.value,
-        !productColorValid.value
-    ]
+const { $productClient } = useNuxtApp()
 
-    console.log(params)
-
-    return params.includes(true)
-}
-
+const CREATE_PRODUCT_MUTATION = gql`
+  mutation($createProductVariable: CreateProductInput!) {
+    createProduct(createProductInput: $createProductVariable) {
+      success
+      message
+      data {
+        product_id
+      }
+    }
+  }
+`
 
 const onCreateProduct = async () => {
+    if (import.meta.server) return;
+
     loading.value = true
 
+    if (!isValidParams()) {
+        const paramErrorMessage = `Some required details are missing. Please ensure all mandatory fields — such as product images, category, and description — are properly filled out before submitting.`
+        loading.value = false
+        return displayMessage(paramErrorMessage, 'error', 30_000)
+    }
+
     try {
-        if (validateParams()) {
-            displayMessage(
-                `Some required details are missing. Please ensure all mandatory fields — such as product images, category, and description — are properly filled out before submitting.`,
-                'error',
-                30_000
-            )
-            return
-        }
 
         const uploadMedia = await useUploadMedia(productImages.value)
 
         if (!uploadMedia || !uploadMedia.success) {
-            displayMessage('Image upload failed. Please try again.', 'error', 30_000)
-            return
+            return displayMessage('Image upload failed. Please try again.', 'error', 30_000)
+            
         }
 
-        const createProductBody = {
+        const createProductVariable = {
             name: productName.value,
             price: productPrice.value,
             sku: productSku.value,
@@ -425,23 +429,20 @@ const onCreateProduct = async () => {
             file_ids: uploadMedia.data.file_ids,
         }
 
-        const { data, error } = await useFetch('/api/product/createProduct', {
-            method: 'POST',
-            credentials: 'include',
-            body: createProductBody,
-            async onResponseError({ response }) {
-                throw new Error(JSON.stringify(response._data?.data || 'Unknown server error'))
-            }
-        })
+        try {
+            const { data } = await $productClient.mutate({
+                mutation: CREATE_PRODUCT_MUTATION,
+                variables: {
+                    createProductVariable
+                }
+            })
 
-        if (error.value) {
-            console.error('Error creating the product:', error)
-            displayMessage(error.value, 'error', 30_000)
+            displayMessage(data?.createProduct.message, 'success', 30_000)
+        } catch (err) {
+            console.error('Error creating the product:', err)
+            displayMessage(err, 'error', 30_000)
         }
 
-        if (data.value?.success) {
-            displayMessage(data.value.message, 'success', 30_000)
-        }
     } catch (err) {
         console.error('Error during product creation:', err)
         displayMessage(err?.message || 'Product creation failed.', 'error', 30_000)
@@ -449,6 +450,34 @@ const onCreateProduct = async () => {
         loading.value = false
     }
 }
+
+function isValidParams() {
+    const params = [
+        productNameValid.value,
+        productPriceValid.value,
+        productSkuValid.value,
+        productModelValid.value,
+        productBrandValid.value,
+        productOriginValid.value,
+        productCityValid.value,
+        productPostalValid.value,
+        productDescriptionValid.value,
+        productImagesValid.value,
+        productBulletlistValid.value,
+        productCategoryValid.value,
+        productConditionValid.value,
+        productColorValid.value
+    ]
+
+    console.log(params)
+
+    return !params.includes(false)
+}
+
+function displayMessage(message, type, duration) {
+    toastRef.value?.showToast(message, type, duration)
+}
+
 </script>
 
 <style lang="css" scoped>

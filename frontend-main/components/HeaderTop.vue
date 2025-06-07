@@ -73,7 +73,6 @@ const isContrast = computed(() => ['country-p-id', 'country-s'].includes(route.n
 .HeaderTop-price,
 .HeaderTop-network {
     margin-left: 2rem;
-    font-weight: 400;
 }
 
 .HeaderTop-network svg {
@@ -85,7 +84,7 @@ const isContrast = computed(() => ['country-p-id', 'country-s'].includes(route.n
 }
 
 .HeaderTop-location img {
-    height: 1rem;
+    height: 0.75rem;
 }
 
 .HeaderTop-location span:nth-child(2) {

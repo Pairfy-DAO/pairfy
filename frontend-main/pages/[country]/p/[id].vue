@@ -2,17 +2,18 @@
   <div class="product-page">
     <ToastComp ref="toastRef" />
 
-    <DialogComp v-model="productStore.cardanoDialog" @update:modelValue="productStore.cardanoDialog = $event">
-      <p>Contenido del diálogo</p>
+    <DialogComp v-model="product.cardanoDialog" @update:modelValue="product.cardanoDialog = $event">
+      <CardanoForm />
     </DialogComp>
 
-    <div class="container" v-if="product">
+    <div class="container" v-if="productData">
       <div class="left-column">
         <ProductMedia />
         <DividerComp />
         <ProductBullet />
         <DividerComp />
         <ProductDescription />
+        <DividerComp invisible />
       </div>
 
       <div class="center-column">
@@ -25,15 +26,15 @@
           <div class="right-scroll" ref="rightScrollRef">
 
             <div class="product-brand">
-              {{ product.brand }}
+              {{ productData.brand }}
             </div>
 
             <div class="product-name">
-              {{ product.name }}
+              {{ productData.name }}
             </div>
 
             <div class="product-sku">
-              <span>SKU {{ product.sku }}</span>
+              <span>SKU {{ productData.sku }}</span>
             </div>
 
             <div class="product-rating">
@@ -42,19 +43,25 @@
               <span>(384)</span>
             </div>
 
+            <div class="product-price">
+              <span>{{ formatUSD(productData.discount ? productData.discount_value : productData.price) }}</span>
+              <span>USD</span>
+            </div>
+
             <div class="subtitle">
               Model. <span>Check variations.</span>
             </div>
 
-            <ProductModel v-for="n in 1" :key="n" :id="product.id" :model="product.model"
-              :condition="product.condition_" :color="product.color" :price="product.price" :discount="product.discount"
-              :discount_percent="product.discount_percent" :discount_value="product.discount_value" />
+            <ProductModel v-for="n in 1" :key="n" :id="productData.id" :model="productData.model"
+              :condition="productData.condition_" :color="productData.color" :price="productData.price"
+              :discount="productData.discount" :discount_percent="productData.discount_percent"
+              :discount_value="productData.discount_value" />
 
             <div class="subtitle">
               Finish. <span>Choose your network.</span>
             </div>
 
-            <BuyButton @click="productStore.showCardanoDialog(true)">
+            <BuyButton @click="product.showCardanoDialog(true)">
               <template #icon>
                 <img class="icon" src="@/assets/icon/cardano.svg" alt="">
               </template>
@@ -83,8 +90,9 @@ import { useIntersectionObserver } from '@vueuse/core'
 
 const route = useRoute();
 
-const productStore = useProductStore()
-const product = computed(() => productStore.product)
+const product = useProductStore()
+
+const productData = computed(() => product.product)
 
 const toastRef = ref(null);
 
@@ -156,7 +164,7 @@ const GET_PRODUCT_QUERY = gql`
 
 const { $apollo } = useNuxtApp()
 
-const loading = ref(true)
+const productId = ref(null);
 
 const getProductError = ref(null)
 
@@ -164,11 +172,15 @@ let pollIntervalId = null
 
 watch(
   () => route.params.id,
-  (id) => fetchProduct(),
+  (id) => {
+    productId.value = id
+    fetchProduct()
+  },
   { immediate: true }
 )
 
 onMounted(() => {
+  watchToast()
   observeTrigger()
   addScrollListener()
   showGetProductError()
@@ -187,18 +199,21 @@ async function fetchProduct() {
       query: GET_PRODUCT_QUERY,
       variables: {
         getProductVariable: {
-          id: route.params.id
+          id: productId.value
         }
       },
       fetchPolicy: 'no-cache'
     })
 
-    productStore.setProductData(data.getProduct)
+    product.setProductData(data.getProduct)
   } catch (err) {
     getProductError.value = err
-  } finally {
-    loading.value = false
   }
+}
+
+
+function watchToast() {
+  watch(() => product.toastMessage, ({ message, type, duration }) => toastRef.value?.showToast(message, type, duration));
 }
 
 function observeTrigger() {
@@ -229,10 +244,6 @@ function clearIntervals() {
   clearInterval(pollIntervalId)
 }
 
-function displayMessage(message, type, duration) {
-  toastRef.value?.showToast(message, type, duration)
-}
-
 function addScrollListener() {
   window.addEventListener('scroll', syncScroll)
 }
@@ -242,7 +253,7 @@ function removeScrollListener() {
 }
 
 function showGetProductError() {
-  if (getProductError.value) displayMessage(getProductError.value, 'error')
+  if (getProductError.value) product.showToast(getProductError.value, 'error', 10_000)
 }
 </script>
 
@@ -250,22 +261,29 @@ function showGetProductError() {
 .product-page {
   width: 100%;
   display: flex;
+  align-items: center;
+  flex-direction: column;
   justify-content: center;
+  background: var(--background-b);
 }
 
 .container {
   display: grid;
   width: inherit;
+  margin-top: 1rem;
   box-sizing: border-box;
   max-width: var(--body-a);
-  grid-template-columns: 1fr 3rem 350px;
+  grid-template-columns: 4fr 0.5rem 1fr;
+
 }
 
 .left-column {
   width: inherit;
-  width: inherit;
-  margin-top: 4rem;
+  padding: 2rem;
   box-sizing: border-box;
+  border-radius: var(--radius-b);
+  background: var(--background-a);
+  border: 1px solid var(--border-a);
 }
 
 .center-column {
@@ -273,8 +291,11 @@ function showGetProductError() {
 }
 
 .right-column {
-  width: 350px;
+  width: 375px;
   box-sizing: border-box;
+  border-radius: var(--radius-b);
+  background: var(--background-a);
+  border: 1px solid var(--border-a);
 }
 
 .trigger {
@@ -302,8 +323,9 @@ function showGetProductError() {
 
 .right-scroll {
   height: 100%;
+  padding: 1.5rem;
   overflow-y: auto;
-  padding-top: 4rem;
+  padding-top: 2rem;
 }
 
 .right-scroll {
@@ -338,7 +360,7 @@ function showGetProductError() {
 }
 
 .subtitle {
-  font-size: var(--text-size-4);
+  font-size: var(--text-size-3);
   margin-bottom: 2rem;
   margin-top: 2rem;
   font-weight: 600;
@@ -349,10 +371,20 @@ function showGetProductError() {
 }
 
 .product-name {
-  font-size: var(--text-size-4);
+  font-size: var(--text-size-3);
   margin-top: 0.5rem;
   line-height: 2rem;
   font-weight: 400;
+}
+
+.product-price {
+  font-size: var(--text-size-6);
+  font-weight: 700;
+  margin-top: 1rem;
+}
+
+.product-price span:nth-child(2) {
+  margin-left: 0.5rem;
 }
 
 .product-rating {
@@ -383,7 +415,7 @@ function showGetProductError() {
 }
 
 .product-brand {
-  font-size: var(--text-size-3);
+  font-size: var(--text-size-2);
   font-weight: 700;
 }
 

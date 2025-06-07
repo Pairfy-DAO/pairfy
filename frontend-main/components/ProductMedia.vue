@@ -115,9 +115,8 @@
 </template>
 
 <script setup>
-import placeholderImage from '@/assets/placeholder/image.svg'
+import placeholderImage from '@/assets/icon/image.svg'
 import DialogComp from '@/components/DialogComp.vue'
-import { ref, computed } from 'vue'
 
 const productStore = useProductStore()
 const media = computed(() => productStore.media)
@@ -191,7 +190,6 @@ function getImageSrc(item) {
 
 <style scoped>
 .ProductMedia {
-  background: var(--background-a);
   border-radius: var(--radius-d);
   position: relative;
   display: flex;

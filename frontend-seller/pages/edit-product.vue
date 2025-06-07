@@ -4,9 +4,11 @@
 
         <div class="grid">
 
+            <!--GRID-ROW-->
+
             <div class="grid-row">
                 <div class="grid-title">
-                    <span>Edit</span> 
+                    <span>Edit</span>
                     <TipComp text="Edit the details of your product below." position="right">
                         <span class="flex" style="margin-left: 0.5rem;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
@@ -40,6 +42,8 @@
                         @valid="productBrandValid = $event.valid" />
                 </div>
             </div>
+
+            <!--GRID-ROW-->
 
             <div class="grid-row">
                 <div class="grid-title">
@@ -82,6 +86,8 @@
                 </div>
             </div>
 
+            <!--GRID-ROW-->
+
             <div class="grid-row">
                 <div class="grid-title">
                     <span>Description</span>
@@ -101,10 +107,14 @@
                 <div class="grid-subtitle">
                     Create a product description using the AI tool.
                 </div>
+
                 <div class="grid-item">
-                    <EditorComp v-model="productDescription" @valid="productDescriptionValid = $event.valid" />
+                    <EditorComp v-model="productDescription" :htmlContent="productDescriptionHTML"
+                        @valid="onEditorChange" />
                 </div>
             </div>
+
+            <!--GRID-ROW-->
 
             <div class="grid-row">
                 <div class="grid-title">
@@ -131,6 +141,8 @@
                 </div>
             </div>
 
+            <!--GRID-ROW-->
+
             <div class="grid-row">
                 <div class="grid-title">
                     <span>Upload Images</span>
@@ -150,8 +162,11 @@
                 <div class="grid-subtitle">
                     Please upload product images — maximum size: 5 MB, recommended dimensions: 500×500 pixels.
                 </div>
+
                 <UploadImagesEdit v-model="productImages" @valid="onImagesChange" />
             </div>
+
+            <!--GRID-ROW-->
 
             <div class="grid-row">
                 <div class="grid-title">
@@ -175,7 +190,7 @@
                 </div>
             </div>
 
-
+            <!--GRID-ROW-->
 
             <div class="grid-row">
                 <div class="grid-title">
@@ -215,6 +230,8 @@
                 </div>
             </div>
 
+            <!--GRID-ROW-->
+
             <div class="grid-row">
                 <div class="grid-title">
                     <span>Discount</span>
@@ -241,6 +258,8 @@
                 </div>
             </div>
 
+            <!--GRID-ROW-->
+
             <div class="grid-row">
                 <div class="grid-title">
                     Publication
@@ -250,7 +269,7 @@
                 </div>
 
                 <div class="grid-item">
-                    <ButtonSolid label="Apply Changes" @click="onApplyChanges" :loading="loading" />
+                    <ButtonSolid label="Apply" @click="onApplyChanges" :loading="loading" />
                 </div>
             </div>
 
@@ -262,16 +281,11 @@
 <script setup>
 import categoryList from '@/assets/json/categories.json'
 import countryList from '@/assets/json/countries.json'
+import { gql } from 'graphql-tag'
 
 const route = useRoute()
 
 const toastRef = ref(null);
-
-const displayMessage = (message, type, duration) => {
-    toastRef.value?.showToast(message, type, duration)
-}
-
-const loading = ref(false)
 
 const categories = computed(() =>
     Object.values(categoryList).map(category => ({
@@ -279,6 +293,8 @@ const categories = computed(() =>
         code: category.code,
     }))
 )
+
+const loading = ref(false)
 
 const countries = ref(countryList)
 
@@ -309,7 +325,13 @@ const productPostal = ref(null)
 const productPostalValid = ref(false)
 
 const productDescription = ref(null)
+const productDescriptionHTML = ref(null)
 const productDescriptionValid = ref(false)
+
+const onEditorChange = (event) => {
+    productDescriptionValid.value = event.valid
+    productDescriptionHTML.value = event.value
+}
 
 const productBulletlist = ref([])
 const productBulletlistValid = ref(false)
@@ -327,6 +349,18 @@ const productImages = ref([])
 const productImagesValid = ref(false)
 const productImagesPosition = ref([])
 
+const onImagesChange = (event) => {
+    console.log(productImages.value.map((e) => {
+        return {
+            id: e.id,
+            local: e.local
+        }
+    }))
+
+    productImagesPosition.value = event.value.positions
+    productImagesValid.value = event.valid
+}
+
 const productDiscountEnabled = ref(false);
 const productDiscountPercent = ref(0);
 
@@ -340,50 +374,61 @@ watch(productPrice, (newPrice) => {
     productDiscount.value.price = newPrice
 })
 
-const onImagesChange = (event) => {
-    //test
+const { $productClient } = useNuxtApp()
 
-    const areEqual = (arr1, arr2) => {
-        if (arr1.length !== arr2.length) {
-            return false;
+const getProductError = ref(null)
+
+const GET_PRODUCT_QUERY = gql`
+  query GetProduct($getProductVariable: GetProductInput!) {
+    getProduct(getProductInput: $getProductVariable) {
+        product {
+          id
+          group_id
+          media_group_id
+          media_position
+          status
+          moderated
+          thumbnail_url
+          name
+          price
+          sku
+          model
+          brand
+          description
+          category
+          bullet_list
+          color
+          condition_
+          country
+          origin
+          city
+          postal
+          discount
+          discount_value
+          discount_percent
+          created_at
         }
 
-        for (let i = 0; i < arr1.length; i++) {
-            if (arr1[i] !== arr2[i]) {
-                return false;
-            }
+        media {
+          id  
+          media_group_id  
+          product_id  
+          mime_type  
+          position  
+          alt_text  
+          resolutions  
+          created_at  
+          updated_at  
         }
+          
+    }
+  }
+`;
 
-        return true;
-    };
-
-    console.log("imagesCoherence", areEqual(productImages.value.map((e) => e.id), event.value.positions))
-
-
-    console.log(productImages.value.map((e) => {
-        return {
-            id: e.id,
-            local: e.local
-        }
-    }))
-
-    productImagesPosition.value = event.value.positions
-    productImagesValid.value = event.valid
-}
-
-const { data: initialData, error: getProductError } = await useAsyncData('product', () =>
-    $fetch('/api/product/getProduct', {
-        method: 'POST',
-        credentials: 'include',
-        body: {
-            id: route.query.id
-        },
-        headers: useRequestHeaders(['cookie']),
-        async onResponseError({ response }) {
-            throw new Error(JSON.stringify(response._data.data));
-        },
-    })
-)
+watch(
+    () => route.query.id,
+    (id) => fetchProduct(id)
+    , { immediate: true })
 
 onMounted(() => {
     if (getProductError.value) {
@@ -392,81 +437,29 @@ onMounted(() => {
     }
 })
 
-if (initialData.value) {
-    const product = initialData.value.product
-    const media = initialData.value.media
+const EDIT_PRODUCT_MUTATION = gql`
+  mutation($editProductVariable: EditProductInput!) {
+    editProduct(editProductInput: $editProductVariable) {
+      success
+      message
+    }
+  }
+`
 
-    productData.value = product
+async function onApplyChanges() {
+    if (import.meta.server) return;
 
-    productName.value = product.name
-    productPrice.value = product.price
-    productSku.value = product.sku
-    productModel.value = product.model
-    productBrand.value = product.brand
-    productOrigin.value = product.origin
-    productCity.value = product.city
-    productPostal.value = product.postal
-    productImages.value = media
-    productDescription.value = product.description
-    productBulletlist.value = product.bullet_list
-    productCategory.value = product.category
-    productCondition.value = product.condition_
-    productColor.value = product.color
-
-    productDiscountEnabled.value = product.discount
-    productDiscountPercent.value = product.discount_percent
-}
-
-
-const validateParams = () => {
-    const params = [
-        !productNameValid.value,
-        !productPriceValid.value,
-        !productSkuValid.value,
-        !productModelValid.value,
-        !productBrandValid.value,
-        !productOriginValid.value,
-        !productCityValid.value,
-        !productPostalValid.value,
-        !productDescriptionValid.value,
-        !productImagesValid.value,
-        !productBulletlistValid.value,
-        !productCategoryValid.value,
-        !productConditionValid.value,
-        !productColorValid.value
-    ]
-
-    console.log(params)
-
-    return params.includes(true)
-}
-
-const onApplyChanges = async () => {
     loading.value = true
 
+    if (!isValidParams()) {
+        const paramErrorMessage = `Some required details are missing. Please ensure all mandatory fields — such as product images, category, and description — are properly filled out before submitting.`
+        loading.value = false
+        return displayMessage(paramErrorMessage, 'error', 30_000)
+    }
+
     try {
-        if (validateParams()) {
-            const message = `Some required details are missing.
-                Please ensure all mandatory fields
-                — such as product images, category,
-                and description — are properly filled
-                out before submitting.`
-
-            displayMessage(
-                message,
-                'error',
-                30_000
-            )
-
-            return
-        }
-
-        const mediaGroupId = productData.value?.media_group_id
-
-        if (!mediaGroupId) return
-
-        const media = {
-            mediaGroupId,
+        const MEDIA = {
+            mediaGroupId: productData.value.media_group_id,
             fileIds: [...productImages.value.map((e) => e.id)]
         };
 
@@ -474,28 +467,27 @@ const onApplyChanges = async () => {
 
         if (localImages.length) {
 
-            const uploadMedia = await useUpdateMedia(localImages, media.mediaGroupId)
+            const uploadMedia = await useUpdateMedia(localImages, MEDIA.mediaGroupId)
 
             if (!uploadMedia || !uploadMedia.success) {
-                displayMessage('Image uploadMedia failed. Please try again.', 'error', 30_000)
-                return
+                return displayMessage('Image uploadMedia failed. Please try again.', 'error', 30_000)
             }
 
-            media.fileIds = replaceOldIdsWithNew(
-                media.fileIds,
+            MEDIA.fileIds = replaceOldIdsWithNew(
+                MEDIA.fileIds,
                 uploadMedia.data.old_ids,
                 uploadMedia.data.file_ids
             );
         }
 
-        const productChanges = {
-            id: productData.value.id, 
+        const editProductVariable = {
+            id: productData.value.id,
             name: productName.value,
             price: productPrice.value,
             sku: productSku.value,
             model: productModel.value,
             brand: productBrand.value,
-            description: productDescription.value,
+            description: productDescriptionHTML.value,
             category: productCategory.value,
             bullet_list: productBulletlist.value,
             color: productColor.value,
@@ -505,26 +497,22 @@ const onApplyChanges = async () => {
             postal: productPostal.value,
             discount: productDiscount.value.enabled,
             discount_percent: productDiscount.value.discount,
-            media_group_id: media.mediaGroupId,
-            file_ids: media.fileIds
+            media_group_id: MEDIA.mediaGroupId,
+            file_ids: MEDIA.fileIds
         }
 
-        const { data, error } = await useFetch('/api/product/editProduct', {
-            method: 'POST',
-            credentials: 'include',
-            body: productChanges,
-            async onResponseError({ response }) {
-                throw new Error(JSON.stringify(response._data?.data || 'Unknown server error'))
-            }
-        })
+        try {
+            const { data } = await $productClient.mutate({
+                mutation: EDIT_PRODUCT_MUTATION,
+                variables: {
+                    editProductVariable
+                }
+            })
 
-        if (error.value) {
-            console.error('Error creating the product:', error)
-            displayMessage(error.value, 'error', 30_000)
-        }
-
-        if (data.value?.success) {
-            displayMessage(data.value.message, 'success', 30_000)
+            displayMessage(data?.editProduct.message, 'success', 30_000)
+        } catch (err) {
+            console.error('Error editing the product:', err)
+            displayMessage(err, 'error', 30_000)
         }
     } catch (err) {
         console.error('Error during product creation:', err)
@@ -532,6 +520,72 @@ const onApplyChanges = async () => {
     } finally {
         loading.value = false
     }
+}
+
+async function fetchProduct(id) {
+    if (import.meta.server) return;
+
+    try {
+        const { data } = await $productClient.query({
+            query: GET_PRODUCT_QUERY,
+            variables: {
+                getProductVariable: {
+                    id
+                }
+            },
+            fetchPolicy: 'no-cache'
+        })
+
+        const product = data.getProduct.product
+        const media = data.getProduct.media
+
+        productData.value = product
+        productName.value = product.name
+        productPrice.value = product.price
+        productSku.value = product.sku
+        productModel.value = product.model
+        productBrand.value = product.brand
+        productOrigin.value = product.origin
+        productCity.value = product.city
+        productPostal.value = product.postal
+        productImages.value = media
+        productDescriptionHTML.value = product.description.html
+        productBulletlist.value = product.bullet_list
+        productCategory.value = product.category
+        productCondition.value = product.condition_
+        productColor.value = product.color
+
+        productDiscountEnabled.value = product.discount
+        productDiscountPercent.value = product.discount_percent
+
+
+    } catch (err) {
+        console.log(err)
+        getProductError.value = err
+    }
+}
+
+function isValidParams() {
+    const params = [
+        productNameValid.value,
+        productPriceValid.value,
+        productSkuValid.value,
+        productModelValid.value,
+        productBrandValid.value,
+        productOriginValid.value,
+        productCityValid.value,
+        productPostalValid.value,
+        productDescriptionValid.value,
+        productImagesValid.value,
+        productBulletlistValid.value,
+        productCategoryValid.value,
+        productConditionValid.value,
+        productColorValid.value
+    ]
+
+    console.log(params)
+
+    return !params.includes(false)
 }
 
 function replaceOldIdsWithNew(media, oldIds, fileIds) {
@@ -546,6 +600,11 @@ function replaceOldIdsWithNew(media, oldIds, fileIds) {
     return media.map(id =>
         replacementMap.has(id) ? replacementMap.get(id) : id
     );
+}
+
+
+function displayMessage(message, type, duration) {
+    toastRef.value?.showToast(message, type, duration)
 }
 </script>
 

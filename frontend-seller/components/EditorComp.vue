@@ -155,6 +155,11 @@ const props = defineProps({
   modelValue: {
     type: Object,
     default: () => null,
+  },
+
+  htmlContent: {
+    type: String,
+    default: () => ''
   }
 })
 
@@ -165,8 +170,6 @@ const editorLimit = ref(6000)
 const isGenerating = ref(false)
 const generativeEditor = ref('')
 
-const initialContent = ref(props.modelValue)
-
 watch(
   () => props.modelValue,
   (newVal) => {
@@ -174,9 +177,19 @@ watch(
       editor.value.commands.setContent(newVal)
     }
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 )
 
+watch(
+  () => props.htmlContent,
+  (newVal) => {
+    if (editor.value && newVal) {
+      editor.value.commands.setContent(newVal)
+      emitValid()
+    }
+  },
+  { immediate: true }
+)
 
 const ChunkSpan = Node.create({
   name: 'chunkSpan',
@@ -208,7 +221,7 @@ const setupEditor = async () => {
         TextStyle.configure({ types: [ListItem.name] }),
       ],
       editorProps: { attributes: { class: 'editor-class' } },
-      content: initialContent.value?.html || '',
+      content: '',
       onUpdate: ({ editor }) => {
         const json = editor.getJSON()
         const text = editor.getText().trim()
@@ -218,18 +231,26 @@ const setupEditor = async () => {
         emit('update:modelValue', json)
       },
     })
+  })
+}
 
-
-    const text = editor.value?.getText().trim() ?? ''
-    const json = editor.value?.getJSON() ?? null
+function emitValid() {
+  if (editor.value) {
+    const text = editor.value.getText().trim() ?? ''
+    const json = editor.value.getJSON() ?? null
+    const html = editor.value.getHTML()
 
     emit('valid', {
       valid: text.length > 0,
-      value: json
+      value: html
     })
 
-  })
+    console.log("Initial editor length", text.length)
+  } else {
+    console.error("emitError editor does not exist.")
+  }
 }
+
 
 const displayMessage = (message, type, duration) => {
   toastRef.value?.showToast(message, type, duration)
@@ -396,8 +417,10 @@ onBeforeUnmount(() => {
   padding: 1rem;
   width: 100%;
   overflow: scroll;
-  scrollbar-width: none;      /* Firefox */
-  -ms-overflow-style: none;   /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
 }
 
 .EditorComp-generative textarea:focus {
@@ -411,7 +434,7 @@ onBeforeUnmount(() => {
 
 .EditorComp-generative textarea::-webkit-scrollbar {
   width: 0.6rem;
-  display: none;    
+  display: none;
 }
 
 .EditorComp-generative textarea::-webkit-scrollbar-track {

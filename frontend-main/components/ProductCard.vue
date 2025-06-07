@@ -10,7 +10,7 @@
             <div class="ProductCard-title">
                 <span>{{ `${data.brand} -` }}</span>
                 <span>{{ `${truncateByWords(data.name, 15)}...` }}</span>
-            </div> 
+            </div>
 
             <div class="ProductCard-rating">
                 <RatingComp :rating="4" />
@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import placeholderImage from '@/assets/placeholder/image.svg'
+import placeholderImage from '@/assets/icon/image.svg'
 import { truncateByWords, formatUSD } from '~/utils/utils'
 
 const props = defineProps({
@@ -83,6 +83,7 @@ function getImageSrc(item) {
     border-radius: var(--radius-b);
     justify-content: space-between;
     background: var(--background-a);
+    transition: box-shadow 0.3s ease;
     animation: fadeInUp 0.5s forwards;
     border: 1px solid var(--border-a);
 }
@@ -94,16 +95,22 @@ function getImageSrc(item) {
     }
 }
 
+.ProductCard:hover {
+    box-shadow: var(--shadow-e)
+}
+
 .ProductCard-image {
     width: 100%;
-    aspect-ratio: 4 / 3;
-    position: relative;
+    display: flex;
     overflow: hidden;
+    position: relative;
+    aspect-ratio: 4 / 3;
+    justify-content: center;
 }
 
 .ProductCard-image img {
-    width: 100%;
-    height: 100%;
+    width: 95%;
+    height: 95%;
     object-fit: contain;
 }
 
