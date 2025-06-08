@@ -1,0 +1,53 @@
+global:
+  tlsDisable: true
+
+injector:
+  enabled: true
+
+server:
+  ha:
+    enabled: true
+    raft:
+      enabled: true
+      setNodeId: true
+      config: |
+        ui = true
+        listener "tcp" {
+          address     = "0.0.0.0:8200"
+          cluster_address = "0.0.0.0:8201"
+          tls_disable = 1
+        }
+        storage "raft" {
+          path    = "/vault/data"
+          node_id = "$(POD_NAME)"
+        }
+        api_addr = "http://$(POD_NAME).vault-internal:8200"
+        cluster_addr = "http://$(POD_NAME).vault-internal:8201"
+        disable_mlock = true
+        ui = true
+
+  dataStorage:
+    enabled: true
+    size: 1Gi
+    storageClass: "standard"
+
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "250Mi"
+    limits:
+      cpu: "500m"
+      memory: "500Mi"
+
+  affinity: {}        
+  tolerations: []     
+  nodeSelector: {}     
+
+ui:
+  enabled: true
+
+service:
+  enabled: true
+  type: LoadBalancer
+  port: 8200
+  targetPort: 8200

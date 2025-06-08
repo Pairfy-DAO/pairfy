@@ -1,0 +1,6 @@
+{
+    "jwt_supported_algs": ["RS256"],
+    "jwt_validation_pubkeys": [],
+    "bound_issuer": "my-issuer"
+  }
+  
