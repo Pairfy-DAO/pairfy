@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMediaGroupId = exports.getFileId = exports.getEventId = exports.getProductId = exports.productIdSchema = exports.productIdRegex = exports.getSellerId = void 0;
 exports.createId = createId;
 const nanoid_1 = require("nanoid");
+const uuid_1 = require("uuid");
 const zod_1 = require("zod");
 function createId(alphabet, length) {
     if (!alphabet || typeof alphabet !== "string") {
@@ -30,7 +31,7 @@ const getProductId = () => {
 };
 exports.getProductId = getProductId;
 const getEventId = () => {
-    return createId("abcdefghijklmnopqrstuvwxyz0123456789", 21);
+    return (0, uuid_1.v7)();
 };
 exports.getEventId = getEventId;
 const getFileId = () => {

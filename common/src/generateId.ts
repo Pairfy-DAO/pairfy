@@ -1,4 +1,5 @@
 import { customAlphabet } from "nanoid";
+import { v7 as uuidv7 } from 'uuid';
 import { z } from "zod";
 
 export function createId(alphabet: string, length: number): string {
@@ -31,9 +32,9 @@ export const getProductId = () => {
   return `PRD-${date}-${generate()}`;                  
 };
 
-export const getEventId = () =>{
-  return createId("abcdefghijklmnopqrstuvwxyz0123456789", 21)
-}
+export const getEventId = (): string => {
+  return uuidv7();
+};
 
 export const getFileId = () =>{
   return createId('ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz123456789', 16)

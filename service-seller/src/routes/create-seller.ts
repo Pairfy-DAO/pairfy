@@ -59,7 +59,13 @@ const createSellerHandler = async (req: Request, res: Response) => {
       username: params.username,
     };
 
-    const token = createToken(emailToken, "1h");
+    const token = createToken(
+      emailToken,
+      process.env.AGENT_JWT_KEY as string,
+      "1h",
+      "service-seller",
+      ["internal"]
+    );
 
     const emailScheme = {
       type: "register:seller",
