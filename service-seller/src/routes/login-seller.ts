@@ -13,7 +13,6 @@ import {
   isValidSignatureCIP30
 } from "@pairfy/common";
 import { getPubKeyHash } from "../utils/blockchain.js";
-import  verifyDataSignature  from '@cardano-foundation/cardano-verify-datasignature';
 import { LoginInput, validateParams } from "../validators/login-seller.js";
 
 const loginSellerMiddlewares: any = [sellerMiddleware, validateParams];
@@ -108,7 +107,13 @@ const loginSellerHandler = async (req: Request, res: Response) => {
       });
     }
 
-    const token = createToken(sellerData);
+    const token = createToken(
+      sellerData,
+      process.env.AGENT_JWT_KEY as string,
+      process.env.TOKEN_EXPIRATION as string,
+      "service-seller",
+      ["internal"]
+    );
 
     req.session = {
       jwt: token,

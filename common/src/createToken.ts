@@ -4,16 +4,21 @@ import ms from "ms";
 export function createToken(
   params: object,
   privateKey: string,
-  expires: ms.StringValue | number,
+  expires: string,
   issuer: string,
-  audience: string
+  audience: string[]
 ): string {
+
+  const expiresIn: ms.StringValue = expires as ms.StringValue
+
   const options: jwt.SignOptions = {
-    expiresIn: expires,
+    expiresIn,
     algorithm: "RS256",
     issuer,
     audience
   };
 
-  return jwt.sign(params, privateKey, options);
+  const key = Buffer.from(privateKey, 'base64').toString('utf-8');
+
+  return jwt.sign(params, key, options);
 }

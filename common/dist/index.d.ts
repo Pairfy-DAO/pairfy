@@ -36,3 +36,4 @@ export * from "./userAuth";
 export * from "./getUserNickname";
 export * from "./findUserByPubKeyhash";
 export * from "./isValidSignatureCIP30";
+export * from "./createToken";

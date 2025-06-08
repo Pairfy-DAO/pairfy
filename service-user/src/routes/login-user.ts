@@ -119,7 +119,13 @@ export const loginUserHandler = async (req: Request, res: Response) => {
 
     console.log(schemeValue);
 
-    const token = createToken(tokenData);
+    const token = createToken(
+      tokenData,
+      process.env.AGENT_JWT_KEY as string,
+      process.env.TOKEN_EXPIRATION as string,
+      "service-user",
+      ["internal"]
+    );
 
     req.session = {
       jwt: token,

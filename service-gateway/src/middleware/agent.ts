@@ -43,9 +43,11 @@ const agentMiddleware = (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
+    const privateKey = Buffer.from(process.env.AGENT_JWT_KEY!, 'base64').toString('utf-8');
+
     const sessionData = jwt.verify(
       req.session.jwt,
-      process.env.AGENT_JWT_KEY!
+      privateKey
     ) as any;
 
     if (sessionData.role === "SELLER") {

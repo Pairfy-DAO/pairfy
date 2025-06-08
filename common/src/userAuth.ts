@@ -29,9 +29,11 @@ export const userMiddleware = (
   }
 
   try {
+    const privateKey = Buffer.from(process.env.AGENT_JWT_KEY!, 'base64').toString('utf-8');
+
     const sessionData = jwt.verify(
       req.session.jwt,
-      process.env.AGENT_JWT_KEY!
+      privateKey
     ) as UserToken;
 
     if (sessionData.role === "USER") {

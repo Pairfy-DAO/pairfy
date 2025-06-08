@@ -199,12 +199,6 @@ portForward:
     namespace: default 
     port: 11434
     localPort: 11434
-
-  - resourceType: service
-    resourceName: nats-ui-nui
-    namespace: default 
-    port: 31311
-    localPort: 31311
     
   - resourceType: service
     resourceName: service-processor-redis
