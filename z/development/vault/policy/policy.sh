@@ -17,7 +17,7 @@ kubectl exec -it vault-0 -- vault read auth/jwt/role/seller-role
 
 kubectl exec -it vault-0 -- vault auth list -detailed
 
-kubectl exec -it vault-0 -- vault token lookup hvs.CAESILUb1_ypIPQFhybgMqZRFZ4EY-pNzr2usZX8Ty_t6IpYGh4KHGh2cy5GNkZBbkhkVnh1R3NVMU5pTlkzUGwwdGM
+kubectl exec -it vault-0 -- vault token lookup <test-token>
 
 kubectl exec -it vault-0 -- vault list transit/keys
 
