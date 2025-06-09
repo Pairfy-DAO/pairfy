@@ -112,7 +112,7 @@ const loginSellerHandler = async (req: Request, res: Response) => {
       process.env.AGENT_JWT_KEY as string,
       process.env.TOKEN_EXPIRATION as string,
       "service-seller",
-      ["internal"]
+      ["vault", "internal"]
     );
 
     req.session = {
