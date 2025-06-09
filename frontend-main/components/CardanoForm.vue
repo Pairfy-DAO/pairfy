@@ -57,7 +57,7 @@
 
                 <div class="CardanoForm-section">
                     <div class="subtitle flex">
-                        <span> Encrypted Address (AES-256)
+                        <span> Encrypted Address (RSA-256)
                         </span>
                     </div>
 

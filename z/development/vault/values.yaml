@@ -26,7 +26,7 @@ server:
 
   dataStorage:
     enabled: true
-    size: 2Gi
+    size: 5Gi
     storageClass: standard
 
   readinessProbe:
