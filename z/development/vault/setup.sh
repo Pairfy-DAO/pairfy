@@ -27,13 +27,15 @@ kubectl exec -it vault-1 -- vault operator unseal <key2>
 kubectl exec -it vault-1 -- vault operator unseal <key3>
 
 
-kubectl exec -it vault-0 -- vault secrets enable transit
+
 kubectl exec -it vault-0 -- vault auth enable jwt
 
 kubectl cp jwt-config.json vault-0:/tmp/jwt-config.json
 kubectl exec -it vault-0 -- sh -c 'vault write auth/jwt/config @/tmp/jwt-config.json'
 
 
+kubectl exec -it vault-0 -- vault secrets disable secrets
+kubectl exec -it vault-0 -- vault secrets enable -path=secrets -version=1 kv
 
 
 

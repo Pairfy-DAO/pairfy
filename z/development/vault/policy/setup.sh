@@ -18,8 +18,3 @@ kubectl exec -it vault-0 -- vault read auth/jwt/role/seller-role
 kubectl exec -it vault-0 -- vault auth list -detailed
 
 kubectl exec -it vault-0 -- vault token lookup <test-token>
-
-kubectl exec -it vault-0 -- vault list transit/keys
-
-kubectl exec -it vault-0 -- vault write transit/keys/seller-1CD9A684A08B9C6952037/config deletion_allowed=true
-kubectl exec -it vault-0 -- vault delete transit/keys/seller-1CD9A684A08B9C6952037

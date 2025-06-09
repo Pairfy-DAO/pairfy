@@ -1,3 +1,3 @@
-path "transit/*" {
-  capabilities = ["create", "read", "update"]
+path "secrets/seller-*" {
+  capabilities = ["create", "update", "read"]
 }
