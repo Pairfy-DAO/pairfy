@@ -3,7 +3,7 @@ import forge from "node-forge";
 
 const VAULT_ADDR = "http://localhost:8200";
 
-export async function authenticateWithVault(sellerJwt) {
+export async function loginSellerVault(sellerJwt) {
   const url = `${VAULT_ADDR}/v1/auth/jwt/login`;
 
   try {
@@ -22,7 +22,7 @@ export async function authenticateWithVault(sellerJwt) {
   }
 }
 
-export async function createRsaKeyForSeller(limitedToken, sellerId) {
+export async function createSellerRSA(limitedToken, sellerId) {
   const { privateKey, publicKey } = forge.pki.rsa.generateKeyPair({
     bits: 2048,
   });
@@ -76,7 +76,7 @@ export async function getSellerPublicKey(limitedToken, sellerId) {
 
 ////////////////////////////////////////////BROWSER
 
-export function encryptWithPubKey(publicKeyPem, message) {
+export function encryptMessageWithPublicKey(publicKeyPem, message) {
   try {
     const publicKey = forge.pki.publicKeyFromPem(publicKeyPem);
 
@@ -93,26 +93,28 @@ export function encryptWithPubKey(publicKeyPem, message) {
 
     return forge.util.encode64(encrypted);
   } catch (err) {
-    console.error("🔒 Error al cifrar mensaje:", err);
+    console.error("🔒 Error encryptMessageWithPublicKey:", err);
     return null;
   }
 }
 
-export async function decryptWithSellerKey(limitedToken, sellerId, ciphertextB64) {
+export async function decryptMessageWithPrivateKey(limitedToken, sellerId, ciphertextB64) {
   const url = `${VAULT_ADDR}/v1/secrets/seller-${sellerId}`;
 
   const res = await axios.get(url, {
     headers: { "X-Vault-Token": limitedToken },
   });
+
   const privateKeyPem = res.data.data.private_key;
+
   if (!privateKeyPem) {
-    throw new Error("Clave privada no encontrada en Vault.");
+    throw new Error("The key was not found");
   }
 
   const privateKey = forge.pki.privateKeyFromPem(privateKeyPem);
 
-  // 3. Descifrar
   const encryptedBytes = forge.util.decode64(ciphertextB64);
+  
   const decrypted = privateKey.decrypt(encryptedBytes, "RSA-OAEP", {
     md: forge.md.sha256.create(),
     mgf1: {
@@ -133,11 +135,11 @@ async function main() {
 
   const parsed = JSON.parse(decoded);
 
-  const limitedToken = await authenticateWithVault(parsed.jwt);
+  const limitedToken = await loginSellerVault(parsed.jwt);
 
   console.log("limitedToken: ", limitedToken);
 
-  const createRSA = await createRsaKeyForSeller(limitedToken, sellerId);
+  const createRSA = await createSellerRSA(limitedToken, sellerId);
 
   console.log("createRSA: ", createRSA.publicKeyPem.slice(0, 30));
 
@@ -145,11 +147,11 @@ async function main() {
 
   console.log("publicKey: ", publicKey);
 
-  const encrypted = await encryptWithPubKey(publicKey, "this is the message");
+  const encrypted = await encryptMessageWithPublicKey(publicKey, "this is the message");
 
   console.log("encrypted: ", encrypted);
 
-  const decrypted = await decryptWithSellerKey(limitedToken, sellerId, encrypted);
+  const decrypted = await decryptMessageWithPrivateKey(limitedToken, sellerId, encrypted);
 
   console.log("message: ", decrypted)
 }
