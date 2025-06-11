@@ -1,7 +1,14 @@
 <template>
   <div class="p-InputSelect" ref="dropdownRef" @blur="validate(props.modelValue)"
     @keydown.enter.prevent="toggleDropdown" @keydown.space.prevent="toggleDropdown" tabindex="0">
-    <label :for="props.id" class="title-text">{{ label }}</label>
+    <label class="title-text" :for="props.id">
+
+      <span>{{ label }}</span>
+
+      <span class="error-text" :class="{ visible: errorMessage }" :id="`${props.id}-error`">
+        {{ errorMessage || '-' }}
+      </span>
+    </label>
 
     <!-- Display -->
     <div class="dropdown-display" :class="{ 'is-invalid': errorMessage }" role="combobox"
@@ -42,17 +49,10 @@
         </li>
       </ul>
     </transition>
-
-    <!-- Error -->
-    <p class="error-text" :class="{ visible: errorMessage }" :id="`${props.id}-error`">
-      {{ errorMessage || '-' }}
-    </p>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
-
 const props = defineProps({
   id: { type: String, default: 'input-select' },
   modelValue: { type: String, default: '' },
@@ -147,7 +147,7 @@ watch(
   padding: 0.75rem 1rem;
   border: 1px solid var(--border-a);
   border-radius: var(--input-radius);
-  background: var(--background-a);
+  background: var(--background-b);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -179,7 +179,8 @@ watch(
 }
 
 .placeholder {
-  color: var(--text-b);
+  opacity: var(--placeholder-opacity);
+  color: var(--text-a);
 }
 
 .dropdown-list {
@@ -189,7 +190,7 @@ watch(
   font-size: var(--text-size-1);
   box-shadow: var(--shadow-a);
   position: absolute;
-  top: calc(100% - 30px);
+  top: calc(100% - 0px);
   left: 0;
   right: 0;
   max-height: 400px;
@@ -209,17 +210,20 @@ watch(
 }
 
 .dropdown-item:hover {
-  background: #f9f9f9;
+  background: var(--background-b);
 }
 
 .title-text {
+  display: flex;
   margin-bottom: 0.75rem;
+  justify-content: space-between;
 }
 
 .error-text {
-  animation: fadeIn 0.2s ease-in-out;
   font-size: var(--text-size-0, 0.875rem);
+  animation: fadeIn 0.2s ease-in-out;
   color: transparent;
+  font-weight: 400;
   opacity: 0;
 }
 

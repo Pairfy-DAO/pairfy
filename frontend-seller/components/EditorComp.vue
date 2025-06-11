@@ -404,13 +404,13 @@ onBeforeUnmount(() => {
 
 .EditorComp-generative textarea {
   transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
-  background: linear-gradient(135deg, #eef4ff, #dbeafe);
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
-  border: 1px solid rgba(37, 99, 235, 0.3);
+  background: linear-gradient(135deg, rgba(var(--primary-a-base), 0.1), rgba(var(--primary-a-base), 0.2));
+  box-shadow: 0 2px 8px rgba(var(--primary-a-base), 0.1);
+  border: 1px solid rgba(var(--primary-a-base), 0.3);
   border-radius: var(--radius-c);
   font-size: var(--text-size-1);
+  color: var(--primary-a);
   font-family: inherit;
-  color: #1e3a8a;
   overflow: auto;
   resize: none;
   outline: none;
@@ -430,6 +430,7 @@ onBeforeUnmount(() => {
 
 .EditorComp-generative textarea::placeholder {
   color: var(--text-b);
+  opacity: var(--placeholder-opacity);
 }
 
 .EditorComp-generative textarea::-webkit-scrollbar {

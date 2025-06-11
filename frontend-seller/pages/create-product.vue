@@ -25,7 +25,7 @@
                     Fill in the details to publish a new product.
                 </div>
                 <div class="grid-item">
-                    <InputProductName v-model="productName" id="create-product-name" placeholder="e.g. Headphones"
+                    <InputProductName v-model="productName" id="create-product-name"
                         @valid="productNameValid = $event.valid" />
                 </div>
                 <div class="grid-item">
@@ -512,6 +512,7 @@ function displayMessage(message, type, duration) {
 
 .grid-item {
     align-items: center;
+    margin-top: 1rem;
     display: flex;
     gap: 1rem;
 }

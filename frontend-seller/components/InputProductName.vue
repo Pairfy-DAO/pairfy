@@ -1,12 +1,17 @@
 <template>
-  <div class="p-InputProductName">
-    <label :for="props.id" class="title-text">{{ label }}</label>
+  <div class="InputProductName">
+    <label class="title-text" :for="props.id">
+      <span>{{ label }}</span>
+
+      <span class="error-text" :class="{ visible: errorMessage }" :id="`${props.id}-error`">
+        {{ errorMessage || '\u00A0' }}
+      </span>
+    </label>
+
+
     <input ref="inputRef" v-model="internalValue" :id="props.id" type="text" @drop.prevent :placeholder="placeholder"
-      class="p-InputProductName-input" :class="{ 'is-invalid': errorMessage }" :maxlength="maxLength"
+      class="InputProductName-input" :class="{ 'is-invalid': errorMessage }" :maxlength="maxLength"
       :aria-invalid="!!errorMessage" :aria-describedby="`${props.id}-error`" inputmode="text" @blur="validate" />
-    <p class="error-text" :class="{ visible: errorMessage }" :id="`${props.id}-error`">
-      {{ errorMessage || '\u00A0' }}
-    </p>
   </div>
 </template>
 
@@ -15,7 +20,7 @@ const props = defineProps({
   id: { type: String, default: 'product-name' },
   modelValue: { type: [String, null], default: null },
   label: { type: String, default: 'Name' },
-  placeholder: { type: String, default: 'Product name' },
+  placeholder: { type: String, default: 'Headphones' },
   focus: { type: Boolean, default: false },
   required: { type: Boolean, default: true },
   maxLength: { type: Number, default: 200 },
@@ -42,7 +47,6 @@ const messages = {
 
 onMounted(() => {
   if (props.focus) inputRef.value?.focus()
-  validate()
 })
 
 watch(() => props.focus, (newVal) => {
@@ -57,7 +61,7 @@ watch(() => props.modelValue, (val) => {
 watch(internalValue, () => {
   emitNormalizedValue()
   validate()
-})
+}, { immediate: true })
 
 function emitNormalizedValue() {
   const normalized = internalValue.value.trim()
@@ -87,18 +91,24 @@ function validate() {
 
 
 <style scoped>
-.p-InputProductName {
+.InputProductName {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  width: 100%;
 }
 
-.p-InputProductName-input {
+.InputProductName-input {
   border: 1px solid var(--border-a);
   border-radius: var(--input-radius);
   transition: var(--transition-a);
+  background: var(--background-b);
   padding: 0.75rem 1rem;
   outline: none;
+}
+
+input::placeholder {
+  opacity: var(--placeholder-opacity);
+  color: var(--text-b);
 }
 
 input:focus::placeholder {
@@ -114,13 +124,16 @@ input:focus-within {
 }
 
 .title-text {
+  display: flex;
   margin-bottom: 0.75rem;
+  justify-content: space-between;
 }
 
 .error-text {
   font-size: var(--text-size-0, 0.875rem);
   animation: fadeIn 0.2s ease-in-out;
   color: transparent;
+  font-weight: 400;
   opacity: 0;
 }
 

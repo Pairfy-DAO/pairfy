@@ -12,7 +12,7 @@ body {
 }
 
 :root {
-  --text-size-0: 13px; /* Smallest text: captions, sub-labels */
+  --text-size-0: 12px; /* Smallest text: captions, sub-labels */
   --text-size-1: 14px; /* Secondary labels, helper text */
   --text-size-2: 16px; /* Base body text */
   --text-size-3: 18px; /* Paragraph lead or dense UI text */
@@ -23,24 +23,26 @@ body {
   --text-size-8: 48px; /* H1 */
   --text-size-9: 56px;
   --text-size-10: 64px; /* Hero / page title */
+}
 
-  --body-a: 1500px;
-
-  --shadow-a: 0 6px 20px rgba(0, 0, 0, 0.08);
-  --shadow-b: 0 1px 2px 0 rgba(0, 0, 0, 0.12);
+:root {
+  --body-a: 1650px;
 
   --background-a: #ffffff;
-  --background-b: #f5f5f7;
-  --background-c: #f0f0f2;
+  --background-b: #f7f9fb;
 
-  --text-a: #1d1d1f;
-  --text-b: #65686C; 
+  --text-a: #1a1a1a;
+  --text-b: #6b7280;
   --text-w: #ffffff;
-  
-  --border-a: #00000029;
-  --border-b: rgba(0, 0, 0, 50%);
 
-  --primary-a: var(--blue-a);
+  --border-a: #e5eaf1;
+  --border-b: #cbd5e1;
+
+  --primary-a: #2563eb;
+  --primary-a-base: 37, 99, 235;
+
+  --primary-b: #3b82f6;
+  --primary-b-base: 59, 130, 246;
 
   --radius-a: 4px;
   --radius-b: 6px;
@@ -49,17 +51,34 @@ body {
   --radius-e: 28px;
   --radius-f: 999px;
 
-  --blue-a: #225aea;
-  --gray-a: #334155;
-  --red-a: #dc2626;
-  --yellow-a: #fbbc04;
-  --yellow-b: #ffe600;
-  --green-a: #16a34a;
-  --orange-a: #ea580c;
-  --purple-a: #6366f1;
-  --pink-a: #db2777;
-  --black-a: #000000;
-  --gray-a: #161c24;
+  --shadow-a: 0 6px 20px rgba(0, 0, 0, 0.08);
+  --shadow-b: 0 1px 2px 0 rgba(0, 0, 0, 0.12);
+  --shadow-c: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-d: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+  --shadow-e: 0 12px 24px rgba(0, 0, 0, 0.1);
+
+  --transition-a: 0.2s ease-in-out;
+  --placeholder-opacity: 0.9;
+}
+
+:root {
+  --red-a: #ef4444; /* Error / Critical */
+  --yellow-a: #facc15; /* Warning / Caution */
+  --green-a: #22c55e; /* Success / Confirmed */
+  --orange-a: #fb923c; /* Soft alert / Attention */
+  --purple-a: #8b5cf6; /* Info / Highlighted elements */
+  --gray-a: #1E293B;
+
+  --red-bg: rgba(239, 68, 68, 0.1); /* Soft background for error states */
+  --yellow-bg: rgba(250, 204, 21, 0.1); /* Soft background for warnings */
+  --green-bg: rgba(34, 197, 94, 0.1); /* Soft background for success messages */
+  --orange-bg: rgba(251, 146, 60, 0.1); /* Soft background for attention */
+  --purple-bg: rgba(
+    139,
+    92,
+    246,
+    0.1
+  ); /* Soft background for informational badges */
 
   --gradient-a: linear-gradient(
     135deg,
@@ -69,8 +88,6 @@ body {
     #e8f4fc 80%,
     #e9fff0 100%
   );
-
-  --transition-a: 0.2s ease-in-out;
 }
 
 :root {
