@@ -1,11 +1,13 @@
 import { CreateProduct } from "./CreateProduct.js";
 import { CreateMedia } from "./CreateMedia.js";
 import { UpdateProduct } from "./UpdateProduct.js";
+import { DeleteProduct } from "./DeleteProduct.js";
 
 const handlers: any = {
     CreateProduct,
     CreateMedia,
-    UpdateProduct
+    UpdateProduct,
+    DeleteProduct
   };
   
   export const processEvent = (message: any) => {

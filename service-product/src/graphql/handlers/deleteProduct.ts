@@ -1,4 +1,3 @@
-import { deleteProductById } from "../../common/deleteProductById.js";
 import database from "../../database/client.js";
 import {
   ApiGraphQLError,
@@ -6,6 +5,7 @@ import {
   ERROR_CODES,
   findProductBySeller,
   SellerToken,
+  deleteProductById
 } from "@pairfy/common";
 import { verifyParams } from "../../validators/deleteProduct.js";
 
