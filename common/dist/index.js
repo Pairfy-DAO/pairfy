@@ -53,3 +53,4 @@ __exportStar(require("./getUserNickname"), exports);
 __exportStar(require("./findUserByPubKeyhash"), exports);
 __exportStar(require("./isValidSignatureCIP30"), exports);
 __exportStar(require("./createToken"), exports);
+__exportStar(require("./deleteProductById"), exports);

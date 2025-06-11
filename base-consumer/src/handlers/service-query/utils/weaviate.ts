@@ -46,8 +46,6 @@ export async function createProductIndex(product: any): Promise<boolean> {
 
     const { id, ...productData } = product;
 
-    delete product.id;
-
     await weaviateClient.data
       .creator()
       .withClassName("ProductV1")
@@ -77,26 +75,13 @@ export async function createProductIndex(product: any): Promise<boolean> {
 
 export async function updateProductIndex(product: any): Promise<boolean> {
   try {
-    const productId = product.id;
+    const weaviateId = await getProductId(product.id);
 
-    const result = await weaviateClient.graphql
-      .get()
-      .withClassName("ProductV1")
-      .withFields("id_ _additional { id }")
-      .withWhere({
-        path: ["id_"],
-        operator: "Equal",
-        valueString: productId,
-      })
-      .do();
-
-    const exists = result?.data?.Get?.ProductV1 || [];
-
-    if (!exists || exists.length === 0) {
+    if (!weaviateId) {
       logger.error({
         service: "service-query-consumer",
         event: "weaviate.error",
-        message: `Product with id_ ${productId} not found`,
+        message: `Product with id_ ${product.id} not found`,
       });
       return false;
     }
@@ -124,15 +109,13 @@ export async function updateProductIndex(product: any): Promise<boolean> {
 
     const { id, ...productData } = product;
 
-    const weaviateId = exists[0]._additional.id;
-
     await weaviateClient.data
       .updater()
       .withClassName("ProductV1")
       .withId(weaviateId)
       .withProperties({
         ...productData,
-        id_: productId,
+        id_: id,
         discount: Boolean(product.discount),
         moderated: Boolean(product.moderated),
         description: product.description.text,
@@ -149,6 +132,78 @@ export async function updateProductIndex(product: any): Promise<boolean> {
       error,
     });
 
+    return false;
+  }
+}
+
+export async function deleteProductIndex(productId: string): Promise<boolean> {
+  try {
+    const weaviateId = await getProductId(productId);
+
+    if (!weaviateId) {
+      logger.error({
+        service: "service-query-consumer",
+        event: "weaviate.error",
+        message: `Product with id_ ${productId} not found`,
+      });
+      return false;
+    }
+    await weaviateClient.data
+      .deleter()
+      .withClassName("ProductV1")
+      .withId(weaviateId)
+      .do();
+
+    return true;
+  } catch (error) {
+    logger.error({
+      service: "service-query-consumer",
+      event: "weaviate.delete.error",
+      message: `Failed to delete product with id_ ${productId}`,
+      error,
+    });
+
+    return false;
+  }
+}
+
+//////////////////////////////////////////////////////////////
+
+async function getProductId(pid: string): Promise<string | false> {
+
+  try {
+    const result = await weaviateClient.graphql
+      .get()
+      .withClassName("ProductV1")
+      .withFields("id_ _additional { id }")
+      .withWhere({
+        path: ["id_"],
+        operator: "Equal",
+        valueString: pid,
+      })
+      .do();
+
+    const resultArray = result?.data?.Get?.ProductV1;
+
+    const products = Array.isArray(resultArray) ? resultArray : [];
+
+    if (products.length === 0) {
+      logger.error({
+        service: "service-query-consumer",
+        event: "weaviate.error",
+        message: `Product with id_ ${pid} not found`,
+      });
+      return false;
+    }
+
+    return products[0]._additional?.id;
+  } catch (error: any) {
+    logger.error({
+      service: "service-query-consumer",
+      event: "weaviate.error",
+      message: `Error fetching product with id_ ${pid}: ${error.message}`,
+      stack: error.stack,
+    });
     return false;
   }
 }

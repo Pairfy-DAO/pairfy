@@ -98,6 +98,7 @@ type EditProductResponse {
 
 type DeleteProductResponse {
   success: Boolean!
+  message: String!
 }
 
 input CreateProductInput {

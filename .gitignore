@@ -3,3 +3,4 @@ zecrets
 search
 A/k8s-prod/metadata-secret.yaml
 keys
+common/dist

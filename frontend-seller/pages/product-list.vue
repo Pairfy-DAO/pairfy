@@ -1,5 +1,7 @@
 <template>
     <div class="card">
+        <ToastComp ref="toastRef" />
+
         <FolderComp :tabs="['Products', 'Statistics']" v-model="tabIndex">
 
             <template #icon-0>
@@ -28,7 +30,7 @@
 
             <template #content="{ index }">
                 <!----------------CONTENT---------------->
-                <div v-if="!products.length">Empty</div>
+                <div v-if="!products.length"></div>
 
                 <TableComp v-if="products.length" :columns="columns" :items="products" :limit="limit"
                     :hasNextPage="hasNextPage" :hasPrevPage="hasPrevPage" :range="range" :page="page"
@@ -81,10 +83,12 @@
 </template>
 
 <script setup>
-import { gql } from 'graphql-tag'
 import placeholderImage from '@/assets/placeholder/image.svg'
+import { gql } from 'graphql-tag'
 
 const router = useRouter()
+
+const toastRef = ref(null);
 
 const tabIndex = ref(0)
 
@@ -157,7 +161,7 @@ const GET_PRODUCTS_QUERY = gql`
 `
 
 async function fetchProducts(getProductsVariable) {
-    if(import.meta.server) return;
+    if (import.meta.server) return;
 
     try {
         const { data } = await $productClient.query({
@@ -205,12 +209,48 @@ const handleOnPrev = async (item) => {
     if (page.value > 1) page.value -= 1
 }
 
-const handleDottedMenu = (event, value) => {
-    if (event === 'delete') return beforeDeleteProduct(value)
+const handleDottedMenu = async (event, value) => {
+    if (event === 'delete') {
+        await onDeleteProduct(value.id)
+        return;
+    }
 
     if (event === 'edit') {
         router.push({ name: 'edit-product', query: { id: value.id } })
     }
+}
+const DELETE_PRODUCT_MUTATION = gql`
+  mutation DeleteProduct($deleteProductVariable: DeleteProductInput!) {
+    deleteProduct(deleteProductInput: $deleteProductVariable) {
+      success
+      message
+    }
+  }
+`
+
+async function onDeleteProduct(productId) {
+    if (import.meta.server) return;
+
+    try {
+        const { data } = await $productClient.mutate({
+            mutation: DELETE_PRODUCT_MUTATION,
+            variables: {
+                deleteProductVariable: {
+                    id: productId
+                }
+            }
+        })
+
+        const response = data.deleteProduct
+        displayMessage(response.message, 'success', 10_000)
+    } catch (err) { 
+        console.error('onDeleteProductError: ', err)
+        displayMessage(err.message, 'error', 10_000)
+    }
+}
+
+function displayMessage(message, type, duration) {
+    toastRef.value?.showToast(message, type, duration)
 }
 
 function getImageSrc(item) {
@@ -231,6 +271,6 @@ function formatDate(timestamp) {
 
 <style lang="css" scoped>
 .card {
-    padding: 0.5rem;
+    padding: 0.25rem;
 }
 </style>

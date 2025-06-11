@@ -9,7 +9,7 @@ const route = useRoute()
 
 const auth = useAuthStore()
 
-const isContrast = computed(() =>  ['country-p-id', 'country-s'].includes(route.name))
+const isContrast = computed(() => ['country-p-id', 'country-s'].includes(route.name))
 
 </script>
 
@@ -22,7 +22,6 @@ button {
     white-space: nowrap;
     color: var(--text-a);
     padding: 0.75rem 1rem;
-    border: 2px solid white;
     overflow-wrap: break-word;
     font-size: var(--text-size-1);
     border-radius: var(--radius-e);
@@ -31,16 +30,17 @@ button {
 }
 
 button:hover {
-    opacity: 0.9
+    opacity: 0.8;
 }
 
+
+
 button.contrast {
-    border: 2px solid white;
     background: var(--primary-a);
     color: var(--text-w);
 }
 
 button.contrast:hover {
-    opacity: 0.8;
+    background: var(--primary-b);
 }
 </style>

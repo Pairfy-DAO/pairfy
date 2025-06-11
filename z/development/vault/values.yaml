@@ -1,53 +1,50 @@
 global:
-  tlsDisable: true
+  enabled: true
+  tlsDisable: true  # ✅ TLS 
+
+server:
+  enabled: true
+  affinity: {}
+  ha:
+    enabled: true
+    replicas: 1
+    raft:
+      enabled: true
+      config: |
+        ui = true
+
+        listener "tcp" {
+          address     = "0.0.0.0:8200"
+          tls_disable = true
+        }
+
+        storage "raft" {
+          path = "/vault/data"
+        }
+
+        service_registration "kubernetes" {}
+
+  dataStorage:
+    enabled: true
+    size: 5Gi
+    storageClass: standard
+
+  readinessProbe:
+    enabled: true
+
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "100m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
 
 injector:
   enabled: true
 
-server:
-  ha:
+  metrics:
     enabled: true
-    raft:
-      enabled: true
-      setNodeId: true
-      config: |
-        ui = true
-        listener "tcp" {
-          address     = "0.0.0.0:8200"
-          cluster_address = "0.0.0.0:8201"
-          tls_disable = 1
-        }
-        storage "raft" {
-          path    = "/vault/data"
-          node_id = "$(POD_NAME)"
-        }
-        api_addr = "http://$(POD_NAME).vault-internal:8200"
-        cluster_addr = "http://$(POD_NAME).vault-internal:8201"
-        disable_mlock = true
-        ui = true
 
-  dataStorage:
-    enabled: true
-    size: 1Gi
-    storageClass: "standard"
-
-  resources:
-    requests:
-      cpu: "100m"
-      memory: "250Mi"
-    limits:
-      cpu: "500m"
-      memory: "500Mi"
-
-  affinity: {}        
-  tolerations: []     
-  nodeSelector: {}     
-
-ui:
-  enabled: true
-
-service:
-  enabled: true
-  type: LoadBalancer
-  port: 8200
-  targetPort: 8200
+  webhook:
+    failurePolicy: Fail

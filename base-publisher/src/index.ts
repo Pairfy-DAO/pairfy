@@ -102,7 +102,7 @@ const main = async () => {
         );
 
         if (findEvents.length < 1) {
-          console.log("🔍 Empty event queue");
+          console.log("Waiting for events");
           continue;
         }
 

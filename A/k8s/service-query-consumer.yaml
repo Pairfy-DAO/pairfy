@@ -30,7 +30,7 @@ spec:
             - name: STREAM_LIST
               value: service-product
             - name: FILTER_SUBJECTS
-              value: "service-product.CreateProduct,service-product.UpdateProduct,service-product.CreateMedia"
+              value: "service-product.CreateProduct,service-product.UpdateProduct,service-product.CreateMedia,service-product.DeleteProduct"
             - name: DATABASE_NAME
               value: service_query
             - name: DATABASE_USER
