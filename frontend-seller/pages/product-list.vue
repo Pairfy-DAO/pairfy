@@ -30,7 +30,7 @@
 
             <template #content="{ index }">
                 <!----------------CONTENT---------------->
-                <div v-if="!products.length">Empty</div>
+                <div v-if="!products.length"></div>
 
                 <TableComp v-if="products.length" :columns="columns" :items="products" :limit="limit"
                     :hasNextPage="hasNextPage" :hasPrevPage="hasPrevPage" :range="range" :page="page"
@@ -271,6 +271,6 @@ function formatDate(timestamp) {
 
 <style lang="css" scoped>
 .card {
-    padding: 0.5rem;
+    padding: 0.25rem;
 }
 </style>
