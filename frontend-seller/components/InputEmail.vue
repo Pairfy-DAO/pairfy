@@ -1,15 +1,13 @@
 <template>
-    <div class="p-InputEmail">
-        <label for="email" class="title-text">Email</label>
+    <div class="InputEmail">
+        <label class="title-text" for="email" >Email</label>
         <input ref="inputRef" type="email" :value="modelValue" @input="onInput" placeholder="example@gmail.com"
-            class="p-InputEmail-input" :class="{ 'is-invalid': errorMessage }" />
-        <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
+            class="InputEmail-input" :class="{ 'is-invalid': errorMessage }" />
+        <p class="error-text" v-if="errorMessage" >{{ errorMessage }}</p>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
-
 const props = defineProps({
     modelValue: {
         type: String,
@@ -73,28 +71,35 @@ const validateEmail = (email) => {
 </script>
 
 <style scoped>
-.p-InputEmail {
+.InputEmail {
     display: flex;
     flex-direction: column;
     max-width: 300px;
 }
 
-.p-InputEmail-input {
+.InputEmail-input {
     border: 1px solid var(--border-a);
     border-radius: var(--input-radius);
+    background: var(--background-b);
     padding: 0.75rem 1rem;
     outline: none;
 }
 
-.p-InputEmail-input:focus-within {
+input::placeholder {
+  opacity: var(--placeholder-opacity);
+  color: var(--text-b);
+}
+
+.InputEmail-input:focus-within {
     border: 1px solid var(--primary-a);
 }
 
-.p-InputEmail-input.is-invalid {
+.InputEmail-input.is-invalid {
     border-color: red;
 }
 
 .title-text {
+    font-size: var(--text-size-0);
     margin-bottom: 0.75rem;
     font-weight: 600;
 }

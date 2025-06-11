@@ -1,15 +1,15 @@
 <template>
-  <form class="p-RegisterForm" @submit.prevent="register">
+  <form class="RegisterForm" @submit.prevent="register">
     <ToastComp ref="toastRef" />
 
-    <InputEmail class="p-RegisterForm-email" v-model="email" :focus="true" @valid="onValidEmail" />
+    <InputEmail class="RegisterForm-email" v-model="email" :focus="true" @valid="onValidEmail" />
 
-    <InputAlphaNumeric class="p-RegisterForm-username" v-model="username" label="username" placeholder="e.g. Name777"
+    <InputUsername class="RegisterForm-username" v-model="username" label="username" placeholder="e.g. Name777"
       :minLength="5" :maxLength="20" @valid="onValidUsername" />
 
-    <InputPassword class="p-RegisterForm-password" v-model="password" @valid="onValidPassword" />
+    <InputPassword class="RegisterForm-password" v-model="password" @valid="onValidPassword" />
 
-    <InputSelect class="p-RegisterForm-country" v-model="country" label="Country" 
+    <InputSelect class="RegisterForm-country" v-model="country" label="Country" 
       :options="countries" @valid="onValidCountry" required>
       <template #option="{ option }">
         <span class="flex">
@@ -19,11 +19,11 @@
       </template>
     </InputSelect>
 
-    <InputCheck class="p-RegisterForm-terms" v-model="terms" @valid="onValidTerms" label="I have read the "
+    <InputCheck class="RegisterForm-terms" v-model="terms" @valid="onValidTerms" label="I have read the "
       :link="{ label: 'terms of use and privacy policy.', href: '/terms' }" required />
 
 
-    <ButtonSolid class="p-RegisterForm-button" type="submit" label="Register" :disabled="disableSubmit"
+    <ButtonSolid class="RegisterForm-button" type="submit" label="Register" :disabled="disableSubmit"
       :loading="auth.loading" />
   </form>
 </template>
@@ -31,7 +31,6 @@
 
 <script setup>
 import { useAuthStore } from '@/stores/auth'
-import InputAlphaNumeric from './InputAlphaNumeric.vue'
 
 const auth = useAuthStore()
 
@@ -110,20 +109,20 @@ form {
   display: flex;
 }
 
-.p-RegisterForm-button {
+.RegisterForm-button {
   margin-bottom: 1rem;
 }
 
-.p-RegisterForm-terms {
+.RegisterForm-terms {
   font-family: var(--text-size-0);
   color: var(--text-b);
   margin-bottom: 1rem;
 }
 
-.p-RegisterForm-email,
-.p-RegisterForm-username,
-.p-RegisterForm-password,
-.p-RegisterForm-country {
+.RegisterForm-email,
+.RegisterForm-username,
+.RegisterForm-password,
+.RegisterForm-country {
   margin-bottom: 1rem;
 }
 </style>
