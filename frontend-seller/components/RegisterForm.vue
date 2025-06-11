@@ -4,16 +4,23 @@
 
     <InputEmail class="RegisterForm-email" v-model="email" :focus="true" @valid="onValidEmail" />
 
-    <InputUsername class="RegisterForm-username" v-model="username" label="username" placeholder="e.g. Name777"
-      :minLength="5" :maxLength="20" @valid="onValidUsername" />
+    <InputUsername class="RegisterForm-username" v-model="username" label="username" :minLength="5" :maxLength="20"
+      @valid="onValidUsername" />
 
     <InputPassword class="RegisterForm-password" v-model="password" @valid="onValidPassword" />
 
-    <InputSelect class="RegisterForm-country" v-model="country" label="Country" 
-      :options="countries" @valid="onValidCountry" required>
+    <InputSelect class="RegisterForm-country" v-model="country" label="Country" :options="countries"
+      @valid="onValidCountry" required small>
+      <template #selected="{ option }">
+        <span class="flex">
+          <img class="flag" :src="`/flags/${option.code?.toLowerCase()}.svg`" alt="" />
+          <span style="margin-left: 0.5rem; "> {{ option.label }}</span>
+        </span>
+      </template>
+
       <template #option="{ option }">
         <span class="flex">
-          <img :src="`/flags/${option.code?.toLowerCase()}.svg`" alt="" class="flag" />
+          <img class="big-flag" :src="`/flags/${option.code?.toLowerCase()}.svg`" alt="" />
           <span style="margin-left: 0.5rem; "> {{ option.label }}</span>
         </span>
       </template>
@@ -117,6 +124,7 @@ form {
   font-family: var(--text-size-0);
   color: var(--text-b);
   margin-bottom: 1rem;
+  font-weight: 300;
 }
 
 .RegisterForm-email,
@@ -124,5 +132,13 @@ form {
 .RegisterForm-password,
 .RegisterForm-country {
   margin-bottom: 1rem;
+}
+
+.flag {
+  width: 1rem;
+}
+
+.big-flag {
+  width: 1.5rem;
 }
 </style>

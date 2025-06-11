@@ -12,11 +12,10 @@
 </template>
 
 <script setup>
-
 const props = defineProps({
   modelValue: { type: String, default: '' },
   label: { type: String, default: 'Alphanumeric Input' },
-  placeholder: { type: String, default: 'e.g., user123' },
+  placeholder: { type: String, default: 'user123' },
   focus: { type: Boolean, default: false },
   required: { type: Boolean, default: true },
   maxLength: { type: Number, default: 30 },
@@ -96,6 +95,11 @@ const validateAlphaNumeric = (value) => {
   padding: 0.75rem 1rem;
   outline: none;
   transition: border-color 0.2s;
+}
+
+input::placeholder {
+  opacity: var(--placeholder-opacity);
+  color: var(--text-b);
 }
 
 .InputUsername-input:focus-within {

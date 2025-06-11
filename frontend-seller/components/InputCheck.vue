@@ -1,24 +1,22 @@
 <template>
-  <div class="p-InputCheck">
-    <label class="p-InputCheck-wrap">
-      <input class="p-InputCheck-input" ref="checkboxRef" type="checkbox" :checked="modelValue" @change="onChange"  />
-      <span class="p-InputCheck-box"></span>
-      <span class="p-InputCheck-label">{{ label }}
+  <div class="InputCheck">
+    <label class="InputCheck-wrap">
+      <input class="InputCheck-input" ref="checkboxRef" type="checkbox" :checked="modelValue" @change="onChange"  />
+      <span class="InputCheck-box"></span>
+      <span class="InputCheck-label">{{ label }}
 
-        <a class="p-InputCheck-link" v-if="link" :href="link.href" target="_blank" rel="noopener">
+        <a class="InputCheck-link" v-if="link" :href="link.href" target="_blank" rel="noopener">
           {{ link.label }}
         </a>
 
       </span>
     </label>
 
-    <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
+    <p class="error-text" v-if="errorMessage" >{{ errorMessage }}</p>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
-
 const props = defineProps({
   modelValue: {
     type: Boolean,
@@ -79,13 +77,13 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.p-InputCheck {
+.InputCheck {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.p-InputCheck-wrap {
+.InputCheck-wrap {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -93,11 +91,11 @@ onMounted(() => {
   user-select: none;
 }
 
-.p-InputCheck-input {
+.InputCheck-input {
   display: none;
 }
 
-.p-InputCheck-box {
+.InputCheck-box {
   width: 1rem;
   height: 1rem;
   border: 2px solid var(--border-a, #ccc);
@@ -106,12 +104,12 @@ onMounted(() => {
   background-color: white;
 }
 
-.p-InputCheck-input:checked+.p-InputCheck-box {
+.InputCheck-input:checked+.InputCheck-box {
   background-color: var(--primary-a, #3498db);
   border-color: var(--primary-a, #3498db);
 }
 
-.p-InputCheck-input:checked+.p-InputCheck-box::after {
+.InputCheck-input:checked+.InputCheck-box::after {
   content: '✓';
   position: absolute;
   top: -2px;
@@ -120,8 +118,9 @@ onMounted(() => {
   color: white;
 }
 
-.p-InputCheck-label {
+.InputCheck-label {
   font-size: var(--text-size-0);
+  font-weight: 400;
 }
 
 .error-text {
@@ -140,7 +139,7 @@ onMounted(() => {
   }
 }
 
-.p-InputCheck-link {
+.InputCheck-link {
   text-decoration: underline;
   color: var(--text-a);
   font-size: inherit;

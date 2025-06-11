@@ -1,7 +1,7 @@
 <template>
-  <div class="p-InputSelect" ref="dropdownRef" @blur="validate(props.modelValue)"
-    @keydown.enter.prevent="toggleDropdown" @keydown.space.prevent="toggleDropdown" tabindex="0">
-    <label class="title-text" :for="props.id">
+  <div class="InputSelect" ref="dropdownRef" @blur="validate(props.modelValue)" @keydown.enter.prevent="toggleDropdown"
+    @keydown.space.prevent="toggleDropdown" tabindex="0">
+    <label class="title-text" :class="{ small: props.small }" :for="props.id">
 
       <span>{{ label }}</span>
 
@@ -14,15 +14,11 @@
     <div class="dropdown-display" :class="{ 'is-invalid': errorMessage }" role="combobox"
       :aria-expanded="isOpen.toString()" aria-haspopup="listbox" :aria-controls="`${props.id}-listbox`"
       @click="toggleDropdown">
+
       <template v-if="selectedOption">
-        <slot name="option" :option="selectedOption">
-          <span class="flex items-center gap-2">
-            <img :src="`/flags/${selectedOption.code}.svg`" @error="onFlagError" class="flag-icon" alt=""
-              aria-hidden="true" />
-            {{ selectedOption.label }}
-          </span>
-        </slot>
+        <slot name="selected" :option="selectedOption"/>
       </template>
+
       <template v-else>
         <span class="placeholder">{{ placeholder }}</span>
       </template>
@@ -39,13 +35,7 @@
       <ul v-if="isOpen" :id="`${props.id}-listbox`" class="dropdown-list" role="listbox">
         <li v-for="option in options" :key="option.code" class="dropdown-item" @click.stop="select(option)"
           :id="`option-${option.code}`" role="option">
-          <slot name="option" :option="option">
-            <span class="flex items-center gap-2">
-              <img :src="`/flags/${option.code}.svg`" @error="onFlagError" class="flag-icon" alt=""
-                aria-hidden="true" />
-              {{ option.label }}
-            </span>
-          </slot>
+          <slot name="option" :option="option" />
         </li>
       </ul>
     </transition>
@@ -58,6 +48,7 @@ const props = defineProps({
   modelValue: { type: String, default: '' },
   label: { type: String, required: true },
   required: { type: Boolean, default: true },
+  small: { type: Boolean, default: false },
   options: { type: Array, required: true },
   placeholder: { type: String, default: 'Select one...' },
   invalid: { type: Boolean, default: false }
@@ -135,7 +126,7 @@ watch(
 </script>
 
 <style scoped>
-.p-InputSelect {
+.InputSelect {
   font-size: var(--text-size-1);
   display: flex;
   flex-direction: column;
@@ -217,6 +208,10 @@ watch(
   display: flex;
   margin-bottom: 0.75rem;
   justify-content: space-between;
+}
+
+.title-text.small {
+  font-size: var(--text-size-0) !important;
 }
 
 .error-text {

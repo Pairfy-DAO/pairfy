@@ -100,11 +100,6 @@ body {
   display: flex;
 }
 
-.flag {
-  width: 1rem;
-  height: 1rem;
-}
-
 input {
   font-size: var(--text-size-1);
 }
@@ -114,7 +109,7 @@ input::placeholder {
 }
 
 label {
-  font-size: var(--text-size-1);
+  font-size: var(--text-size-0);
   font-weight: 600;
 }
 

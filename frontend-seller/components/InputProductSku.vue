@@ -20,7 +20,7 @@
 const props = defineProps({
   id: { type: String, default: 'sku' },
   modelValue: { type: [String, null], default: null },
-  label: { type: String, default: 'Sku' },
+  label: { type: String, default: 'SKU' },
   placeholder: { type: String, default: 'RZ-RTX4090' },
   focus: { type: Boolean, default: false },
   required: { type: Boolean, default: true },
