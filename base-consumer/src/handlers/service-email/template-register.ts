@@ -18,7 +18,7 @@ export function generateRegistrationEmail({
     <title>Welcome to Pairfy</title>
   </head>
   <body style="font-family:Arial, sans-serif; background-color:#f6f6f6; padding:20px; margin:0;">
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px; margin:0 auto; background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 0 8px rgba(0,0,0,0.05);">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px; margin:0 auto; background-color:#ffffff; border-radius:0px; overflow:hidden; box-shadow:0 0 8px rgba(0,0,0,0.05);">
       <tr>
         <td style="background-color:#2563eb; padding: 30px 20px; text-align:center;">
           <h1 style="color:#ffffff; margin:0;">Welcome to Pairfy!</h1>
