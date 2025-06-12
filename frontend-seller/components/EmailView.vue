@@ -5,8 +5,7 @@
 
         <div class="p-EmailView-message">
           <span>
-            Please check your email to verify your account...
-            We've sent a verification link to your inbox.
+            Please check your email. We've sent a verification link to your inbox.
             Please check spam or all folder.
           </span>
         </div>

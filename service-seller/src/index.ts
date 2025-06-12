@@ -76,6 +76,16 @@ const main = async () => {
       route.loginSellerHandler
     );
 
+    app.post(
+      "/api/seller/recovery-seller",
+
+      rateLimiter.middlewareIp(),
+      ...route.recoverySellerMiddlewares,
+
+      route.recoverySellerHandler
+    );
+
+
     app.get(
       "/api/seller/current-seller",
 

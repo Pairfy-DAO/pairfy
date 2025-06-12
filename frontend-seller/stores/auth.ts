@@ -3,7 +3,7 @@ export const useAuthStore = defineStore("auth", () => {
   const seller = useState<any>("seller", () => null);
   const loading = ref(false);
   const error = ref<string | null>(null);
-  
+
   const login = async (credentials: {
     email: string;
     password: string;
@@ -22,6 +22,27 @@ export const useAuthStore = defineStore("auth", () => {
         },
       });
       await fetchProfile();
+    } catch (err: any) {
+      throw new Error(err.message);
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const recovery = async (credentials: { email: string }) => {
+    loading.value = true;
+
+    try {
+      const response = await $fetch("/api/seller/recovery-seller", {
+        method: "POST",
+        body: credentials,
+        credentials: "include",
+        async onResponseError({ response }) {
+          throw new Error(JSON.stringify(response._data.data));
+        },
+      });
+
+      return response;
     } catch (err: any) {
       throw new Error(err.message);
     } finally {
@@ -111,6 +132,7 @@ export const useAuthStore = defineStore("auth", () => {
     register,
     logout,
     verify,
+    recovery,
     fetchProfile,
   };
 });
