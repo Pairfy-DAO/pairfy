@@ -2,7 +2,6 @@
 <template>
   <div class="entry">
 
-
     <div class="entry-form">
 
       <div class="entry-form-image">
@@ -18,13 +17,13 @@
 
         <div class="entry-form-switcher" v-if="!['verify','email'].includes(currentView)">
 
-          <NuxtLink :to="{ path: '/entry', query: { m: 'login' } }" v-if="!['login'].includes(currentView)">
+          <NuxtLink v-if="!['login'].includes(currentView)" :to="{ path: '/entry', query: { m: 'login' } }">
             <button @click="mode = 'login'">I already have an account</button>
           </NuxtLink>
-          <NuxtLink :to="{ path: '/entry', query: { m: 'register' } }">
+          <NuxtLink v-if="!['register'].includes(currentView)" :to="{ path: '/entry', query: { m: 'register' } }">
             <button @click="mode = 'register'">Create a new account</button>
           </NuxtLink>
-          <NuxtLink :to="{ path: '/entry', query: { m: 'recovery' } }">
+          <NuxtLink v-if="!['recovery'].includes(currentView)" :to="{ path: '/entry', query: { m: 'recovery' } }">
             <button @click="mode = 'recovery'">Recover password</button>
           </NuxtLink>
 

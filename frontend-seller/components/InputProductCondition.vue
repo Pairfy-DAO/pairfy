@@ -1,22 +1,21 @@
 <template>
-  <div class="p-InputProductCondition">
-    <label :for="props.id" class="title-text">{{ label }}</label>
-    <div class="switch-group" :class="{ 'is-invalid': errorMessage }" role="radiogroup" :aria-describedby="`${props.id}-error`">
-      <button
-        v-for="option in options"
-        :key="option"
-        type="button"
-        class="switch-button"
-        :class="{ active: internalValue === option }"
-        @click="selectOption(option)"
-        :aria-pressed="internalValue === option"
-      >
+  <div class="InputProductCondition">
+    <label class="title-text" :for="props.id">
+
+      <span>{{ label }}</span>
+      <span class="error-text" :class="{ visible: errorMessage }" :id="`${props.id}-error`">
+        {{ errorMessage || '-' }}
+      </span>
+
+    </label>
+    <div class="switch-group" :class="{ 'is-invalid': errorMessage }" role="radiogroup"
+      :aria-describedby="`${props.id}-error`">
+      <button v-for="option in options" :key="option" type="button" class="switch-button"
+        :class="{ active: internalValue === option }" @click="selectOption(option)"
+        :aria-pressed="internalValue === option">
         {{ capitalize(option) }}
       </button>
     </div>
-    <p class="error-text" :class="{ visible: errorMessage }" :id="`${props.id}-error`">
-      {{ errorMessage || '-' }}
-    </p>
   </div>
 </template>
 
@@ -41,15 +40,6 @@ watch(() => props.modelValue, (val) => {
   if (val !== internalValue.value) internalValue.value = val
 })
 
-watch(internalValue, (val) => {
-  emit('update:modelValue', val)
-  validate(val)
-})
-
-onMounted(() => {
-  validate(internalValue.value)
-})
-
 const selectOption = (val: string) => {
   internalValue.value = val
 }
@@ -69,10 +59,16 @@ const validate = (val: string) => {
 }
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
+
+watch(internalValue, (val) => {
+  emit('update:modelValue', val)
+  validate(val)
+}, { immediate: true })
+
 </script>
 
 <style scoped>
-.p-InputProductCondition {
+.InputProductCondition {
   flex-direction: column;
   display: flex;
   width: 100%;
@@ -85,7 +81,7 @@ const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
 .switch-button {
   border: 1px solid var(--border-a, #ccc);
-  border-radius: var(--input-radius); 
+  border-radius: var(--input-radius);
   background: var(--background-a);
   font-size: var(--text-size-0);
   padding: 0.75rem 1rem;
@@ -106,15 +102,19 @@ const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 }
 
 .title-text {
+  display: flex;
   margin-bottom: 0.75rem;
+  justify-content: space-between;
 }
 
 .error-text {
-  animation: fadeIn 0.2s ease-in-out;
   font-size: var(--text-size-0, 0.875rem);
+  animation: fadeIn 0.2s ease-in-out;
   color: transparent;
+  font-weight: 400;
   opacity: 0;
 }
+
 
 .error-text.visible {
   opacity: 1;
@@ -122,7 +122,12 @@ const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 </style>

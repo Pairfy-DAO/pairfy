@@ -11,12 +11,12 @@ export async function sendEmail(type: string, to: string, payload: any) {
     subject = "Pairfy email confirmation.";
     template = generateRegistrationEmail({
       name: payload.username,
-      verifyUrl: `${process.env.HANDLER_URL_SELLER}/entry?m=verify&t=${payload.token}`,
+      verifyUrl: `${process.env.HANDLER_SELLER_URL}/entry?m=verify&t=${payload.token}`,
     });
   }
 
   const { data, error } = await resend.emails.send({
-    from: "Pairfy <noreply@pairfy.store>",
+    from: "Pairfy <noreply@pairfy.io>",
     to: [to],
     subject: subject,
     html: template,

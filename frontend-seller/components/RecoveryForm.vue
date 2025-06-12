@@ -1,8 +1,10 @@
 <template>
-  <form class="p-loginform" @submit.prevent="login">
-    <input v-model="email" type="email" placeholder="Email" required />
-    <input v-model="password" type="password" placeholder="Password" required />
-    <button type="submit">Login</button>
+  <form class="RecoveryForm" @submit.prevent="login">
+    <ToastComp ref="toastRef" />
+
+    <InputEmail class="RecoveryForm-email" v-model="email" :focus="true" @valid="onValidEmail" />
+
+    <ButtonSolid class="RegisterForm-button" type="submit" label="Recovery" :disabled="disableSubmit" />
   </form>
 </template>
 
@@ -11,18 +13,27 @@
 import { useAuthStore } from '@/stores/auth'
 
 const email = ref('')
-const password = ref('')
+const emailValid = ref(false)
+
+const disableSubmit = ref(false)
 
 const login = () => {
   console.log('Logging in', email.value, password.value)
-  // Aquí podrías llamar a tu API o usar useFetch()
+}
+
+const onValidEmail = (event) => {
+  emailValid.value = event
 }
 </script>
 
 <style scoped>
 form{
-  background: red;
   display: flex;
   flex-direction: column;
+}
+
+.RegisterForm-button{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 </style>

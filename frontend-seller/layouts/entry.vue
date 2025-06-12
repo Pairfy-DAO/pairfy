@@ -30,7 +30,7 @@ if (import.meta.server) {
 
 
 .layout-entry {
-  background: var(--gradient-a);
+  background: var(--primary-a);
   display: flex;
   height: 100vh;
 }

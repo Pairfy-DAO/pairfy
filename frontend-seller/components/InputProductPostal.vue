@@ -1,24 +1,17 @@
 <template>
-  <div class="p-InputProductPostal">
-    <label :for="id" class="title-text">{{ label }}</label>
-    <input
-      ref="inputRef"
-      v-model="normalizedValue"
-      :id="id"
-      type="text"
-      :placeholder="placeholder"
-      class="p-InputProductPostal-input"
-      :class="{ 'is-invalid': errorMessage }"
-      :maxlength="maxLength"
-      :aria-invalid="!!errorMessage"
-      :aria-describedby="`${id}-error`"
-      inputmode="text"
-      @drop.prevent
-      @blur="validate"
-    />
-    <p class="error-text" :class="{ visible: errorMessage }" :id="`${id}-error`">
-      {{ errorMessage || '-' }}
-    </p>
+  <div class="InputProductPostal">
+    <label class="title-text" :for="id">
+      <span>{{ label }}</span>
+
+      <span class="error-text" :class="{ visible: errorMessage }" :id="`${id}-error`">
+        {{ errorMessage || '-' }}
+      </span>
+    </label>
+
+    <input ref="inputRef" v-model="normalizedValue" :id="id" type="text" :placeholder="placeholder"
+      class="InputProductPostal-input" :class="{ 'is-invalid': errorMessage }" :maxlength="maxLength"
+      :aria-invalid="!!errorMessage" :aria-describedby="`${id}-error`" inputmode="text" @drop.prevent
+      @blur="validate" />
   </div>
 </template>
 
@@ -27,7 +20,7 @@ const props = defineProps({
   id: { type: String, default: 'product-postal' },
   modelValue: { type: [String, null], default: null },
   label: { type: String, default: 'Postal Code' },
-  placeholder: { type: String, default: 'e.g. 10001' },
+  placeholder: { type: String, default: '10001' },
   focus: { type: Boolean, default: false },
   required: { type: Boolean, default: true },
   maxLength: { type: Number, default: 12 },
@@ -88,22 +81,28 @@ watch(() => props.modelValue, (val) => {
 
 
 <style scoped>
-.p-InputProductPostal {
+.InputProductPostal {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
 
-.p-InputProductPostal-input {
+.InputProductPostal-input {
   border: 1px solid var(--border-a, #ccc);
   border-radius: var(--input-radius, 6px);
   transition: var(--transition-a);
+  background: var(--background-b);
   padding: 0.75rem 1rem;
   outline: none;
 }
 
-.p-InputProductPostal-input:focus {
+.InputProductPostal-input:focus {
   border-color: var(--primary-a, #2563eb);
+}
+
+input::placeholder {
+  opacity: var(--placeholder-opacity);
+  color: var(--text-b);
 }
 
 input:focus::placeholder {
@@ -120,13 +119,16 @@ input:focus-within {
 
 
 .title-text {
+  display: flex;
   margin-bottom: 0.75rem;
+  justify-content: space-between;
 }
 
 .error-text {
-  animation: fadeIn 0.2s ease-in-out;
   font-size: var(--text-size-0, 0.875rem);
+  animation: fadeIn 0.2s ease-in-out;
   color: transparent;
+  font-weight: 400;
   opacity: 0;
 }
 

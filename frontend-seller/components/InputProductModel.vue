@@ -1,35 +1,24 @@
 <template>
-  <div class="p-InputProductModel">
-    <label :for="props.id" class="title-text">{{ label }}</label>
-    <input
-      ref="inputRef"
-      v-model="internalValue"
-      :id="props.id"
-      type="text"
-      @drop.prevent
-      :placeholder="placeholder"
-      class="p-InputProductModel-input"
-      :class="{ 'is-invalid': errorMessage }"
-      :maxlength="maxLength"
-      :aria-invalid="!!errorMessage"
-      :aria-describedby="`${props.id}-error`"
-      inputmode="text"
-      @blur="validate"
-    />
-    <p class="error-text" :class="{ visible: errorMessage }" :id="`${props.id}-error`">
-      {{ errorMessage || '-' }}
-    </p>
+  <div class="InputProductModel">
+    <label class="title-text" :for="props.id">
+      <span>{{ label }}</span>
+      <span class="error-text" :class="{ visible: errorMessage }" :id="`${props.id}-error`">
+        {{ errorMessage || '-' }}
+      </span>
+    </label>
+    <input ref="inputRef" v-model="internalValue" :id="props.id" type="text" @drop.prevent :placeholder="placeholder"
+      class="InputProductModel-input" :class="{ 'is-invalid': errorMessage }" :maxlength="maxLength"
+      :aria-invalid="!!errorMessage" :aria-describedby="`${props.id}-error`" inputmode="text" @blur="validate" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed, onMounted } from 'vue';
 
 const props = defineProps({
   id: { type: String, default: 'product-model' },
   modelValue: { type: [String, null], default: null },
   label: { type: String, default: 'Model' },
-  placeholder: { type: String, default: 'e.g. XR-6400a' },
+  placeholder: { type: String, default: 'XR-6400a' },
   focus: { type: Boolean, default: false },
   required: { type: Boolean, default: true },
   maxLength: { type: Number, default: 40 },
@@ -79,7 +68,6 @@ const validate = () => {
 
 onMounted(() => {
   if (props.focus) inputRef.value?.focus();
-  validate();
 });
 
 watch(() => props.modelValue, (newVal) => {
@@ -90,26 +78,32 @@ watch(() => props.modelValue, (newVal) => {
 watch(internalValue, (newVal) => {
   emit('update:modelValue', newVal);
   validate();
-});
+}, { immediate: true });
 </script>
 
 <style scoped>
-.p-InputProductModel {
+.InputProductModel {
   flex-direction: column;
   display: flex;
   width: 100%;
 }
 
-.p-InputProductModel-input {
+.InputProductModel-input {
   border: 1px solid var(--border-a, #ccc);
   border-radius: var(--input-radius, 6px);
+  background: var(--background-b);
   transition: var(--transition-a);
   padding: 0.75rem 1rem;
   outline: none;
 }
 
-.p-InputProductModel-input:focus-within {
+.InputProductModel-input:focus-within {
   border: 1px solid var(--primary-a, #2563eb);
+}
+
+input::placeholder {
+  opacity: var(--placeholder-opacity);
+  color: var(--text-b);
 }
 
 input:focus::placeholder {
@@ -125,13 +119,16 @@ input:focus-within {
 }
 
 .title-text {
+  display: flex;
   margin-bottom: 0.75rem;
+  justify-content: space-between;
 }
 
 .error-text {
   font-size: var(--text-size-0, 0.875rem);
   animation: fadeIn 0.2s ease-in-out;
   color: transparent;
+  font-weight: 400;
   opacity: 0;
 }
 

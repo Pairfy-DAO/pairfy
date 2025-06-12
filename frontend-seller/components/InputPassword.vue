@@ -1,9 +1,9 @@
 <template>
-    <div class="p-InputPassword">
+    <div class="InputPassword">
         <label class="title-text">Password</label>
-        <div class="p-InputPassword-wrap">
+        <div class="InputPassword-wrap">
             <input ref="inputRef" :type="isVisible ? 'text' : 'password'" :value="modelValue" @input="onInput"
-                placeholder="Enter your password" class="p-InputPassword-input"
+                placeholder="Enter your password" class="InputPassword-input"
                 :class="{ 'is-invalid': errorMessage }" />
 
             <button class="toggle-btn" type="button" @click="toggleVisibility">
@@ -105,31 +105,36 @@ const validatePassword = (password) => {
 </script>
 
 <style scoped>
-.p-InputPassword {
+.InputPassword {
     display: flex;
     flex-direction: column;
     max-width: 300px;
 }
 
-.p-InputPassword-wrap {
+.InputPassword-wrap {
     position: relative;
 }
 
-.p-InputPassword-input {
-    width: 100%;
+.InputPassword-input {
     padding: 0.75rem 2.5rem 0.75rem 1rem;
-    border: 1px solid var(--border-a);
     border-radius: var(--input-radius);
-    outline: none;
+    border: 1px solid var(--border-a);
+    background: var(--background-b);
     box-sizing: border-box;
-
+    outline: none;
+    width: 100%;
 }
 
-.p-InputPassword-input:focus-within {
+input::placeholder {
+  opacity: var(--placeholder-opacity);
+  color: var(--text-b);
+}
+
+.InputPassword-input:focus-within {
     border: 1px solid var(--primary-a);
 }
 
-.p-InputPassword-input.is-invalid {
+.InputPassword-input.is-invalid {
     border-color: red;
 }
 
@@ -147,6 +152,7 @@ const validatePassword = (password) => {
 }
 
 .title-text {
+    font-size: var(--text-size-0);
     margin-bottom: 0.75rem;
     font-weight: 600;
 }

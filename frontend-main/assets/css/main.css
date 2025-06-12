@@ -9,6 +9,7 @@ body {
   padding: 0;
   margin: 0;
 }
+
 :root {
   --text-size-0: 12px; /* Smallest text: captions, sub-labels */
   --text-size-1: 14px; /* Secondary labels, helper text */
@@ -65,7 +66,8 @@ body {
   --green-a: #22c55e; /* Success / Confirmed */
   --orange-a: #fb923c; /* Soft alert / Attention */
   --purple-a: #8b5cf6; /* Info / Highlighted elements */
-
+  --gray-a: #1E293B;
+  
   --red-bg: rgba(239, 68, 68, 0.1); /* Soft background for error states */
   --yellow-bg: rgba(250, 204, 21, 0.1); /* Soft background for warnings */
   --green-bg: rgba(34, 197, 94, 0.1); /* Soft background for success messages */

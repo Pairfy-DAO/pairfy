@@ -1,36 +1,25 @@
 <template>
-  <div class="p-InputProductCity">
-    <label :for="props.id" class="title-text">{{ label }}</label>
-    <input
-      ref="inputRef"
-      v-model="internalValue"
-      :id="props.id"
-      type="text"
-      :placeholder="placeholder"
-      :maxlength="maxLength"
-      inputmode="text"
-      @drop.prevent
-      @blur="validate"
-      :class="{ 'is-invalid': errorMessage }"
-      :aria-invalid="!!errorMessage"
-      :aria-describedby="`${props.id}-error`"
-      class="p-InputProductCity-input"
-    />
-    <p class="error-text" :class="{ visible: errorMessage }" :id="`${props.id}-error`">
-      {{ errorMessage || '-' }}
-    </p>
+  <div class="InputProductCity">
+    <label class="title-text" :for="props.id">
+      <span>{{ label }}</span>
+      <span class="error-text" :class="{ visible: errorMessage }" :id="`${props.id}-error`">
+        {{ errorMessage || '-' }}
+      </span>
+    </label>
+    <input class="InputProductCity-input" ref="inputRef" v-model="internalValue" :id="props.id" type="text" :placeholder="placeholder"
+      :maxlength="maxLength" inputmode="text" @drop.prevent @blur="validate" :class="{ 'is-invalid': errorMessage }"
+      :aria-invalid="!!errorMessage" :aria-describedby="`${props.id}-error`"  />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
 import type { PropType } from 'vue'
 
 const props = defineProps({
   id: { type: String, default: 'product-city' },
   modelValue: { type: [String, null] as PropType<string | null>, default: null },
   label: { type: String, default: 'City' },
-  placeholder: { type: String, default: 'e.g. Los Ángeles' },
+  placeholder: { type: String, default: 'Los Angeles' },
   focus: { type: Boolean, default: false },
   required: { type: Boolean, default: true },
   maxLength: { type: Number, default: 40 },
@@ -78,34 +67,38 @@ watch(() => props.modelValue, (val) => {
 watch(internalValue, (val) => {
   emitValue(val)
   validate()
-})
+}, { immediate: true })
 
 watch(() => props.focus, (newVal) => {
   if (newVal) inputRef.value?.focus()
 }, { immediate: true })
 
-onMounted(() => {
-  validate()
-})
+
 </script>
 
 <style scoped>
-.p-InputProductCity {
+.InputProductCity {
   flex-direction: column;
   display: flex;
   width: 100%;
 }
 
-.p-InputProductCity-input {
+.InputProductCity-input {
   border: 1px solid var(--border-a, #ccc);
   border-radius: var(--input-radius, 6px);
   transition: var(--transition-a);
+  background: var(--background-b);
   padding: 0.75rem 1rem;
   outline: none;
 }
 
-.p-InputProductCity-input:focus-within {
+.InputProductCity-input:focus-within {
   border: 1px solid var(--primary-a, #2563eb);
+}
+
+input::placeholder {
+  opacity: var(--placeholder-opacity);
+  color: var(--text-b);
 }
 
 input:focus::placeholder {
@@ -121,13 +114,16 @@ input:focus-within {
 }
 
 .title-text {
+  display: flex;
   margin-bottom: 0.75rem;
+  justify-content: space-between;
 }
 
 .error-text {
-  animation: fadeIn 0.2s ease-in-out;
   font-size: var(--text-size-0, 0.875rem);
+  animation: fadeIn 0.2s ease-in-out;
   color: transparent;
+  font-weight: 400;
   opacity: 0;
 }
 
@@ -137,7 +133,12 @@ input:focus-within {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 </style>

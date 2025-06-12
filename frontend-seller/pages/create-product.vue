@@ -25,7 +25,7 @@
                     Fill in the details to publish a new product.
                 </div>
                 <div class="grid-item">
-                    <InputProductName v-model="productName" id="create-product-name" placeholder="e.g. Headphones"
+                    <InputProductName v-model="productName" id="create-product-name"
                         @valid="productNameValid = $event.valid" />
                 </div>
                 <div class="grid-item">
@@ -69,12 +69,23 @@
                 <div class="grid-item">
                     <InputSelect v-model="productOrigin" label="Country" :options="countries"
                         @valid="productOriginValid = $event.valid">
-                        <template #option="{ option }">
+
+                        <template #selected="{ option }">
                             <span class="flex">
-                                <img :src="`/flags/${option.code?.toLowerCase()}.svg`" alt="" class="flag" />
+                                <img class="flag" :src="`/flags/${option.code?.toLowerCase()}.svg`" alt="" />
                                 <span style="margin-left: 0.5rem; "> {{ option.label }}</span>
                             </span>
                         </template>
+
+
+                        <template #option="{ option }">
+                            <span class="flex">
+                                <img class="big-flag" :src="`/flags/${option.code?.toLowerCase()}.svg`" alt="" />
+                                <span style="margin-left: 0.5rem; "> {{ option.label }}</span>
+                            </span>
+                        </template>
+
+
                     </InputSelect>
 
                     <InputProductCity v-model="productCity" id="create-product-city"
@@ -406,7 +417,7 @@ const onCreateProduct = async () => {
 
         if (!uploadMedia || !uploadMedia.success) {
             return displayMessage('Image upload failed. Please try again.', 'error', 30_000)
-            
+
         }
 
         const createProductVariable = {
@@ -512,6 +523,7 @@ function displayMessage(message, type, duration) {
 
 .grid-item {
     align-items: center;
+    margin-top: 1rem;
     display: flex;
     gap: 1rem;
 }
@@ -528,5 +540,13 @@ function displayMessage(message, type, duration) {
     .grid {
         grid-template-columns: 1fr;
     }
+}
+
+.flag {
+  width: 1rem;
+}
+
+.big-flag {
+  width: 1.5rem;
 }
 </style>
