@@ -44,6 +44,12 @@ export const recoverySellerHandler = async (req: Request, res: Response) => {
       });
     }
 
+    if (findSeller.verified !== 1) {
+      throw new ApiError(403, "Email not verified", {
+        code: ERROR_CODES.UNVERIFIED_EMAIL,
+      });
+    }
+
     const tokenData = {
       source: "service-seller",
       role: "SELLER",
