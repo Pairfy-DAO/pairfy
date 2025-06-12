@@ -58,7 +58,7 @@ const sizeClass = computed(() => {
 }
 
 .p-ButtonSolid:hover {
-  opacity: 0.9;
+  background: var(--primary-b);
 }
 
 .p-ButtonSolid.disabled {

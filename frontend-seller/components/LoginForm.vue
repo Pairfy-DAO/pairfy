@@ -1,19 +1,19 @@
 <template>
-  <form class="p-LoginForm" @submit.prevent="connectWallet">
+  <form class="LoginForm" @submit.prevent="connectWallet">
     <ToastComp ref="toastRef" />
 
-    <InputEmail class="p-LoginForm-email" v-model="email" :focus="true" @valid="onValidEmail" />
+    <InputEmail class="LoginForm" v-model="email" :focus="true" @valid="onValidEmail" />
 
-    <InputPassword class="p-LoginForm-password" v-model="password" @valid="onValidPassword" />
+    <InputPassword class="LoginForm-password" v-model="password" @valid="onValidPassword" />
 
-    <div class="p-LoginForm-wallets">
-      <button class="p-LoginForm-wallet" :class="{ disabled: disableSubmit }" type="submit" v-for="item in walletImages"
+    <div class="LoginForm-wallets">
+      <button class="LoginForm-wallet" :class="{ disabled: disableSubmit }" type="submit" v-for="item in walletImages"
         :key="item.name" @click="connectWallet(item.name)">
         <img :src="item.src" :alt="item.name" />
       </button>
 
-      <div class="p-LoginForm-wallet" :class="{ disabled: disableSubmit }" />
-      <div class="p-LoginForm-wallet" :class="{ disabled: disableSubmit }" />
+      <div class="LoginForm-wallet" :class="{ disabled: disableSubmit }" />
+      <div class="LoginForm-wallet" :class="{ disabled: disableSubmit }" />
 
     </div>
 
@@ -102,7 +102,7 @@ form {
   display: flex;
 }
 
-.p-LoginForm-wallets {
+.LoginForm-wallets {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(3rem, 1fr));
   gap: 8px;
@@ -110,7 +110,7 @@ form {
   margin-bottom: 1rem;
 }
 
-.p-LoginForm-wallet {
+.LoginForm-wallet {
   width: 3rem;
   height: 3rem;
   display: flex;
@@ -123,17 +123,17 @@ form {
   border: 1px solid var(--border-a);
 }
 
-.p-LoginForm-wallet.disabled {
+.LoginForm-wallet.disabled {
   pointer-events: none;
   opacity: 0.5;
 }
 
-.p-LoginForm-wallet img {
+.LoginForm-wallet img {
   width: 1.25rem;
 }
 
-.p-LoginForm-email,
-.p-LoginForm-password {
+.LoginForm,
+.LoginForm-password {
   margin-bottom: 1rem;
 }
 </style>

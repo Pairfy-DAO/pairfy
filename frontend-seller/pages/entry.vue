@@ -23,7 +23,7 @@
           <NuxtLink v-if="!['register'].includes(currentView)" :to="{ path: '/entry', query: { m: 'register' } }">
             <button @click="mode = 'register'">Create a new account</button>
           </NuxtLink>
-          <NuxtLink :to="{ path: '/entry', query: { m: 'recovery' } }">
+          <NuxtLink v-if="!['recovery'].includes(currentView)" :to="{ path: '/entry', query: { m: 'recovery' } }">
             <button @click="mode = 'recovery'">Recover password</button>
           </NuxtLink>
 
