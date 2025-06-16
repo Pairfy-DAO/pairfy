@@ -74,6 +74,29 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  const updatePassword = async (credentials: {
+    token: string;
+    password: string;
+  }) => {
+    loading.value = true;
+
+    try {
+      const response: any = await $fetch("/api/seller/update-password", {
+        method: "POST",
+        body: credentials,
+        async onResponseError({ response }) {
+          throw new Error(JSON.stringify(response._data.data));
+        },
+      });
+
+      return response;
+    } catch (err: any) {
+      throw new Error(err.message);
+    } finally {
+      loading.value = false;
+    }
+  };
+
   const fetchProfile = async () => {
     if (!import.meta.server) return;
 
@@ -134,5 +157,6 @@ export const useAuthStore = defineStore("auth", () => {
     verify,
     recovery,
     fetchProfile,
+    updatePassword,
   };
 });

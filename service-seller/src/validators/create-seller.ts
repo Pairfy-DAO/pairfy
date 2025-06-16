@@ -1,9 +1,6 @@
 import { z } from "zod";
 import { Request, Response, NextFunction } from "express";
-import { emailRegex } from "./index.js";
-
-
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,64}$/;
+import { emailRegex, passwordRegex } from "./index.js";
 
 const usernameRegex = /^[a-zA-Z0-9]*$/;
 

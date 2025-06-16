@@ -4,3 +4,9 @@ export function truncateByWords(text: string, wordCount: number): string {
   const words = text.trim().split(/\s+/);
   return words.slice(0, wordCount).join(" ");
 }
+
+export function sleep(ms: number) {
+  return new Promise(function(resolve) {
+    setTimeout(resolve, ms);
+  });
+}

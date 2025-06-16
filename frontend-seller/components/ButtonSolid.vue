@@ -63,6 +63,7 @@ const sizeClass = computed(() => {
 
 .p-ButtonSolid.disabled {
   pointer-events: none;
+  background: var(--primary-b);
 }
 
 .p-ButtonSolid-body {
