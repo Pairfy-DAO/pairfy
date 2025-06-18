@@ -120,7 +120,7 @@ watch(() => route.path, (newPath) => {
   color: var(--text-a);
   padding: 0.75rem 1rem;
   background: var(--background-a);
-  border-radius: var(--radius-c);
+  border-radius: var(--radius-b);
   box-shadow: var(--shadow-b);
 }
 
