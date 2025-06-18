@@ -95,6 +95,10 @@ body {
   --button-radius: var(--radius-b);
 }
 
+:root{
+  --aside-icon-width: 1.5rem;
+}
+
 .flex {
   align-items: center;
   display: flex;

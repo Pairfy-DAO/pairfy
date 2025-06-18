@@ -1,6 +1,6 @@
 <template>
     <div class="InputPassword">
-        <label class="title-text">Password</label>
+        <label class="title-text">{{ label }}</label>
         <div class="InputPassword-wrap">
             <input ref="inputRef" :type="isVisible ? 'text' : 'password'" :value="modelValue" @input="onInput"
                 placeholder="Enter your password" class="InputPassword-input"
@@ -33,8 +33,6 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
-
 const props = defineProps({
     modelValue: {
         type: String,
@@ -43,6 +41,10 @@ const props = defineProps({
     focus: {
         type: Boolean,
         default: false
+    },
+    label: {
+        type: String,
+        default: 'Password'
     }
 })
 

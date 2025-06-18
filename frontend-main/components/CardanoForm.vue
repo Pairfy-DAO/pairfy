@@ -23,8 +23,8 @@
 
                     <div class="form-group">
                         <div class="form-item">
-                            <InputSelect v-model="orderUnits" :options="orderUnitOptions" label="Total Units"
-                                @valid="orderUnitsValid = $event.valid" id="order-units-select" placeholder="Quantity">
+                            <InputSelect v-model="orderUnits" :options="orderUnitOptions" label="Quantity"
+                                @valid="orderUnitsValid = $event.valid" id="order-units-select" placeholder="Units">
                                 <template #option="{ option }">
                                     <span class="flex">
                                         <span>{{ option.label }}</span>
@@ -399,7 +399,7 @@ select {
 }
 
 .summary-top p {
-    line-height: 1.5rem;
+    line-height: 2rem;
     color: var(--text-b);
     font-weight: 400;
     margin: 0.5rem 0;

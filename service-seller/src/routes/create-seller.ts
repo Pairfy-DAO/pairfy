@@ -64,7 +64,7 @@ const createSellerHandler = async (req: Request, res: Response) => {
       process.env.AGENT_JWT_KEY as string,
       "1h",
       "service-seller",
-      ["internal"]
+      ["register"]
     );
 
     const emailScheme = {

@@ -3,7 +3,7 @@ export const useAuthStore = defineStore("auth", () => {
   const seller = useState<any>("seller", () => null);
   const loading = ref(false);
   const error = ref<string | null>(null);
-  
+
   const login = async (credentials: {
     email: string;
     password: string;
@@ -29,6 +29,27 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  const recovery = async (credentials: { email: string }) => {
+    loading.value = true;
+
+    try {
+      const response = await $fetch("/api/seller/recovery-seller", {
+        method: "POST",
+        body: credentials,
+        credentials: "include",
+        async onResponseError({ response }) {
+          throw new Error(JSON.stringify(response._data.data));
+        },
+      });
+
+      return response;
+    } catch (err: any) {
+      throw new Error(err.message);
+    } finally {
+      loading.value = false;
+    }
+  };
+
   const register = async (credentials: {
     email: string;
     password: string;
@@ -38,6 +59,29 @@ export const useAuthStore = defineStore("auth", () => {
 
     try {
       const response: any = await $fetch("/api/seller/create-seller", {
+        method: "POST",
+        body: credentials,
+        async onResponseError({ response }) {
+          throw new Error(JSON.stringify(response._data.data));
+        },
+      });
+
+      return response;
+    } catch (err: any) {
+      throw new Error(err.message);
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const updatePassword = async (credentials: {
+    token: string;
+    password: string;
+  }) => {
+    loading.value = true;
+
+    try {
+      const response: any = await $fetch("/api/seller/update-password", {
         method: "POST",
         body: credentials,
         async onResponseError({ response }) {
@@ -111,6 +155,8 @@ export const useAuthStore = defineStore("auth", () => {
     register,
     logout,
     verify,
+    recovery,
     fetchProfile,
+    updatePassword,
   };
 });

@@ -76,6 +76,24 @@ const main = async () => {
       route.loginSellerHandler
     );
 
+    app.post(
+      "/api/seller/recovery-seller",
+
+      rateLimiter.middlewareIp(),
+      ...route.recoverySellerMiddlewares,
+
+      route.recoverySellerHandler
+    );
+
+    app.post(
+      "/api/seller/update-password",
+
+      rateLimiter.middlewareIp(),
+      ...route.updatePasswordMiddlewares,
+
+      route.updatePasswordHandler
+    );
+
     app.get(
       "/api/seller/current-seller",
 
