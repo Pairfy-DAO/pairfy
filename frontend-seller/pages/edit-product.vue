@@ -70,13 +70,24 @@
 
                     <InputSelect v-model="productOrigin" label="Country" :options="countries"
                         @valid="productOriginValid = $event.valid">
-                        <template #option="{ option }">
+
+                        <template #selected="{ option }">
                             <span class="flex">
-                                <img :src="`/flags/${option.code?.toLowerCase()}.svg`" alt="" class="flag" />
+                                <img class="flag" :src="`/flags/${option.code?.toLowerCase()}.svg`" alt="" />
                                 <span style="margin-left: 0.5rem; "> {{ option.label }}</span>
                             </span>
                         </template>
+
+
+                        <template #option="{ option }">
+                            <span class="flex">
+                                <img class="big-flag" :src="`/flags/${option.code?.toLowerCase()}.svg`" alt="" />
+                                <span style="margin-left: 0.5rem; "> {{ option.label }}</span>
+                            </span>
+                        </template>
+                        
                     </InputSelect>
+
                     <InputProductCity v-model="productCity" id="create-product-city"
                         @valid="productCityValid = $event.valid" />
                 </div>
@@ -610,12 +621,17 @@ function displayMessage(message, type, duration) {
 
 <style lang="css" scoped>
 .card {
-    padding: 1rem 20rem;
+    width: 100%;
+    display: flex;
+    padding-top: 1rem;
+    justify-content: center;
 }
 
 .grid {
-    display: grid;
     grid-template-columns: 1fr;
+    max-width: 1100px;
+    width: inherit;
+    display: grid;
     gap: 0rem;
 }
 
@@ -636,6 +652,7 @@ function displayMessage(message, type, duration) {
 
 .grid-item {
     align-items: center;
+    margin-top: 1rem;
     display: flex;
     gap: 1rem;
 }
@@ -652,5 +669,13 @@ function displayMessage(message, type, duration) {
     .grid {
         grid-template-columns: 1fr;
     }
+}
+
+.flag {
+  width: 1rem;
+}
+
+.big-flag {
+  width: 1.5rem;
 }
 </style>

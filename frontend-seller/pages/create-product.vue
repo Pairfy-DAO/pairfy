@@ -67,6 +67,7 @@
                 </div>
 
                 <div class="grid-item">
+
                     <InputSelect v-model="productOrigin" label="Country" :options="countries"
                         @valid="productOriginValid = $event.valid">
 
@@ -84,8 +85,7 @@
                                 <span style="margin-left: 0.5rem; "> {{ option.label }}</span>
                             </span>
                         </template>
-
-
+                        
                     </InputSelect>
 
                     <InputProductCity v-model="productCity" id="create-product-city"
@@ -501,7 +501,7 @@ function displayMessage(message, type, duration) {
 
 .grid {
     grid-template-columns: 1fr;
-    max-width: 70%;
+    max-width: 1100px;
     width: inherit;
     display: grid;
     gap: 0rem;

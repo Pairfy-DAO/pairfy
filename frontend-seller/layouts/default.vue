@@ -4,7 +4,7 @@
 
       <div class="sidebar-header">
         <div class="sidebar-logo">
-          <img src="@/assets/brand/icon.svg" alt="">
+          <img src="@/assets/brand/aside-icon.svg" alt="">
         </div>
       </div>
 
@@ -176,19 +176,15 @@ nav a:hover {
 
 .sidebar-header {
   display: flex;
+  margin-top: 1rem;
   align-items: center;
 }
 
 .sidebar-logo {
   justify-content: center;
   align-items: center;
-  min-width: 4rem;
+  padding: 0 1rem;
   display: flex;
-  height: 4rem;
-  width: 4rem;
 }
 
-.sidebar-logo img {
-  width: 3rem;
-}
 </style>

@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS sellers (
   wallet_name varchar(50) NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   verified BOOLEAN DEFAULT FALSE,
+  public_key TEXT NOT NULL,
   country VARCHAR(10) NOT NULL,
   terms_accepted BOOLEAN NOT NULL,
   avatar_base VARCHAR(255) NOT NULL,
