@@ -136,7 +136,7 @@ export const createSellerHandler = async (req: Request, res: Response) => {
 
     res.status(200).send({
       success: true,
-      message: "Registration completed successfully. Please check your inbox, including the 'All Mail' and 'Spam' folders, for our email.",
+      message: "Successfully registered. Please check your inbox including the 'All Mail' and 'Spam' folders, for our email.",
     });
   } catch (err) {
     if (connection) await connection.rollback();
