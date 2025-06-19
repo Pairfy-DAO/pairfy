@@ -91,6 +91,7 @@ const validateAlphaNumeric = (value) => {
 
 .InputUsername-input {
   border: 1px solid var(--border-a, #ccc);
+  background: var(--background-b);
   border-radius: var(--input-radius, 6px);
   padding: 0.75rem 1rem;
   outline: none;

@@ -205,9 +205,3 @@ portForward:
     namespace: default
     port: 6379
     localPort: 6379
-
-  - resourceType: service
-    resourceName: vault-active
-    namespace: default
-    port: 8200
-    localPort: 8200

@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
   try {
-    const response = await fetch(`${config.serviceLlmBase}/llm/product-description`, {
+    const response = await fetch(config.serviceLlmBase + "/api/llm/product-description", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),

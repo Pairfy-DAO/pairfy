@@ -4,10 +4,10 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
 
   const body = await readBody(event);
-  
+
   try {
     const response = await $fetch(
-      `${config.serviceSellerBase}/seller/update-password`,
+      config.serviceSellerBase + "/api/seller/update-password",
       {
         method: "POST",
         body,

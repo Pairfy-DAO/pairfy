@@ -52,7 +52,9 @@ export const useAuthStore = defineStore("auth", () => {
 
   const register = async (credentials: {
     email: string;
+    username: string;
     password: string;
+    country: string;
     terms_accepted: boolean;
   }) => {
     loading.value = true;
