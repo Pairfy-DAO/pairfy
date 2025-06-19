@@ -6,7 +6,7 @@
         </DrawerComp>
 
         <div class="title">
-            <span>Hello, search however you want...</span>
+            <span>Hello, search however you want.</span>
         </div>
 
         <form class="SearchPrompt-form" :class="{ 'focused': isFocused }" @focusin="isFocused = true"
@@ -14,7 +14,7 @@
             <div class="controls">
                 <div class="SearchPrompt-input flex">
                     <textarea v-model="prompt" aria-label="Prompt" @keydown.enter.exact.prevent="submitPrompt" rows="1"
-                        @focus="onFocusOrClick" @click="onFocusOrClick" placeholder="Search for what you want" />
+                        @focus="onFocusOrClick" @click="onFocusOrClick" placeholder="I need a laptop with a good battery but affordable." />
                 </div>
 
                 <div class="control flex">

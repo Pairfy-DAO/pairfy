@@ -82,7 +82,7 @@ watch(() => route.path, (newPath) => {
   align-items: center;
   box-sizing: border-box;
   max-width: var(--body-a);
-  grid-template-columns: 1fr 1.5fr 0.5fr;
+  grid-template-columns: 1fr 2fr 0.5fr;
 }
 
 .HeaderContent-nav {

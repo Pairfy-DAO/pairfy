@@ -1,7 +1,7 @@
 <template>
-    <header class="header">
-        <nav class="nav">
-            <ul class="nav-links">
+    <div class="HeaderNav">
+        <nav class="HeaderNav-body">
+            <ul class="HeaderNav-body-links">
                 <li><a href="#">How to sell?</a></li>
                 <li><a href="#">How it works?</a></li>
                 <li><a href="#">Governance</a></li>
@@ -9,7 +9,7 @@
                 <li><a href="#">I need Help</a></li>
             </ul>
         </nav>
-    </header>
+    </div>
 </template>
 
 <script setup>
@@ -17,14 +17,16 @@ const route = useRoute()
 </script>
 
 <style scoped>
-.header {
+.HeaderNav {
     border-top: 1px solid rgba(255, 255, 255, 0.3); 
     background: var(--blue-b);
     height: 2.5rem;
     width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
-.nav {
+.HeaderNav-body {
     display: flex;
     width: inherit;
     align-items: center;
@@ -40,7 +42,7 @@ const route = useRoute()
     font-size: 1.5rem;
 }
 
-.nav-links {
+.HeaderNav-body-links {
     list-style: none;
     display: flex;
     gap: 2rem;
@@ -48,12 +50,12 @@ const route = useRoute()
     padding: 0;
 }
 
-.nav-links a {
-    color: #fff;
+.HeaderNav-body-links a {
+    color: var(--text-w);
     text-decoration: none;
 }
 
-.nav-links a:hover {
+.HeaderNav-body-links a:hover {
     text-decoration: underline;
 }
 </style>
