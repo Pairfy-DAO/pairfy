@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     const response = await $fetch(
-      `${config.serviceUserBase}/user/current-user`,
+      config.serviceUserBase + "/api/user/current-user",
       {
         method: "GET",
         credentials: "include",
@@ -17,9 +17,9 @@ export default defineEventHandler(async (event) => {
         },
         async onResponseError({ response }) {
           throw new Error(JSON.stringify(response._data));
-        }
+        },
       }
-    )
+    );
 
     return response;
   } catch (err: any) {

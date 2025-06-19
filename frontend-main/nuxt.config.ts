@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   runtimeConfig: {
     serviceUserBase: process.env.NUXT_SERVICE_USER_BASE,
-    serviceQueryBase: process.env.NUXT_SERVICE_PRODUCT_BASE,
+    serviceQueryBase: process.env.NUXT_SERVICE_QUERY_BASE,
     serviceMediaBase: process.env.NUXT_SERVICE_MEDIA_BASE,
     public: {
       apiBaseBrowser: "",

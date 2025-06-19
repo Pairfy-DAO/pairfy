@@ -57,7 +57,7 @@ const isContrast = computed(() => ['country-p-id', 'country-s'].includes(route.n
     color: var(--text-w);
     position: fixed;
     z-index: 12000;
-    height: 2.5rem;
+    height: 2rem;
     width: 100%;
     top: 0;
 }

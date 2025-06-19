@@ -112,7 +112,7 @@ watch(() => route.path, (newPath) => {
 
 
 .HeaderContent.contrast {
-  margin-top: 3.5rem;
+  margin-top: 3rem;
   position: initial;
 } 
 

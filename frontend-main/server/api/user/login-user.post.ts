@@ -4,26 +4,23 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
   try {
-    const response = await $fetch(
-      `${config.serviceUserBase}/user/login-user`,
-      {
-        method: "POST",
-        body,
-        credentials: "include",
-        async onResponse({ response }) {
-          const setCookies = response.headers.getSetCookie?.()
-          if (Array.isArray(setCookies)) {
-            for (const cookie of setCookies) {
-              appendHeader(event, 'set-cookie', cookie)
-            }
+    const response = await $fetch(config.serviceUserBase + "/api/user/login-user", {
+      method: "POST",
+      body,
+      credentials: "include",
+      async onResponse({ response }) {
+        const setCookies = response.headers.getSetCookie?.();
+        if (Array.isArray(setCookies)) {
+          for (const cookie of setCookies) {
+            appendHeader(event, "set-cookie", cookie);
           }
-        },
+        }
+      },
 
-        async onResponseError({ response }) {
-          throw new Error(JSON.stringify(response._data));
-        },
-      }
-    );
+      async onResponseError({ response }) {
+        throw new Error(JSON.stringify(response._data));
+      },
+    });
 
     return response;
   } catch (err: any) {

@@ -10,20 +10,23 @@ export default defineEventHandler(async (event) => {
   const sessionCookie = cookies.session;
 
   try {
-    const response = await $fetch(`${config.serviceQueryBase}/query/graphql`, {
-      method: "POST",
-      body,
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: sessionCookie ? `session=${sessionCookie}` : "",
-      },
-      credentials: "include",
-      async onResponseError({ response }) {
-        throw new Error(
-          JSON.stringify(response._data || "Unknown server error")
-        );
+    const response = await $fetch(
+      config.serviceQueryBase + "/api/query/graphql",
+      {
+        method: "POST",
+        body,
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: sessionCookie ? `session=${sessionCookie}` : "",
+        },
+        credentials: "include",
+        async onResponseError({ response }) {
+          throw new Error(
+            JSON.stringify(response._data || "Unknown server error")
+          );
+        },
       }
-    });
+    );
 
     return response;
   } catch (err) {
