@@ -150,3 +150,63 @@
     background: rgba(255, 255, 255, 0.1);
 }
 </style>
+
+<style scoped>
+/* Smartphones */
+@media (max-width: 480px) {
+    .Banner-header-left h1 {
+        font-size: var(--text-size-8);
+    }
+
+    .Banner-body {
+        width: 100%;
+        border: none;
+        margin-top: 2rem;
+        border-radius: initial;
+        backdrop-filter: blur(0px);
+        background: initial;
+    }
+
+
+    .Banner-header {
+        flex-direction: column;
+        align-items: center;
+        margin-top: 4rem;
+        gap: 0rem;
+    }
+
+    .features {
+        font-size: var(--text-size-2);
+        text-align: center;
+        padding: 1rem;
+
+    }
+
+    .Banner-header-right {
+        display: none; 
+    }
+
+    .Banner-cards {
+        display: none;
+    }
+
+    .overlay {
+        padding: 0rem;
+    }
+}
+
+/* Smartphones en paisaje y móviles grandes */
+@media (min-width: 481px) and (max-width: 767px) {}
+
+/* Tablets en retrato */
+@media (min-width: 768px) and (max-width: 991px) {}
+
+/* Tablets en paisaje y laptops pequeños */
+@media (min-width: 992px) and (max-width: 1199px) {}
+
+/* Laptops y escritorios */
+@media (min-width: 1200px) and (max-width: 1599px) {}
+
+/* Pantallas grandes */
+@media (min-width: 1600px) {}
+</style>

@@ -99,7 +99,7 @@ function submitPrompt() {
 .SearchPrompt {
     width: 100%;
     display: flex;
-    height: 25rem;
+    min-height: 25rem;
     flex-direction: column;
     box-sizing: border-box;
     background-size: cover;

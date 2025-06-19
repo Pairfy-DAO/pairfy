@@ -1,18 +1,18 @@
 <template>
-    <div  class="video-background" ref="containerRef">
+    <div class="video-background" ref="containerRef">
         <ClientOnly>
             <video class="video-bg" ref="videoRef" v-if="!prefersReducedMotion" autoplay muted loop playsinline>
 
                 <source src="@/assets/videos/2.mp4" type="video/mp4" />
                 Your browser does not support the video HTML5.
             </video>
-        </ClientOnly> 
+        </ClientOnly>
 
-        <div class="overlay-content"> 
+        <div class="overlay-content">
             <slot />
         </div>
 
-       
+
     </div>
 </template>
 
@@ -79,11 +79,29 @@ const goToProducts = () => {
     transform: translate(-50%, -50%);
     object-fit: cover;
     position: absolute;
-    filter: brightness(0.7);
+    filter: brightness(0.4);
 }
 
 .overlay-content {
     position: relative;
     z-index: 1;
 }
+</style>
+
+<style scoped>
+@media (max-width: 480px) {
+    .video-bg {
+        filter: brightness(0.2);
+    }
+}
+
+@media (min-width: 481px) and (max-width: 767px) {}
+
+@media (min-width: 768px) and (max-width: 991px) {}
+
+@media (min-width: 992px) and (max-width: 1199px) {}
+
+@media (min-width: 1200px) and (max-width: 1599px) {}
+
+@media (min-width: 1600px) {}
 </style>

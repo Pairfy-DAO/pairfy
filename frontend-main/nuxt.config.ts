@@ -13,7 +13,7 @@ export default defineNuxtConfig({
     public: {
       apiBaseBrowser: "",
       validWallets: ["lace", "nami", "eternl"],
-      mediaCDNBase: process.env.NUXT_PUBLIC_MEDIA_CDN
+      mediaCDNBase: process.env.NUXT_PUBLIC_MEDIA_CDN,
     },
   },
   css: [
@@ -24,6 +24,11 @@ export default defineNuxtConfig({
     plugins: [wasm()],
     build: {
       target: "esnext",
+    },
+    server: {
+      allowedHosts: [
+        //"c719-2800-e2-bb80-5ef-a58c-fcd2-4177-1bfc.ngrok-free.app",
+      ],
     },
   },
 });
