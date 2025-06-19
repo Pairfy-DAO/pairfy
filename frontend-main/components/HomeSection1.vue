@@ -4,7 +4,6 @@
             <BannerComp />
             <HomePrompt />
         </VideoBackground>
-
     </div>
 </template>
 
@@ -15,6 +14,6 @@
 <style lang="css" scoped>
 .HomeSection1 {
     height: 100vh;
-    background: black;
+    background: var(--black-a);
 }
 </style>

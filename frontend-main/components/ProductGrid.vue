@@ -71,6 +71,7 @@ function animateCards() {
   flex-direction: column;
   box-sizing: border-box;
   border-radius: var(--radius-a);
+  max-width: var(--body-a);
 }
 
 .ProductGrid-grid {

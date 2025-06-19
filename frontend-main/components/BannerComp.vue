@@ -88,10 +88,10 @@
 
 .Banner-header-left h1 {
     margin: 0;
-    font-weight: 400;
+    font-weight: 500;
     margin-bottom: 1rem;
+    font-size: var(--text-size-9);
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    font-size: var(--text-size-10);
 }
 
 .bold {

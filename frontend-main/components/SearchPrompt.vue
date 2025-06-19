@@ -5,6 +5,10 @@
             <SearchPanel @onApply="filterDrawer = false" />
         </DrawerComp>
 
+        <div class="title">
+            <span>Hello, search however you want...</span>
+        </div>
+
         <form class="SearchPrompt-form" :class="{ 'focused': isFocused }" @focusin="isFocused = true"
             @focusout="isFocused = false" @submit.prevent="submitPrompt">
             <div class="controls">
@@ -95,16 +99,15 @@ function submitPrompt() {
 .SearchPrompt {
     width: 100%;
     display: flex;
-    height: 30rem;
-    margin-top: 1rem;
+    height: 25rem;
     flex-direction: column;
     box-sizing: border-box;
     background-size: cover;
     justify-content: flex-end;
     background-repeat: no-repeat;
-    border-radius: var(--radius-d);
     background-position: center;
     background-image: url('@/assets/banner/1.png');
+    background: var(--blue-c);
 }
 
 .controls {
@@ -129,10 +132,10 @@ function submitPrompt() {
     padding: 1rem;
     max-width: 50%;
     margin: auto auto;
-    margin-bottom: 2rem;
     padding-top: 1rem;
     position: relative;
     align-items: center;
+    margin-bottom: 4rem;
     box-sizing: border-box;
     padding-bottom: 0.75rem;
     box-shadow: var(--shadow-c);
@@ -197,5 +200,18 @@ function submitPrompt() {
 .send-button:disabled {
     background: black;
     pointer-events: none;
+}
+
+.title {
+    justify-content: center;
+    margin-top: 4rem;
+    width: inherit;
+    display: flex;
+}
+
+.title span {
+    font-size: var(--text-size-8);
+    color: var(--text-w);
+    font-weight: 500;
 }
 </style>

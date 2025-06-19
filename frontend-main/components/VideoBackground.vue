@@ -1,5 +1,5 @@
 <template>
-    <div ref="containerRef" class="video-background">
+    <div  class="video-background" ref="containerRef">
         <ClientOnly>
             <video class="video-bg" ref="videoRef" v-if="!prefersReducedMotion" autoplay muted loop playsinline>
 
@@ -79,7 +79,7 @@ const goToProducts = () => {
     transform: translate(-50%, -50%);
     object-fit: cover;
     position: absolute;
-    filter: brightness(0.6);
+    filter: brightness(0.7);
 }
 
 .overlay-content {

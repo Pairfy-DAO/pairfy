@@ -97,11 +97,11 @@ const selectSuggestion = (item: ProductSuggestion) => {
 }
 
 .search-input:focus-within {
-    border: 1px solid var(--primary-a);
+    border: 1px solid var(--black-a);
 }
 
 .search-input:hover {
-    border: 1px solid var(--primary-a); 
+    border: 1px solid var(--black-a);
 }
 
 .search-input::placeholder {
