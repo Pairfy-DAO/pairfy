@@ -1,8 +1,7 @@
-import { getCurrentTimestamp, logger } from "../../utils/index.js";
-import { searchClient } from "../../elastic/index.js";
-import { database } from "../../database/client.js";
+import { logger } from "@pairfy/common";
+import database from "../../database/client.js";
 
-const updateProductIndex = async (payload: any): Promise<boolean> => {
+export const updateProductIndex = async (payload: any): Promise<boolean> => {
   let result = false;
 
   try {
@@ -10,7 +9,7 @@ const updateProductIndex = async (payload: any): Promise<boolean> => {
       id: payload.id,
       available: payload.available,
     };
-
+/*
     const response = await searchClient.update({
       index: "products",
       id: document.id,
@@ -19,7 +18,7 @@ const updateProductIndex = async (payload: any): Promise<boolean> => {
 
     if (response.result !== "updated") {
       throw new Error("UpdateProductIndexError");
-    }
+    }*/
 
     result = true;
   } catch (err) {
@@ -29,7 +28,7 @@ const updateProductIndex = async (payload: any): Promise<boolean> => {
   }
 };
 
-const updateBook = async (_: any, args: any, context: any) => {
+export const updateBook = async (_: any, args: any, context: any) => {
   const params = args.updateBookInput;
 
   console.log(params);
@@ -68,7 +67,7 @@ const updateBook = async (_: any, args: any, context: any) => {
     const updateValues = [
       params.keeping_stock,
       params.ready_stock,
-      getCurrentTimestamp(),
+      Date.now(),
       params.id,
     ];
 
@@ -109,7 +108,7 @@ const updateBook = async (_: any, args: any, context: any) => {
   }
 };
 
-const getBooks = async (_: any, args: any, context: any) => {
+export const getBooks = async (_: any, args: any, context: any) => {
   let connection = null;
 
   try {
@@ -201,4 +200,3 @@ const getBooks = async (_: any, args: any, context: any) => {
   }
 };
 
-export { getBooks, updateBook };

@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: service-gateway
+  template:
+    metadata:
+      labels:
+        role: service-gateway
+    spec:
+      containers:
+        - name: service-gateway
+          image: pairfy/service-gateway
+          env:
+            - name: NODE_ENV
+              value: development
+            - name: NETWORK_ENV
+              value: "Preprod"              
+            - name: REDIS_STATE_HOST
+              value: redis://redis-state:6379
+            - name : REDIS_RATELIMIT_HOST
+              value: redis://redis-limiter:6379              
+            - name: TX_VALID_TIME
+              value: "360000"
+            - name: TX_WATCH_WINDOW
+              value: "960000"
+            - name: PENDING_RANGE
+              value: "3600000"
+            - name: SHIPPING_RANGE
+              value: "86400000"
+            - name: APPEAL_RANGE
+              value: "604800000"
+            - name: DELIVERY_RANGE
+              value: "864000000"              
+            - name: EXPIRING_RANGE
+              value: "5184000000"
+            - name: FEE_PERCENT
+              value: "10" 
+            - name: DATABASE_NAME
+              value: service_gateway
+            - name: DATABASE_USER
+              value: marketplace
+            - name: DATABASE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: database-config
+                  key: master
+            - name: DATABASE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: database-config
+                  key: port
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-password-secret
+                  key: password              
+            - name: PROJECT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: blockfrost-key
+                  key: key
+            - name: KUPO_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: kupo-key
+                  key: key
+            - name: OGMIOS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ogmios-key
+                  key: key                     
+            - name: WEAVIATE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: weaviate-config
+                  key: host            
+            - name: AGENT_JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: agent-token-secret
+                  key: AGENT_TOKEN_KEY
+
+
+          resources:
+            limits:
+              memory: "500Mi"
+            requests:
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-gateway
+spec:
+  selector:
+    role: service-gateway
+  ports:
+    - name: service-gateway
+      protocol: TCP
+      port: 8006
+      targetPort: 8006
