@@ -3,7 +3,7 @@
         <ClientOnly>
             <video class="video-bg" ref="videoRef" v-if="!prefersReducedMotion" autoplay muted loop playsinline>
 
-                <source src="@/assets/videos/2.mp4" type="video/mp4" />
+                <source src="@/assets/videos/1.mp4" type="video/mp4" />
                 Your browser does not support the video HTML5.
             </video>
         </ClientOnly>
@@ -79,7 +79,7 @@ const goToProducts = () => {
     transform: translate(-50%, -50%);
     object-fit: cover;
     position: absolute;
-    filter: brightness(0.4);
+    filter: brightness(0.6);
 }
 
 .overlay-content {
@@ -91,7 +91,7 @@ const goToProducts = () => {
 <style scoped>
 @media (max-width: 480px) {
     .video-bg {
-        filter: brightness(0.2);
+        filter: brightness(0.6);
     }
 }
 

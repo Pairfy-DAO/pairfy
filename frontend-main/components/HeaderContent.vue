@@ -110,3 +110,28 @@ watch(() => route.path, (newPath) => {
   background: rgba(255, 255, 255, 0.05);
 }
 </style>
+
+
+
+<style scoped>
+@media (max-width: 480px) {
+  .HeaderContent-nav {
+    display: none;
+  }
+
+  .HeaderContent-body{
+    padding: 0.5rem;
+    grid-template-columns: 0.1fr 1fr 0.1fr;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 767px) {}
+
+@media (min-width: 768px) and (max-width: 991px) {}
+
+@media (min-width: 992px) and (max-width: 1199px) {}
+
+@media (min-width: 1200px) and (max-width: 1599px) {}
+
+@media (min-width: 1600px) {}
+</style>

@@ -11,9 +11,9 @@
                         </h1>
                         <ul class="features">
                             <li>✔ Community-governed (DAO)</li>
-                            <li>✔ Native asset payments</li>
-                            <li>✔ Midnight network</li>
-                            <li>✔ Free shipping</li>
+                            <li>✔ Native asset and stablecoin payments</li>
+                            <li>✔ Midnight network - Cardano network</li>
+                            <li>✔ Free shipping for all products</li>
                         </ul>
                     </div>
 
@@ -64,11 +64,11 @@
     position: relative;
     box-sizing: border-box;
     max-width: var(--body-a);
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(10px);
     border-radius: var(--radius-d);
     border: 1px solid rgba(255, 255, 255, 0.2);
     -webkit-backdrop-filter: blur(5px);
-    background: rgba(255, 255, 255, 5%);
+    background: rgba(255, 255, 255, 2%);
 }
 
 .overlay {
@@ -183,7 +183,7 @@
     }
 
     .Banner-header-right {
-        display: none; 
+        display: none;
     }
 
     .Banner-cards {

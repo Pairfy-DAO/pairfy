@@ -27,7 +27,7 @@ export default defineNuxtConfig({
     },
     server: {
       allowedHosts: [
-        //"c719-2800-e2-bb80-5ef-a58c-fcd2-4177-1bfc.ngrok-free.app",
+    
       ],
     },
   },

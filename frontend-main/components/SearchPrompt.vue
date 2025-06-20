@@ -6,7 +6,7 @@
         </DrawerComp>
 
         <div class="title">
-            <span>Hello, search however you want.</span>
+            <span>Hello, what do you need today?</span>
         </div>
 
         <form class="SearchPrompt-form" :class="{ 'focused': isFocused }" @focusin="isFocused = true"
@@ -14,7 +14,8 @@
             <div class="controls">
                 <div class="SearchPrompt-input flex">
                     <textarea v-model="prompt" aria-label="Prompt" @keydown.enter.exact.prevent="submitPrompt" rows="1"
-                        @focus="onFocusOrClick" @click="onFocusOrClick" placeholder="I need a laptop with a good battery but affordable." />
+                        @focus="onFocusOrClick" @click="onFocusOrClick"
+                        placeholder="Search" />
                 </div>
 
                 <div class="control flex">
@@ -99,6 +100,7 @@ function submitPrompt() {
 .SearchPrompt {
     width: 100%;
     display: flex;
+    padding: 1rem;
     min-height: 25rem;
     flex-direction: column;
     box-sizing: border-box;
@@ -178,7 +180,7 @@ function submitPrompt() {
 .SearchPrompt-input textarea::placeholder {
     color: var(--text-b);
     font-size: inherit;
-    opacity: 0.6;
+    opacity: 0.5;
 }
 
 
@@ -212,6 +214,39 @@ function submitPrompt() {
 .title span {
     font-size: var(--text-size-8);
     color: var(--text-w);
+    text-align: center;
     font-weight: 500;
 }
+</style>
+
+<style scoped>
+@media (max-width: 480px) {
+    .SearchPrompt {
+        min-height: 18rem;
+    }
+
+    .title {
+        margin-top: 2rem;
+    }
+
+    .title span {
+        font-size: var(--text-size-6);
+    }
+
+    .SearchPrompt-form {
+        max-width: 100%;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 767px) {}
+
+@media (min-width: 768px) and (max-width: 991px) {}
+
+@media (min-width: 992px) and (max-width: 1199px) {}
+
+@media (min-width: 1200px) and (max-width: 1599px) {}
+
+@media (min-width: 1600px) {}
 </style>

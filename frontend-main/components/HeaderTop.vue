@@ -1,5 +1,5 @@
 <template>
-    <div class="HeaderTop flex" :class="{ black: ['country', 'index'].includes(route.name) }">
+    <div class="HeaderTop flex" :class="{ home: ['country', 'index'].includes(route.name) }">
         <div class="HeaderTop-content flex">
             <div class="HeaderTop-location flex" @click="auth.locationDialog = true">
                 <img :src="US" alt="">
@@ -59,8 +59,9 @@ const auth = useAuthStore()
     top: 0;
 }
 
-.black {
+.home {
     background: var(--black-a);
+    position: initial;
 }
 
 .HeaderTop-content {
@@ -95,17 +96,12 @@ const auth = useAuthStore()
 }
 
 @media (max-width: 480px) {
-    .HeaderTop {
-        border-bottom: 1px solid var(--border-a);
-        height: 2.5rem;
-    }
-
     .HeaderTop-price {
         display: none;
     }
 
     .HeaderTop-content {
-        padding: 0 0.5rem;
+        padding: 0 1rem;
         max-width: 100%;
     }
 }

@@ -37,3 +37,24 @@ const auth = useAuthStore()
 }
 
 </style>
+
+
+<style scoped>
+
+@media (max-width: 480px) {
+    .HeaderConnect{
+        display: none;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 767px) {}
+
+@media (min-width: 768px) and (max-width: 991px) {}
+
+@media (min-width: 992px) and (max-width: 1199px) {}
+
+@media (min-width: 1200px) and (max-width: 1599px) {}
+
+@media (min-width: 1600px) {}
+
+</style>
