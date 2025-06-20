@@ -10,9 +10,6 @@ hero:
     - theme: brand
       text: Introduction
       link: /introduction
-    - theme: alt
-      text: API docs
-      link: /api-examples
 
 features:
   - title: 🔥 Open Source - Apache 2.0
