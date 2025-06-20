@@ -14,8 +14,7 @@
             <div class="controls">
                 <div class="SearchPrompt-input flex">
                     <textarea v-model="prompt" aria-label="Prompt" @keydown.enter.exact.prevent="submitPrompt" rows="1"
-                        @focus="onFocusOrClick" @click="onFocusOrClick"
-                        placeholder="Search" />
+                        @focus="onFocusOrClick" @click="onFocusOrClick" placeholder="Search prompt" />
                 </div>
 
                 <div class="control flex">
@@ -57,6 +56,8 @@
 </template>
 
 <script setup>
+const route = useRoute()
+const router = useRouter()
 
 const isFocused = ref(false)
 
@@ -69,9 +70,15 @@ function openFilters(e) {
 const prompt = ref('')
 const isSubmitting = ref(false)
 
-const route = useRouter()
-
-const router = useRouter()
+watch(
+    () => route.query.prompt,
+    (value) => {
+        if (value) {
+            prompt.value = value
+        }
+    },
+    { immediate: true }
+)
 
 function submitPrompt() {
     const trimmed = prompt.value.trim()

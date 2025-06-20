@@ -2,7 +2,7 @@
   <div class="dialog-backdrop" v-if="modelValue" @click="emitClose">
     <div class="dialog-box" @click.stop>
 
-      <div class="header flex end"  v-if="props.closable">
+      <div class="header flex end" v-if="props.closable">
         <button class="flex center" @click="emitClose">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -96,8 +96,10 @@ if (import.meta.client) {
   right: 0;
   bottom: 0;
   display: flex;
+  padding: 1rem;
   z-index: 20000;
   align-items: center;
+  box-sizing: border-box;
   justify-content: center;
   background: rgba(0, 0, 0, 0.3);
 }
@@ -106,6 +108,7 @@ if (import.meta.client) {
   background: var(--background-a);
   border-radius: var(--radius-c);
   box-shadow: var(--shadow-b);
+  box-sizing: border-box;
   overflow: hidden;
   min-width: 300px;
 }
