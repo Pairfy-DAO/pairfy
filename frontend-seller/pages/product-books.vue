@@ -33,38 +33,44 @@
                 <div v-if="!books.length"></div>
 
                 <TableComp v-if="books.length" :columns="columns" :items="books" :limit="limit"
-                    :hasNextPage="hasNextPage" :hasPrevPage="hasPrevPage" :range="range" :page="page"
-                    :count="bookCount" :images="true" @onPrev="handleOnPrev" @onNext="handleOnNext"
-                    :columnWidths="{ id: '10rem', sku: '8rem', price: '6rem', model: '8rem', discount: '4rem', category: '10rem', created_at: '6rem', moderated: '4rem' }">
+                    :hasNextPage="hasNextPage" :hasPrevPage="hasPrevPage" :range="range" :page="page" :count="bookCount"
+                    :images="true" @onPrev="handleOnPrev" @onNext="handleOnNext" :columnWidths="{
+                        image: '6rem',
+                        id: '8rem',
+                        product_sku: '8rem',
+                        product_name: '16rem',
+                        sold: '4rem',
+                        blocked_stock: '4rem',
+                        ready_stock: '4rem',
+                        keeping_stock: '4rem',
+                        buy_limit: '4rem',
+                        paused: '4rem',
+                        created_at: '4rem',
+                        action: '4rem'
+                    }">
 
                     <template #image="{ item }">
-                        <ImageComp :src="getImageSrc(item)" :image-style="{ width: '4rem', height: '4rem' }" />
+                        <ImageComp :src="getImageSrc(item)" :image-style="{ width: '4rem' }" />
                     </template>
 
                     <template #col-id="{ value }">
                         {{ value }}
                     </template>
 
-                    <template #col-sku="{ value }">
+                    <template #col-product_sku="{ value }">
                         {{ value }}
                     </template>
 
-                    <template #col-price="{ value, item }">
-                        <span>{{ `${item.discount ? item.discount_value : value}` }}</span>
+                    <template #col-buy_limit="{ value, item }">
+                        {{ !!value }}
                     </template>
 
-                    <template #col-category="{ value }">
-                        <span style="text-transform: lowercase;">{{ value }}</span>
-                    </template>
-
-                    <template #col-discount="{ value, item }">
-                        <span>
-                            {{ `${item.discount ? '-' + item.discount_percent + '%' : 'N/a'}` }}
-                        </span>
+                    <template #col-paused="{ value, item }">
+                        {{ !!value }}
                     </template>
 
                     <template #col-created_at="{ value }">
-                        {{ formatDate(value) }}
+                        {{ formatDateYYMMDD(value) }}
                     </template>
 
                     <template #action="{ item }">
@@ -84,6 +90,7 @@
 
 <script setup>
 import placeholderImage from '@/assets/placeholder/image.svg'
+import { formatDateYYMMDD } from "@/utils/utils"
 import { gql } from 'graphql-tag'
 
 const router = useRouter()
@@ -111,13 +118,14 @@ const dottedMenuOptions = ref([
 
 const columns = ref([
     { label: "ID", field: "id" },
-    { label: "Sku", field: "sku" },
-    { label: "Name", field: "name" },
-    { label: "Price", field: "price" },
-    { label: "Model", field: "model" },
-    { label: "Discount", field: "discount" },
-    { label: "Category", field: "category" },
-    { label: "Moderated", field: "moderated" },
+    { label: "Sku", field: "product_sku" },
+    { label: "Name", field: "product_name" },
+    { label: "Sold", field: "sold" },
+    { label: "Blocked", field: "blocked_stock" },
+    { label: "Ready", field: "ready_stock" },
+    { label: "Keeping", field: "keeping_stock" },
+    { label: "BuyLimit", field: "buy_limit" },
+    { label: "Paused", field: "paused" },
     { label: "Date", field: "created_at" }
 ])
 
@@ -135,6 +143,15 @@ const GET_BOOKS_QUERY = gql`
     getBooks(getBooksInput: $getBooksVariable) {
       books {
         id
+        keeping_stock
+        ready_stock
+        blocked_stock
+        buy_limit
+        sold
+        created_at
+        product_name
+        product_sku
+        thumbnail_url
       }
       nextCursor
       hasPrevMore
@@ -207,20 +224,12 @@ function getImageSrc(item) {
     return item.thumbnail_url ? useMediaUrl(item.thumbnail_url) : placeholderImage
 }
 
-function formatDate(timestamp) {
-    const date = new Date(timestamp);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
-
 </script>
 
 
 
 <style lang="css" scoped>
 .card {
-    padding: 0.25rem;
+    padding: 0.1rem;
 }
 </style>

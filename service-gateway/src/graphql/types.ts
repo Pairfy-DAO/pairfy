@@ -43,6 +43,9 @@ type Books {
   created_at: BigInt!
   updated_at: BigInt!
   schema_v: Int!
+  product_name: String!
+  product_sku: String!
+  thumbnail_url: String!
 }
 
 type GetBooksResponse {

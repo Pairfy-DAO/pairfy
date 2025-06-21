@@ -15,7 +15,7 @@ export const getBooks = async (_: any, args: any, context: any) => {
   const realLimit = pageSize + 1;
 
   const queryParams: any[] = [SELLER.id];
-  let whereClause = "WHERE seller_id = ?";
+  let whereClause = "WHERE books.seller_id = ?";
   let orderClause = "ORDER BY created_at DESC, id DESC";
   let isReversing = false;
 
@@ -34,11 +34,17 @@ export const getBooks = async (_: any, args: any, context: any) => {
   }
 
   const query = `
-    SELECT * FROM books
-    ${whereClause}
-    ${orderClause}
-    LIMIT ?
-  `;
+  SELECT 
+    books.*,
+    products.name AS product_name,
+    products.sku AS product_sku,
+    products.thumbnail_url AS thumbnail_url
+  FROM books
+  JOIN products ON books.id = products.id
+  ${whereClause}
+  ${orderClause}
+  LIMIT ?
+`;
 
   queryParams.push(realLimit);
 
@@ -71,15 +77,13 @@ export const getBooks = async (_: any, args: any, context: any) => {
 
     const isInitialLoad = !cursor && !reverseCursor;
 
-    const hasPrevMore = !isInitialLoad && (
-      (!isReversing && (isAdvancing || hasMore)) ||
-      (isReversing && hasMore)
-    );
-    
-    const hasNextMore = (
+    const hasPrevMore =
+      !isInitialLoad &&
+      ((!isReversing && (isAdvancing || hasMore)) || (isReversing && hasMore));
+
+    const hasNextMore =
       (!isReversing && hasMore) ||
-      (isReversing && (isAdvancing || resultLength > 0))
-    );
+      (isReversing && (isAdvancing || resultLength > 0));
 
     return {
       books: finalBooks,
@@ -89,9 +93,7 @@ export const getBooks = async (_: any, args: any, context: any) => {
       totalCount: total_books,
     };
   } catch (err) {
-    throw new ApiGraphQLError(500, "Unexpected error retrieving books", {
-      code: ERROR_CODES.INTERNAL_ERROR,
-    });
+    throw err
   } finally {
     if (connection) connection.release();
   }

@@ -22,12 +22,12 @@
 
         <ButtonRounded @click="prevPage" :disabled="!hasPrevPage">
           <template #content>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
-            class="lucide lucide-chevron-left">
-            <path d="m15 18-6-6 6-6" />
-          </svg>
-        </template>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-chevron-left">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+          </template>
         </ButtonRounded>
 
         <ButtonRounded @click="nextPage" :disabled="!hasNextPage">
@@ -61,7 +61,7 @@
 
       <tbody>
         <tr class="rows" v-for="item in filteredItems" :key="item.id">
-          <td class="image" v-if="images">
+          <td class="image" :style="{ width: columnWidths['image'] || 'auto' }" v-if="images">
             <slot name="image" :item="item" />
           </td>
 
@@ -72,7 +72,7 @@
             </slot>
           </td>
 
-          <td class="row">
+          <td class="row" :style="{ width: columnWidths['action'] || 'auto' }">
             <slot name="action" :item="item" />
           </td>
         </tr>
@@ -186,15 +186,20 @@ const nextPage = () => {
 
 .search {
   border-radius: var(--input-radius);
-  border: 1px solid var(--border-a);
+  border: 1px solid var(--border-b);
   background: var(--background-b);
+  transition: var(--transition-a);
   padding: 0 1rem;
   width: 50%;
 }
 
+.search:hover {
+  border: 1px solid var(--primary-a);
+}
+
 .search input {
   background: transparent;
-  padding: 0.75rem 1rem;
+  padding: 0.65rem 1rem;
   min-width: 300px;
   width: inherit;
   border: none;
@@ -203,6 +208,7 @@ const nextPage = () => {
 
 .search input::placeholder {
   color: var(--text-b);
+  opacity: var(--placeholder-opacity); 
   font-size: var(--text-size-1);
 }
 
