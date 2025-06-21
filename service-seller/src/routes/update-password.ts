@@ -7,6 +7,8 @@ import {
   updateSeller,
   verifyToken,
   hashPassword,
+  createEvent,
+  findSellerById,
 } from "@pairfy/common";
 import {
   verifyParams,
@@ -21,6 +23,8 @@ export const updatePasswordHandler = async (req: Request, res: Response) => {
   let connection = null;
 
   try {
+    const timestamp = Date.now();
+
     const validateParams = verifyParams.safeParse(req.body);
 
     if (!validateParams.success) {
@@ -81,7 +85,7 @@ export const updatePasswordHandler = async (req: Request, res: Response) => {
       params.password
     );
 
-    const updatedSeller = await updateSeller(
+    const updateResult = await updateSeller(
       connection,
       SELLER.id,
       SELLER.schema_v,
@@ -94,11 +98,22 @@ export const updatePasswordHandler = async (req: Request, res: Response) => {
       }
     );
 
-    if (updatedSeller.affectedRows !== 1) {
+    if (updateResult.affectedRows !== 1) {
       throw new ApiError(409, "Update failed: version mismatch or not found", {
         code: ERROR_CODES.UPDATE_CONFLICT,
       });
     }
+
+    const findSeller = await findSellerById(connection, SELLER.id);
+
+    await createEvent(
+      connection,
+      timestamp,
+      "service-seller",
+      "UpdateSeller",
+      JSON.stringify(findSeller),
+      SELLER.id
+    );
 
     await connection.commit();
 

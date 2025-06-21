@@ -82,7 +82,13 @@ const connectWallet = async (name) => {
 
     const [signature, address] = await wallet.sign()
 
-    await auth.login({ email: email.value, password: password.value, signature, address })
+    await auth.login({
+      email: email.value,
+      password: password.value,
+      wallet_name: name,
+      signature,
+      address
+    })
 
     router.push({ path: '/home', query: {} })
   } catch (err) {

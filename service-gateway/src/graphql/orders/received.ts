@@ -1,5 +1,5 @@
 import { receivedTransactionBuilder } from "../../cardano/builders/received.js";
-import { UserToken } from "../../middleware/agent.js";
+import { UserToken } from "@pairfy/common";
 import database from "../../database/client.js";
 
 const receivedEndpoint = async (_: any, args: any, context: any) => {

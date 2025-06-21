@@ -1,15 +1,8 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { logger, SellerToken } from "@pairfy/common";
+import { logger, SellerToken, UserToken } from "@pairfy/common";
 
 
-export interface UserToken {
-  pubkeyhash: string;
-  role: string;
-  address: string;
-  country: string;
-  username: string;
-}
 
 declare global {
   interface Request {

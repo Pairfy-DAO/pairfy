@@ -5,6 +5,8 @@ import {
   ApiError,
   ERROR_CODES,
   updateSeller,
+  createEvent,
+  findSellerById,
 } from "@pairfy/common";
 import { Request, Response } from "express";
 import {
@@ -12,12 +14,14 @@ import {
   tokenValidator,
 } from "../validators/verify-seller.js";
 
-const verifySellerMiddlewares: any = [];
+export const verifySellerMiddlewares: any = [];
 
-const verifySellerHandler = async (req: Request, res: Response) => {
+export const verifySellerHandler = async (req: Request, res: Response) => {
   let connection = null;
 
   try {
+    const timestamp = Date.now();
+
     const isValidToken = tokenValidator.safeParse(req.body);
 
     if (!isValidToken.success) {
@@ -61,7 +65,7 @@ const verifySellerHandler = async (req: Request, res: Response) => {
       });
     }
 
-    const updatedSeller = await updateSeller(
+    const updateResult = await updateSeller(
       connection,
       SELLER.id,
       SELLER.schema_v,
@@ -71,11 +75,22 @@ const verifySellerHandler = async (req: Request, res: Response) => {
       }
     );
 
-    if (updatedSeller.affectedRows !== 1) {
+    if (updateResult.affectedRows !== 1) {
       throw new ApiError(409, "Update failed: version mismatch or not found", {
         code: ERROR_CODES.UPDATE_CONFLICT,
       });
     }
+
+    const findSeller = await findSellerById(connection, SELLER.id);
+
+    await createEvent(
+      connection,
+      timestamp,
+      "service-seller",
+      "UpdateSeller",
+      JSON.stringify(findSeller),
+      SELLER.id
+    );
 
     await connection.commit();
 
@@ -83,20 +98,12 @@ const verifySellerHandler = async (req: Request, res: Response) => {
 
     res.status(200).send({
       success: true,
-      data: {
-        message: "The email has been successfully verified !",
-      },
+      message: "The email has been successfully verified !",
     });
   } catch (err: any) {
-    if (connection) {
-      await connection.rollback();
-    }
-
+    if (connection) await connection.rollback();
     throw err;
   } finally {
-    if (connection) {
-      connection.release();
-    }
+    if (connection) connection.release();
   }
 };
-export { verifySellerMiddlewares, verifySellerHandler };

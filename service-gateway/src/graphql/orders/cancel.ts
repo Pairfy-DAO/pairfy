@@ -1,5 +1,5 @@
 import { cancelTransactionBuilder } from "../../cardano/builders/cancel.js";
-import { UserToken } from "../../middleware/agent.js";
+import { UserToken } from "@pairfy/common";
 import database from "../../database/client.js";
 
 const cancelEndpoint = async (_: any, args: any, context: any) => {

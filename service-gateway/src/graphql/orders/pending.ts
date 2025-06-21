@@ -3,7 +3,7 @@ import { pendingTransactionBuilder } from "../../cardano/builders/pending.js";
 import { chunkMetadata, encryptMetadata } from "../../lib/metadata.js";
 import { getContractFee, getContractPrice } from "../../lib/index.js";
 import { pendingEndpointSchema } from "../../validators/orders.js";
-import { UserToken } from "../../middleware/agent.js";
+import { UserToken } from "@pairfy/common";
 import { redisClient } from "../../database/redis.js";
 import { GraphQLError } from "graphql";
 

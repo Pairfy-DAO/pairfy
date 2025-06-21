@@ -1,5 +1,5 @@
 import { returnTransactionBuilder } from "../../cardano/builders/return.js";
-import { UserToken } from "../../middleware/agent.js";
+import { UserToken } from "@pairfy/common";
 import database from "../../database/client.js";
 
 const returnEndpoint = async (_: any, args: any, context: any) => {

@@ -10,6 +10,7 @@ import {
   insertSeller,
   createToken,
   findSellerByEmail,
+  findSellerById,
 } from "@pairfy/common";
 import {
   validateParams,
@@ -103,7 +104,7 @@ export const createSellerHandler = async (req: Request, res: Response) => {
       });
     }
 
-    const findSeller = await findSellerByEmail(connection, sellerScheme.email);
+    const findSeller = await findSellerById(connection, sellerScheme.id);
 
     await createEvent(
       connection,
@@ -136,7 +137,7 @@ export const createSellerHandler = async (req: Request, res: Response) => {
 
     res.status(200).send({
       success: true,
-      message: "Successfully registered. Please check your inbox including the 'All Mail' and 'Spam' folders, for our email.",
+      message: "Successfully registered. Please check your email inbox."
     });
   } catch (err) {
     if (connection) await connection.rollback();
