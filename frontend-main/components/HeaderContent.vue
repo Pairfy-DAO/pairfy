@@ -1,30 +1,26 @@
 <template>
-  <nav class="HeaderContent flex" :class="{ contrast: isContrast }">
-    <div class="HeaderContent-body" :class="{ contrast: isContrast }">
+  <nav class="HeaderContent flex">
+    <div class="HeaderContent-body">
 
       <div class="left-column flex">
-        <img class="icon" v-if="!isContrast" src="@/assets/brand/icon-white.svg" alt="" @click="navigateTo('/')">
-        <img class="icon" v-if="isContrast" src="@/assets/brand/icon.svg" alt="" @click="navigateTo('/')">
+        <img class="icon" src="@/assets/brand/icon-white.svg" alt="" @click="navigateTo('/')">
 
         <ul class="HeaderContent-nav">
-
-          <li v-for="item in items" :key="item.label" @click="navigateTo(item.route)" :class="{ contrast: isContrast }">
+          <li v-for="item in items" :key="item.label" @click="navigateTo(item.route)">
             {{ item.label }}
           </li>
         </ul>
       </div>
 
-
       <div class="center-column flex center">
-        <HeaderSearch v-if="isContrast" />
+        <HeaderSearch />
       </div>
-
 
       <div class="right-column flex end">
         <ClientOnly>
-        <HeaderConnect v-if="!auth.isAuthenticated" />
-        <HeaderAvatar v-if="auth.isAuthenticated" />
-      </ClientOnly>
+          <HeaderConnect v-if="!auth.isAuthenticated" />
+          <HeaderAvatar v-if="auth.isAuthenticated" />
+        </ClientOnly>
       </div>
 
     </div>
@@ -33,8 +29,6 @@
 
 
 <script setup lang="ts">
-const isContrast = computed(() => ['country-p-id', 'country-s'].includes(route.name as string))
-
 const auth = useAuthStore()
 
 const items = ref([
@@ -69,10 +63,13 @@ watch(() => route.path, (newPath) => {
   justify-content: center;
   box-sizing: border-box;
   color: var(--text-w);
-  position: fixed;
   z-index: 11000;
   width: 100%;
   top: 2rem;
+  margin-top: 2rem;
+  position: initial;
+  box-shadow: var(--shadow-b);
+  background: var(--blue-b);
 }
 
 .HeaderContent-body {
@@ -81,10 +78,11 @@ watch(() => route.path, (newPath) => {
   width: inherit;
   color: inherit;
   font-weight: 500;
+  padding: 0.75rem 0;
   align-items: center;
   box-sizing: border-box;
   max-width: var(--body-a);
-  grid-template-columns: 1fr 1.5fr 0.25fr;
+  grid-template-columns: 1fr 2fr 0.5fr;
 }
 
 .HeaderContent-nav {
@@ -108,24 +106,32 @@ watch(() => route.path, (newPath) => {
   background: rgba(255, 255, 255, 0.1);
 }
 
+.HeaderContent-body li:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+</style>
 
 
 
-.HeaderContent.contrast {
-  margin-top: 3.5rem;
-  position: initial;
-} 
+<style scoped>
+@media (max-width: 480px) {
+  .HeaderContent-nav {
+    display: none;
+  }
 
-.HeaderContent-body.contrast {
-  color: var(--text-a);
-  padding: 0.75rem 1rem;
-  background: var(--background-a);
-  border-radius: var(--radius-b);
-  box-shadow: var(--shadow-b);
+  .HeaderContent-body{
+    padding: 0.5rem;
+    grid-template-columns: 0.1fr 1fr 0.1fr;
+  }
 }
 
-.HeaderContent-body li.contrast:hover {
-  color: var(--primary-a);
-  background: rgba(0, 0, 0, 0.025);
-}
+@media (min-width: 481px) and (max-width: 767px) {}
+
+@media (min-width: 768px) and (max-width: 991px) {}
+
+@media (min-width: 992px) and (max-width: 1199px) {}
+
+@media (min-width: 1200px) and (max-width: 1599px) {}
+
+@media (min-width: 1600px) {}
 </style>

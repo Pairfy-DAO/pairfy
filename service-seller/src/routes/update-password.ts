@@ -7,11 +7,15 @@ import {
   updateSeller,
   verifyToken,
   hashPassword,
+  createEvent,
+  findSellerById,
 } from "@pairfy/common";
 import {
   verifyParams,
   verifyTokenType,
 } from "../validators/update-password.js";
+import { generateRSA } from "../utils/rsa.js";
+import { encryptAESGCM } from "../utils/aes.js";
 
 export const updatePasswordMiddlewares: any = [];
 
@@ -19,6 +23,8 @@ export const updatePasswordHandler = async (req: Request, res: Response) => {
   let connection = null;
 
   try {
+    const timestamp = Date.now();
+
     const validateParams = verifyParams.safeParse(req.body);
 
     if (!validateParams.success) {
@@ -66,38 +72,57 @@ export const updatePasswordHandler = async (req: Request, res: Response) => {
       });
     }
 
-      ///////////////////////////////////////////////////////////////// START TRANSACTION
+    ///////////////////////////////////////////////////////////////// START TRANSACTION
 
     await connection.beginTransaction();
 
     const password = await hashPassword(params.password);
 
-    const updatedSeller = await updateSeller(
+    const RSAkeys = await generateRSA();
+
+    const encriptedPrivateKey = await encryptAESGCM(
+      RSAkeys.privateKeyB64,
+      params.password
+    );
+
+    const updateResult = await updateSeller(
       connection,
       SELLER.id,
       SELLER.schema_v,
       {
         password_hash: password,
+        rsa_version: SELLER.rsa_version + 1,
+        rsa_public_key: RSAkeys.publicKeyB64,
+        rsa_private_key: [...SELLER.rsa_private_key, encriptedPrivateKey],
         schema_v: SELLER.schema_v + 1,
       }
     );
 
-    if (updatedSeller.affectedRows !== 1) {
+    if (updateResult.affectedRows !== 1) {
       throw new ApiError(409, "Update failed: version mismatch or not found", {
         code: ERROR_CODES.UPDATE_CONFLICT,
       });
     }
 
+    const findSeller = await findSellerById(connection, SELLER.id);
+
+    await createEvent(
+      connection,
+      timestamp,
+      "service-seller",
+      "UpdateSeller",
+      JSON.stringify(findSeller),
+      SELLER.id
+    );
+
     await connection.commit();
 
     ///////////////////////////////////////////////////////////////// END TRANSACTION
 
-    res
-      .status(200)
-      .send({
-        success: true,
-        message: "The password has been changed successfully",
-      });
+    res.status(200).send({
+      success: true,
+      message: "The password has been updated successfully. Redirecting to the login page...",
+    });
   } catch (err: any) {
     if (connection) await connection.rollback();
     throw err;

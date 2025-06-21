@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   const sessionCookie = cookies.session;
 
   try {
-    const response = await $fetch(`${config.serviceProductBase}/product/graphql`, {
+    const response = await $fetch(config.serviceProductBase + "/api/product/graphql", {
       method: "POST",
       body,
       headers: {

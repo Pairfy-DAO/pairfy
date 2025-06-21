@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     const response = await $fetch(
-      `${config.serviceSellerBase}/seller/login-seller`,
+      config.serviceSellerBase + "/api/seller/login-seller",
       {
         method: "POST",
         body,
@@ -13,12 +13,12 @@ export default defineEventHandler(async (event) => {
         headers: {
           cookie: getHeader(event, "cookie") || "",
         },
-        
+
         async onResponse({ response }) {
-          const setCookies = response.headers.getSetCookie?.()
+          const setCookies = response.headers.getSetCookie?.();
           if (Array.isArray(setCookies)) {
             for (const cookie of setCookies) {
-              appendHeader(event, 'set-cookie', cookie)
+              appendHeader(event, "set-cookie", cookie);
             }
           }
         },

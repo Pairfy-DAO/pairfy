@@ -1,5 +1,5 @@
 <template>
-    <div class="HomeChat flex center">
+    <div class="HomePrompt flex center">
         <form class="chat-form" @submit.prevent="submitPrompt">
             <div class="input-wrapper flex">
                 <textarea v-model="prompt" aria-label="Prompt" @keydown.enter.exact.prevent="submitPrompt"
@@ -8,8 +8,14 @@
                     {{ typedPlaceholder }}
                 </span>
             </div>
-            <button class="send-button flex center" type="submit" :disabled="isSubmitting || !prompt.trim()" title="Enviar">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-icon lucide-arrow-up"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
+            <button class="send-button flex center" type="submit" :disabled="isSubmitting || !prompt.trim()"
+                title="Enviar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-arrow-up-icon lucide-arrow-up">
+                    <path d="m5 12 7-7 7 7" />
+                    <path d="M12 19V5" />
+                </svg>
             </button>
         </form>
     </div>
@@ -101,7 +107,7 @@ onBeforeUnmount(() => {
 })
 </script>
 <style scoped>
-.HomeChat {
+.HomePrompt {
     width: 100%;
     box-sizing: border-box;
 }
@@ -109,11 +115,12 @@ onBeforeUnmount(() => {
 .chat-form {
     width: inherit;
     display: flex;
-    align-items: center;
     padding: 1rem;
+    overflow: hidden;
     margin: 20px auto;
     margin-top: 4rem;
     position: relative;
+    align-items: center;
     box-sizing: border-box;
     background: transparent;
     border-radius: var(--radius-d);
@@ -123,7 +130,7 @@ onBeforeUnmount(() => {
     border: 2px solid rgba(255, 255, 255, 80%);
 }
 
-.chat-form:hover{
+.chat-form:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     border-color: #888;
 }
@@ -151,14 +158,15 @@ onBeforeUnmount(() => {
 
 
 .ghost-placeholder {
-    position: absolute;
     top: 6px;
     left: 8px;
-    color: rgba(255, 255, 255, 90%);
-    font-size: var(--text-size-2);
-    pointer-events: none;
-    white-space: nowrap;
     z-index: 1;
+    position: absolute;
+    white-space: normal;
+    padding-right: 1rem;
+    pointer-events: none;
+    font-size: var(--text-size-2);
+    color: rgba(255, 255, 255, 90%);
 }
 
 .send-button {
@@ -181,4 +189,31 @@ onBeforeUnmount(() => {
     background-color: #888;
     cursor: not-allowed;
 }
+</style>
+
+<style scoped>
+@media (max-width: 480px) {
+
+    .HomePrompt {
+        padding: 1rem;
+    }
+
+    .chat-form {
+        margin: 0rem;
+    }
+
+    .ghost-placeholder {
+        font-size: var(--text-size-1);
+    }
+}
+
+@media (min-width: 481px) and (max-width: 767px) {}
+
+@media (min-width: 768px) and (max-width: 991px) {}
+
+@media (min-width: 992px) and (max-width: 1199px) {}
+
+@media (min-width: 1200px) and (max-width: 1599px) {}
+
+@media (min-width: 1600px) {}
 </style>

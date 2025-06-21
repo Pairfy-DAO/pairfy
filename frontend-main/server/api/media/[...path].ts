@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: "Invalid media group path" });
   }
 
-  const url = `${config.serviceMediaBase}/media/get-file/${path.join("/")}`;
+  const url = `${config.serviceMediaBase}/api/media/get-file/${path.join("/")}`;
   const res = await fetch(url);
 
   if (!res.ok) {

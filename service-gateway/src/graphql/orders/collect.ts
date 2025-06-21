@@ -1,6 +1,6 @@
-import { collectTransactionBuilder } from "../../contracts/builders/collect.js";
-import { SellerToken } from "../../middleware/agent.js";
-import { database } from "../../database/client.js";
+import { SellerToken } from "@pairfy/common";
+import { collectTransactionBuilder } from "../../cardano/builders/collect.js";
+import database from "../../database/client.js";
 
 const collectEndpoint = async (_: any, args: any, context: any) => {
   if (!context.sellerData) {

@@ -38,3 +38,4 @@ export * from "./findUserByPubKeyhash";
 export * from "./isValidSignatureCIP30";
 export * from "./createToken";
 export * from "./deleteProductById";
+export * from "./findSellerById";

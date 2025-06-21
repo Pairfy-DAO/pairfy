@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    return await $fetch(`${config.serviceMediaBase}/media/update-files`, {
+    return await $fetch(config.serviceMediaBase + "/api/media/update-files", {
       method: "POST",
       body: form,
       headers: {

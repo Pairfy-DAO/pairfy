@@ -10,17 +10,21 @@ import {
   sellerMiddleware,
   findSellerByEmail,
   updateSeller,
-  isValidSignatureCIP30
+  isValidSignatureCIP30,
+  createEvent,
+  findSellerById,
 } from "@pairfy/common";
 import { getPubKeyHash } from "../utils/blockchain.js";
 import { LoginInput, validateParams } from "../validators/login-seller.js";
 
-const loginSellerMiddlewares: any = [sellerMiddleware, validateParams];
+export const loginSellerMiddlewares: any = [sellerMiddleware, validateParams];
 
-const loginSellerHandler = async (req: Request, res: Response) => {
+export const loginSellerHandler = async (req: Request, res: Response) => {
   let connection = null;
 
   try {
+    const timestamp = Date.now();
+
     let params = req.body as LoginInput;
 
     const hexAddress = Cardano.Address.from_hex(params.address);
@@ -88,31 +92,44 @@ const loginSellerHandler = async (req: Request, res: Response) => {
       country: SELLER.country,
       username: SELLER.username,
       pubkeyhash: pubKeyHash,
+      wallet_name: params.wallet_name
     };
 
-    const updatedSeller = await updateSeller(
+    const updateResult = await updateSeller(
       connection,
       SELLER.id,
       SELLER.schema_v,
       {
         pubkeyhash: pubKeyHash,
         address: address32,
+        wallet_name: params.wallet_name,
         schema_v: SELLER.schema_v + 1,
       }
     );
 
-    if (updatedSeller.affectedRows !== 1) {
+    if (updateResult.affectedRows !== 1) {
       throw new ApiError(409, "Update failed: version mismatch or not found", {
         code: ERROR_CODES.UPDATE_CONFLICT,
       });
     }
+
+    const findSeller = await findSellerById(connection, SELLER.id);
+
+    await createEvent(
+      connection,
+      timestamp,
+      "service-seller",
+      "UpdateSeller",
+      JSON.stringify(findSeller),
+      SELLER.id
+    );
 
     const token = createToken(
       sellerData,
       process.env.AGENT_JWT_KEY as string,
       process.env.TOKEN_EXPIRATION as string,
       "service-seller",
-      ["vault", "internal"]
+      ["internal"]
     );
 
     req.session = {
@@ -125,16 +142,9 @@ const loginSellerHandler = async (req: Request, res: Response) => {
 
     res.status(200).send({ success: true, data: sellerData });
   } catch (err: any) {
-    if (connection) {
-      await connection.rollback();
-    }
-
-    throw err
+    if (connection) await connection.rollback();
+    throw err;
   } finally {
-    if (connection) {
-      connection.release();
-    }
+    if (connection) connection.release();
   }
 };
-
-export { loginSellerMiddlewares, loginSellerHandler };

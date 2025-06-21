@@ -2,15 +2,15 @@
   <form class="RegisterForm" @submit.prevent="register">
     <ToastComp ref="toastRef" />
 
-    <InputEmail class="RegisterForm-email" v-model="email" :focus="true" @valid="onValidEmail" />
+    <InputEmail class="RegisterForm-email" v-model="email" :focus="true" @valid="emailValid = $event" />
 
     <InputUsername class="RegisterForm-username" v-model="username" label="username" :minLength="5" :maxLength="20"
-      @valid="onValidUsername" />
+      @valid="usernameValid = $event" />
 
-    <InputPassword class="RegisterForm-password" v-model="password" @valid="onValidPassword" />
+    <InputPassword class="RegisterForm-password" v-model="password" @valid="passwordValid = $event" />
 
     <InputSelect class="RegisterForm-country" v-model="country" label="Country" :options="countries"
-      @valid="onValidCountry" required small>
+      @valid="countryValid = $event" required small>
       <template #selected="{ option }">
         <span class="flex">
           <img class="flag" :src="`/flags/${option.code?.toLowerCase()}.svg`" alt="" />
@@ -26,8 +26,8 @@
       </template>
     </InputSelect>
 
-    <InputCheck class="RegisterForm-terms" v-model="terms" @valid="onValidTerms" label="I have read the "
-      :link="{ label: 'terms of use and privacy policy.', href: '/terms' }" required />
+    <InputCheck class="RegisterForm-terms" v-model="terms" @valid="termsValid = $event" label="I have read the "
+      :link="{ label: 'terms of use.', href: '/terms' }" required />
 
 
     <ButtonSolid class="RegisterForm-button" type="submit" label="Register" :disabled="disableSubmit"
@@ -38,16 +38,13 @@
 
 <script setup>
 import { useAuthStore } from '@/stores/auth'
+import { sleep } from '@/utils/utils'
 
 const auth = useAuthStore()
 
 const router = useRouter();
 
 const toastRef = ref(null);
-
-const displayMessage = (message, type, duration) => {
-  toastRef.value?.showToast(message, type, duration)
-}
 
 const countries = ref([{ label: 'United States', code: 'US' }])
 
@@ -60,50 +57,37 @@ const terms = ref(false)
 const emailValid = ref(false)
 const usernameValid = ref(false)
 const passwordValid = ref(false)
-const countryValid = ref(false)
 const termsValid = ref(false)
-
-const onValidEmail = (event) => {
-  console.log("emailhandler", event)
-  emailValid.value = event
-}
-
-const onValidUsername = (event) => {
-  console.log("onValidUsername", event)
-  usernameValid.value = event
-}
-
-const onValidPassword = (event) => {
-  console.log("passwordhandler", event)
-  passwordValid.value = event
-}
-
-const onValidCountry = (event) => {
-  console.log("countryHandler", event)
-  countryValid.value = event
-}
-
-const onValidTerms = (event) => {
-  console.log("termshandler", event)
-  termsValid.value = event
-}
+const countryValid = ref(false)
 
 const disableSubmit = computed(() => !emailValid.value || !usernameValid.value || !passwordValid.value || !termsValid.value || !countryValid.value)
 
-
 const register = async () => {
   try {
-    //console.log('Credentials', { email: email.value, username: username.value, password: password.value, terms_accepted: terms.value, country: country.value })
 
-    const response = await auth.register({ email: email.value, username: username.value, password: password.value, terms_accepted: terms.value, country: country.value })
+    const registerParams = {
+      email: email.value,
+      username: username.value,
+      password: password.value,
+      country: country.value,
+      terms_accepted: terms.value
+    }
+    
+    const response = await auth.register(registerParams)
 
-    displayMessage(response.data.message, 'success', 20_000)
+    displayMessage(response.message, 'success', 20_000)
+
+    await sleep(3_000)
 
     router.replace({ path: '/entry', query: { m: 'email' } })
   } catch (err) {
     console.error(err)
     displayMessage(err, 'error', 20_000)
   }
+}
+
+function displayMessage (message, type, duration) {
+  toastRef.value?.showToast(message, type, duration)
 }
 
 </script>

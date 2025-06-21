@@ -5,12 +5,16 @@
             <SearchPanel @onApply="filterDrawer = false" />
         </DrawerComp>
 
+        <div class="title">
+            <span>Hello, what do you need today?</span>
+        </div>
+
         <form class="SearchPrompt-form" :class="{ 'focused': isFocused }" @focusin="isFocused = true"
             @focusout="isFocused = false" @submit.prevent="submitPrompt">
             <div class="controls">
                 <div class="SearchPrompt-input flex">
                     <textarea v-model="prompt" aria-label="Prompt" @keydown.enter.exact.prevent="submitPrompt" rows="1"
-                        @focus="onFocusOrClick" @click="onFocusOrClick" placeholder="Search for what you want" />
+                        @focus="onFocusOrClick" @click="onFocusOrClick" placeholder="Search prompt" />
                 </div>
 
                 <div class="control flex">
@@ -52,6 +56,8 @@
 </template>
 
 <script setup>
+const route = useRoute()
+const router = useRouter()
 
 const isFocused = ref(false)
 
@@ -64,9 +70,15 @@ function openFilters(e) {
 const prompt = ref('')
 const isSubmitting = ref(false)
 
-const route = useRouter()
-
-const router = useRouter()
+watch(
+    () => route.query.prompt,
+    (value) => {
+        if (value) {
+            prompt.value = value
+        }
+    },
+    { immediate: true }
+)
 
 function submitPrompt() {
     const trimmed = prompt.value.trim()
@@ -95,16 +107,16 @@ function submitPrompt() {
 .SearchPrompt {
     width: 100%;
     display: flex;
-    height: 30rem;
-    margin-top: 1rem;
+    padding: 1rem;
+    min-height: 25rem;
     flex-direction: column;
     box-sizing: border-box;
     background-size: cover;
     justify-content: flex-end;
     background-repeat: no-repeat;
-    border-radius: var(--radius-d);
     background-position: center;
     background-image: url('@/assets/banner/1.png');
+    background: var(--blue-c);
 }
 
 .controls {
@@ -129,10 +141,10 @@ function submitPrompt() {
     padding: 1rem;
     max-width: 50%;
     margin: auto auto;
-    margin-bottom: 2rem;
     padding-top: 1rem;
     position: relative;
     align-items: center;
+    margin-bottom: 4rem;
     box-sizing: border-box;
     padding-bottom: 0.75rem;
     box-shadow: var(--shadow-c);
@@ -175,7 +187,7 @@ function submitPrompt() {
 .SearchPrompt-input textarea::placeholder {
     color: var(--text-b);
     font-size: inherit;
-    opacity: 0.6;
+    opacity: 0.5;
 }
 
 
@@ -198,4 +210,50 @@ function submitPrompt() {
     background: black;
     pointer-events: none;
 }
+
+.title {
+    justify-content: center;
+    margin-top: 4rem;
+    width: inherit;
+    display: flex;
+}
+
+.title span {
+    font-size: var(--text-size-8);
+    color: var(--text-w);
+    text-align: center;
+    font-weight: 500;
+}
+</style>
+
+<style scoped>
+@media (max-width: 480px) {
+    .SearchPrompt {
+        min-height: 18rem;
+    }
+
+    .title {
+        margin-top: 2rem;
+    }
+
+    .title span {
+        font-size: var(--text-size-6);
+    }
+
+    .SearchPrompt-form {
+        max-width: 100%;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 767px) {}
+
+@media (min-width: 768px) and (max-width: 991px) {}
+
+@media (min-width: 992px) and (max-width: 1199px) {}
+
+@media (min-width: 1200px) and (max-width: 1599px) {}
+
+@media (min-width: 1600px) {}
 </style>

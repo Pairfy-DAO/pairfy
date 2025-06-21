@@ -21,13 +21,13 @@ spec:
             - containerPort: 3000
           env:
             - name: NUXT_SERVICE_SELLER_BASE
-              value: http://service-seller.default.svc.cluster.local:8000/api
+              value: http://service-seller.default.svc.cluster.local:8000
             - name: NUXT_SERVICE_PRODUCT_BASE
-              value: http://service-product.default.svc.cluster.local:8001/api
+              value: http://service-product.default.svc.cluster.local:8001
             - name: NUXT_SERVICE_LLM_BASE
-              value: http://service-llm.default.svc.cluster.local:8002/api
+              value: http://service-llm.default.svc.cluster.local:8002
             - name: NUXT_SERVICE_MEDIA_BASE
-              value: http://service-media.default.svc.cluster.local:8003/api
+              value: http://service-media.default.svc.cluster.local:8003
             - name: NUXT_PUBLIC_MEDIA_CDN
               value: /api/media
 ---

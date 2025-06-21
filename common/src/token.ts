@@ -10,10 +10,3 @@ export function verifyToken(token: string, privateKey: string): any {
     return null;
   }
 }
-
-export interface SellerEmailRegistrationToken {
-  source: "service-seller";
-  role: "SELLER";
-  email: string;
-  username: string;
-}

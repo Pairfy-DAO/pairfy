@@ -1,12 +1,14 @@
 import proxyaddr from "proxy-addr";
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import { SellerToken } from "./sellerAuth";
+import { UserToken } from "./userAuth";
 
 declare global {
   namespace Express {
     interface Request {
       publicAddress?: string;
       sellerData?: SellerToken;
+      userData: UserToken;
       session?:
         | {
             jwt?: string;

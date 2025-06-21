@@ -1,6 +1,6 @@
-import { appealTransactionBuilder } from "../../contracts/builders/appeal.js";
-import { UserToken } from "../../middleware/agent.js";
-import { database } from "../../database/client.js";
+import { UserToken } from "@pairfy/common";
+import { appealTransactionBuilder } from "../../cardano/builders/appeal.js";
+import database from "../../database/client.js";
 
 const appealEndpoint = async (_: any, args: any, context: any) => {
   if (!context.userData) {

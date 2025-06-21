@@ -1,6 +1,5 @@
 import database from "../database/index.js";
 import { Request, Response } from "express";
-import { validateParams, RegistrationInput } from "../validators/create-seller.js";
 import {
   ApiError,
   ERROR_CODES,
@@ -10,20 +9,28 @@ import {
   createEvent,
   insertSeller,
   createToken,
-  SellerEmailRegistrationToken,
   findSellerByEmail,
+  findSellerById,
 } from "@pairfy/common";
+import {
+  validateParams,
+  RegistrationInput,
+} from "../validators/create-seller.js";
+import { generateRSA } from "../utils/rsa.js";
+import { encryptAESGCM } from "../utils/aes.js";
 
-const createSellerMiddlewares: any = [validateParams];
+export const createSellerMiddlewares: any = [validateParams];
 
-const createSellerHandler = async (req: Request, res: Response) => {
+export const createSellerHandler = async (req: Request, res: Response) => {
   let connection = null;
 
-  const params = req.body as RegistrationInput;
-
-  console.log(params);
-
   try {
+    const timestamp = Date.now();
+
+    const params = req.body as RegistrationInput;
+
+    console.log(params); //TEST
+
     connection = await database.client.getConnection();
 
     const sellerExists = await findSellerByEmailOrUsername(
@@ -33,26 +40,27 @@ const createSellerHandler = async (req: Request, res: Response) => {
     );
 
     if (sellerExists) {
-      throw new ApiError(
-        400,
-        "The email address or username is already registered.",
-        {
-          code: ERROR_CODES.BAD_REQUEST,
-        }
-      );
+      throw new ApiError(400, "The email or username is already registered.", {
+        code: ERROR_CODES.BAD_REQUEST,
+      });
     }
 
     ///////////////////////////////////////////////////////////////////////////////////
 
     await connection.beginTransaction();
 
-    const timestamp = Date.now();
+    const sellerId = getSellerId();
 
     const password = await hashPassword(params.password);
 
-    const sellerId = getSellerId();
+    const RSAkeys = await generateRSA();
 
-    const emailToken: SellerEmailRegistrationToken = {
+    const encriptedPrivateKey = await encryptAESGCM(
+      RSAkeys.privateKeyB64,
+      params.password
+    );
+
+    const tokenContent = {
       source: "service-seller",
       role: "SELLER",
       email: params.email,
@@ -60,19 +68,12 @@ const createSellerHandler = async (req: Request, res: Response) => {
     };
 
     const token = createToken(
-      emailToken,
+      tokenContent,
       process.env.AGENT_JWT_KEY as string,
       "1h",
       "service-seller",
       ["register"]
     );
-
-    const emailScheme = {
-      type: "register:seller",
-      username: params.username,
-      email: params.email,
-      token: token,
-    };
 
     const sellerScheme = {
       id: sellerId,
@@ -82,6 +83,9 @@ const createSellerHandler = async (req: Request, res: Response) => {
       verified: false,
       country: params.country,
       terms_accepted: params.terms_accepted,
+      rsa_version: 0,
+      rsa_public_key: RSAkeys.publicKeyB64,
+      rsa_private_key: [encriptedPrivateKey],
       avatar_base: "https://example.com",
       avatar_path: "/avatar.jpg",
       public_ip: req.publicAddress,
@@ -92,15 +96,15 @@ const createSellerHandler = async (req: Request, res: Response) => {
 
     console.log(sellerScheme);
 
-    const [sellerCreated] = await insertSeller(connection, sellerScheme);
+    const [insertSellerResult] = await insertSeller(connection, sellerScheme);
 
-    if (sellerCreated.affectedRows !== 1) {
+    if (insertSellerResult.affectedRows !== 1) {
       throw new ApiError(500, "Unexpected error while creating seller.", {
         code: ERROR_CODES.INTERNAL_ERROR,
       });
     }
 
-    const findSeller = await findSellerByEmail(connection, sellerScheme.email);
+    const findSeller = await findSellerById(connection, sellerScheme.id);
 
     await createEvent(
       connection,
@@ -111,12 +115,19 @@ const createSellerHandler = async (req: Request, res: Response) => {
       sellerId
     );
 
+    const emailEvent = {
+      type: "register:seller",
+      username: params.username,
+      email: params.email,
+      token,
+    };
+
     await createEvent(
       connection,
       timestamp,
       "service-seller",
       "CreateEmail",
-      JSON.stringify(emailScheme),
+      JSON.stringify(emailEvent),
       sellerId
     );
 
@@ -126,21 +137,12 @@ const createSellerHandler = async (req: Request, res: Response) => {
 
     res.status(200).send({
       success: true,
-      data: {
-        message: 'Please check your email in the "all" or "spam" folder.',
-      },
+      message: "Successfully registered. Please check your email inbox."
     });
   } catch (err) {
-    if (connection) {
-      await connection.rollback();
-    }
-
+    if (connection) await connection.rollback();
     throw err;
   } finally {
-    if (connection) {
-      connection.release();
-    }
+    if (connection) connection.release();
   }
 };
-
-export { createSellerMiddlewares, createSellerHandler };

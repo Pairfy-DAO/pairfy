@@ -131,6 +131,14 @@ build:
         manual:
           - src: 'src/**/*.{ts,js,json,vue}'
             dest: .
+    - image: pairfy/service-gateway
+      context: service-gateway
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.{ts,js,json,vue}'
+            dest: .
 
 deploy:
   statusCheckDeadlineSeconds: 540
@@ -189,6 +197,12 @@ portForward:
     localPort: 8005  
 
   - resourceType: service
+    resourceName: service-gateway
+    namespace: default
+    port: 8006
+    localPort: 8006  
+
+  - resourceType: service
     resourceName: weaviate
     namespace: default
     port: 8080
@@ -205,9 +219,3 @@ portForward:
     namespace: default
     port: 6379
     localPort: 6379
-
-  - resourceType: service
-    resourceName: vault-active
-    namespace: default
-    port: 8200
-    localPort: 8200

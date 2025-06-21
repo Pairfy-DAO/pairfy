@@ -1,6 +1,5 @@
 <template>
-    <div class="HeaderTop flex" v-if="isContrast">
-
+    <div class="HeaderTop flex" :class="{ home: ['country', 'index'].includes(route.name) }">
         <div class="HeaderTop-content flex">
             <div class="HeaderTop-location flex" @click="auth.locationDialog = true">
                 <img :src="US" alt="">
@@ -44,22 +43,25 @@ const route = useRoute()
 
 const auth = useAuthStore()
 
-const isContrast = computed(() => ['country-p-id', 'country-s'].includes(route.name))
-
 </script>
 
 <style lang="css" scoped>
 .HeaderTop {
-    background: var(--primary-a);
     font-size: var(--text-size-0);
+    background: var(--blue-c);
     justify-content: center;
     box-sizing: border-box;
     color: var(--text-w);
     position: fixed;
     z-index: 12000;
-    height: 2.5rem;
+    height: 2rem;
     width: 100%;
     top: 0;
+}
+
+.home {
+    background: var(--black-a);
+    position: initial;
 }
 
 .HeaderTop-content {
@@ -78,7 +80,7 @@ const isContrast = computed(() => ['country-p-id', 'country-s'].includes(route.n
     margin-right: 0.5rem;
 }
 
-.HeaderTop-location{
+.HeaderTop-location {
     cursor: pointer;
 }
 
@@ -94,17 +96,12 @@ const isContrast = computed(() => ['country-p-id', 'country-s'].includes(route.n
 }
 
 @media (max-width: 480px) {
-    .HeaderTop {
-        border-bottom: 1px solid var(--border-a);
-        height: 2.5rem;
-    }
-
     .HeaderTop-price {
         display: none;
     }
 
     .HeaderTop-content {
-        padding: 0 0.5rem;
+        padding: 0 1rem;
         max-width: 100%;
     }
 }
