@@ -17,22 +17,28 @@ spec:
         - name: service-gateway-consumer
           image: pairfy/base-consumer
           ports:
-            - containerPort: 3000    
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 3000
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3                  
+            - containerPort: 3000                   
           env:
+            - name: NODE_ENV
+              value: development     
+            - name: SERVICE_NAME
+              value: service-gateway   
+            - name: CONSUMER_GROUP
+              value: service-gateway-group   
+            - name: DURABLE_NAME
+              value: service-gateway-consumer                           
+            - name: STREAM_LIST
+              value: service-seller,service-product
+            - name: FILTER_SUBJECTS
+              value: "service-product.CreateProduct,service-product.UpdateProduct,service-product.DeleteProduct,service-seller.CreateSeller,service-seller.UpdateSeller"              
+            - name: DATABASE_NAME
+              value: service_gateway       
+            - name: DATABASE_USER
+              value: marketplace                  
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            - name: POD_TIMEOUT
-              value: "120000"
             - name: DATABASE_HOST  
               valueFrom:
                 configMapKeyRef:
@@ -46,30 +52,15 @@ spec:
             - name: DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: db-password
+                  name: database-password-secret
                   key: password   
-            - name: DATABASE_NAME
-              value: service_gateway       
-            - name: DATABASE_USER
-              value: marketplace 
-            - name: STREAM_LIST
-              value: product
-            - name: SERVICE_NAME
-              value: service-gateway
-            - name: CONSUMER_GROUP
-              value: service-gateway-group
-            - name: DURABLE_NAME
-              value: service-gateway-consumer
-            - name: ELASTIC_NODE
+            - name: NATS_SERVERS
               valueFrom:
-                secretKeyRef:
-                  name: elastic-endpoint
-                  key: key
-            - name: ELASTIC_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: elastic-api-key
-                  key: key                           
+                configMapKeyRef:
+                  name: nats-cluster-config
+                  key: hosts 
+                  
+
           resources:
             limits:
               memory: "500Mi"

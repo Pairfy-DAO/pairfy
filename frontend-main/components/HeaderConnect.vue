@@ -1,6 +1,9 @@
 <template>
-    <button :class="{ contrast: isContrast }" @click="auth.authDrawer = true">
-        Connect Wallet
+    <button class="HeaderConnect" @click="auth.authDrawer = true">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wallet-minimal-icon lucide-wallet-minimal"><path d="M17 14h.01"/><path d="M7 7h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14"/></svg>
+     
+        <span>Connect Wallet</span>
     </button>
 </template>
 
@@ -9,38 +12,49 @@ const route = useRoute()
 
 const auth = useAuthStore()
 
-const isContrast = computed(() => ['country-p-id', 'country-s'].includes(route.name))
-
 </script>
 
 <style lang="css" scoped>
-button {
+.HeaderConnect {
+    padding: 0;
     border: none;
     outline: none;
+    display: flex;
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 700;
+    align-items: center;
     white-space: nowrap;
-    color: var(--text-a);
-    padding: 0.75rem 1rem;
+    color: var(--text-w);
+    background: transparent;
     overflow-wrap: break-word;
     font-size: var(--text-size-1);
-    border-radius: var(--radius-e);
     transition: var(--transition-a);
-    background: var(--background-a);
 }
 
-button:hover {
-    opacity: 0.8;
+.HeaderConnect span {
+    font-size: var(--text-size-2);
+    margin-left: 1rem;
 }
 
+</style>
 
 
-button.contrast {
-    background: var(--primary-a);
-    color: var(--text-w);
+<style scoped>
+
+@media (max-width: 480px) {
+    .HeaderConnect{
+        display: none;
+    }
 }
 
-button.contrast:hover {
-    background: var(--primary-b);
-}
+@media (min-width: 481px) and (max-width: 767px) {}
+
+@media (min-width: 768px) and (max-width: 991px) {}
+
+@media (min-width: 992px) and (max-width: 1199px) {}
+
+@media (min-width: 1200px) and (max-width: 1599px) {}
+
+@media (min-width: 1600px) {}
+
 </style>

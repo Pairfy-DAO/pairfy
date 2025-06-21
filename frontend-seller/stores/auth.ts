@@ -7,6 +7,7 @@ export const useAuthStore = defineStore("auth", () => {
   const login = async (credentials: {
     email: string;
     password: string;
+    wallet_name: string,
     signature: string;
     address: string;
   }) => {
@@ -52,7 +53,9 @@ export const useAuthStore = defineStore("auth", () => {
 
   const register = async (credentials: {
     email: string;
+    username: string;
     password: string;
+    country: string;
     terms_accepted: boolean;
   }) => {
     loading.value = true;

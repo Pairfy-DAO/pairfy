@@ -29,13 +29,12 @@ onMounted(async () => {
         try {
             const response = await auth.verify({ token })
 
-            message.value = response.data.message
+            message.value = response.message
 
-            displayMessage(response.data.message, 'info', 20_000)
+            displayMessage(response.message, 'info', 20_000)
 
             router.replace({ path: '/entry', query: { m: 'login' } })
         } catch (err) {
-
             displayMessage(err, 'error', 20_000)
         }
     }

@@ -60,6 +60,7 @@ function animateCards() {
 <style lang="css" scoped>
 .ProductGrid {
   width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   box-sizing: border-box;
@@ -71,6 +72,7 @@ function animateCards() {
   flex-direction: column;
   box-sizing: border-box;
   border-radius: var(--radius-a);
+  max-width: var(--body-a);
 }
 
 .ProductGrid-grid {
@@ -103,35 +105,31 @@ function animateCards() {
   margin-left: 0.25rem;
   color: var(--text-b);
 }
+
+</style>
+
+
+<style scoped>
 @media (max-width: 480px) {
   .ProductGrid-body {
     padding: 0 0.5rem;
   }
 
-  .grid {
+  .ProductGrid-grid {
     grid-template-columns: 1fr 1fr;
     gap: 0.5rem;
     row-gap: 1rem;
   }
 }
 
-/* Large phones and small tablets (481px - 767px) */
-@media (min-width: 481px) and (max-width: 767px) {
-  /* Styles for larger phones */
-}
+@media (min-width: 481px) and (max-width: 767px) {}
 
-/* Tablets (768px - 1024px) */
-@media (min-width: 768px) and (max-width: 1024px) {
-  /* Styles for tablets */
-}
+@media (min-width: 768px) and (max-width: 991px) {}
 
-/* Laptops and small desktops (1025px - 1440px) */
-@media (min-width: 1025px) and (max-width: 1440px) {
-  /* Styles for laptops */
-}
+@media (min-width: 992px) and (max-width: 1199px) {}
 
-/* Large desktops (1441px and up) */
-@media (min-width: 1441px) {
-  /* Styles for large screens */
-}
+@media (min-width: 1200px) and (max-width: 1599px) {}
+
+@media (min-width: 1600px) {}
+
 </style>

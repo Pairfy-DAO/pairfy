@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
   const sessionCookie = cookies.session;
 
   try {
-    const data = await $fetch(`${config.serviceMediaBase}/media/create-files`, {
+    const data = await $fetch(config.serviceMediaBase + "/api/media/create-files", {
       method: "POST",
       body: form,
       headers: {

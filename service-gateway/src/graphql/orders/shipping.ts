@@ -1,7 +1,7 @@
-import { shippingTransactionBuilder } from "../../contracts/builders/shipping.js";
+import { shippingTransactionBuilder } from "../../cardano/builders/shipping.js";
 import { chunkMetadata, encryptMetadata } from "../../lib/metadata.js";
-import { SellerToken } from "../../middleware/agent.js";
-import { database } from "../../database/client.js";
+import database from "../../database/client.js";
+import { SellerToken } from "@pairfy/common";
 
 const shippingEndpoint = async (_: any, args: any, context: any) => {
   if (!context.sellerData) {

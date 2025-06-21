@@ -8,12 +8,12 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   runtimeConfig: {
     serviceUserBase: process.env.NUXT_SERVICE_USER_BASE,
-    serviceQueryBase: process.env.NUXT_SERVICE_PRODUCT_BASE,
+    serviceQueryBase: process.env.NUXT_SERVICE_QUERY_BASE,
     serviceMediaBase: process.env.NUXT_SERVICE_MEDIA_BASE,
     public: {
       apiBaseBrowser: "",
       validWallets: ["lace", "nami", "eternl"],
-      mediaCDNBase: process.env.NUXT_PUBLIC_MEDIA_CDN
+      mediaCDNBase: process.env.NUXT_PUBLIC_MEDIA_CDN,
     },
   },
   css: [
@@ -24,6 +24,11 @@ export default defineNuxtConfig({
     plugins: [wasm()],
     build: {
       target: "esnext",
+    },
+    server: {
+      allowedHosts: [
+    
+      ],
     },
   },
 });

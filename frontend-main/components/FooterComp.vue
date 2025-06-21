@@ -118,7 +118,7 @@
 }
 
 .footer-column ul li {
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .footer-column ul li a {
@@ -150,4 +150,31 @@
     text-align: center;
   }
 }
+</style>
+
+
+<style scoped>
+@media (max-width: 480px) {
+
+  .footer{
+    padding: 1rem;
+  }
+
+  .footer-columns{
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 767px) {}
+
+@media (min-width: 768px) and (max-width: 991px) {}
+
+@media (min-width: 992px) and (max-width: 1199px) {}
+
+@media (min-width: 1200px) and (max-width: 1599px) {}
+
+@media (min-width: 1600px) {}
+
 </style>

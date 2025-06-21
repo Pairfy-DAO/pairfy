@@ -1,6 +1,0 @@
-{
-  "jwt_supported_algs": ["RS256"],
-  "jwt_validation_pubkeys": ["rsa-public-key-value"],
-  "bound_issuer": "service-seller",
-  "bound_audiences": "vault"
-}

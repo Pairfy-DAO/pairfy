@@ -11,6 +11,7 @@ export interface SellerToken {
   country: string;
   username: string;
   pubkeyhash: string;
+  wallet_name: string;
 }
 
 export const sellerMiddleware = (

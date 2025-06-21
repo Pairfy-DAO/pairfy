@@ -1,36 +1,19 @@
 {
   "compilerOptions": {
-    "target": "ESNext",                             // Target latest ECMAScript features
-    "module": "ESNext",                             // Output ES Modules (ESM)
-    "moduleResolution": "Node",                     // Use Node.js module resolution strategy
-    "esModuleInterop": true,                        // Enable interop between CommonJS and ESM
-    "allowSyntheticDefaultImports": true,           // Enable synthetic default imports
-    "skipLibCheck": true,                           // Skip library type checking for faster builds
-    "forceConsistentCasingInFileNames": true,       // Ensure consistent casing of filenames
-    "strict": true,                                 // Enable strict type checking
-    "noImplicitAny": true,                          // Disallow 'any' type
-    "noUnusedLocals": false,                         // Warn on unused local variables
-    "noUnusedParameters": false,                     // Warn on unused function parameters
-    "resolveJsonModule": true,                      // Allow importing JSON files as modules
-    "declaration": true,                            // Generate declaration files (.d.ts)
-    "declarationMap": true,                         // Generate declaration maps for better debugging
-    "sourceMap": true,                              // Enable source maps for easier debugging
-    "outDir": "./dist",                             // Output directory for compiled files
-    "baseUrl": "./src",
-    "paths": {
-      "@/*": ["./*"]
-    },
-    "lib": ["ESNext", "DOM"],                       // Include ES and DOM type definitions
-    "experimentalDecorators": true,                 // Enable decorators support
-    "emitDecoratorMetadata": true                   // Enable metadata for decorators
+    "target": "es2022",               
+    "module": "es2022",               
+    "outDir": "./dist",                
+    "rootDir": "./src",                
+    "lib": ["es2023"],
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": false,
+    "resolveJsonModule": true
   },
-  "include": [
-    "src/**/*",                                     // Include all TypeScript files in the 'src' folder
-    "types/**/*"                                    // Include custom types (if any)
-  ],
-  "exclude": [
-    "node_modules",                                 // Exclude 'node_modules'
-    "dist",                                          // Exclude 'dist' directory
-    "test"                                           // Exclude test directories (if present)
-  ]
+  "include": ["src", "types"],
+  "exclude": ["node_modules", "dist"]
 }

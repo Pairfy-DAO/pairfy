@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     const response = await $fetch(
-      `${config.serviceSellerBase}/seller/recovery-seller`,
+      config.serviceSellerBase + "/api/seller/recovery-seller",
       {
         method: "POST",
         body,

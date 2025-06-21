@@ -3,12 +3,13 @@
         <ToastComp ref="toastRef" />
 
         <HeaderTop />
-        <HeaderContent />
+        <HeaderContent v-if="!['country', 'index'].includes(currentRoute)"/>
+        <HeaderNav v-if="!['country', 'index'].includes(currentRoute)" />
 
         <DialogComp v-model="auth.locationDialog" @update:modelValue="auth.locationDialog = $event" :closable="false">
             <LocationView v-if="auth.locationDialog" />
-        </DialogComp> 
- 
+        </DialogComp>
+
         <DrawerComp v-model="auth.authDrawer" @update:modelValue="auth.authDrawer = $event" position="right"
             width="320px" :overlay="false">
             <AuthView v-if="auth.authDrawer" />
@@ -25,6 +26,9 @@
 const toastRef = ref(null);
 
 const auth = useAuthStore()
+const route = useRoute()
+
+const currentRoute = computed(() => route.name)
 
 onMounted(() => {
     watch(() => auth.toastMessage, ({ message, type, duration }) => toastRef.value?.showToast(message, type, duration));

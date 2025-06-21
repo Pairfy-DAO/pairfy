@@ -1,20 +1,23 @@
 # Introduction
 
-Pairfy is a decentralized application for trading physical products.
-It is a community-governed e-commerce that uses blockchain technology and artificial intelligence to generate a comprehensive value exchange ecosystem.
-
-The trade between the seller and the buyer is managed by smart contracts or individual Plutus scripts.
-Using a Cardano smart-contract allows to use **_ADA_**, **_stablecoin_** and **_native asset_** as a form of payment for the products.
-In addition, the implementation of other innovative and deterministic trading logics. It is compatible with the midnight network.
-
-Pairfy was funded in Cardano Catalyst round 11.
+Pairfy funded by catalyst R11 is a native Cardano decentralized application for trading physical products.
 ![Catalyst](assets/f11.png)
+
+It uses the collective intelligence of its DAO members to conduct market and product research for the benefit of the Cardano community.
+Imagine a site like Amazon where product sellers own Amazon itself and can vote in governance, contribute to the repository of suppliers and templates of all kinds.
+This makes it easy for any community member to become a seller and generate an ecosystem of value exchange.
+
+The trading process between the seller and the buyer is handled by individual Plutus scripts (Cardano smart-contract).
+Using a Cardano smart-contract allows to use **_ADA_**, **_stablecoin_** and **_native asset_** as a form of payment for the products.
+In addition, the implementation of other innovative and deterministic trading logics. It is also compatible with the **_midnight network._**
+
+
 
 
 #### Differential factors
 
-- Community-governed with chain vote (DAO model).
-- The **liquidity pool** to reduce the price of products.
+- Community-governed with chain vote (DAO constitutional model).
+- The **discount liquidity pool** to reduce the price of products.
 - Use of Cardano Network – Midnight Network 🔥.
 - Free shipping always included.
 - ADA Guarantee as purchase protection.
