@@ -171,7 +171,7 @@ watch(
 
 .placeholder {
   opacity: var(--placeholder-opacity);
-  color: var(--text-a);
+  color: var(--text-b);
 }
 
 .dropdown-list {

@@ -380,7 +380,7 @@ function showGetProductError() {
 .product-price {
   font-size: var(--text-size-6);
   font-weight: 700;
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 
 .product-price span:nth-child(2) {
