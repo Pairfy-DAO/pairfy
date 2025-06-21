@@ -1,5 +1,5 @@
 <template>
-  <div class="app-layout">
+  <div class="layout">
     <aside :class="['sidebar', { collapsed: isCollapsed && !isHovering }]">
 
       <div class="sidebar-header">
@@ -9,56 +9,46 @@
       </div>
 
       <nav>
-        <NuxtLink to="/home">
-          <div class="sidebar-nav-button">
-            <span class="sidebar-icon" :class="{ selected: currentPath === 'home' }">
-              <HomeIcon />
-            </span>
-          </div>
+        <NuxtLink to="/home" :class="{ selected: currentPath === 'home' }">
+          <span class="sidebar-icon">
+            <HomeIcon />
+          </span>
           <span class="sidebar-label"
             :class="{ collapsed: isCollapsed && !isHovering, selected: currentPath === 'home' }"
             v-show="!isCollapsed || isHovering">Home</span>
         </NuxtLink>
 
-        <NuxtLink to="/product-list">
-          <div class="sidebar-nav-button">
-            <span class="sidebar-icon" :class="{ selected: currentPath === 'product-list' }">
-              <ProductsIcon />
-            </span>
-          </div>
+        <NuxtLink to="/product-list" :class="{ selected: currentPath === 'product-list' }">
+          <span class="sidebar-icon">
+            <ProductsIcon />
+          </span>
           <span class="sidebar-label"
             :class="{ collapsed: isCollapsed && !isHovering, selected: currentPath === 'product-list' }"
             v-show="!isCollapsed || isHovering">Products</span>
         </NuxtLink>
 
-        <NuxtLink to="/product-books">
-          <div class="sidebar-nav-button">
-            <span class="sidebar-icon" :class="{ selected: currentPath === 'product-books' }">
-              <BooksIcon />
-            </span>
-          </div>
+        <NuxtLink to="/product-books" :class="{ selected: currentPath === 'product-books' }">
+          <span class="sidebar-icon">
+            <BooksIcon />
+          </span>
           <span class="sidebar-label"
             :class="{ collapsed: isCollapsed && !isHovering, selected: currentPath === 'product-books' }"
             v-show="!isCollapsed || isHovering">Books</span>
         </NuxtLink>
 
-        <NuxtLink to="/create-product">
-          <div class="sidebar-nav-button">
-            <span class="sidebar-icon" :class="{ selected: currentPath === 'create-product' }">
-              <CreateIcon />
-            </span>
-          </div>
+        <NuxtLink to="/create-product" :class="{ selected: currentPath === 'create-product' }">
+          <span class="sidebar-icon">
+            <CreateIcon />
+          </span>
           <span class="sidebar-label"
             :class="{ collapsed: isCollapsed && !isHovering, selected: currentPath === 'create-product' }"
             v-show="!isCollapsed || isHovering">Create</span>
         </NuxtLink>
 
-        <NuxtLink to="/notifications">
-          <div class="sidebar-nav-button">
-            <span class="sidebar-icon" :class="{ selected: currentPath === 'notifications' }">
-              <BellIcon />
-            </span>
-          </div>
+        <NuxtLink to="/notifications" :class="{ selected: currentPath === 'notifications' }">
+          <span class="sidebar-icon">
+            <BellIcon />
+          </span>
           <span class="sidebar-label"
             :class="{ collapsed: isCollapsed && !isHovering, selected: currentPath === 'notifications' }"
             v-show="!isCollapsed || isHovering">Notifications</span>
@@ -67,7 +57,7 @@
       </nav>
     </aside>
 
-    <main class="app-content">
+    <main class="layout-content">
       <slot />
     </main>
   </div>
@@ -90,13 +80,13 @@ if (import.meta.server) {
 </script>
 
 <style scoped>
-.app-layout {
-  background: var(--background-b);
+.layout {
+  background: var(--gradient-a); 
   display: flex;
   height: 100vh;
 }
 
-.app-content {
+.layout-content {
   overflow-y: auto;
   flex: 1;
 }
@@ -104,7 +94,7 @@ if (import.meta.server) {
 .sidebar {
   border-bottom-right-radius: var(--radius-c);
   border-top-right-radius: var(--radius-c);
-  background: var(--gray-a);
+  background: var(--background-a);
   box-shadow: var(--shadow-a);
   transition: width 0.3s ease;
   position: relative;
@@ -114,64 +104,6 @@ if (import.meta.server) {
 
 .sidebar.collapsed {
   width: 4rem;
-}
-
-nav {
-  flex-direction: column;
-  margin-top: 1rem;
-  display: flex;
-  gap: 0rem;
-}
-
-nav a {
-  font-size: var(--text-size-0);
-  text-decoration: none;
-  color: var(--text-w);
-  align-items: center;
-  padding: 0.5rem 0;
-  font-weight: 600;
-  display: flex;
-}
-
-nav a:hover {
-  background: var(--background-b);
-  color: var(--primary-a);
-}
-
-.sidebar-nav-button {
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  width: 4rem;
-  min-width: 4rem;
-}
-
-.sidebar-icon {
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.sidebar-icon.selected {
-  border-radius: var(--radius-b);
-  background: var(--primary-a);
-  color: var(--text-w);
-}
-
-.sidebar-label {
-  animation: fade-in 0.5s ease forwards;
-  white-space: nowrap;
-  visibility: initial;
-}
-
-.sidebar-label.selected {
-  color: var(--primary-a);
-}
-
-.sidebar-label.collapsed {
-  visibility: hidden;
 }
 
 .sidebar-header {
@@ -187,4 +119,50 @@ nav a:hover {
   display: flex;
 }
 
+nav {
+  flex-direction: column;
+  margin-top: 1rem;
+  display: flex;
+  padding: 1rem;
+  gap: 0.5rem;
+}
+
+nav a {
+  border-radius: var(--radius-b);
+  font-size: var(--text-size-0);
+  text-decoration: none;
+  color: var(--text-a);
+  align-items: center;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-weight: 600;
+  display: flex;
+}
+
+nav a:hover {
+  background: var(--background-b);
+  color: var(--primary-a);
+}
+
+nav a.selected {
+  background: var(--primary-a);
+  color: var(--text-w);
+}
+
+.sidebar-icon {
+  width: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-label {
+  animation: fade-in 0.5s ease forwards;
+  white-space: nowrap;
+  visibility: initial;
+}
+
+.sidebar-label.collapsed {
+  visibility: hidden;
+}
 </style>

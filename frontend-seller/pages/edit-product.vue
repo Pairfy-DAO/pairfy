@@ -226,10 +226,12 @@
                 <div class="grid-item">
                     <InputSelect v-model="productCategory" :options="categories" label="Category"
                         @valid="productCategoryValid = $event.valid">
+                        <template #selected="{ option }">
+                            <span>{{ option.label }}</span>
+                        </template>
+
                         <template #option="{ option }">
-                            <span class="flex">
-                                <span>{{ option.label }}</span>
-                            </span>
+                            <span>{{ option.label }}</span>
                         </template>
                     </InputSelect>
 
@@ -660,7 +662,7 @@ function displayMessage(message, type, duration) {
 .grid-row {
     background: var(--background-a);
     border-radius: var(--radius-b);
-    box-shadow: var(--shadow-a);
+    box-shadow: var(--shadow-b);
     margin-bottom: 1rem;
     padding: 1.5rem;
 }
