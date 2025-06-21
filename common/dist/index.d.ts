@@ -39,3 +39,4 @@ export * from "./isValidSignatureCIP30";
 export * from "./createToken";
 export * from "./deleteProductById";
 export * from "./findSellerById";
+export * from "./insertBook";

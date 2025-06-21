@@ -55,3 +55,4 @@ __exportStar(require("./isValidSignatureCIP30"), exports);
 __exportStar(require("./createToken"), exports);
 __exportStar(require("./deleteProductById"), exports);
 __exportStar(require("./findSellerById"), exports);
+__exportStar(require("./insertBook"), exports);
