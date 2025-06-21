@@ -1,6 +1,5 @@
 import database  from "../database/client.js";
 import { getOrder } from "./orders/get-order.js";
-import { getBooks, updateBook } from "./books/index.js";
 import { pendingEndpoint } from "./orders/pending.js";
 import { lockingEndpoint } from "./orders/locking.js";
 import { returnEndpoint } from "./orders/return.js";
@@ -9,6 +8,8 @@ import { receivedEndpoint } from "./orders/received.js";
 import { collectEndpoint } from "./orders/collect.js";
 import { cancelEndpoint } from "./orders/cancel.js";
 import { appealEndpoint } from "./orders/appeal.js";
+import { getBooks } from "./books/getBooks.js";
+import { updateBook } from "./books/updateBooks.js";
 
 const getOrders = async (_: any, args: any, context: any) => {
   const params = args.updateProductInput;

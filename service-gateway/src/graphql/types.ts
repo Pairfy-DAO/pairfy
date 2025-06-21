@@ -1,4 +1,5 @@
 const typeDefs = `#graphql
+scalar BigInt
 
 type Product {
     id: String!
@@ -31,26 +32,25 @@ type Product {
 }
 
 
-type ProductBook {
-   id: ID!
-   name: String!
-   price: Int!
-   sku: String!
-   media_url: String!
-   image_path: String!
-   image_set: String!
-   discount: Boolean!
-   discount_value: Int!   
-   created_at: String!
-   book_keeping_stock: Int!
-   book_ready_stock: Int!
-   book_blocked_stock: Int!
+type Books {
+  id: ID!
+  seller_id: String!
+  keeping_stock: BigInt
+  ready_stock: BigInt
+  blocked_stock: BigInt
+  buy_limit: BigInt
+  sold: BigInt
+  created_at: BigInt!
+  updated_at: BigInt!
+  schema_v: Int!
 }
 
 type GetBooksResponse {
-  books: [ProductBook!]
-  cursor: String!
-  count: Int!
+  books: [Books]!
+  nextCursor: String
+  hasPrevMore: Boolean!
+  hasNextMore: Boolean!
+  totalCount: Int!
 }
 
 type Order {
@@ -115,7 +115,8 @@ type getOrderResponse {
 }
 
 input GetBooksInput {
-  cursor: String!
+  cursor: String
+  reverseCursor: String
 }  
 
 input GetOrdersInput {
