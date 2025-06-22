@@ -61,6 +61,7 @@ const onSelected = (value) => {
     padding: 1rem;
     cursor: pointer;
     white-space: nowrap;
+    font-weight: 500;
     font-size: var(--text-size-0);
 }
 

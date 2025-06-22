@@ -56,7 +56,6 @@ const onSelect = (index) => {
     color: var(--text-a);
     padding: 0.75rem 1.5rem;
     backdrop-filter: blur(5px);
-    border: 1px solid var(--border-a);
 }
 
 .tab:hover {
