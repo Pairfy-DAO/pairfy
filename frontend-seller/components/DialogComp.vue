@@ -1,8 +1,8 @@
 <template>
-  <div class="dialog-backdrop" v-if="modelValue" @click="emitClose">
-    <div class="dialog-box" @click.stop>
+  <div class="DialogComp" v-if="modelValue" @click="emitClose">
+    <div class="DialogComp-box" @click.stop>
 
-      <div class="header flex end" v-if="props.closable">
+      <div class="DialogComp-header flex end" v-if="props.closable">
         <button class="flex center" @click="emitClose">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -14,6 +14,7 @@
       </div>
 
       <slot />
+      
     </div>
   </div>
 </template>
@@ -89,7 +90,7 @@ if (import.meta.client) {
 </script>
 
 <style scoped>
-.dialog-backdrop {
+.DialogComp {
   position: fixed;
   top: 0;
   left: 0;
@@ -104,7 +105,7 @@ if (import.meta.client) {
   background: rgba(0, 0, 0, 0.3);
 }
 
-.dialog-box {
+.DialogComp-box {
   background: var(--background-a);
   border-radius: var(--radius-c);
   box-shadow: var(--shadow-b);
@@ -125,7 +126,7 @@ button:hover {
   color: var(--text-a);
 }
 
-.header {
+.DialogComp-header {
   width: 100%;
   padding: 1rem;
   box-sizing: border-box;

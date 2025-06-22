@@ -207,7 +207,7 @@ const nextPage = () => {
 
 .search input::placeholder {
   color: var(--text-b);
-  opacity: var(--placeholder-opacity); 
+  opacity: var(--placeholder-opacity);
   font-size: var(--text-size-1);
 }
 
@@ -221,27 +221,27 @@ const nextPage = () => {
 .arrow {
   width: 0;
   height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-radius: 4px;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-radius: 3px;
   margin: 1px;
   margin-left: 0.5rem;
 }
 
 .arrow.up.enabled {
-  border-bottom: 4px solid currentColor;
+  border-bottom: 3px solid currentColor;
 }
 
 .arrow.down.enabled {
-  border-top: 4px solid currentColor;
+  border-top: 3px solid currentColor;
 }
 
-.up {
-  border-bottom: 4px solid rgba(0, 0, 0, 0.3);
+.arrow.up {
+  border-bottom: 3px solid rgba(0, 0, 0, 0.3);
 }
 
-.down {
-  border-top: 4px solid rgba(0, 0, 0, 0.3);
+.arrow.down {
+  border-top: 3px solid rgba(0, 0, 0, 0.3);
 }
 
 .table {

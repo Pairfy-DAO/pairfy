@@ -96,7 +96,6 @@ if (import.meta.server) {
   border-top-right-radius: var(--radius-c);
   border-right: 1px solid var(--border-a);
   background: var(--background-a);
-  box-shadow: var(--shadow-a);
   transition: width 0.3s ease;
   box-sizing: border-box;
   position: relative;
