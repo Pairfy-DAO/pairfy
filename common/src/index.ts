@@ -40,3 +40,5 @@ export * from "./createToken";
 export * from "./deleteProductById";
 export * from "./findSellerById";
 export * from "./insertBook";
+export * from "./deleteBookById"
+export * from "./findBookById";

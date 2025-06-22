@@ -56,3 +56,5 @@ __exportStar(require("./createToken"), exports);
 __exportStar(require("./deleteProductById"), exports);
 __exportStar(require("./findSellerById"), exports);
 __exportStar(require("./insertBook"), exports);
+__exportStar(require("./deleteBookById"), exports);
+__exportStar(require("./findBookById"), exports);

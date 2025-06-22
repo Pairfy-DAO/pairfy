@@ -155,7 +155,6 @@ const nextPage = () => {
   flex-direction: column;
   color: var(--text-a);
   min-height: 100vh;
-  border-top: none;
   transition: 0.2s;
   overflow: hidden;
   width: 100%;
@@ -186,10 +185,10 @@ const nextPage = () => {
 
 .search {
   border-radius: var(--input-radius);
-  border: 1px solid var(--border-b);
+  border: 1px solid var(--border-a);
   background: var(--background-b);
   transition: var(--transition-a);
-  padding: 0 1rem;
+  padding: 0 0.75rem;
   width: 50%;
 }
 

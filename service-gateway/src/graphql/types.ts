@@ -39,6 +39,7 @@ type Books {
   ready_stock: BigInt
   blocked_stock: BigInt
   buy_limit: BigInt
+  paused: Boolean!
   sold: BigInt
   created_at: BigInt!
   updated_at: BigInt!

@@ -66,7 +66,7 @@
                     </template>
 
                     <template #col-paused="{ value, item }">
-                        {{ !!value }}
+                        {{ value }}
                     </template>
 
                     <template #col-created_at="{ value }">
@@ -147,6 +147,7 @@ const GET_BOOKS_QUERY = gql`
         ready_stock
         blocked_stock
         buy_limit
+        paused
         sold
         created_at
         product_name
@@ -231,5 +232,6 @@ function getImageSrc(item) {
 <style lang="css" scoped>
 .card {
     padding: 0.1rem;
+    padding-top: 1rem;
 }
 </style>
