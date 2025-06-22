@@ -135,10 +135,10 @@ watch(
 }
 
 .dropdown-display {
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--border-a);
   border-radius: var(--input-radius);
+  border: 1px solid var(--border-a);
   background: var(--background-b);
+  padding: var(--input-padding);
   cursor: pointer;
   display: flex;
   align-items: center;
