@@ -35,10 +35,21 @@
                 <TableComp v-if="products.length" :columns="columns" :items="products" :limit="limit"
                     :hasNextPage="hasNextPage" :hasPrevPage="hasPrevPage" :range="range" :page="page"
                     :count="productCount" :images="true" @onPrev="handleOnPrev" @onNext="handleOnNext"
-                    :columnWidths="{ id: '10rem', sku: '8rem', price: '6rem', model: '8rem', discount: '4rem', category: '10rem', created_at: '6rem', moderated: '4rem' }">
+                    :columnWidths="{ 
+                    image: '6rem',
+                    id: '10rem',
+                    sku: '8rem',
+                    price: '6rem',
+                    model: '8rem',
+                    discount: '4rem',
+                    category: '10rem',
+                    created_at: '6rem',
+                    moderated: '4rem',
+                    action: '4rem'
+                    }">
 
                     <template #image="{ item }">
-                        <ImageComp :src="getImageSrc(item)" :image-style="{ width: '4rem', height: '4rem' }" />
+                        <ImageComp :src="getImageSrc(item)"  :image-style="{ width: '4rem' }"/>
                     </template>
 
                     <template #col-id="{ value }">
@@ -64,7 +75,7 @@
                     </template>
 
                     <template #col-created_at="{ value }">
-                        {{ formatDate(value) }}
+                        {{ formatDateYYMMDD(value) }}
                     </template>
 
                     <template #action="{ item }">
@@ -84,6 +95,7 @@
 
 <script setup>
 import placeholderImage from '@/assets/placeholder/image.svg'
+import { formatDateYYMMDD } from "@/utils/utils"
 import { gql } from 'graphql-tag'
 
 const router = useRouter()
@@ -257,13 +269,6 @@ function getImageSrc(item) {
     return item.thumbnail_url ? useMediaUrl(item.thumbnail_url) : placeholderImage
 }
 
-function formatDate(timestamp) {
-    const date = new Date(timestamp);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
 
 </script>
 
@@ -271,6 +276,7 @@ function formatDate(timestamp) {
 
 <style lang="css" scoped>
 .card {
-    padding: 0.25rem;
+    padding: 0.1rem;
+    padding-top: 1rem;
 }
 </style>

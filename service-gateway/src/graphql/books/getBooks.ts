@@ -1,8 +1,18 @@
 import database from "../../database/client.js";
-import { ApiGraphQLError, ERROR_CODES, logger } from "@pairfy/common";
+import { ApiGraphQLError, ERROR_CODES } from "@pairfy/common";
+import { verifyParams } from "../../validators/getBooks.js";
 
 export const getBooks = async (_: any, args: any, context: any) => {
-  const { cursor, reverseCursor } = args.getBooksInput;
+
+  const validation = verifyParams.safeParse(args.getBooksInput);
+
+  if (!validation.success) {
+    throw new ApiGraphQLError(400, `Invalid input ${validation.error.format()}`, {
+      code: ERROR_CODES.VALIDATION_ERROR
+    });
+  }
+
+  const { cursor, reverseCursor } = validation.data;
   const { sellerData: SELLER } = context;
 
   if (cursor && reverseCursor) {

@@ -1,14 +1,13 @@
 import database from "../../database/client.js";
 import { ApiGraphQLError, ERROR_CODES } from "@pairfy/common";
-import { verifyParams } from "../../validators/get-products.js";
+import { verifyParams } from "../../validators/getProducts.js";
 
 export const getProducts = async (_: any, args: any, context: any) => {
   const validation = verifyParams.safeParse(args.getProductsInput);
 
   if (!validation.success) {
-    throw new ApiGraphQLError(400, "Invalid input", {
-      code: ERROR_CODES.VALIDATION_ERROR,
-      details: validation.error.format(),
+    throw new ApiGraphQLError(400, `Invalid input ${validation.error.format()}`, {
+      code: ERROR_CODES.VALIDATION_ERROR
     });
   }
 
