@@ -94,9 +94,11 @@ if (import.meta.server) {
 .sidebar {
   border-bottom-right-radius: var(--radius-c);
   border-top-right-radius: var(--radius-c);
+  border-right: 1px solid var(--border-a);
   background: var(--background-a);
   box-shadow: var(--shadow-a);
   transition: width 0.3s ease;
+  box-sizing: border-box;
   position: relative;
   overflow: hidden;
   width: 14rem;
@@ -108,6 +110,7 @@ if (import.meta.server) {
 
 .sidebar-header {
   display: flex;
+  padding: 0 1rem;
   margin-top: 1rem;
   align-items: center;
 }
@@ -115,7 +118,6 @@ if (import.meta.server) {
 .sidebar-logo {
   justify-content: center;
   align-items: center;
-  padding: 0 1rem;
   display: flex;
 }
 
