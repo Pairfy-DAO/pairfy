@@ -1,60 +1,65 @@
 <template>
   <div class="InputSwitch" :class="{ disabled }">
-    <label class="title-text" :for="props.id">
-      <span> {{ label }}</span>
-      <span class="error-text" :class="{ visible: errorMessage }" :id="`${props.id}-error`">
+    <label class="InputSwitch-label" :for="id">
+      <span>{{ label }}</span>
+      <span class="error-text" :class="{ visible: errorMessage }" :id="`${id}-error`">
         {{ errorMessage || '-' }}
       </span>
     </label>
-    <div class="switch-wrapper" :class="{ 'is-invalid': errorMessage }">
-      <input type="checkbox" :id="props.id" ref="inputRef" v-model="internalValue" @change="onToggle"
-        class="switch-input" :disabled="disabled" :aria-invalid="!!errorMessage"
-        :aria-describedby="`${props.id}-error`" />
-      <span class="switch-slider" />
+    <div class="InputSwitch-wrap" :class="{ 'is-invalid': errorMessage }">
+      <input class="InputSwitch-input" type="checkbox" :id="id" ref="inputRef" v-model="internalValue" @change="onToggle"
+        :disabled="disabled" :aria-invalid="!!errorMessage" :aria-describedby="`${id}-error`" />
+      <span class="InputSwitch-circle" />
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 const props = defineProps({
   id: { type: String, default: 'switch' },
   modelValue: { type: Boolean, default: false },
-  label: { type: String, default: 'Toggle Option' },
-  required: { type: Boolean, default: true },
+  label: { type: String, default: 'Title' },
+  required: { type: Boolean, default: false }, 
   disabled: { type: Boolean, default: false },
 })
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: boolean): void
-  (e: 'valid', value: boolean): void
-}>()
+const emit = defineEmits(['update:modelValue', 'valid'])
 
-const inputRef = ref<HTMLInputElement | null>(null)
+const inputRef = ref(null)
 const internalValue = ref(props.modelValue)
 const errorMessage = ref('')
 
-watch(() => props.modelValue, (val) => {
-  if (val !== internalValue.value) internalValue.value = val
-})
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (val !== internalValue.value) internalValue.value = val
+  }
+)
 
 watch(internalValue, (val) => {
   emit('update:modelValue', val)
-  validateSwitch(val)
+  validate(val)
 })
- 
+
+onMounted(() => {
+  validate(internalValue.value)
+})
+
 const onToggle = () => {
-  validateSwitch(internalValue.value)
+  validate(internalValue.value)
 }
 
-const validateSwitch = (value: boolean) => {
+const validate = (value) => {
   if (props.required && !value) {
-    errorMessage.value = 'This field is required.'
+    errorMessage.value = '•'
     emit('valid', false)
   } else {
     errorMessage.value = ''
     emit('valid', true)
   }
 }
+
+const { id, label, disabled } = props
 </script>
 
 <style scoped>
@@ -63,7 +68,6 @@ const validateSwitch = (value: boolean) => {
   flex-direction: column;
   width: 100%;
   opacity: 1;
-  transition: opacity 0.3s;
 }
 
 .InputSwitch.disabled {
@@ -71,23 +75,26 @@ const validateSwitch = (value: boolean) => {
   pointer-events: none;
 }
 
-.title-text {
+.InputSwitch-label {
+  display: flex;
+  align-items: center;
   margin-bottom: 0.75rem;
+  justify-content: space-between;
 }
 
-.switch-wrapper {
+.InputSwitch-wrap {
   position: relative;
   width: 48px;
   height: 26px;
 }
 
-.switch-input {
+.InputSwitch-input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.switch-slider {
+.InputSwitch-circle {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -99,28 +106,24 @@ const validateSwitch = (value: boolean) => {
   background: var(--border-b);
 }
 
-.switch-wrapper input:checked+.switch-slider {
+.InputSwitch-wrap input:checked+.InputSwitch-circle {
   background-color: var(--primary-a, #2563eb);
 }
 
-.switch-slider::before {
+.InputSwitch-circle::before {
   content: '';
   position: absolute;
   height: 20px;
   width: 20px;
   left: 3px;
   bottom: 3px;
-  background-color: white;
   border-radius: 50%;
-  transition: 0.3s;
+  transition: var(--transition-a);
+  background: var(--background-b);
 }
 
-.switch-wrapper input:checked+.switch-slider::before {
+.InputSwitch-wrap input:checked+.InputSwitch-circle::before {
   transform: translateX(22px);
-}
-
-.switch-wrapper.is-invalid .switch-slider {
-  border: 2px solid red;
 }
 
 .error-text {
@@ -132,15 +135,5 @@ const validateSwitch = (value: boolean) => {
 .error-text.visible {
   opacity: 1;
   color: red;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
 }
 </style>

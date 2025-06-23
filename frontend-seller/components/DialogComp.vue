@@ -112,7 +112,7 @@ if (import.meta.client) {
   align-items: center;
   box-sizing: border-box;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .DialogComp-box {

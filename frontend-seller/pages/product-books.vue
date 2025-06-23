@@ -17,10 +17,10 @@
                 <div class="edit-form">
                     <InputSwitch v-model="stopPurchases" label="Stop purchases" />
                     <InputSwitch v-model="purchaseLimit" label="Purchase limit" />
-                    <InputInteger v-model="keepingStock" :min="0" :max="999999" label="Keeping stock"
+                    <InputInteger v-model="keepingStock" label="Keeping stock" :min="0" :max="999999"
                         placeholder="Keeping" @valid="keepingStockValid = $event.valid" />
-                    <InputInteger v-model="readyStock" :min="0" :max="999999" label="Ready stock" placeholder="Ready"
-                        @valid="readyStockValid = $event.valid" /> 
+                    <InputInteger v-model="readyStock" label="Ready stock" :min="0" :max="999999"
+                    placeholder="Ready" @valid="readyStockValid = $event.valid" />
                 </div>
             </template>
         </DialogComp>
@@ -247,7 +247,9 @@ function getImageSrc(item) {
 const stopPurchases = ref(false)
 const purchaseLimit = ref(false)
 const readyStock = ref(null)
+const readyStockValid = ref(false)
 const keepingStock = ref(null)
+const keepingStockValid = ref(false)
 </script>
 
 <style lang="css" scoped>
