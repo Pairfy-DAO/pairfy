@@ -2,55 +2,56 @@
   <div class="InputSwitch" :class="{ disabled }">
     <label class="InputSwitch-label" :for="id">
       <span>{{ label }}</span>
-      <span class="error-text" :class="{ visible: errorMessage }" :id="`${id}-error`">
-        {{ errorMessage || '-' }}
+      <span class="error-text visible" v-if="errorMessage" :id="`${id}-error`">
+        {{ errorMessage }}
       </span>
     </label>
     <div class="InputSwitch-wrap" :class="{ 'is-invalid': errorMessage }">
-      <input class="InputSwitch-input" type="checkbox" :id="id" ref="inputRef" v-model="internalValue" @change="onToggle"
-        :disabled="disabled" :aria-invalid="!!errorMessage" :aria-describedby="`${id}-error`" />
+      <input
+        class="InputSwitch-input"
+        type="checkbox"
+        :id="id"
+        v-model="localValue"
+        :disabled="disabled"
+        :aria-invalid="hasError"
+        :aria-describedby="`${id}-error`"
+      />
       <span class="InputSwitch-circle" />
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref, watch, computed, onMounted } from 'vue'
+
 const props = defineProps({
   id: { type: String, default: 'switch' },
   modelValue: { type: Boolean, default: false },
   label: { type: String, default: 'Title' },
-  required: { type: Boolean, default: false }, 
+  required: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['update:modelValue', 'valid'])
 
-const inputRef = ref(null)
-const internalValue = ref(props.modelValue)
+const localValue = ref(props.modelValue)
 const errorMessage = ref('')
 
-watch(
-  () => props.modelValue,
-  (val) => {
-    if (val !== internalValue.value) internalValue.value = val
-  }
-)
+const hasError = computed(() => !!errorMessage.value)
 
-watch(internalValue, (val) => {
+watch(() => props.modelValue, (val) => {
+  if (val !== localValue.value) localValue.value = val
+})
+
+watch(localValue, (val) => {
   emit('update:modelValue', val)
   validate(val)
 })
 
-onMounted(() => {
-  validate(internalValue.value)
-})
+onMounted(() => validate(localValue.value))
 
-const onToggle = () => {
-  validate(internalValue.value)
-}
-
-const validate = (value) => {
-  if (props.required && !value) {
+function validate(val) {
+  if (props.required && !val) {
     errorMessage.value = '•'
     emit('valid', false)
   } else {
@@ -106,7 +107,7 @@ const { id, label, disabled } = props
   background: var(--border-b);
 }
 
-.InputSwitch-wrap input:checked+.InputSwitch-circle {
+.InputSwitch-wrap input:checked + .InputSwitch-circle {
   background-color: var(--primary-a, #2563eb);
 }
 
@@ -122,18 +123,18 @@ const { id, label, disabled } = props
   background: var(--background-b);
 }
 
-.InputSwitch-wrap input:checked+.InputSwitch-circle::before {
+.InputSwitch-wrap input:checked + .InputSwitch-circle::before {
   transform: translateX(22px);
 }
 
 .error-text {
   margin: 0.5rem 0;
-  color: transparent;
-  opacity: 0;
+  color: red;
+  opacity: 1;
 }
 
-.error-text.visible {
-  opacity: 1;
-  color: red;
+.error-text:not(.visible) {
+  opacity: 0;
+  color: transparent;
 }
 </style>
