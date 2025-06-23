@@ -4,10 +4,24 @@
 
         <DialogComp ref="editDialogRef" v-model="editDialog" title="Edit book">
             <template #icon>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder-cog-icon lucide-folder-cog"><path d="M10.3 20H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.98a2 2 0 0 1 1.69.9l.66 1.2A2 2 0 0 0 12 6h8a2 2 0 0 1 2 2v3.3"/><path d="m14.305 19.53.923-.382"/><path d="m15.228 16.852-.923-.383"/><path d="m16.852 15.228-.383-.923"/><path d="m16.852 20.772-.383.924"/><path d="m19.148 15.228.383-.923"/><path d="m19.53 21.696-.382-.924"/><path d="m20.772 16.852.924-.383"/><path d="m20.772 19.148.924.383"/><circle cx="18" cy="18" r="3"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-settings2-icon lucide-settings-2">
+                    <path d="M14 17H5" />
+                    <path d="M19 7h-9" />
+                    <circle cx="17" cy="17" r="3" />
+                    <circle cx="7" cy="7" r="3" />
+                </svg>
             </template>
             <template #content>
-            
+                <div class="edit-form">
+                    <InputSwitch v-model="stopPurchases" label="Stop purchases" />
+                    <InputSwitch v-model="purchaseLimit" label="Purchase limit" />
+                    <InputInteger v-model="keepingStock" :min="0" :max="999999" label="Keeping stock"
+                        placeholder="Keeping" @valid="keepingStockValid = $event.valid" />
+                    <InputInteger v-model="readyStock" :min="0" :max="999999" label="Ready stock" placeholder="Ready"
+                        @valid="readyStockValid = $event.valid" /> 
+                </div>
             </template>
         </DialogComp>
 
@@ -114,10 +128,10 @@ const hasNextPage = ref(false)
 const hasPrevPage = ref(false)
 
 const editDialogRef = ref(null)
-const editDialog = ref(false)
+const editDialog = ref(true)
 
 const dottedMenuOptions = ref([
-    { label: "Edit this book", value: "edit" }
+    { label: "Edit this book.", value: "edit" }
 ])
 
 const columns = ref([
@@ -229,11 +243,23 @@ function displayMessage(message, type, duration) {
 function getImageSrc(item) {
     return item.thumbnail_url ? useMediaUrl(item.thumbnail_url) : placeholderImage
 }
+
+const stopPurchases = ref(false)
+const purchaseLimit = ref(false)
+const readyStock = ref(null)
+const keepingStock = ref(null)
 </script>
 
 <style lang="css" scoped>
 .card {
     padding: 0.1rem;
     padding-top: 1rem;
+}
+
+.edit-form {
+    gap: 1rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
 }
 </style>

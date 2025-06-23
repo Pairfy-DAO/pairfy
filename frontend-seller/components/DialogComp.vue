@@ -108,10 +108,11 @@ if (import.meta.client) {
   display: flex;
   padding: 1rem;
   z-index: 20000;
+  padding-right: 0;
   align-items: center;
   box-sizing: border-box;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .DialogComp-box {
@@ -145,12 +146,13 @@ button:hover {
 
 .title .icon {
   margin-right: 0.5rem;
+  color: var(--text-b);
 }
 
 .title {
   display: flex;
   font-weight: 700;
   align-items: center;
-  color: var(--text-b);
+  color: var(--text-a);
 }
 </style>
