@@ -139,8 +139,9 @@ type Query {
 
 #----------------------------------------------------------------- MUTATIONS
 
-type UpdateBookResponse {
+type EditBookResponse {
   success: Boolean!
+  message: String!
 }
 
 type PendingEndpointPayload {
@@ -192,8 +193,8 @@ type CollectEndpointResponse {
   payload: CborPayload!
 }
 
-input UpdateBookInput {
-  id: String!
+input EditBookInput {
+  id: ID!
   keeping_stock: Int!
   ready_stock: Int!
   purchase_limit: Boolean!
@@ -248,7 +249,7 @@ input CollectEndpointInput {
 } 
 
 type Mutation {
-  updateBook(updateBookInput: UpdateBookInput!): UpdateBookResponse!
+  editBook(editBookInput: EditBookInput!): EditBookResponse!
   pendingEndpoint(pendingEndpointInput: PendingEndpointInput!): PendingEndpointResponse!
   cancelEndpoint(cancelEndpointInput: CancelEndpointInput!): CancelEndpointResponse!
   returnEndpoint(returnEndpointInput: ReturnEndpointInput!): ReturnEndpointResponse!

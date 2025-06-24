@@ -7,12 +7,15 @@ import {
   findProductBySeller,
   findProductBySku,
   sanitizeStringArray,
-  SellerToken,
   updateProduct,
 } from "@pairfy/common";
 import { verifyParams } from "../../validators/edit-product.js";
 import { checkFileGroup } from "../../utils/media.js";
-import { applyDiscount, extractTextFromHTML, sanitizeTiptapContent } from "../../utils/index.js";
+import {
+  applyDiscount,
+  extractTextFromHTML,
+  sanitizeTiptapContent,
+} from "../../utils/index.js";
 
 export const editProduct = async (_: any, args: any, context: any) => {
   let connection = null;
@@ -21,10 +24,13 @@ export const editProduct = async (_: any, args: any, context: any) => {
     const validateParams = verifyParams.safeParse(args.editProductInput);
 
     if (!validateParams.success) {
-      const errors = JSON.stringify(validateParams.error.flatten());
-      throw new ApiGraphQLError(400, `Validation failed: ${errors}`, {
-        code: ERROR_CODES.VALIDATION_ERROR,
-      });
+      throw new ApiGraphQLError(
+        400,
+        `Validation: ${validateParams.error.flatten()}`,
+        {
+          code: ERROR_CODES.VALIDATION_ERROR,
+        }
+      );
     }
 
     args.editProductInput.bullet_list = sanitizeStringArray(
@@ -41,7 +47,7 @@ export const editProduct = async (_: any, args: any, context: any) => {
 
     const params = validateParams.data;
 
-    const SELLER = context.sellerData as SellerToken;
+    const { sellerData: SELLER } = context;
 
     const timestamp = Date.now();
 
@@ -126,7 +132,7 @@ export const editProduct = async (_: any, args: any, context: any) => {
       schema_v: findProduct.schema_v + 1,
     };
 
-    console.log(updateScheme);
+    console.log(updateScheme); //TEST
 
     const update = await updateProduct(
       connection,
@@ -136,13 +142,9 @@ export const editProduct = async (_: any, args: any, context: any) => {
     );
 
     if (update.affectedRows !== 1) {
-      throw new ApiGraphQLError(
-        409,
-        "Update failed: version mismatch or not found",
-        {
-          code: ERROR_CODES.UPDATE_CONFLICT,
-        }
-      );
+      throw new ApiGraphQLError(409, "Version mismatch or not found", {
+        code: ERROR_CODES.UPDATE_CONFLICT,
+      });
     }
 
     const updatedProduct = await findProductById(connection, findProduct.id);
