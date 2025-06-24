@@ -31,16 +31,16 @@ type Product {
     created_at: String!
 }
 
-
 type Books {
   id: ID!
   seller_id: String!
-  keeping_stock: BigInt
-  ready_stock: BigInt
-  blocked_stock: BigInt
-  buy_limit: BigInt
-  paused: Boolean!
-  sold: BigInt
+  keeping_stock: Int!
+  ready_stock: Int!
+  blocked_stock: Int!
+  purchase_limit: Boolean!
+  purchase_limit_value: Int
+  stop_purchases: Boolean!
+  sold_count: Int!
   created_at: BigInt!
   updated_at: BigInt!
   schema_v: Int!
@@ -137,17 +137,11 @@ type Query {
   getBooks(getBooksInput: GetBooksInput!): GetBooksResponse!
 }
 
-#////////////////////////////////////////////////////////////////////////////// MUTATIONS
+#----------------------------------------------------------------- MUTATIONS
 
 type UpdateBookResponse {
   success: Boolean!
 }
-
-input UpdateBookInput {
-  id: String!
-  keeping_stock: Int!
-  ready_stock: Int!
-} 
 
 type PendingEndpointPayload {
   cbor: String!
@@ -197,6 +191,15 @@ type CollectEndpointResponse {
   success: Boolean!
   payload: CborPayload!
 }
+
+input UpdateBookInput {
+  id: String!
+  keeping_stock: Int!
+  ready_stock: Int!
+  purchase_limit: Boolean!
+  purchase_limit_value: Int!
+  stop_purchases: Boolean!
+} 
 
 input PendingEndpointData {
   city: String!

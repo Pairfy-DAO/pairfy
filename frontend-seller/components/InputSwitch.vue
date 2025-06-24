@@ -6,18 +6,18 @@
         {{ errorMessage }}
       </span>
     </label>
-    <div class="InputSwitch-wrap" :class="{ 'is-invalid': errorMessage }">
+
+    <label class="InputSwitch-wrap" :class="{ 'is-invalid': errorMessage }">
       <input
         class="InputSwitch-input"
         type="checkbox"
-        :id="id"
         v-model="localValue"
         :disabled="disabled"
         :aria-invalid="hasError"
         :aria-describedby="`${id}-error`"
       />
-      <span class="InputSwitch-circle" />
-    </div>
+      <span class="InputSwitch-circle"></span>
+    </label>
   </div>
 </template>
 
@@ -36,7 +36,6 @@ const emit = defineEmits(['update:modelValue', 'valid'])
 
 const localValue = ref(props.modelValue)
 const errorMessage = ref('')
-
 const hasError = computed(() => !!errorMessage.value)
 
 watch(() => props.modelValue, (val) => {
@@ -85,8 +84,10 @@ const { id, label, disabled } = props
 
 .InputSwitch-wrap {
   position: relative;
+  display: inline-block;
   width: 48px;
   height: 26px;
+  cursor: pointer;
 }
 
 .InputSwitch-input {
@@ -97,17 +98,16 @@ const { id, label, disabled } = props
 
 .InputSwitch-circle {
   position: absolute;
-  cursor: pointer;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  transition: 0.3s;
   border-radius: 999px;
   background: var(--border-b);
+  transition: 0.3s;
 }
 
-.InputSwitch-wrap input:checked + .InputSwitch-circle {
+.InputSwitch-wrap input:checked ~ .InputSwitch-circle {
   background-color: var(--primary-a, #2563eb);
 }
 
@@ -119,11 +119,11 @@ const { id, label, disabled } = props
   left: 3px;
   bottom: 3px;
   border-radius: 50%;
-  transition: var(--transition-a);
   background: var(--background-b);
+  transition: var(--transition-a);
 }
 
-.InputSwitch-wrap input:checked + .InputSwitch-circle::before {
+.InputSwitch-wrap input:checked ~ .InputSwitch-circle::before {
   transform: translateX(22px);
 }
 

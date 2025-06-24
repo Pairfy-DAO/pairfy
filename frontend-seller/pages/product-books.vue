@@ -17,10 +17,16 @@
                 <div class="edit-form">
                     <InputSwitch v-model="stopPurchases" label="Stop purchases" />
                     <InputSwitch v-model="purchaseLimit" label="Purchase limit" />
+
                     <InputInteger v-model="keepingStock" label="Keeping stock" :min="0" :max="999999"
                         placeholder="Keeping" @valid="keepingStockValid = $event.valid" />
-                    <InputInteger v-model="readyStock" label="Ready stock" :min="0" :max="999999"
-                    placeholder="Ready" @valid="readyStockValid = $event.valid" />
+                    <InputInteger v-model="readyStock" label="Ready stock" :min="0" :max="999999" placeholder="Ready"
+                        @valid="readyStockValid = $event.valid" />
+
+                    <div class="edit-form-bottom">
+                        <ButtonSolid label="Cancel" size="mini" @click="editDialog = false" outlined /> 
+                        <ButtonSolid label="Save" size="mini" style="margin-left: 1rem;" />
+                    </div>
                 </div>
             </template>
         </DialogComp>
@@ -58,12 +64,12 @@
                         id: '8rem',
                         product_sku: '8rem',
                         product_name: '16rem',
-                        sold: '4rem',
+                        sold_count: '4rem',
                         blocked_stock: '4rem',
                         ready_stock: '4rem',
                         keeping_stock: '4rem',
-                        buy_limit: '4rem',
-                        paused: '4rem',
+                        purchase_limit: '4rem',
+                        stop_purchases: '4rem',
                         created_at: '4rem',
                         action: '4rem'
                     }">
@@ -138,12 +144,12 @@ const columns = ref([
     { label: "ID", field: "id" },
     { label: "Sku", field: "product_sku" },
     { label: "Name", field: "product_name" },
-    { label: "Sold", field: "sold" },
+    { label: "Sold", field: "sold_count" },
     { label: "Blocked", field: "blocked_stock" },
     { label: "Ready", field: "ready_stock" },
     { label: "Keeping", field: "keeping_stock" },
-    { label: "BuyLimit", field: "buy_limit" },
-    { label: "Paused", field: "paused" },
+    { label: "BuyLimit", field: "purchase_limit" },
+    { label: "Paused", field: "stop_purchases" },
     { label: "Date", field: "created_at" }
 ])
 
@@ -165,9 +171,10 @@ const GET_BOOKS_QUERY = gql`
         keeping_stock
         ready_stock
         blocked_stock
-        buy_limit
-        paused
-        sold
+        purchase_limit
+        purchase_limit_value
+        stop_purchases
+        sold_count
         created_at
         product_name
         product_sku
@@ -246,6 +253,7 @@ function getImageSrc(item) {
 
 const stopPurchases = ref(false)
 const purchaseLimit = ref(false)
+
 const readyStock = ref(null)
 const readyStockValid = ref(false)
 const keepingStock = ref(null)
@@ -263,5 +271,10 @@ const keepingStockValid = ref(false)
     padding: 1rem;
     display: flex;
     flex-direction: column;
+}
+
+.edit-form-bottom {
+    display: flex;
+    justify-content: flex-end;
 }
 </style>

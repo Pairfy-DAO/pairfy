@@ -3,13 +3,16 @@ import { ApiGraphQLError, ERROR_CODES } from "@pairfy/common";
 import { verifyParams } from "../../validators/getBooks.js";
 
 export const getBooks = async (_: any, args: any, context: any) => {
-
   const validation = verifyParams.safeParse(args.getBooksInput);
 
   if (!validation.success) {
-    throw new ApiGraphQLError(400, `Invalid input ${validation.error.format()}`, {
-      code: ERROR_CODES.VALIDATION_ERROR
-    });
+    throw new ApiGraphQLError(
+      400,
+      `Invalid input ${validation.error.format()}`,
+      {
+        code: ERROR_CODES.VALIDATION_ERROR,
+      }
+    );
   }
 
   const { cursor, reverseCursor } = validation.data;
@@ -103,7 +106,8 @@ export const getBooks = async (_: any, args: any, context: any) => {
       totalCount: total_books,
     };
   } catch (err) {
-    throw err
+    if (connection) await connection.rollback();
+    throw err;
   } finally {
     if (connection) connection.release();
   }

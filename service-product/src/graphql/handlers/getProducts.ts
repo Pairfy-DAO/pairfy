@@ -95,9 +95,8 @@ export const getProducts = async (_: any, args: any, context: any) => {
       totalCount: total_products,
     };
   } catch (err) {
-    throw new ApiGraphQLError(500, "Unexpected error retrieving products", {
-      code: ERROR_CODES.INTERNAL_ERROR,
-    });
+    if (connection) await connection.rollback();
+    throw err
   } finally {
     if (connection) connection.release();
   }

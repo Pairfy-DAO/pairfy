@@ -86,9 +86,9 @@ function isValid(value) {
     box-sizing: border-box;
     padding: var(--input-padding);
     font-size: var(--text-size-1);
+    transition: var(--transition-a);
     border: 1px solid var(--border-b);
     border-radius: var(--input-radius);
-    transition: var(--transition-a);
 }
 
 .InputInteger-input:hover {
