@@ -29,7 +29,7 @@ const main = async () => {
       "SERVICE_STATE_REDIS",
       "REDIS_RATELIMIT_URL",
       "AGENT_JWT_KEY",
-      "EMBEDDING_HOST"
+      "EMBEDDING_HOST",
     ];
 
     for (const varName of requiredEnvVars) {
@@ -91,7 +91,6 @@ const main = async () => {
         connectTimeout: 100000,
         keepAlive: 100000,
       })
-      .then(() => checkRedis(redisClient))
       .catch((err: any) => catchError(err));
 
     console.log("✅ RedisClient connected");

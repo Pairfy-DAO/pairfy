@@ -6,6 +6,7 @@ import {
   deleteProductById,
   deleteBookById
 } from "@pairfy/common";
+import { redisBooksClient } from "./utils/redis.js";
 
 export const DeleteProduct = async (
   event: any,
@@ -55,6 +56,8 @@ export const DeleteProduct = async (
     if (delete2.affectedRows !== 1) {
       throw new Error("deleteBookError");
     }
+
+    await redisBooksClient.client.del(dataParsed.id)
 
     await consumeEvent(connection, event, seq);
 

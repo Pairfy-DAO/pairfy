@@ -17,7 +17,7 @@ spec:
           image: pairfy/service-processor
           env:
             - name: REDIS_HOST
-              value: service-processor-redis.default.svc.cluster.local
+              value: redis-processor.default.svc.cluster.local
             - name : MINIO_HOST_URL
               value: minio
             - name : MINIO_PORT

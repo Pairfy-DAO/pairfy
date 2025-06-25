@@ -38,7 +38,7 @@ spec:
             - name: DATABASE_USER
               value: marketplace    
             - name: SERVICE_STATE_REDIS
-              value: redis://service-state-redis:6379    
+              value: redis://redis-state:6379    
             - name : REDIS_RATELIMIT_URL
               value: "redis://redis-limiter:6379"
             - name: POD_NAME

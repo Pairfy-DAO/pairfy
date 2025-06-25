@@ -11,12 +11,12 @@
     </label>
 
     <!-- Display -->
-    <div class="dropdown-display" :class="{ 'is-invalid': errorMessage }" role="combobox"
+    <div class="InputSelect-body" :class="{ 'is-invalid': errorMessage }" role="combobox"
       :aria-expanded="isOpen.toString()" aria-haspopup="listbox" :aria-controls="`${props.id}-listbox`"
       @click="toggleDropdown">
 
       <template v-if="selectedOption">
-        <slot name="selected" :option="selectedOption"/>
+        <slot name="selected" :option="selectedOption" />
       </template>
 
       <template v-else>
@@ -32,8 +32,8 @@
 
     <!-- Dropdown -->
     <transition name="fade">
-      <ul v-if="isOpen" :id="`${props.id}-listbox`" class="dropdown-list" role="listbox">
-        <li v-for="option in options" :key="option.code" class="dropdown-item" @click.stop="select(option)"
+      <ul class="dropdown-list"  v-if="isOpen" :id="`${props.id}-listbox`" role="listbox">
+        <li class="dropdown-item" v-for="option in options" :key="option.code"  @click.stop="select(option)"
           :id="`option-${option.code}`" role="option">
           <slot name="option" :option="option" />
         </li>
@@ -134,7 +134,7 @@ watch(
   position: relative;
 }
 
-.dropdown-display {
+.InputSelect-body {
   border-radius: var(--input-radius);
   border: 1px solid var(--border-a);
   background: var(--background-b);
@@ -146,15 +146,15 @@ watch(
   justify-content: space-between;
 }
 
-.dropdown-display:hover {
+.InputSelect-body:hover {
   border-color: var(--primary-a);
 }
 
-.dropdown-display:focus::placeholder {
+.InputSelect-body:focus::placeholder {
   color: transparent;
 }
 
-.dropdown-display:focus-within {
+.InputSelect-body:focus-within {
   border: 1px solid var(--primary-a);
 }
 
@@ -165,7 +165,7 @@ watch(
   transition: var(--transition-a);
 }
 
-.dropdown-display[aria-expanded="true"] .chevron-down-icon {
+.InputSelect-body[aria-expanded="true"] .chevron-down-icon {
   transform: rotate(180deg);
 }
 
@@ -190,6 +190,26 @@ watch(
   z-index: 1000;
   padding: 0;
   margin: 0;
+}
+
+.dropdown-list::-webkit-scrollbar {
+  width: 15px;
+}
+
+.dropdown-list::-webkit-scrollbar-track {
+  background: var(--background-b);
+  border-radius: 4px;
+}
+
+.dropdown-list::-webkit-scrollbar-thumb {
+  background: var(--border-b);
+  border: 2px solid #f0f0f0;
+  border-radius: 4px;
+  height: 100px;
+}
+
+.dropdown-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .dropdown-item {

@@ -42,3 +42,5 @@ export * from "./findSellerById";
 export * from "./insertBook";
 export * from "./deleteBookById";
 export * from "./findBookById";
+export * from "./redisClient";
+export * from "./findBookBySeller";

@@ -5,7 +5,9 @@ import {
   logger,
   insertProduct,
   insertBook,
+  findBookBySeller
 } from "@pairfy/common";
+import { redisBooksClient } from "./utils/redis.js";
 
 export const CreateProduct = async (
   event: any,
@@ -57,6 +59,10 @@ export const CreateProduct = async (
     if (insert2.affectedRows !== 1) {
       throw new Error("insertBookError");
     }
+
+    const findBook = await findBookBySeller(connection, parsedData.id, parsedData.seller_id);
+
+    await redisBooksClient.client.set(findBook.id, JSON.stringify(findBook))
 
     await consumeEvent(connection, event, seq);
 

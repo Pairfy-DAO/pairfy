@@ -31,6 +31,8 @@ spec:
               value: service-seller,service-product
             - name: FILTER_SUBJECTS
               value: "service-product.CreateProduct,service-product.UpdateProduct,service-product.DeleteProduct,service-seller.CreateSeller,service-seller.UpdateSeller"              
+            - name : HANDLER_REDIS_BOOKS_HOST
+              value: redis://redis-books:6379               
             - name: DATABASE_NAME
               value: service_gateway       
             - name: DATABASE_USER

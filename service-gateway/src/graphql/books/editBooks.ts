@@ -3,6 +3,7 @@ import { ApiGraphQLError, ERROR_CODES } from "@pairfy/common";
 import { findBookBySeller } from "../../common/findBookBySeller.js";
 import { verifyParams } from "../../validators/editBook.js";
 import { updateBook } from "../../common/updateBook.js";
+import { redisBooksClient } from "../../database/redis.js";
 
 export const editBook = async (_: any, args: any, context: any) => {
   let connection = null;
@@ -61,6 +62,8 @@ export const editBook = async (_: any, args: any, context: any) => {
         code: ERROR_CODES.UPDATE_CONFLICT,
       });
     }
+
+    await redisBooksClient.client.set(findBook.id, JSON.stringify(updateContent))
 
     ///////////////////////////////////////////////////////////////// END TRANSACTION
 
