@@ -18,14 +18,19 @@
                     <InputSwitch v-model="stopPurchases" label="Stop purchases" />
                     <InputSwitch v-model="purchaseLimit" label="Purchase limit" />
 
-                    <InputInteger v-model="keepingStock" label="Keeping stock" :min="0" :max="999999"
-                        placeholder="Keeping" @valid="keepingStockValid = $event.valid" />
+                    <InputInteger v-model="purchaseLimitValue" label="Purchase limit value" :min="0" :max="999999"
+                        placeholder="Ready" @valid="purchaseLimitValueValid = $event.valid" v-if="purchaseLimit" />
+
                     <InputInteger v-model="readyStock" label="Ready stock" :min="0" :max="999999" placeholder="Ready"
                         @valid="readyStockValid = $event.valid" />
+                    <InputInteger v-model="keepingStock" label="Keeping stock" :min="0" :max="999999"
+                        placeholder="Keeping" @valid="keepingStockValid = $event.valid" />
+
 
                     <div class="edit-form-bottom">
                         <ButtonSolid label="Cancel" size="mini" @click="editDialog = false" outlined />
-                        <ButtonSolid label="Save" size="mini" style="margin-left: 1rem;" />
+                        <ButtonSolid label="Save" size="mini" @click="onEditBook" style="margin-left: 1rem;"
+                            :loading="loading" />
                     </div>
                 </div>
             </template>
@@ -68,7 +73,7 @@
                         blocked_stock: '4rem',
                         ready_stock: '4rem',
                         keeping_stock: '4rem',
-                        purchase_limit: '4rem',
+                        purchase_limit_value: '4rem',
                         stop_purchases: '4rem',
                         created_at: '4rem',
                         action: '4rem'
@@ -120,9 +125,26 @@ import { gql } from 'graphql-tag'
 
 const router = useRouter()
 
-const toastRef = ref(null);
-
 const tabIndex = ref(0)
+
+const columns = ref([
+    { label: "ID", field: "id" },
+    { label: "Sku", field: "product_sku" },
+    { label: "Name", field: "product_name" },
+    { label: "Sold", field: "sold_count" },
+    { label: "Blocked", field: "blocked_stock" },
+    { label: "Ready", field: "ready_stock" },
+    { label: "Keeping", field: "keeping_stock" },
+    { label: "BuyLimit", field: "purchase_limit_value" },
+    { label: "Paused", field: "stop_purchases" },
+    { label: "Date", field: "created_at" }
+])
+
+const dottedMenuOptions = ref([
+    { label: "Edit this book.", value: "edit" }
+])
+
+const toastRef = ref(null);
 
 const books = ref([])
 const nextCursor = ref(null)
@@ -134,24 +156,7 @@ const hasNextPage = ref(false)
 const hasPrevPage = ref(false)
 
 const editDialogRef = ref(null)
-const editDialog = ref(true)
-
-const dottedMenuOptions = ref([
-    { label: "Edit this book.", value: "edit" }
-])
-
-const columns = ref([
-    { label: "ID", field: "id" },
-    { label: "Sku", field: "product_sku" },
-    { label: "Name", field: "product_name" },
-    { label: "Sold", field: "sold_count" },
-    { label: "Blocked", field: "blocked_stock" },
-    { label: "Ready", field: "ready_stock" },
-    { label: "Keeping", field: "keeping_stock" },
-    { label: "BuyLimit", field: "purchase_limit" },
-    { label: "Paused", field: "stop_purchases" },
-    { label: "Date", field: "created_at" }
-])
+const editDialog = ref(false)
 
 const range = computed(() => {
     const start = (page.value - 1) * limit.value + 1
@@ -163,7 +168,10 @@ const { $gatewayClient } = useNuxtApp()
 
 const getBooksError = ref(null)
 
-const GET_BOOKS_QUERY = gql`
+const fetchBooks = async (getBooksVariable) => {
+    if (import.meta.server) return;
+
+    const GET_BOOKS_QUERY = gql`
   query GetBooks($getBooksVariable: GetBooksInput!) {
     getBooks(getBooksInput: $getBooksVariable) {
       books {
@@ -186,11 +194,8 @@ const GET_BOOKS_QUERY = gql`
       totalCount
     }
   }
+    
 `
-
-const fetchBooks = async (getBooksVariable) => {
-    if (import.meta.server) return;
-
     try {
         const { data } = await $gatewayClient.query({
             query: GET_BOOKS_QUERY,
@@ -237,9 +242,12 @@ const handleOnPrev = async (item) => {
     if (page.value > 1) page.value -= 1
 }
 
+const bookId = ref(null)
+
 const stopPurchases = ref(false)
+
 const purchaseLimit = ref(false)
-const purchaseLimitValue = ref(0)
+const purchaseLimitValue = ref(null)
 
 const readyStock = ref(null)
 const readyStockValid = ref(false)
@@ -249,8 +257,7 @@ const keepingStockValid = ref(false)
 
 const handleDottedMenu = (event, value) => {
     if (event === 'edit') {
-        console.log(value)
-
+        bookId.value = value.id
         stopPurchases.value = value.stop_purchases
         purchaseLimit.value = value.purchase_limit
         purchaseLimitValue.value = value.purchase_limit_value
@@ -260,7 +267,10 @@ const handleDottedMenu = (event, value) => {
     }
 }
 
-const EDIT_BOOK_MUTATION = gql`
+const onEditBook = async () => {
+    if (import.meta.server) return;
+
+    const EDIT_BOOK_MUTATION = gql`
       mutation EditBook($editBookVariable: EditBookInput!) {
         editBook(editBookInput: $editBookVariable) {
           success
@@ -268,31 +278,31 @@ const EDIT_BOOK_MUTATION = gql`
         }
       }
 `
- 
-const editBook = async () => {
-    if (import.meta.server) return;
-
     try {
+        loading.value = true
+
         const { data } = await $gatewayClient.mutate({
             mutation: EDIT_BOOK_MUTATION,
             variables: {
                 "editBookVariable": {
-                    "id": "PRD-250625-R6C5J9X",
-                    "keeping_stock": 3,
-                    "purchase_limit": true,
-                    "purchase_limit_value": 1,
-                    "ready_stock": 1,
-                    "stop_purchases": false
+                    "id": bookId.value,
+                    "stop_purchases": stopPurchases.value,
+                    "purchase_limit": purchaseLimit.value,
+                    "purchase_limit_value": purchaseLimitValue.value,
+                    "ready_stock": readyStock.value,
+                    "keeping_stock": keepingStock.value
                 }
             },
         });
-
+        editDialogRef.value?.close?.()
         displayMessage(data.editBook.message, 'success', 10_000)
-    } catch (error) {
-        console.error('EditBook:', error);
+    } catch (err) {
+        console.error('EditBook:', err);
         displayMessage(err, 'error', 30_000)
+    } finally {
+        loading.value = false
     }
-} 
+}
 
 
 function displayMessage(message, type, duration) {
