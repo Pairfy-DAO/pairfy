@@ -52,9 +52,8 @@ const auth = useAuthStore()
     justify-content: center;
     box-sizing: border-box;
     color: var(--text-w);
-    position: fixed;
     z-index: 12000;
-    height: 2rem;
+    height: 2.5rem;
     width: 100%;
     top: 0;
 }

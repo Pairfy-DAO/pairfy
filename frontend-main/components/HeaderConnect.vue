@@ -33,7 +33,7 @@ const auth = useAuthStore()
 
 .HeaderConnect span {
     font-size: var(--text-size-2);
-    margin-left: 1rem;
+    margin-left: 0.5rem;
 }
 
 </style>

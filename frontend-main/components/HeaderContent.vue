@@ -66,7 +66,6 @@ watch(() => route.path, (newPath) => {
   z-index: 11000;
   width: 100%;
   top: 2rem;
-  margin-top: 2rem;
   position: initial;
   box-shadow: var(--shadow-b);
   background: var(--blue-b);

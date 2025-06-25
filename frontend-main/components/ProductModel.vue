@@ -67,7 +67,7 @@ const save = computed(() => discount.value ? `Save $${formatUSD(price.value - di
     border: 1px solid var(--border-b);    
     transition: var(--transition-a);
     border-radius: var(--radius-c);
-    font-size: var(--text-size-1);
+    font-size: var(--text-size-2);
     margin-bottom: 1rem;
     font-weight: 600;
     cursor: pointer;
@@ -126,7 +126,7 @@ const save = computed(() => discount.value ? `Save $${formatUSD(price.value - di
 
 .discount {
     color: var(--green-a);
-    font-weight: 300;
+    font-weight: 4300;
 }
 
 .saved {

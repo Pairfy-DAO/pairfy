@@ -38,9 +38,9 @@
             </div>
 
             <div class="product-rating">
-              <span>4.3</span>
               <RatingComp :rating="4" />
-              <span>(384)</span>
+              <span>4.3</span>
+              <span>(384 reviews)</span>
             </div>
 
             <div class="product-price">
@@ -264,26 +264,22 @@ function showGetProductError() {
   align-items: center;
   flex-direction: column;
   justify-content: center;
-  background: var(--background-b);
 }
 
 .container {
   display: grid;
   width: inherit;
-  margin-top: 2rem;
+  margin-top: 3rem;
   box-sizing: border-box;
   max-width: var(--body-a);
-  grid-template-columns: 4fr 0.25rem 1fr;
-
+  grid-template-columns: 4fr 2rem 1fr;
 }
 
 .left-column {
   width: inherit;
-  padding: 2rem;
   box-sizing: border-box;
   border-radius: var(--radius-b);
   background: var(--background-a);
-  border: 1px solid var(--border-a);
 }
 
 .center-column {
@@ -291,7 +287,7 @@ function showGetProductError() {
 }
 
 .right-column {
-  width: 375px;
+  width: 24rem; 
   box-sizing: border-box;
   border-radius: var(--radius-b);
   background: var(--background-a);
@@ -370,11 +366,17 @@ function showGetProductError() {
   color: var(--text-a);
 }
 
+.product-brand {
+  font-size: var(--text-size-2);
+  color: var(--text-a);
+  font-weight: 700;
+}
+
 .product-name {
-  font-size: var(--text-size-3);
+  font-size: var(--text-size-5);
+  line-height: 2.25rem;
   margin-top: 0.5rem;
-  line-height: 2rem;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 .product-price {
@@ -391,20 +393,18 @@ function showGetProductError() {
   display: flex;
   margin-top: 1rem;
   align-items: center;
+  color: var(--blue-b);
   font-size: var(--text-size-1);
 }
 
-.product-rating span {
-  font-weight: 400;
-}
-
-.product-rating span:nth-child(1) {
-  margin-right: 0.5rem;
-  font-weight: 600;
+.product-rating span:nth-child(2) {
+  margin-left: 0.25rem;
+  font-weight: 700;
 }
 
 .product-rating span:nth-child(3) {
-  margin-left: 0.5rem;
+  font-size: var(--text-size-0);
+  margin-left: 0.25rem;
 }
 
 .product-sku {
@@ -412,11 +412,6 @@ function showGetProductError() {
   align-items: center;
   margin-top: 1rem;
   display: flex;
-}
-
-.product-brand {
-  font-size: var(--text-size-2);
-  font-weight: 700;
 }
 
 .product-sku div {
