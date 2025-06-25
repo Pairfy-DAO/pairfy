@@ -1,21 +1,24 @@
 <template>
-  <div class="dialog-backdrop" v-if="modelValue" @click="emitClose">
-    <div class="dialog-box" @click.stop>
 
-      <div class="header flex end" v-if="props.closable">
-        <button class="flex center" @click="emitClose">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-            class="lucide lucide-x-icon lucide-x">
-            <path d="M18 6 6 18" />
-            <path d="m6 6 12 12" />
-          </svg>
-        </button>
+  <transition name="fade">
+    <div class="dialog-backdrop" v-if="modelValue" @click="emitClose">
+      <div class="dialog-box" @click.stop>
+
+        <div class="header flex end" v-if="props.closable">
+          <button class="flex center" @click="emitClose">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-x-icon lucide-x">
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <slot />
       </div>
-
-      <slot />
     </div>
-  </div>
+  </transition>
 </template>
 
 <script setup>
@@ -55,6 +58,7 @@ function lockScroll() {
   if (isLocked) return
   scrollY = window.scrollY
   document.body.style.position = 'fixed'
+  document.body.style.overflowY = 'scroll'
   document.body.style.top = `-${scrollY}px`
   document.body.style.width = '100%'
   isLocked = true
@@ -130,5 +134,18 @@ button:hover {
   width: 100%;
   padding: 1rem;
   box-sizing: border-box;
+}
+
+
+.fade-enter-active, .fade-leave-active {
+  transition: var(--transition-a);
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-to, .fade-leave-from {
+  opacity: 1;
 }
 </style>

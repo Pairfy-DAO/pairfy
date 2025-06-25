@@ -23,7 +23,7 @@
       <div class="right-column">
 
         <div class="fixed-box" :class="{ fixed: isRightPanelFixed }">
-          <div class="right-scroll" ref="rightScrollRef">
+          <div class="right-scroll" :class="{ fixed: isRightPanelFixed }" ref="rightScrollRef">
 
             <div class="product-brand">
               {{ productData.brand }}
@@ -223,7 +223,7 @@ function observeTrigger() {
       isRightPanelFixed.value = !entry.isIntersecting
     },
     {
-      threshold: 1
+      threshold: 0.1
     })
 
   observer = stop
@@ -287,7 +287,7 @@ function showGetProductError() {
 }
 
 .right-column {
-  width: 24rem; 
+  width: 24rem;
   box-sizing: border-box;
   border-radius: var(--radius-b);
   background: var(--background-a);
@@ -320,16 +320,15 @@ function showGetProductError() {
 .right-scroll {
   height: 100%;
   padding: 1.5rem;
-  overflow-y: auto;
   padding-top: 2rem;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  transition: var(--transition-a);
 }
 
-.right-scroll {
-  overflow-y: auto;
-  scrollbar-width: none;
-  /* Firefox */
-  -ms-overflow-style: none;
-  /* IE 10+ */
+.right-scroll.fixed {
+ 
 }
 
 .right-scroll::-webkit-scrollbar {
@@ -352,7 +351,7 @@ function showGetProductError() {
 }
 
 .busy-box {
-  height: 200px;
+  height: 150px;
 }
 
 .subtitle {

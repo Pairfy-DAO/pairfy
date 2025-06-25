@@ -535,7 +535,7 @@ function displayMessage(message, type, duration) {
 .grid-row {
     background: var(--background-a);
     border-radius: var(--radius-a);
-    box-shadow: var(--shadow-b);
+    box-shadow: var(--shadow-a);
     margin-bottom: 1rem;
     padding: 1.5rem;
 }
