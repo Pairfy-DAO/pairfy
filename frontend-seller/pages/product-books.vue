@@ -24,7 +24,7 @@
                         @valid="readyStockValid = $event.valid" />
 
                     <div class="edit-form-bottom">
-                        <ButtonSolid label="Cancel" size="mini" @click="editDialog = false" outlined /> 
+                        <ButtonSolid label="Cancel" size="mini" @click="editDialog = false" outlined />
                         <ButtonSolid label="Save" size="mini" style="margin-left: 1rem;" />
                     </div>
                 </div>
@@ -237,11 +237,63 @@ const handleOnPrev = async (item) => {
     if (page.value > 1) page.value -= 1
 }
 
-function handleDottedMenu(event, value) {
+const stopPurchases = ref(false)
+const purchaseLimit = ref(false)
+const purchaseLimitValue = ref(0)
+
+const readyStock = ref(null)
+const readyStockValid = ref(false)
+
+const keepingStock = ref(null)
+const keepingStockValid = ref(false)
+
+const handleDottedMenu = (event, value) => {
     if (event === 'edit') {
+        console.log(value)
+
+        stopPurchases.value = value.stop_purchases
+        purchaseLimit.value = value.purchase_limit
+        purchaseLimitValue.value = value.purchase_limit_value
+        readyStock.value = value.ready_stock
+        keepingStock.value = value.keeping_stock
         editDialogRef.value?.open?.()
     }
 }
+
+const EDIT_BOOK_MUTATION = gql`
+      mutation EditBook($editBookVariable: EditBookInput!) {
+        editBook(editBookInput: $editBookVariable) {
+          success
+          message
+        }
+      }
+`
+ 
+const editBook = async () => {
+    if (import.meta.server) return;
+
+    try {
+        const { data } = await $gatewayClient.mutate({
+            mutation: EDIT_BOOK_MUTATION,
+            variables: {
+                "editBookVariable": {
+                    "id": "PRD-250625-R6C5J9X",
+                    "keeping_stock": 3,
+                    "purchase_limit": true,
+                    "purchase_limit_value": 1,
+                    "ready_stock": 1,
+                    "stop_purchases": false
+                }
+            },
+        });
+
+        displayMessage(data.editBook.message, 'success', 10_000)
+    } catch (error) {
+        console.error('EditBook:', error);
+        displayMessage(err, 'error', 30_000)
+    }
+} 
+
 
 function displayMessage(message, type, duration) {
     toastRef.value?.showToast(message, type, duration)
@@ -250,14 +302,6 @@ function displayMessage(message, type, duration) {
 function getImageSrc(item) {
     return item.thumbnail_url ? useMediaUrl(item.thumbnail_url) : placeholderImage
 }
-
-const stopPurchases = ref(false)
-const purchaseLimit = ref(false)
-
-const readyStock = ref(null)
-const readyStockValid = ref(false)
-const keepingStock = ref(null)
-const keepingStockValid = ref(false)
 </script>
 
 <style lang="css" scoped>

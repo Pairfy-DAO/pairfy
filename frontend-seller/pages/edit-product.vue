@@ -522,7 +522,7 @@ async function onApplyChanges() {
                 }
             })
 
-            displayMessage(data?.editProduct.message, 'success', 30_000)
+            displayMessage(data?.editProduct.message, 'success', 10_000)
         } catch (err) {
             console.error('Error editing the product:', err)
             displayMessage(err, 'error', 30_000)
