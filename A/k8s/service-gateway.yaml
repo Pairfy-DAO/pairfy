@@ -24,6 +24,8 @@ spec:
               value: redis://redis-state:6379
             - name : REDIS_RATELIMIT_HOST
               value: redis://redis-limiter:6379              
+            - name : REDIS_BOOKS_HOST
+              value: redis://redis-books:6379                
             - name: TX_VALID_TIME
               value: "360000"
             - name: TX_WATCH_WINDOW

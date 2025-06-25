@@ -1,4 +1,4 @@
-// plugins/query.ts
+// plugins/product.ts
 import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client/core";
 
 export default defineNuxtPlugin(() => {

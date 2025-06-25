@@ -111,7 +111,7 @@ function validate() {
   border-radius: var(--input-radius, 6px);
   transition: var(--transition-a);
   background: var(--background-b);
-  padding: 0.75rem 1rem;
+  padding: var(--input-padding);
   outline: none;
 }
 

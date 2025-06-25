@@ -1,4 +1,5 @@
 const typeDefs = `#graphql
+scalar BigInt
 
 type Product {
     id: String!
@@ -30,27 +31,30 @@ type Product {
     created_at: String!
 }
 
-
-type ProductBook {
-   id: ID!
-   name: String!
-   price: Int!
-   sku: String!
-   media_url: String!
-   image_path: String!
-   image_set: String!
-   discount: Boolean!
-   discount_value: Int!   
-   created_at: String!
-   book_keeping_stock: Int!
-   book_ready_stock: Int!
-   book_blocked_stock: Int!
+type Books {
+  id: ID!
+  seller_id: String!
+  keeping_stock: Int!
+  ready_stock: Int!
+  blocked_stock: Int!
+  purchase_limit: Boolean!
+  purchase_limit_value: Int
+  stop_purchases: Boolean!
+  sold_count: Int!
+  created_at: BigInt!
+  updated_at: BigInt!
+  schema_v: Int!
+  product_name: String!
+  product_sku: String!
+  thumbnail_url: String!
 }
 
 type GetBooksResponse {
-  books: [ProductBook!]
-  cursor: String!
-  count: Int!
+  books: [Books]!
+  nextCursor: String
+  hasPrevMore: Boolean!
+  hasNextMore: Boolean!
+  totalCount: Int!
 }
 
 type Order {
@@ -115,7 +119,8 @@ type getOrderResponse {
 }
 
 input GetBooksInput {
-  cursor: String!
+  cursor: String
+  reverseCursor: String
 }  
 
 input GetOrdersInput {
@@ -132,17 +137,12 @@ type Query {
   getBooks(getBooksInput: GetBooksInput!): GetBooksResponse!
 }
 
-#////////////////////////////////////////////////////////////////////////////// MUTATIONS
+#----------------------------------------------------------------- MUTATIONS
 
-type UpdateBookResponse {
+type EditBookResponse {
   success: Boolean!
+  message: String!
 }
-
-input UpdateBookInput {
-  id: String!
-  keeping_stock: Int!
-  ready_stock: Int!
-} 
 
 type PendingEndpointPayload {
   cbor: String!
@@ -193,6 +193,15 @@ type CollectEndpointResponse {
   payload: CborPayload!
 }
 
+input EditBookInput {
+  id: ID!
+  keeping_stock: Int!
+  ready_stock: Int!
+  purchase_limit: Boolean!
+  purchase_limit_value: Int!
+  stop_purchases: Boolean!
+} 
+
 input PendingEndpointData {
   city: String!
   address: String!
@@ -240,7 +249,7 @@ input CollectEndpointInput {
 } 
 
 type Mutation {
-  updateBook(updateBookInput: UpdateBookInput!): UpdateBookResponse!
+  editBook(editBookInput: EditBookInput!): EditBookResponse!
   pendingEndpoint(pendingEndpointInput: PendingEndpointInput!): PendingEndpointResponse!
   cancelEndpoint(cancelEndpointInput: CancelEndpointInput!): CancelEndpointResponse!
   returnEndpoint(returnEndpointInput: ReturnEndpointInput!): ReturnEndpointResponse!

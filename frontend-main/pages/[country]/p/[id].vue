@@ -273,7 +273,7 @@ function showGetProductError() {
   margin-top: 2rem;
   box-sizing: border-box;
   max-width: var(--body-a);
-  grid-template-columns: 4fr 0.5rem 1fr;
+  grid-template-columns: 4fr 0.25rem 1fr;
 
 }
 
@@ -380,7 +380,7 @@ function showGetProductError() {
 .product-price {
   font-size: var(--text-size-6);
   font-weight: 700;
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 
 .product-price span:nth-child(2) {

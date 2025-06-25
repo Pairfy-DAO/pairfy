@@ -26,7 +26,7 @@ body {
 }
 
 :root {
-  --body-a: 1650px;
+  --body-a: 1600px;
 
   --background-a: #ffffff;
   --background-b: #f7f9fb;
@@ -58,7 +58,7 @@ body {
   --shadow-e: 0 12px 24px rgba(0, 0, 0, 0.1);
 
   --transition-a: 0.2s ease-in-out;
-  --placeholder-opacity: 0.9;
+  --placeholder-opacity: 0.6;
 }
 
 :root {
@@ -93,6 +93,7 @@ body {
 :root {
   --input-radius: var(--radius-a);
   --button-radius: var(--radius-b);
+  --input-padding: 0.7rem 1rem; 
 }
 
 :root{
