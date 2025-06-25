@@ -4,7 +4,9 @@ import {
   consumeEvent,
   logger,
   deleteProductById,
+  deleteBookById
 } from "@pairfy/common";
+import { redisBooksClient } from "./utils/redis.js";
 
 export const DeleteProduct = async (
   event: any,
@@ -35,16 +37,27 @@ export const DeleteProduct = async (
     await connection.beginTransaction();
 
     ///////////////////////////////////////////////////////
-
-    const deleteResult = await deleteProductById(
+    
+    const delete1 = await deleteProductById(
       connection,
       dataParsed.id,
       dataParsed.schema_v
     );
 
-    if (deleteResult.affectedRows !== 1) {
-      throw new Error("DeleteProductError");
+    if (delete1.affectedRows !== 1) {
+      throw new Error("deleteProductError");
     }
+
+    const delete2 = await deleteBookById(
+      connection,
+      dataParsed.id
+    );
+
+    if (delete2.affectedRows !== 1) {
+      throw new Error("deleteBookError");
+    }
+
+    await redisBooksClient.client.del(dataParsed.id)
 
     await consumeEvent(connection, event, seq);
 

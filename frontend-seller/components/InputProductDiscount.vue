@@ -186,8 +186,8 @@ const discountedPrice = computed(() => {
   border-radius: var(--input-radius);
   background: var(--background-a);
   font-size: var(--text-size-1);
+  padding: var(--input-padding);
   box-sizing: border-box;
-  padding: 0.75rem 1rem;
   outline: none;
   width: 100%;
 }

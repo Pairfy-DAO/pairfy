@@ -22,12 +22,12 @@
 
         <ButtonRounded @click="prevPage" :disabled="!hasPrevPage">
           <template #content>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
-            class="lucide lucide-chevron-left">
-            <path d="m15 18-6-6 6-6" />
-          </svg>
-        </template>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-chevron-left">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+          </template>
         </ButtonRounded>
 
         <ButtonRounded @click="nextPage" :disabled="!hasNextPage">
@@ -61,7 +61,7 @@
 
       <tbody>
         <tr class="rows" v-for="item in filteredItems" :key="item.id">
-          <td class="image" v-if="images">
+          <td class="image" :style="{ width: columnWidths['image'] || 'auto' }" v-if="images">
             <slot name="image" :item="item" />
           </td>
 
@@ -72,7 +72,7 @@
             </slot>
           </td>
 
-          <td class="row">
+          <td class="row" :style="{ width: columnWidths['action'] || 'auto' }">
             <slot name="action" :item="item" />
           </td>
         </tr>
@@ -155,7 +155,6 @@ const nextPage = () => {
   flex-direction: column;
   color: var(--text-a);
   min-height: 100vh;
-  border-top: none;
   transition: 0.2s;
   overflow: hidden;
   width: 100%;
@@ -188,13 +187,18 @@ const nextPage = () => {
   border-radius: var(--input-radius);
   border: 1px solid var(--border-a);
   background: var(--background-b);
-  padding: 0 1rem;
+  transition: var(--transition-a);
+  padding: 0 0.75rem;
   width: 50%;
+}
+
+.search:hover {
+  border: 1px solid var(--primary-a);
 }
 
 .search input {
   background: transparent;
-  padding: 0.75rem 1rem;
+  padding: 0.65rem 1rem;
   min-width: 300px;
   width: inherit;
   border: none;
@@ -203,6 +207,7 @@ const nextPage = () => {
 
 .search input::placeholder {
   color: var(--text-b);
+  opacity: var(--placeholder-opacity);
   font-size: var(--text-size-1);
 }
 
@@ -216,27 +221,27 @@ const nextPage = () => {
 .arrow {
   width: 0;
   height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-radius: 4px;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-radius: 3px;
   margin: 1px;
   margin-left: 0.5rem;
 }
 
 .arrow.up.enabled {
-  border-bottom: 4px solid currentColor;
+  border-bottom: 3px solid currentColor;
 }
 
 .arrow.down.enabled {
-  border-top: 4px solid currentColor;
+  border-top: 3px solid currentColor;
 }
 
-.up {
-  border-bottom: 4px solid rgba(0, 0, 0, 0.3);
+.arrow.up {
+  border-bottom: 3px solid rgba(0, 0, 0, 0.3);
 }
 
-.down {
-  border-top: 4px solid rgba(0, 0, 0, 0.3);
+.arrow.down {
+  border-top: 3px solid rgba(0, 0, 0, 0.3);
 }
 
 .table {

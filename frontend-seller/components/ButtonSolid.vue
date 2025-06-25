@@ -1,8 +1,7 @@
-
 <template>
-  <button class="p-ButtonSolid" :class="[{ disabled }, sizeClass]" @click="$emit('click')" :disabled="disabled">
+  <button class="ButtonSolid" :class="[{ disabled, outlined }, sizeClass]" @click="$emit('click')" :disabled="disabled" >
 
-    <div class="p-ButtonSolid-body">
+    <div class="ButtonSolid-body">
       <span class="loader" v-if="loading" />
       <span class="label" v-if="!loading">{{ label }}</span>
     </div>
@@ -21,6 +20,10 @@ const props = defineProps({
     required: true
   },
   disabled: {
+    type: Boolean,
+    default: false
+  },
+  outlined: {
     type: Boolean,
     default: false
   },
@@ -44,9 +47,9 @@ const sizeClass = computed(() => {
 </script>
 
 <style scoped>
-.p-ButtonSolid {
-  transition: background-color 0.2s ease;
+.ButtonSolid {
   border-radius: var(--button-radius);
+  transition: var(--transition-a);
   background: var(--primary-a);
   justify-content: center;
   color: var(--text-w);
@@ -57,23 +60,35 @@ const sizeClass = computed(() => {
   border: none;
 }
 
-.p-ButtonSolid:hover {
+.ButtonSolid.outlined {
+  border: 1px solid var(--primary-a); 
+  background: transparent;
+  color: var(--primary-a);
+}
+
+.ButtonSolid.outlined:hover {
+  border: 1px solid var(--primary-a); 
+  background: var(--primary-a);
+  color: var(--text-w);
+}
+
+.ButtonSolid:hover {
   background: var(--primary-b);
 }
 
-.p-ButtonSolid.disabled {
+.ButtonSolid.disabled {
   pointer-events: none;
   background: var(--primary-b);
 }
 
-.p-ButtonSolid-body {
+.ButtonSolid-body {
   align-items: center;
   display: flex;
 }
 
 .btn-mini {
-  padding: 4px 8px;
-  font-size: 12px;
+  padding: 0.5rem 1rem;
+  font-size: var(--text-size-0);
 }
 
 .btn-mid {

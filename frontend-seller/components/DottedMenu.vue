@@ -17,7 +17,6 @@
 <script setup>
 import ButtonRounded from '@/components/ButtonRounded.vue';
 import { onClickOutside } from "@vueuse/core";
-import { ref } from 'vue';
 
 const props = defineProps(['options', 'value'])
 
@@ -51,7 +50,6 @@ const onSelected = (value) => {
     background: var(--background-a);
     box-shadow: var(--shadow-c);
     position: absolute;
-    min-height: 100px;
     min-width: 100px;
     right: 0;
     z-index: 2;
@@ -63,6 +61,7 @@ const onSelected = (value) => {
     padding: 1rem;
     cursor: pointer;
     white-space: nowrap;
+    font-weight: 500;
     font-size: var(--text-size-0);
 }
 

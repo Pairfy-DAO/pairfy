@@ -93,7 +93,7 @@ watch(internalValue, (newVal) => {
   border-radius: var(--input-radius, 6px);
   background: var(--background-b);
   transition: var(--transition-a);
-  padding: 0.75rem 1rem;
+  padding: var(--input-padding);
   outline: none;
 }
 

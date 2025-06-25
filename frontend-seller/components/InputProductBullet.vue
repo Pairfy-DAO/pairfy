@@ -6,7 +6,7 @@
       <div v-for="(item, index) in items" :key="index" class="item">
         <textarea
           v-model="items[index]"
-          placeholder="•"
+          placeholder=""
           :maxlength="maxLength"
           class="textarea"
           :class="{ 'is-invalid': showError[index] }"

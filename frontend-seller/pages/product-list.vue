@@ -5,27 +5,11 @@
         <FolderComp :tabs="['Products', 'Statistics']" v-model="tabIndex">
 
             <template #icon-0>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-package-search-icon lucide-package-search">
-                    <path
-                        d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14" />
-                    <path d="m7.5 4.27 9 5.15" />
-                    <polyline points="3.29 7 12 12 20.71 7" />
-                    <line x1="12" x2="12" y1="22" y2="12" />
-                    <circle cx="18.5" cy="15.5" r="2.5" />
-                    <path d="M20.27 17.27 22 19" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-inbox-icon lucide-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
             </template>
 
             <template #icon-1>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-chart-pie-icon lucide-chart-pie">
-                    <path
-                        d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z" />
-                    <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-no-axes-column-icon lucide-chart-no-axes-column"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
             </template>
 
             <template #content="{ index }">
@@ -35,10 +19,21 @@
                 <TableComp v-if="products.length" :columns="columns" :items="products" :limit="limit"
                     :hasNextPage="hasNextPage" :hasPrevPage="hasPrevPage" :range="range" :page="page"
                     :count="productCount" :images="true" @onPrev="handleOnPrev" @onNext="handleOnNext"
-                    :columnWidths="{ id: '10rem', sku: '8rem', price: '6rem', model: '8rem', discount: '4rem', category: '10rem', created_at: '6rem', moderated: '4rem' }">
+                    :columnWidths="{ 
+                    image: '6rem',
+                    id: '10rem',
+                    sku: '8rem',
+                    price: '6rem',
+                    model: '8rem',
+                    discount: '4rem',
+                    category: '10rem',
+                    created_at: '6rem',
+                    moderated: '4rem',
+                    action: '4rem'
+                    }">
 
                     <template #image="{ item }">
-                        <ImageComp :src="getImageSrc(item)" :image-style="{ width: '4rem', height: '4rem' }" />
+                        <ImageComp :src="getImageSrc(item)"  :image-style="{ width: '4rem' }"/>
                     </template>
 
                     <template #col-id="{ value }">
@@ -64,7 +59,7 @@
                     </template>
 
                     <template #col-created_at="{ value }">
-                        {{ formatDate(value) }}
+                        {{ formatDateYYMMDD(value) }}
                     </template>
 
                     <template #action="{ item }">
@@ -84,6 +79,7 @@
 
 <script setup>
 import placeholderImage from '@/assets/placeholder/image.svg'
+import { formatDateYYMMDD } from "@/utils/utils"
 import { gql } from 'graphql-tag'
 
 const router = useRouter()
@@ -106,9 +102,9 @@ const hasNextPage = ref(false)
 const hasPrevPage = ref(false)
 
 const dottedMenuOptions = ref([
-    { label: "Edit this product", value: "edit" },
-    { label: "Open product page", value: "open" },
-    { label: "Delete this product", value: "delete" }
+    { label: "Edit this product.", value: "edit" },
+    { label: "Open product page.", value: "open" },
+    { label: "Delete this product.", value: "delete" }
 ])
 
 const columns = ref([
@@ -257,13 +253,6 @@ function getImageSrc(item) {
     return item.thumbnail_url ? useMediaUrl(item.thumbnail_url) : placeholderImage
 }
 
-function formatDate(timestamp) {
-    const date = new Date(timestamp);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
 
 </script>
 
@@ -271,6 +260,7 @@ function formatDate(timestamp) {
 
 <style lang="css" scoped>
 .card {
-    padding: 0.25rem;
+    padding: 0.1rem;
+    padding-top: 1rem;
 }
 </style>

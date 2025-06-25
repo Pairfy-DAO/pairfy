@@ -39,3 +39,8 @@ export * from "./isValidSignatureCIP30";
 export * from "./createToken";
 export * from "./deleteProductById";
 export * from "./findSellerById";
+export * from "./insertBook";
+export * from "./deleteBookById"
+export * from "./findBookById";
+export * from "./redisClient";
+export * from "./findBookBySeller";

@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: service-state-redis-pvc
+  name: redis-processor-pvc
   namespace: default
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 500Mi
   storageClassName: standard
 
 ---
@@ -16,35 +16,35 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-state-redis
+  name: redis-processor
   namespace: default
   labels:
-    app: service-state-redis
+    app: redis-processor
 spec:
   type: ClusterIP
   ports:
     - port: 6379
       targetPort: 6379
   selector:
-    app: service-state-redis
+    app: redis-processor
 
 ---
 
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: service-state-redis
+  name: redis-processor
   namespace: default
 spec:
-  serviceName: "service-state-redis"
+  serviceName: "redis-processor"
   replicas: 1
   selector:
     matchLabels:
-      app: service-state-redis
+      app: redis-processor
   template:
     metadata:
       labels:
-        app: service-state-redis
+        app: redis-processor
     spec:
       containers:
         - name: redis
@@ -52,12 +52,12 @@ spec:
           ports:
             - containerPort: 6379
           volumeMounts:
-            - name: service-state-redis-data
+            - name: redis-processor-data
               mountPath: /data
           command: [ "redis-server", "--appendonly", "yes" ]
   volumeClaimTemplates:
     - metadata:
-        name: service-state-redis-data
+        name: redis-processor-data
       spec:
         accessModes: [ "ReadWriteOnce" ]
         storageClassName: standard

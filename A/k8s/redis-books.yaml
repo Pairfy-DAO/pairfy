@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-books-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+  storageClassName: standard
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-books
+  namespace: default
+  labels:
+    app: redis-books
+spec:
+  type: ClusterIP
+  ports:
+    - port: 6379
+      targetPort: 6379
+  selector:
+    app: redis-books
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-books
+  namespace: default
+spec:
+  serviceName: "redis-books"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-books
+  template:
+    metadata:
+      labels:
+        app: redis-books
+    spec:
+      containers:
+        - name: redis
+          image: redis
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: redis-books-data
+              mountPath: /data
+          command: [ "redis-server", "--appendonly", "yes" ]
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-books-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 500Mi

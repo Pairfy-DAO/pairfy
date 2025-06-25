@@ -55,7 +55,7 @@ spec:
             - name: NATS_SERVERS
               value: "nats://nats-0.nats-headless.default.svc.cluster.local:4222,nats://nats-1.nats-headless.default.svc.cluster.local:4222,nats://nats-2.nats-headless.default.svc.cluster.local:4222"
             - name: HANDLER_REDIS_HOST
-              value: service-processor-redis.default.svc.cluster.local
+              value: redis-processor.default.svc.cluster.local
           
           resources:
             limits:

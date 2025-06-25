@@ -18,7 +18,7 @@ import {
   normalizeGraphError,
   RateLimiter,
 } from "@pairfy/common";
-import { redisClient } from "./database/redis.js";
+import { redisBooksClient, redisClient } from "./database/redis.js";
 
 const main = async () => {
   try {
@@ -27,6 +27,7 @@ const main = async () => {
       "NETWORK_ENV",
       "REDIS_STATE_HOST",
       "REDIS_RATELIMIT_HOST",
+      "REDIS_BOOKS_HOST",
       "TX_VALID_TIME",
       "TX_WATCH_WINDOW",
       "PENDING_RANGE",
@@ -44,7 +45,7 @@ const main = async () => {
       "PROJECT_ID",
       "KUPO_KEY",
       "OGMIOS_KEY",
-      "WEAVIATE_HOST"
+      "WEAVIATE_HOST",
     ];
 
     for (const varName of requiredEnvVars) {
@@ -93,12 +94,22 @@ const main = async () => {
 
     await redisClient
       .connect({
-        service: 'service-gateway',
+        service: "service-gateway",
         url: process.env.REDIS_STATE_HOST,
         connectTimeout: 100000,
         keepAlive: 100000,
       })
       .then(() => console.log("redisClient connected"))
+      .catch((err: any) => catchError(err));
+
+    await redisBooksClient
+      .connect({
+        service: "service-gateway",
+        url: process.env.REDIS_BOOKS_HOST,
+        connectTimeout: 100000,
+        keepAlive: 100000,
+      })
+      .then(() => console.log("redisBooksClient connected"))
       .catch((err: any) => catchError(err));
 
     const databasePort = parseInt(process.env.DATABASE_PORT as string);
