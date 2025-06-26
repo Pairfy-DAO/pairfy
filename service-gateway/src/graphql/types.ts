@@ -144,18 +144,19 @@ type EditBookResponse {
   message: String!
 }
 
-type PendingEndpointPayload {
-  cbor: String!
-  order: String!
-}
-
 type CborPayload {
   cbor: String!
 }
 
+type PendingEndpointPayload {
+  cbor: String!
+  order: String!
+  spk: String!
+}
+
 type PendingEndpointResponse {
   success: Boolean!
-  payload: PendingEndpointPayload!
+  data: PendingEndpointPayload!
 }
 
 type CancelEndpointResponse {
@@ -202,18 +203,9 @@ input EditBookInput {
   stop_purchases: Boolean!
 } 
 
-input PendingEndpointData {
-  city: String!
-  address: String!
-  receiver: String!
-  postal: String!
-  other: String!
-}
-
 input PendingEndpointInput {
-  product_id: String!
-  product_units: Int!
-  data: PendingEndpointData!
+  product_id: ID!
+  order_units: Int!
 } 
 
 input CancelEndpointInput {
