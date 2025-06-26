@@ -1,12 +1,12 @@
 <template>
-  <div class="product-page">
+  <div class="ProductPage">
     <ToastComp ref="toastRef" />
 
     <DialogComp v-model="product.cardanoDialog" @update:modelValue="product.cardanoDialog = $event">
       <CardanoForm />
     </DialogComp>
 
-    <div class="container" v-if="productData">
+    <div class="ProductPage-body" v-if="productData">
       <div class="left-column">
         <ProductMedia />
         <DividerComp />
@@ -24,59 +24,7 @@
 
         <div class="fixed-box" :class="{ fixed: isRightPanelFixed }">
           <div class="right-scroll" :class="{ fixed: isRightPanelFixed }" ref="rightScrollRef">
-
-            <div class="product-brand">
-              {{ productData.brand }}
-            </div>
-
-            <div class="product-name">
-              {{ productData.name }}
-            </div>
-
-            <div class="product-sku">
-              <span>SKU {{ productData.sku }}</span>
-            </div>
-
-            <div class="product-rating">
-              <RatingComp :rating="4" />
-              <span>4.3</span>
-              <span>(384 reviews)</span>
-            </div>
-
-            <div class="product-price">
-              <span>{{ formatUSD(productData.discount ? productData.discount_value : productData.price) }}</span>
-              <span>USD</span>
-            </div>
-
-            <div class="subtitle">
-              Model. <span>Check variations.</span>
-            </div>
-
-            <ProductModel v-for="n in 1" :key="n" :id="productData.id" :model="productData.model"
-              :condition="productData.condition_" :color="productData.color" :price="productData.price"
-              :discount="productData.discount" :discount_percent="productData.discount_percent"
-              :discount_value="productData.discount_value" />
-
-            <div class="subtitle">
-              Finish. <span>Choose your network.</span>
-            </div>
-
-            <BuyButton @click="product.showCardanoDialog(true)">
-              <template #icon>
-                <img class="icon" src="@/assets/icon/cardano.svg" alt="">
-              </template>
-              Cardano Network
-            </BuyButton>
-
-            <BuyButton style="margin-top: 1rem;">
-              <template #icon>
-                <img class="icon" src="@/assets/icon/midnight.svg" alt="">
-              </template>
-              Midnight Network
-            </BuyButton>
-
-            <div class="busy-box" />
-
+            <ProductPanel />
           </div>
         </div>
       </div>
@@ -114,7 +62,40 @@ useLenisMultiple([rightScrollRef])
 
 /////////////////////////////////
 
-const GET_PRODUCT_QUERY = gql`
+const { $apollo } = useNuxtApp()
+
+const productId = ref(null);
+
+const getProductError = ref(null)
+
+let pollIntervalId = null
+
+watch(
+  () => route.params.id,
+  (id) => {
+    productId.value = id
+    fetchProduct()
+  },
+  { immediate: true }
+)
+
+onMounted(() => {
+  watchToast()
+  observeTrigger()
+  addScrollListener()
+  showGetProductError()
+  fetchProductPolling()
+})
+
+onBeforeUnmount(() => {
+  deleteObserver()
+  removeScrollListener()
+  clearIntervals()
+})
+
+async function fetchProduct() {
+
+  const GET_PRODUCT_QUERY = gql`
   query GetProduct($getProductVariable: GetProductInput!) {
     getProduct(getProductInput: $getProductVariable) {
       product {
@@ -162,38 +143,6 @@ const GET_PRODUCT_QUERY = gql`
   }
 `;
 
-const { $apollo } = useNuxtApp()
-
-const productId = ref(null);
-
-const getProductError = ref(null)
-
-let pollIntervalId = null
-
-watch(
-  () => route.params.id,
-  (id) => {
-    productId.value = id
-    fetchProduct()
-  },
-  { immediate: true }
-)
-
-onMounted(() => {
-  watchToast()
-  observeTrigger()
-  addScrollListener()
-  showGetProductError()
-  fetchProductPolling()
-})
-
-onBeforeUnmount(() => {
-  deleteObserver()
-  removeScrollListener()
-  clearIntervals()
-})
-
-async function fetchProduct() {
   try {
     const { data } = await $apollo.query({
       query: GET_PRODUCT_QUERY,
@@ -258,7 +207,7 @@ function showGetProductError() {
 </script>
 
 <style scoped>
-.product-page {
+.ProductPage {
   width: 100%;
   display: flex;
   align-items: center;
@@ -266,7 +215,7 @@ function showGetProductError() {
   justify-content: center;
 }
 
-.container {
+.ProductPage-body {
   display: grid;
   width: inherit;
   margin-top: 3rem;
@@ -320,102 +269,15 @@ function showGetProductError() {
 .right-scroll {
   height: 100%;
   padding: 1.5rem;
-  padding-top: 2rem;
   overflow-y: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;
   transition: var(--transition-a);
 }
 
-.right-scroll.fixed {
- 
-}
+.right-scroll.fixed {}
 
 .right-scroll::-webkit-scrollbar {
   display: none;
-}
-
-.product-section {
-  margin-bottom: 40px;
-}
-
-.test-image {
-  width: 100%;
-}
-
-.icon {
-  width: 2rem;
-  height: 2rem;
-  object-fit: contain;
-}
-
-.busy-box {
-  height: 150px;
-}
-
-.subtitle {
-  font-size: var(--text-size-3);
-  margin-bottom: 2rem;
-  margin-top: 2rem;
-  font-weight: 600;
-}
-
-.subtitle span {
-  color: var(--text-a);
-}
-
-.product-brand {
-  font-size: var(--text-size-2);
-  color: var(--text-a);
-  font-weight: 700;
-}
-
-.product-name {
-  font-size: var(--text-size-5);
-  line-height: 2.25rem;
-  margin-top: 0.5rem;
-  font-weight: 500;
-}
-
-.product-price {
-  font-size: var(--text-size-6);
-  font-weight: 700;
-  margin-top: 2rem;
-}
-
-.product-price span:nth-child(2) {
-  margin-left: 0.5rem;
-}
-
-.product-rating {
-  display: flex;
-  margin-top: 1rem;
-  align-items: center;
-  color: var(--text-a);
-  font-size: var(--text-size-1);
-}
-
-.product-rating span:nth-child(2) {
-  margin-left: 0.25rem;
-  font-weight: 700;
-}
-
-.product-rating span:nth-child(3) {
-  font-size: var(--text-size-0);
-  margin-left: 0.25rem;
-}
-
-.product-sku {
-  color: var(--text-b);
-  align-items: center;
-  margin-top: 1rem;
-  display: flex;
-}
-
-.product-sku div {
-  width: 1px;
-  height: 10px;
-  margin: auto 0.5rem;
-  background: var(--text-b);
 }
 </style>
