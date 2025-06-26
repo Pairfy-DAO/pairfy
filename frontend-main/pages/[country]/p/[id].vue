@@ -62,7 +62,7 @@ useLenisMultiple([rightScrollRef])
 
 /////////////////////////////////
 
-const { $apollo } = useNuxtApp()
+const { $queryClient } = useNuxtApp()
 
 const productId = ref(null);
 
@@ -144,7 +144,7 @@ async function fetchProduct() {
 `;
 
   try {
-    const { data } = await $apollo.query({
+    const { data } = await $queryClient.query({
       query: GET_PRODUCT_QUERY,
       variables: {
         getProductVariable: {

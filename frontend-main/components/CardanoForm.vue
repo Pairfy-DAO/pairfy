@@ -158,7 +158,8 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
+import { gql } from 'graphql-tag'
 const product = useProductStore()
 
 const orderUnits = ref(null);
@@ -200,24 +201,6 @@ function isValidParams() {
     return !values.includes(false)
 }
 
-const onSubmit = () => {
-    if (!isValidParams()) {
-        console.log('INVALID')
-        product.showToast('INVALID PARAMS', 'error', 10_000)
-        return;
-    }
-
-    product.showToast('VALID', 'success', 10_000)
-}
-
-
-
-
-
-
-
-
-
 const store = reactive({
     date: '2024/08/24',
     assignTo: 'Homer Simpson',
@@ -236,6 +219,49 @@ const selectedAddressDetails = computed(() => {
     const found = store.addresses.find(a => a.label === store.selectedAddress)
     return found?.details || ''
 })
+
+const loading = ref(false)
+
+const { $gatewayClient } = useNuxtApp()
+
+const onSubmit = async () => {
+    if (import.meta.server) return;
+
+    const PENDING_ENDPOINT_MUTATION = gql`
+mutation PendingEndpoint($pendingEndpointVariable: PendingEndpointInput!) {
+    pendingEndpoint(pendingEndpointInput: $pendingEndpointVariable) {
+       success
+       data {
+        order
+        cbor
+        spk
+       }
+    }
+}
+
+`
+    try {
+        loading.value = true
+
+        const { data } = await $gatewayClient.mutate({
+            mutation: PENDING_ENDPOINT_MUTATION,
+            variables: {
+                "pendingEndpointVariable": {
+                    "product_id": "PRD-250625-R6C5J9X",
+                    "order_units": 1
+                }
+            },
+        });
+
+        console.log(data.pendingEndpoint)
+        product.showToast('order', 'success', 10_000)
+    } catch (err) {
+        console.error('pendingEndpoint:', err);
+         product.showToast(err, 'error', 10_000)
+    } finally {
+        loading.value = false
+    }
+}
 </script>
 
 <style scoped>
