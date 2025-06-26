@@ -333,7 +333,6 @@ function showGetProductError() {
 
 .right-scroll::-webkit-scrollbar {
   display: none;
-  /* Safari y Chrome */
 }
 
 .product-section {
@@ -392,7 +391,7 @@ function showGetProductError() {
   display: flex;
   margin-top: 1rem;
   align-items: center;
-  color: var(--blue-b);
+  color: var(--text-a);
   font-size: var(--text-size-1);
 }
 
