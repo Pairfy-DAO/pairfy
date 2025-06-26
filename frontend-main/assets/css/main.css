@@ -11,7 +11,7 @@ body {
 }
 
 :root {
-  --text-size-0: 13px; /* Smallest text: captions, sub-labels */
+  --text-size-0: 12px; /* Smallest text: captions, sub-labels */
   --text-size-1: 14px; /* Secondary labels, helper text */
   --text-size-2: 16px; /* Base body text */
   --text-size-3: 18px; /* Paragraph lead or dense UI text */
@@ -25,7 +25,7 @@ body {
 }
 
 :root {
-  --body-a: 1600px;
+  --body-a: 1650px;
 
   --background-a: #ffffff;
   --background-b: #f7f9fb;

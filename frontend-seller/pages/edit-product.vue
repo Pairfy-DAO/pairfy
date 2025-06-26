@@ -9,7 +9,7 @@
             <div class="grid-row">
                 <div class="grid-title">
                     <span>Edit</span>
-                    <TipComp text="Edit the details of your product below." position="right">
+                    <TipComp text="Update the details to edit this product." position="right">
                         <span class="flex" style="margin-left: 0.5rem;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
