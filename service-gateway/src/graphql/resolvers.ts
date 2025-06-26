@@ -1,13 +1,13 @@
 import database  from "../database/client.js";
-import { getOrder } from "./orders/get-order.js";
-import { pendingEndpoint } from "./orders/pending.js";
-import { lockingEndpoint } from "./orders/locking.js";
-import { returnEndpoint } from "./orders/return.js";
-import { shippingEndpoint } from "./orders/shipping.js";
-import { receivedEndpoint } from "./orders/received.js";
-import { collectEndpoint } from "./orders/collect.js";
-import { cancelEndpoint } from "./orders/cancel.js";
-import { appealEndpoint } from "./orders/appeal.js";
+import { getOrder } from "./cardano/get-order.js";
+import { pendingEndpoint } from "./cardano/pending.js";
+import { lockingEndpoint } from "./cardano/locking.js";
+import { returnEndpoint } from "./cardano/return.js";
+import { shippingEndpoint } from "./cardano/shipping.js";
+import { receivedEndpoint } from "./cardano/received.js";
+import { collectEndpoint } from "./cardano/collect.js";
+import { cancelEndpoint } from "./cardano/cancel.js";
+import { appealEndpoint } from "./cardano/appeal.js";
 import { getBooks } from "./books/getBooks.js";
 import { editBook } from "./books/editBooks.js";
 
@@ -62,7 +62,7 @@ export const books = {
 
 ////////////////////////////////////////////////////////////////
 
-export const orders = {
+export const cardano = {
   Query: {
     getOrder,
   },

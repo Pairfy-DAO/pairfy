@@ -5,7 +5,7 @@ import cookieSession from "cookie-session";
 import { ApolloServer } from "@apollo/server";
 import { catchError } from "./utils/index.js";
 import { typeDefs } from "./graphql/types.js";
-import { books, orders } from "./graphql/resolvers.js";
+import { books, cardano } from "./graphql/resolvers.js";
 import { agentMiddleware } from "./middleware/agent.js";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
@@ -67,11 +67,11 @@ const main = async () => {
     const resolvers = {
       Query: {
         ...books.Query,
-        ...orders.Query,
+        ...cardano.Query,
       },
       Mutation: {
         ...books.Mutation,
-        ...orders.Mutation,
+        ...cardano.Mutation,
       },
     };
 
