@@ -136,7 +136,7 @@ watch(
 
 .InputSelect-body {
   border-radius: var(--input-radius);
-  border: 1px solid var(--border-a);
+  border: 1px solid var(--border-b);
   background: var(--background-b);
   padding: var(--input-padding);
   cursor: pointer;
@@ -176,7 +176,7 @@ watch(
 
 .dropdown-list {
   border-radius: var(--input-radius);
-  border: 1px solid var(--border-a);
+  border: 1px solid var(--border-b);
   background: var(--background-a);
   font-size: var(--text-size-1);
   box-shadow: var(--shadow-a);
@@ -218,6 +218,7 @@ watch(
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
+  transition: 0.1s ease-in-out;
 }
 
 .dropdown-item:hover {

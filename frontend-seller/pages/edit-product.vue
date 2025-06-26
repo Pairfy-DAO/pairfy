@@ -85,7 +85,7 @@
                                 <span style="margin-left: 0.5rem; "> {{ option.label }}</span>
                             </span>
                         </template>
-                        
+
                     </InputSelect>
 
                     <InputProductCity v-model="productCity" id="create-product-city"
@@ -282,7 +282,7 @@
                 </div>
 
                 <div class="grid-item">
-                    <ButtonSolid label="Apply" @click="onApplyChanges" :loading="loading" />
+                    <ButtonSolid label="Save" @click="onApplyChanges" :loading="loading" />
                 </div>
             </div>
 
@@ -374,13 +374,10 @@ const onImagesChange = (event) => {
     productImagesValid.value = event.valid
 }
 
-const productDiscountEnabled = ref(false);
-const productDiscountPercent = ref(0);
-
 const productDiscount = ref({
-    enabled: productDiscountEnabled.value,
+    enabled: false,
     price: productPrice.value,
-    discount: productDiscountPercent.value
+    discount: 0
 })
 
 watch(productPrice, (newPrice) => {
@@ -568,8 +565,8 @@ async function fetchProduct(id) {
         productCondition.value = product.condition_
         productColor.value = product.color
 
-        productDiscountEnabled.value = product.discount
-        productDiscountPercent.value = product.discount_percent
+        productDiscount.value.enabled = product.discount
+        productDiscount.value.discount = product.discount_percent
 
 
     } catch (err) {
@@ -662,7 +659,7 @@ function displayMessage(message, type, duration) {
 .grid-row {
     background: var(--background-a);
     border-radius: var(--radius-b);
-    box-shadow: var(--shadow-b);
+    box-shadow: var(--shadow-a);
     margin-bottom: 1rem;
     padding: 1.5rem;
 }
@@ -674,10 +671,10 @@ function displayMessage(message, type, duration) {
 }
 
 .flag {
-  width: 1rem;
+    width: 1rem;
 }
 
 .big-flag {
-  width: 1.5rem;
+    width: 1.5rem;
 }
 </style>

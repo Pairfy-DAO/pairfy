@@ -89,7 +89,7 @@ watch(internalValue, (newVal) => {
 }
 
 .InputProductModel-input {
-  border: 1px solid var(--border-a, #ccc);
+  border: 1px solid var(--border-b, #ccc);
   border-radius: var(--input-radius, 6px);
   background: var(--background-b);
   transition: var(--transition-a);

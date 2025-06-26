@@ -1,7 +1,6 @@
 <template>
-  <div class="p-ProductDiscountComp">
+  <div class="InputProductDiscount">
     <label class="title-text">{{ label }}</label>
-
 
     <div class="discount-toggle">
       <label class="switch">
@@ -14,7 +13,7 @@
       <div v-if="enabled" class="input-group">
         <label for="discount" class="label-small">Discount (%)</label>
         <input id="discount" type="number" inputmode="numeric" min="1" max="100" step="1"
-          v-model.number="discountPercent" class="discount-input" placeholder="25" @input="onInput"/>
+          v-model.number="discountPercent" class="discount-input" placeholder="25" @input="onInput" />
       </div>
     </Transition>
 
@@ -25,76 +24,72 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
+import { ref, computed, watch } from 'vue'
+
 const props = defineProps({
   label: { type: String, default: 'Enabled' },
   modelValue: {
-    type: Object as () => { enabled: boolean; price: number | null; discount: number },
-    required: true
+    type: Object,
+    required: true,
   },
   disabled: { type: Boolean, default: false },
 })
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: { enabled: boolean; price: number | null; discount: number }): void
-}>()
+const emit = defineEmits(['update:modelValue'])
 
 const enabled = ref(props.modelValue.enabled)
 const discountPercent = ref(props.modelValue.discount)
+const localPrice = ref(props.modelValue.price ?? 0) // 🔧 local ref para price
 
-
-const originalPrice = computed({
-  get: () => props.modelValue.price,
-  set: (val) => {
-    emit('update:modelValue', {
-      enabled: enabled.value,
-      price: val,
-      discount: discountPercent.value
-    })
-  }
+// Actualizar localPrice si cambia en el padre
+watch(() => props.modelValue.price, (val) => {
+  localPrice.value = val ?? 0
 })
 
-watch([enabled, discountPercent], () => {
+// Actualizar enabled/discount si el padre los cambia
+watch(() => props.modelValue.enabled, (val) => {
+  enabled.value = val
+})
+watch(() => props.modelValue.discount, (val) => {
+  discountPercent.value = val
+})
+
+// Emitir cambios al padre
+watch([enabled, discountPercent, localPrice], () => {
+
   emit('update:modelValue', {
-    enabled: enabled.value,
-    price: originalPrice.value,
-    discount: discountPercent.value,
-  })
+  enabled: enabled.value,
+  price: props.modelValue.price, 
+  discount: discountPercent.value,
+  finalPrice: enabled.value
+    ? applyDiscount(props.modelValue.price, discountPercent.value)
+    : props.modelValue.price
 })
 
-function onInput(e: Event) {
-  const target = e.target as HTMLInputElement
+})
+
+function onInput(e) {
+  const target = e.target
   let value = parseInt(target.value)
 
-  if (isNaN(value)) {
-    value = 0
-  } else if (value < 0) {
-    value = 0
-  } else if (value > 100) {
-    value = 100
-  }
+  if (isNaN(value)) value = 0
+  if (value < 0) value = 0
+  if (value > 100) value = 100
 
   discountPercent.value = value
   target.value = value.toString()
 }
 
-function applyDiscount(price: number, percentage: number): number {
-  if (typeof price !== 'number' || !Number.isInteger(price) || price < 0) {
-    return 0
-  }
+function applyDiscount(price, percentage) {
+  if (typeof price !== 'number' || price < 0) return 0
+  if (typeof percentage !== 'number' || percentage < 0 || percentage > 100) return price
 
-  if (typeof percentage !== 'number' || percentage < 0 || percentage > 100) {
-    return price
-  }
-
-  const discount = (price * percentage) / 100;
-  return Math.floor(price - discount);
+  const discount = (price * percentage) / 100
+  return Math.floor(price - discount)
 }
 
-
-const normalizedPrice = computed(() => {
-  return originalPrice.value ?? 0
-})
+const normalizedPrice = computed(() => localPrice.value ?? 0)
 
 const discountedPrice = computed(() => {
   if (!enabled.value || discountPercent.value === 0) return normalizedPrice.value
@@ -103,12 +98,13 @@ const discountedPrice = computed(() => {
 </script>
 
 
+
 <style scoped>
-.p-ProductDiscountComp {
-  display: flex;
-  flex-direction: column;
+.InputProductDiscount {
   width: 100%;
+  display: flex;
   max-width: 100%;
+  flex-direction: column;
   box-sizing: border-box;
 }
 

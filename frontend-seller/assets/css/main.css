@@ -91,7 +91,7 @@ body {
 }
 
 :root {
-  --input-radius: var(--radius-b);
+  --input-radius: var(--radius-a);
   --button-radius: var(--radius-b);
   --input-padding: 0.7rem 1rem; 
 }

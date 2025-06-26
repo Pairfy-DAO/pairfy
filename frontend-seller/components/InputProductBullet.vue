@@ -156,7 +156,7 @@ onMounted(() => {
   font-family: inherit;
   padding: 0.75rem 1rem;
   box-sizing: border-box;
-  border: 1px solid var(--border-a);
+  border: 1px solid var(--border-b);
   border-radius: var(--input-radius);
   outline: none;
 }

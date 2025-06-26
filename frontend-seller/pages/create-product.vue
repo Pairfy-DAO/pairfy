@@ -355,7 +355,7 @@ const productColorValid = ref(false)
 const productDiscount = ref({
     enabled: false,
     price: productPrice.value,
-    discount: 0,
+    discount: 0
 })
 
 watch(productPrice, (newPrice) => {
