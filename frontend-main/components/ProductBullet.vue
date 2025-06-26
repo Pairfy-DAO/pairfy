@@ -27,7 +27,7 @@ const bullets = computed(() => product.value.bullet_list)
 }
 
 .title {
-    font-size: var(--text-size-3);
+    font-size: var(--text-size-2);
     margin-bottom: 16px;
     font-weight: 700;
 }

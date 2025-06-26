@@ -35,8 +35,7 @@ const items = ref([
   { label: 'Trending', route: '/docs' },
   { label: 'Categories', route: '/categories' },
   { label: 'Docs', route: '/docs' },
-  { label: 'Sellers', route: '/sell' },
-  { label: 'Support', route: '/support' }
+  { label: 'Sellers', route: '/sell' }
 ])
 
 const router = useRouter()
@@ -67,7 +66,6 @@ watch(() => route.path, (newPath) => {
   width: 100%;
   top: 2rem;
   position: initial;
-  box-shadow: var(--shadow-b);
   background: var(--blue-b);
 }
 
