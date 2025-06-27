@@ -125,15 +125,19 @@ export const useWalletStore = defineStore("wallet", () => {
 
     const newAuxData = CardanoWasm.AuxiliaryData.new();
     newAuxData.set_metadata(generalMetadata);
+    const metadataHash = CardanoWasm.hash_auxiliary_data(newAuxData);
 
-    console.log("METADATA", newAuxData.to_json());
+    const oldBody = oldTx.body();
+
+    const newBody = CardanoWasm.TransactionBody.from_bytes(oldBody.to_bytes());
+    newBody.set_auxiliary_data_hash(metadataHash);
 
     //////////////////////////////////////////////////////////////////////////
 
     const template = CardanoWasm.Transaction.new(
-      oldTx.body(),
+      newBody,
       oldTx.witness_set(),
-      oldTx.auxiliary_data()
+      newAuxData
     );
 
     ////////////////////////////////////////////////////////////////////////// SIGNATURE

@@ -252,10 +252,10 @@
   dependencies:
     mime "^3.0.0"
 
-"@emurgo/cardano-serialization-lib-browser@^14.1.1":
-  version "14.1.1"
-  resolved "https://registry.npmjs.org/@emurgo/cardano-serialization-lib-browser/-/cardano-serialization-lib-browser-14.1.1.tgz"
-  integrity sha512-/zGHQoXJCQw0yyEdoVQMDlSsyvaCap2lNVKEu+GTi1pwYopn6K3/SntrDFW5/gIMireDwY4+kZcPvXwIBZnMZA==
+"@emurgo/cardano-serialization-lib-browser@^14.1.2":
+  version "14.1.2"
+  resolved "https://registry.npmjs.org/@emurgo/cardano-serialization-lib-browser/-/cardano-serialization-lib-browser-14.1.2.tgz"
+  integrity sha512-qtGbi7EP6u0DiiD+CMA5TZVfqgGBDDHsWCXplC7LuuyGbKXT53T9LOvi1BcqV6qaZYeajmwm2HbP6bdVqpwinw==
 
 "@esbuild/linux-x64@0.25.2":
   version "0.25.2"
