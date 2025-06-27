@@ -26,3 +26,16 @@ export function truncateText(text: string, maxLength: number) {
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength - 3).trim() + '...';
 }
+
+
+export function chunkMetadata(str: string, size: number): string[] {
+  if (!str || size <= 0) return [];
+
+  const chunks: string[] = [];
+
+  for (let i = 0; i < str.length; i += size) {
+    chunks.push(str.slice(i, i + size));
+  }
+
+  return chunks;
+}

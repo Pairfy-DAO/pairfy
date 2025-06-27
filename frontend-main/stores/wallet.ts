@@ -90,7 +90,7 @@ export const useWalletStore = defineStore("wallet", () => {
     walletName.value = null;
   };
 
-  const balanceTx = async (unbalancedTx: string) => {
+  const balanceTx = async (unbalancedTx: string, metadata = null) => {
     if (!import.meta.client) return;
 
     if (!walletApi.value) {
@@ -111,33 +111,39 @@ export const useWalletStore = defineStore("wallet", () => {
 
     //////////////////////////////////////////////////////////////////////////   METADATA
 
-    const generalMetadata =
-      oldTx.auxiliary_data()?.metadata() ??
-      CardanoWasm.GeneralTransactionMetadata.new();
+    let theBody = null;
+    let theAuxData = null;
 
-    generalMetadata.insert(
-      CardanoWasm.BigNum.from_str("674"),
-      CardanoWasm.encode_json_str_to_metadatum(
-        JSON.stringify({ message: "Hola desde Cardano!" }),
-        0
-      )
-    );
+    if (metadata) {
+      const generalMetadata =
+        oldTx.auxiliary_data()?.metadata() ??
+        CardanoWasm.GeneralTransactionMetadata.new();
 
-    const newAuxData = CardanoWasm.AuxiliaryData.new();
-    newAuxData.set_metadata(generalMetadata);
-    const metadataHash = CardanoWasm.hash_auxiliary_data(newAuxData);
+      generalMetadata.insert(
+        CardanoWasm.BigNum.from_str("674"),
+        CardanoWasm.encode_json_str_to_metadatum(
+          JSON.stringify({ msg: metadata }),
+          0
+        )
+      );
 
-    const oldBody = oldTx.body();
+      theAuxData = CardanoWasm.AuxiliaryData.new();
+      theAuxData.set_metadata(generalMetadata);
+      const metadataHash = CardanoWasm.hash_auxiliary_data(theAuxData);
 
-    const newBody = CardanoWasm.TransactionBody.from_bytes(oldBody.to_bytes());
-    newBody.set_auxiliary_data_hash(metadataHash);
+      theBody = CardanoWasm.TransactionBody.from_bytes(oldTx.body().to_bytes());
+      theBody.set_auxiliary_data_hash(metadataHash);
+    } else {
+      theBody = oldTx.body();
+      theAuxData = oldTx.auxiliary_data()
+    }
 
     //////////////////////////////////////////////////////////////////////////
 
     const template = CardanoWasm.Transaction.new(
-      newBody,
+      theBody,
       oldTx.witness_set(),
-      newAuxData
+      theAuxData
     );
 
     ////////////////////////////////////////////////////////////////////////// SIGNATURE

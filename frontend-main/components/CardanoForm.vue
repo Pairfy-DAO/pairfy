@@ -160,6 +160,8 @@
 
 <script setup>
 import { gql } from 'graphql-tag'
+import { chunkMetadata } from '@/utils/utils';
+
 const product = useProductStore()
 
 const orderUnits = ref(null);
@@ -257,7 +259,10 @@ mutation PendingEndpoint($pendingEndpointVariable: PendingEndpointInput!) {
 
         console.log(data.pendingEndpoint)
 
-        const submit = await wallet.balanceTx(data.pendingEndpoint.data.cbor)
+        const metadata = "ENjL13Eh1jDItRGphNXAGO0osY9xShmKypd22nP7AHYiNwsaGmOloYuYOEG8CE2/Hx0lGyG/+tSs9e6M27FmbBjuwke1iVGHF93dfjkCKDflcvkoWaYfTUD0hPgJemvtYn0//tZWAWITG+I1Ym6JG8ssB40hEIzozF9FgqYK46U3e8o3BWnMBjeTMrHVnVq7T/JiZali2XlUUM9QLoizTz9pYamZm3SkrOpYyK5rFK8D8ntcqn0umbsh2gS7TxxT+NP6DHne5qwt1hsUryxYOo9Kp7dOA9ZEF62JRBgtq1MjEVLkKOO5jCn/GYzPiJfP2DbCrSKp4y4LM0l1ZkFzUw=="
+        const chuncked = chunkMetadata(metadata, 64)
+
+        const submit = await wallet.balanceTx(data.pendingEndpoint.data.cbor, chuncked)
 
         console.log(submit)
 

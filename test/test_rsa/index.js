@@ -1,4 +1,5 @@
 import forge from "node-forge";
+import { gzip, ungzip } from "pako";
 
 export async function createSellerRSA() {
   const { privateKey, publicKey } = forge.pki.rsa.generateKeyPair({
@@ -13,8 +14,6 @@ export async function createSellerRSA() {
     publicKeyPem,
   };
 }
-
-
 
 ////////////////////////////////////////////BROWSER
 
@@ -57,3 +56,29 @@ export async function decryptMessageWithPrivateKey(
 
   return forge.util.decodeUtf8(decrypted);
 }
+
+//////////////////////////////////////////////////////////////
+
+function compressMessage(message) {
+  return Buffer.from(gzip(message)).toString("base64");
+}
+
+const main = async () => {
+  const { privateKeyPem, publicKeyPem } = await createSellerRSA();
+
+  const message = {
+    r: "x".repeat(50), //receiver alias
+    n: "A".repeat(50), //note
+    a: ",".repeat(100), //address
+  };
+
+  const compressed = compressMessage(JSON.stringify(message))
+
+  console.log(compressed.length);
+
+  const encrypted = encryptMessageWithPublicKey(publicKeyPem, compressed);
+
+  console.log(encrypted);
+};
+
+main();

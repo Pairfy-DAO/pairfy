@@ -11,6 +11,7 @@ import {
 } from "@pairfy/common";
 import { redisClient } from "../../database/redis.js";
 import { insertOrder } from "../../lib/order.js";
+import { chunkMetadata } from "../../lib/metadata.js";
 
 export const pendingEndpoint = async (_: any, args: any, context: any) => {
   if (!context.userData) {
@@ -92,12 +93,15 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    const metadata = chunkMetadata('x'.repeat(344), 64)
+
     const BUILDER = await pendingTransactionBuilder(
       operatorWallet,
       USER.address,
       findSeller.pubkeyhash,
       BigInt(contractPrice),
-      BigInt(contractFee)
+      BigInt(contractFee),
+      metadata
     );
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
