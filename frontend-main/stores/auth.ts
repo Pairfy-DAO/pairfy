@@ -5,8 +5,9 @@ export const useAuthStore = defineStore("auth", () => {
   const authDrawer = ref(false);
   const userDrawer = ref(false);
 
-  const country = ref<string | null>(null)
+  const country = ref<string | null>(null);
   const locationDialog = ref(false);
+  const walletName = ref<string | null>(null);
 
   const toastMessage = ref<ToastMessage | null>(null);
 
@@ -21,26 +22,28 @@ export const useAuthStore = defineStore("auth", () => {
     duration: number;
   };
 
-  function checkLocation() {
-    if (import.meta.client) {
-      const storedCountry = localStorage.getItem('country')
-      if (storedCountry) {
-        country.value = storedCountry
-      } else {
-        locationDialog.value = true
-      }
-    }
-  }
+  const checkLocation = () => {
+    if (!import.meta.client) return;
 
-  function setLocation(value: string) {
-    if (import.meta.client) {
-      localStorage.setItem('country', value)
-      country.value = value
-      locationDialog.value = false
+    const storedCountry = localStorage.getItem("country");
+    if (storedCountry) {
+      country.value = storedCountry;
+    } else {
+      locationDialog.value = true;
     }
-  }
+  };
+
+  const setLocation = (value: string) => {
+    if (!import.meta.client) return;
+
+    localStorage.setItem("country", value);
+    country.value = value;
+    locationDialog.value = false;
+  };
 
   const showToast = (message: string, type: ToastType, duration: number) => {
+    if (!import.meta.client) return;
+
     toastMessage.value = {
       message,
       type,
@@ -55,7 +58,7 @@ export const useAuthStore = defineStore("auth", () => {
     country: string;
     terms_accepted: boolean;
   }) => {
-    if (import.meta.server) return;
+    if (!import.meta.client) return;
 
     loading.value = true;
 
@@ -78,7 +81,7 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   const fetchUser = async () => {
-    if (import.meta.server) return;
+    if (!import.meta.client) return;
 
     try {
       const response: any = await $fetch("/api/user/current-user", {
@@ -93,11 +96,14 @@ export const useAuthStore = defineStore("auth", () => {
 
       if (userData) {
         user.value = userData;
+        walletName.value = userData.wallet_name;
         isAuthenticated.value = true;
       }
+
+      return userData;
     } catch (err: any) {
       console.error(err);
-      
+
       showToast(err.message, "error", 10_000);
       isAuthenticated.value = false;
       user.value = null;
@@ -105,7 +111,7 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   const logout = async () => {
-    if (import.meta.server) return;
+    if (!import.meta.client) return;
 
     try {
       await $fetch("/api/user/logout-user", {
@@ -137,6 +143,7 @@ export const useAuthStore = defineStore("auth", () => {
     locationDialog,
     checkLocation,
     setLocation,
-    country
+    country,
+    walletName,
   };
 });

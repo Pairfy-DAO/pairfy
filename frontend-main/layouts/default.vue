@@ -10,12 +10,13 @@
 <script setup>
 
 const auth = useAuthStore()
+const wallet = useWalletStore()
 
 await auth.fetchUser()
 
-onMounted(() => {
-  auth.checkLocation() 
-})
+await wallet.connect(auth.walletName)
+
+onMounted(()=> auth.checkLocation())
 
 </script>
 
