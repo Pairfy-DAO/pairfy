@@ -160,7 +160,7 @@
 
 <script setup>
 import { gql } from 'graphql-tag'
-import { chunkMetadata } from '@/utils/utils';
+import { chunkMetadata, encryptMessageWithPublicKey, compressMessage, sleep } from '@/utils/utils';
 
 const product = useProductStore()
 
@@ -228,13 +228,14 @@ const { $gatewayClient } = useNuxtApp()
 
 const wallet = useWalletStore()
 
-const onSubmit = async () => {
-    if (import.meta.server) return;
+const createOrder = async () => {
+    if (!import.meta.client) return;
 
     const PENDING_ENDPOINT_MUTATION = gql`
 mutation PendingEndpoint($pendingEndpointVariable: PendingEndpointInput!) {
     pendingEndpoint(pendingEndpointInput: $pendingEndpointVariable) {
        success
+       message
        data {
         order
         cbor
@@ -242,7 +243,6 @@ mutation PendingEndpoint($pendingEndpointVariable: PendingEndpointInput!) {
        }
     }
 }
-
 `
     try {
         loading.value = true
@@ -257,16 +257,9 @@ mutation PendingEndpoint($pendingEndpointVariable: PendingEndpointInput!) {
             },
         });
 
-        console.log(data.pendingEndpoint)
+        product.showToast(data.pendingEndpoint.message, 'success', 10_000)
 
-        const metadata = "ENjL13Eh1jDItRGphNXAGO0osY9xShmKypd22nP7AHYiNwsaGmOloYuYOEG8CE2/Hx0lGyG/+tSs9e6M27FmbBjuwke1iVGHF93dfjkCKDflcvkoWaYfTUD0hPgJemvtYn0//tZWAWITG+I1Ym6JG8ssB40hEIzozF9FgqYK46U3e8o3BWnMBjeTMrHVnVq7T/JiZali2XlUUM9QLoizTz9pYamZm3SkrOpYyK5rFK8D8ntcqn0umbsh2gS7TxxT+NP6DHne5qwt1hsUryxYOo9Kp7dOA9ZEF62JRBgtq1MjEVLkKOO5jCn/GYzPiJfP2DbCrSKp4y4LM0l1ZkFzUw=="
-        const chuncked = chunkMetadata(metadata, 64)
-
-        const submit = await wallet.balanceTx(data.pendingEndpoint.data.cbor, chuncked)
-
-        console.log(submit)
-
-        product.showToast('order', 'success', 10_000)
+        return data.pendingEndpoint.data
     } catch (err) {
         console.error('pendingEndpoint:', err);
         product.showToast(err, 'error', 10_000)
@@ -276,17 +269,39 @@ mutation PendingEndpoint($pendingEndpointVariable: PendingEndpointInput!) {
 }
 
 
-const testTX = async () => {
+const onSubmit = async () => {
     try {
-        const cbor = '84aa00d9010281825820c3506eda1728a8794e2007e104cc38fc419bab09f9f2f8f7940bf5eda41b2759010182a300581d705cde3f3cdb382d9f85a4a32539c45a63ec2dc605e59eb10a69f02a9601821a00989680a1581cf335bf5e0a4a73e37b7c0235f3750ac6b4e675cea3d58b7be1ed7460a14b746872656164746f6b656e01028201d81848d8799f00d87a80ff82583900a239e6c2bbd6a9f3249d65afef89c28e1471ed07c529ec06848cc1415502e5c34c37200c2ae9757cf8d9ee36370f7b778ad835377a0c47a51b00000002398db87d021a00032b66031a05ae513409a1581cf335bf5e0a4a73e37b7c0235f3750ac6b4e675cea3d58b7be1ed7460a14b746872656164746f6b656e010b5820dc1b5548c633a0ee88c60295d83c12ae19b771c1d93ddd1a662eeefe743275f20dd9010281825820c3506eda1728a8794e2007e104cc38fc419bab09f9f2f8f7940bf5eda41b2759010ed9010281581ca239e6c2bbd6a9f3249d65afef89c28e1471ed07c529ec06848cc1411082583900a239e6c2bbd6a9f3249d65afef89c28e1471ed07c529ec06848cc1415502e5c34c37200c2ae9757cf8d9ee36370f7b778ad835377a0c47a51b000000023a0af5e3111a001e8480a20581840100d879808219aa501a00d8d16e07d90102815902015901fe01010033332323232323232232223225333007323232323253323300d3001300e3754004264646464a666022600a0022a66602860266ea801c0085854ccc044c00c00454ccc050c04cdd50038010b0b18089baa006132323232533301630190021323253330153009301637540162a66602a6012602c6ea8c8cc004004018894ccc0680045300103d87a80001332253330193375e603c60366ea80080584cdd2a40006603a00497ae0133004004001301c001301d00113253330163008002100114a066e3c00804c5854ccc054cdc3800a4002266e3c00804c5281bad3016002375c60280022c602e00264a666024600860266ea800452f5bded8c026eacc05cc050dd500099198008009bab3017301830183018301800322533301600114c0103d87a80001323332225333017337220140062a66602e66e3c02800c4cdd2a4000660366e980092f5c02980103d87a8000133006006001375c602a0026eacc058004c068008c060004dd6180a80098089baa006370e90011bae3012300f37540046e1d20001630103011003300f002300e002300e0013009375400229309b2b1bad001375c002ae6955ceaab9e5573eae815d0aba24c010c4b746872656164746f6b656e004c0127d8799f5820c3506eda1728a8794e2007e104cc38fc419bab09f9f2f8f7940bf5eda41b275901ff004c01091b00000197af55e80d0001f5f6'
+        const order = await createOrder()
 
-        const submit = await wallet.balanceTx(cbor)
+        const message = {
+            r: "x".repeat(50), //receiver alias
+            n: "A".repeat(50), //note
+            a: "x".repeat(80), //address
+        };
 
-        console.log(submit)
+        const compressed = compressMessage(JSON.stringify(message))
+
+        console.log(compressed.length);
+
+        const encrypted = encryptMessageWithPublicKey(order.spk, compressed);
+
+        console.log(encrypted.length);
+        console.log("✅Encrypted Address: ", encrypted);
+
+        const metadata = chunkMetadata(encrypted, 64)
+
+        const TxHash = await wallet.balanceTx(order.cbor, metadata)
+        console.log(TxHash)
+
+        product.showToast(`The transaction has been sent to the network. TxHash: ${TxHash}`, 'success', 10_000)
+
+        await sleep(3_000)
+
     } catch (err) {
         product.showToast(err, 'error', 10_000)
     }
 }
+
 </script>
 
 <style scoped>

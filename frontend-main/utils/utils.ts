@@ -1,3 +1,7 @@
+import forge from "node-forge";
+import { gzip } from "pako";
+import { Buffer } from 'buffer';
+
 // utils/utils.ts
 export function truncateByWords(text: string, wordCount: number): string {
   if (!text || wordCount <= 0) return "";
@@ -39,3 +43,40 @@ export function chunkMetadata(str: string, size: number): string[] {
 
   return chunks;
 }
+
+export function encryptMessageWithPublicKey(publicKeyPem: string, message: string) {
+  try {
+    const maxLength = 190;
+    const byteLength = Buffer.byteLength(message, 'utf8');
+    
+    if (byteLength > maxLength) {
+      throw new Error(`Message too long. Max allowed for RSA-2048 + SHA-256 is ${maxLength} bytes.`);
+    }
+
+    const raw = Buffer.from(publicKeyPem, 'base64').toString('utf8');
+
+    const publicKey = forge.pki.publicKeyFromPem(raw);
+
+    const encrypted = publicKey.encrypt(
+      forge.util.encodeUtf8(message),
+      "RSA-OAEP",
+      {
+        md: forge.md.sha256.create(),
+        mgf1: {
+          md: forge.md.sha256.create(),
+        },
+      }
+    );
+
+    return forge.util.encode64(encrypted);
+  } catch (err) {
+    console.error("🔒 encryptMessageWithPublicKey:", err);
+    throw new Error('Error encrypting address.')
+  }
+}
+
+export function compressMessage(message: string) {
+  return Buffer.from(gzip(message)).toString("base64");
+}
+
+export function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }

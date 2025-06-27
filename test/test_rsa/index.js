@@ -19,6 +19,14 @@ export async function createSellerRSA() {
 
 export function encryptMessageWithPublicKey(publicKeyPem, message) {
   try {
+
+    const maxLength = 190;
+    const byteLength = Buffer.byteLength(message, 'utf8');
+    
+    if (byteLength > maxLength) {
+      throw new Error(`Message too long. Max allowed for RSA-2048 + SHA-256 is ${maxLength} bytes.`);
+    }
+
     const publicKey = forge.pki.publicKeyFromPem(publicKeyPem);
 
     const encrypted = publicKey.encrypt(
@@ -27,7 +35,7 @@ export function encryptMessageWithPublicKey(publicKeyPem, message) {
       {
         md: forge.md.sha256.create(),
         mgf1: {
-          md: forge.md.sha1.create(),
+          md: forge.md.sha256.create(),
         },
       }
     );
@@ -50,7 +58,7 @@ export async function decryptMessageWithPrivateKey(
   const decrypted = privateKey.decrypt(encryptedBytes, "RSA-OAEP", {
     md: forge.md.sha256.create(),
     mgf1: {
-      md: forge.md.sha1.create(),
+      md: forge.md.sha256.create(),
     },
   });
 

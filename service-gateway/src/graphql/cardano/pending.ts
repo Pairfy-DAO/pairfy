@@ -151,6 +151,7 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
 
     return {
       success: true,
+      message: "The transaction has been generated successfully, sign it and send it to the network.",
       data: {
         cbor: BUILDER.cbor,
         order: BUILDER.threadTokenPolicyId,

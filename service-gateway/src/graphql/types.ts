@@ -156,6 +156,7 @@ type PendingEndpointPayload {
 
 type PendingEndpointResponse {
   success: Boolean!
+  message: String!
   data: PendingEndpointPayload!
 }
 
