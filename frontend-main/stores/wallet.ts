@@ -104,10 +104,31 @@ export const useWalletStore = defineStore("wallet", () => {
     const oldTx = CardanoWasm.Transaction.from_hex(unbalancedTx);
 
     console.log(
-      "/////////////////////////////////////////////////////////////////////////////////////////"
+      "-----------------------------------------------------------------------------"
     );
 
     console.log("OLD BODY", oldTx.to_json());
+
+    //////////////////////////////////////////////////////////////////////////   METADATA
+
+    const generalMetadata =
+      oldTx.auxiliary_data()?.metadata() ??
+      CardanoWasm.GeneralTransactionMetadata.new();
+
+    generalMetadata.insert(
+      CardanoWasm.BigNum.from_str("674"),
+      CardanoWasm.encode_json_str_to_metadatum(
+        JSON.stringify({ message: "Hola desde Cardano!" }),
+        0
+      )
+    );
+
+    const newAuxData = CardanoWasm.AuxiliaryData.new();
+    newAuxData.set_metadata(generalMetadata);
+
+    console.log("METADATA", newAuxData.to_json());
+
+    //////////////////////////////////////////////////////////////////////////
 
     const template = CardanoWasm.Transaction.new(
       oldTx.body(),
@@ -115,8 +136,10 @@ export const useWalletStore = defineStore("wallet", () => {
       oldTx.auxiliary_data()
     );
 
+    ////////////////////////////////////////////////////////////////////////// SIGNATURE
+
     let txVkeyWitnesses = await walletApi.value.signTx(
-      Buffer.from(template.to_bytes(), "utf8").toString("hex"),
+      Buffer.from(template.to_bytes()).toString("hex"),
       true
     );
 
@@ -124,9 +147,10 @@ export const useWalletStore = defineStore("wallet", () => {
       Buffer.from(txVkeyWitnesses, "hex")
     );
 
-    const newTransactionWitnessSet = oldTx.witness_set();
-
+    const newTransactionWitnessSet = template.witness_set();
     newTransactionWitnessSet.set_vkeys(txVkeyWitnesses.vkeys());
+
+    /////////////////////////////////////////////////////
 
     const newTx = CardanoWasm.Transaction.new(
       template.body(),
@@ -141,7 +165,7 @@ export const useWalletStore = defineStore("wallet", () => {
     console.log("NEWBODY", newTx.to_json());
 
     return walletApi.value.submitTx(
-      Buffer.from(newTx.to_bytes(), "utf8").toString("hex")
+      Buffer.from(newTx.to_bytes()).toString("hex")
     );
   };
 
