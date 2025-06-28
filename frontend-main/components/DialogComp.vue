@@ -1,11 +1,11 @@
 <template>
 
   <transition name="fade">
-    <div class="dialog-backdrop" v-if="modelValue" @click="emitClose">
+    <div class="dialog-backdrop" v-if="modelValue" @click="emitClose('modal')">
       <div class="dialog-box" @click.stop>
 
         <div class="header flex end" v-if="props.closable">
-          <button class="flex center" @click="emitClose">
+          <button class="flex center" @click="emitClose('button')">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
               class="lucide lucide-x-icon lucide-x">
@@ -30,14 +30,25 @@ const props = defineProps({
   closable: {
     type: Boolean,
     default: true
-  }
+  },
+  modalClose: {
+    type: Boolean,
+    default: true
+  },
 });
 
 const emit = defineEmits(['update:modelValue']);
 
-function emitClose() {
-  if (props.closable) {
+function emitClose(origin) {
+  if (!props.closable) return
+
+  if (origin === 'button') {
     emit('update:modelValue', false);
+  }
+  if (origin === 'modal') {
+    if (props.modalClose) {
+      emit('update:modelValue', false);
+    }
   }
 }
 
@@ -137,15 +148,18 @@ button:hover {
 }
 
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: var(--transition-a);
 }
 
-.fade-enter-from, .fade-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
 }
 
-.fade-enter-to, .fade-leave-from {
+.fade-enter-to,
+.fade-leave-from {
   opacity: 1;
 }
 </style>

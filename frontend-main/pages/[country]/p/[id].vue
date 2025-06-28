@@ -2,7 +2,7 @@
   <div class="ProductPage">
     <ToastComp ref="toastRef" />
 
-    <DialogComp v-model="product.cardanoDialog" @update:modelValue="product.cardanoDialog = $event">
+    <DialogComp v-model="product.cardanoDialog" @update:modelValue="product.cardanoDialog = $event" :modalClose="false">
       <CardanoForm />
     </DialogComp>
 

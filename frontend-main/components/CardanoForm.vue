@@ -23,6 +23,7 @@
 
                     <div class="form-group">
                         <div class="form-item">
+
                             <InputSelect v-model="orderUnits" :options="orderUnitOptions" label="Quantity"
                                 @valid="orderUnitsValid = $event.valid" id="order-units-select" placeholder="Units">
                                 <template #option="{ option }">
@@ -35,8 +36,7 @@
 
                         <div class="form-item">
                             <InputSelect v-model="orderAsset" :options="orderAssetOptions" label="Payment in"
-                                @valid="orderAssetValid = $event.valid" id="order-payment-select"
-                                placeholder="Assets">
+                                @valid="orderAssetValid = $event.valid" id="order-payment-select" placeholder="Assets">
                                 <template #option="{ option }">
                                     <span class="flex">
                                         <span>{{ option.label }}</span>
@@ -162,17 +162,19 @@ import { gql } from 'graphql-tag'
 import { timestampToDate, chunkMetadata, encryptMessageWithPublicKey, compressMessage, truncateText, sleep } from '@/utils/utils';
 
 const route = useRoute()
-
 const product = useProductStore()
 const wallet = useWalletStore()
+
 const { $gatewayClient } = useNuxtApp()
 
 const loading = ref(false)
 
+const availableUnits = ref(1)
+
 const orderUnits = ref(null);
 const orderUnitsValid = ref(false)
 const orderUnitOptions = computed(() => {
-    return Array.from({ length: 10 }, (_, i) => ({
+    return Array.from({ length: availableUnits.value }, (_, i) => ({
         label: String(i + 1),
         value: String(i + 1)
     }))
@@ -192,8 +194,7 @@ const orderNote = ref(null)
 const orderNoteValid = ref(null)
 
 const orderAddress = ref(null)
-const orderAddressValid = ref(true)
-
+const orderAddressValid = ref(false)
 
 const orderProvider = ref(null)
 
@@ -249,9 +250,21 @@ mutation PendingEndpoint($pendingEndpointVariable: PendingEndpointInput!) {
     }
 }
 
+const isValidParams = () => {
+    const values = [orderUnitsValid.value, orderAssetValid.value, orderNameValid.value, orderNoteValid.value, orderAddressValid.value]
+    
+    console.log(values)
+
+    return !values.includes(false)
+}
 
 const onSubmit = async () => {
     try {
+        if (!isValidParams()) {
+            product.showToast('Please check the mandatory parameters.', 'error', 10_000)
+            return;
+        }
+
         const order = await createOrder()
 
         const message = {
@@ -286,11 +299,7 @@ const onSubmit = async () => {
     }
 }
 
-function isValidParams() {
-    const values = [orderUnitsValid.value, orderAssetValid.value, orderNameValid.value, orderNameValid.value, orderAddressValid.value]
 
-    return !values.includes(false)
-}
 </script>
 
 <style scoped>
