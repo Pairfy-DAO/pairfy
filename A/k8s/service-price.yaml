@@ -16,14 +16,10 @@ spec:
         - name: service-price 
           image: pairfy/service-price 
           env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: POD_TIMEOUT
-              value: "120000"
-            - name: REDIS_HOST
-              value: redis://service-state-redis:6379
+            - name: NODE_ENV
+              value: development
+            - name: REDIS_PRICE_HOST
+              value: redis://redis-price:6379
           resources:
             limits:
               memory: "300Mi"
@@ -40,5 +36,5 @@ spec:
   ports:
     - name: service-price
       protocol: TCP
-      port: 8000
-      targetPort: 8000
+      port: 8007
+      targetPort: 8007
