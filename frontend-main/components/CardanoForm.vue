@@ -159,7 +159,7 @@
 
 <script setup>
 import { gql } from 'graphql-tag'
-import { chunkMetadata, encryptMessageWithPublicKey, compressMessage, truncateText, sleep } from '@/utils/utils';
+import { timestampToDate, chunkMetadata, encryptMessageWithPublicKey, compressMessage, truncateText, sleep } from '@/utils/utils';
 
 const route = useRoute()
 
@@ -201,10 +201,10 @@ const encryptedMessage = ref(null)
 
 const store = computed(() => {
     return {
-        date: '2024/08/24',
+        date: timestampToDate(Date.now() + 7 * 24 * 60 * 60 * 1000),
         orderName: orderName.value || 'Michael Brown',
         orderAddress: orderAddress.value || '1234 Brickell Avenue, Suite 500, Miami, FL 33131',
-        orderAsset: orderAsset.value || 'ADA'
+        orderAsset: orderAsset.value || 'N/A'
     }
 })
 
@@ -300,7 +300,7 @@ function isValidParams() {
     padding: 1.5rem;
     padding-bottom: 0;
     min-width: 300px;
-    max-width: 50vw;
+    max-width: 49vw;
     padding-top: 0;
     display: flex;
     gap: 1rem;
@@ -432,6 +432,7 @@ select {
 }
 
 .CardanoForm-summary {
+    word-break: break-word;
     padding: 1.5rem;
 }
 

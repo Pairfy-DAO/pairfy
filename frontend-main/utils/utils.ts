@@ -91,3 +91,14 @@ export function compressMessage(message: string) {
 }
 
 export function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+
+export function timestampToDate(timestamp: number) {
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}/${month}/${day}`;
+}
+
