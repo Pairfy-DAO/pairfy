@@ -207,6 +207,7 @@ input EditBookInput {
 input PendingEndpointInput {
   product_id: ID!
   order_units: Int!
+  asset: String!
 } 
 
 input CancelEndpointInput {

@@ -34,8 +34,8 @@
                         </div>
 
                         <div class="form-item">
-                            <InputSelect v-model="orderPayment" :options="orderPaymentOptions" label="Payment in"
-                                @valid="orderPaymentValid = $event.valid" id="order-payment-select"
+                            <InputSelect v-model="orderAsset" :options="orderAssetOptions" label="Payment in"
+                                @valid="orderAssetValid = $event.valid" id="order-payment-select"
                                 placeholder="Assets">
                                 <template #option="{ option }">
                                     <span class="flex">
@@ -51,7 +51,7 @@
                     </div>
 
                     <div class="form-item">
-                        <InputTextarea v-model="orderNote" />
+                        <InputNote v-model="orderNote" @valid="orderNoteValid = $event.valid" />
                     </div>
                 </div>
 
@@ -66,8 +66,7 @@
                     </div>
 
                     <div class="form-item">
-                        <InputPassword v-model="orderPassword" @valid="orderPasswordValid = $event.valid"
-                            placeholder="Password" />
+                        <InputOutput v-model="encryptedMessage" />
                     </div>
                 </div>
 
@@ -93,13 +92,13 @@
                         <p id="delivery-date">{{ store.date }}</p>
 
                         <label for="receiver">Receiver alias</label>
-                        <p id="receiver">{{ store.assignTo }}</p>
+                        <p id="receiver">{{ store.orderName }}</p>
 
                         <label for="address">Address</label>
-                        <p id="address">{{ selectedAddressDetails }}</p>
+                        <p id="address">{{ store.orderAddress }}</p>
 
                         <label for="payment">Payment in</label>
-                        <p id="payment">ADA</p>
+                        <p id="payment">{{ store.orderAsset }}</p>
 
                         <DividerComp margin="1rem 0" />
 
@@ -160,9 +159,15 @@
 
 <script setup>
 import { gql } from 'graphql-tag'
-import { chunkMetadata, encryptMessageWithPublicKey, compressMessage, sleep } from '@/utils/utils';
+import { chunkMetadata, encryptMessageWithPublicKey, compressMessage, truncateText, sleep } from '@/utils/utils';
+
+const route = useRoute()
 
 const product = useProductStore()
+const wallet = useWalletStore()
+const { $gatewayClient } = useNuxtApp()
+
+const loading = ref(false)
 
 const orderUnits = ref(null);
 const orderUnitsValid = ref(false)
@@ -174,59 +179,34 @@ const orderUnitOptions = computed(() => {
 })
 
 
-const orderPayment = ref(null)
-const orderPaymentValid = ref(false)
-const orderPaymentOptions = computed(() => [
-    { label: 'ADA', value: 'ada' }
+const orderAsset = ref(null)
+const orderAssetValid = ref(false)
+const orderAssetOptions = computed(() => [
+    { label: 'ADA', value: 'ADA' }
 ])
 
 const orderName = ref(null)
 const orderNameValid = ref(false)
 
 const orderNote = ref(null)
-
+const orderNoteValid = ref(null)
 
 const orderAddress = ref(null)
 const orderAddressValid = ref(true)
 
 
-const orderPassword = ref(null)
-const orderPasswordValid = ref(false)
-
-
 const orderProvider = ref(null)
 
+const encryptedMessage = ref(null)
 
-function isValidParams() {
-    const values = [orderUnitsValid.value, orderPaymentValid.value, orderNameValid.value, orderAddressValid.value, orderPasswordValid.value]
-
-    return !values.includes(false)
-}
-
-const store = reactive({
-    date: '2024/08/24',
-    assignTo: 'Homer Simpson',
-    paymentTerms: 'Cash',
-    note: '',
-    selectedAddress: 'Central Warehouse',
-    addresses: [
-        {
-            label: 'Central Warehouse',
-            details: '1234 Brickell Avenue, Suite 500, Miami, FL 33131'
-        }
-    ]
+const store = computed(() => {
+    return {
+        date: '2024/08/24',
+        orderName: orderName.value || 'Michael Brown',
+        orderAddress: orderAddress.value || '1234 Brickell Avenue, Suite 500, Miami, FL 33131',
+        orderAsset: orderAsset.value || 'ADA'
+    }
 })
-
-const selectedAddressDetails = computed(() => {
-    const found = store.addresses.find(a => a.label === store.selectedAddress)
-    return found?.details || ''
-})
-
-const loading = ref(false)
-
-const { $gatewayClient } = useNuxtApp()
-
-const wallet = useWalletStore()
 
 const createOrder = async () => {
     if (!import.meta.client) return;
@@ -251,8 +231,9 @@ mutation PendingEndpoint($pendingEndpointVariable: PendingEndpointInput!) {
             mutation: PENDING_ENDPOINT_MUTATION,
             variables: {
                 "pendingEndpointVariable": {
-                    "product_id": "PRD-250625-R6C5J9X",
-                    "order_units": 1
+                    "product_id": route.params.id,
+                    "order_units": parseInt(orderUnits.value),
+                    "asset": orderAsset.value
                 }
             },
         });
@@ -274,9 +255,10 @@ const onSubmit = async () => {
         const order = await createOrder()
 
         const message = {
-            r: "x".repeat(50), //receiver alias
-            n: "A".repeat(50), //note
-            a: "x".repeat(80), //address
+            r: orderName.value,
+            n: orderNote.value,
+            a: orderAddress.value,
+            p: orderProvider.value
         };
 
         const compressed = compressMessage(JSON.stringify(message))
@@ -287,6 +269,8 @@ const onSubmit = async () => {
 
         console.log(encrypted.length);
         console.log("✅Encrypted Address: ", encrypted);
+
+        encryptedMessage.value = encrypted;
 
         const metadata = chunkMetadata(encrypted, 64)
 
@@ -302,6 +286,11 @@ const onSubmit = async () => {
     }
 }
 
+function isValidParams() {
+    const values = [orderUnitsValid.value, orderAssetValid.value, orderNameValid.value, orderNameValid.value, orderAddressValid.value]
+
+    return !values.includes(false)
+}
 </script>
 
 <style scoped>

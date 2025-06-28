@@ -1,6 +1,6 @@
 <template>
-  <div class="InputAddress">
-    <label class="InputAddress-label" :for="id">
+  <div class="InputName">
+    <label class="InputName-label" :for="id">
       <span>{{ label }}</span>
       <span class="error-text" :class="{ visible: errorMessage }" :id="`${id}-error`">
         {{ errorMessage || '-' }}
@@ -16,21 +16,20 @@
       :maxlength="maxLength"
       inputmode="text"
       @drop.prevent
-      @blur="validate"
       :class="{ 'is-invalid': errorMessage }"
       :aria-invalid="!!errorMessage"
       :aria-describedby="`${id}-error`"
-      class="InputAddress-input"
+      class="InputName-input"
     />
   </div>
 </template>
 
 <script setup>
 const props = defineProps({
-  id: { type: String, default: 'input-address' },
+  id: { type: String, default: 'input-note' },
   modelValue: { type: [String, null], default: null },
-  label: { type: String, default: 'Address' },
-  placeholder: { type: String, default: '1234 Brickell Avenue, Suite 500, Miami, FL 33131' },
+  label: { type: String, default: 'Note' },
+  placeholder: { type: String, default: 'Other indications...' },
   focus: { type: Boolean, default: false },
   required: { type: Boolean, default: true },
   maxLength: { type: Number, default: 70 },
@@ -42,11 +41,11 @@ const inputRef = ref(null)
 const internalValue = ref(props.modelValue ?? '')
 const errorMessage = ref('')
 
-const addressRegex = /^[\p{L}\p{N}\p{M}\s\-'.(),#\/\\\n]+$/u
+const noteRegex = /^[\p{L}\p{N}\p{M}\s.,;:()'"!?@&\-\/]+$/u;
 
 const messages = {
   required: '•',
-  invalid: "Only letters, numbers, spaces, and common address symbols (- . , ’ ( ) # / \\) are allowed.",
+  invalid: 'Only letters, spaces, and basic punctuation like - ’ . , ( ) are allowed.',
   maxLength: `Maximum length is ${props.maxLength} characters.`,
 }
 
@@ -60,7 +59,7 @@ const validate = () => {
   const validators = [
     { condition: props.required && isEmpty(val), message: messages.required },
     { condition: val.length > props.maxLength, message: messages.maxLength },
-    { condition: !isEmpty(val) && !addressRegex.test(trimmed), message: messages.invalid },
+    { condition: !isEmpty(val) && !noteRegex.test(trimmed), message: messages.invalid },
   ]
 
   const error = validators.find(v => v.condition)?.message
@@ -81,16 +80,17 @@ watch(() => props.focus, (newVal) => {
   if (newVal) inputRef.value?.focus()
 }, { immediate: true })
 
+
 </script>
 
 <style scoped>
-.InputAddress {
+.InputName {
   flex-direction: column;
   display: flex;
   width: 100%;
 }
 
-.InputAddress-input {
+.InputName-input {
   border-radius: var(--input-radius);
   border: 1px solid var(--border-b);
   transition: var(--transition-a);
@@ -99,7 +99,7 @@ watch(() => props.focus, (newVal) => {
   outline: none;
 }
 
-.InputAddress-input:focus {
+.InputName-input:focus {
   border: 1px solid var(--primary-a);
 }
 
@@ -116,7 +116,7 @@ input:hover {
   border: 1px solid var(--primary-a);
 }
 
-.InputAddress-label {
+.InputName-label {
   justify-content: space-between;
   font-size: var(--text-size-0);
   margin-bottom: 0.75rem;

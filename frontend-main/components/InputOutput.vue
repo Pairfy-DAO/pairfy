@@ -1,7 +1,7 @@
 <template>
   <div class="InputTextarea">
-    <label for="note">Note</label>
-    <textarea id="note" v-model="noteText" rows="5" cols="40" placeholder="Write your note here..."></textarea>
+    <label for="note">Output</label>
+    <textarea id="note" v-model="noteText" rows="5" cols="40" placeholder="Audit RSA output" readonly></textarea>
   </div>
 </template>
 
@@ -40,7 +40,10 @@ textarea {
   padding: 1rem;
   outline: none;
   resize: vertical;
-  font-size: var(--text-size-1);
+  color: var(--text-b);
+  word-break: break-word;
+  box-sizing: border-box;
+  font-size: var(--text-size-0);
   border-radius: var(--radius-b);
   background: var(--background-b);
   border: 1px solid var(--border-b);

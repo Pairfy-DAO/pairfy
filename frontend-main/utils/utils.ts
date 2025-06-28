@@ -44,6 +44,17 @@ export function chunkMetadata(str: string, size: number): string[] {
   return chunks;
 }
 
+export function truncateMiddle(hash: string, length = 6) {
+  if (typeof hash !== 'string' || hash.length <= length * 2) {
+    return hash;
+  }
+
+  const start = hash.slice(0, length);
+  const end = hash.slice(-length);
+  return `${start} ...... ${end}`;
+}
+
+
 export function encryptMessageWithPublicKey(publicKeyPem: string, message: string) {
   try {
     const maxLength = 190;
