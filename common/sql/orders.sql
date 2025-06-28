@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS orders(
   seller_address VARCHAR(200) NOT NULL,
   seller_wallet VARCHAR(50) NOT NULL,
   seller_username VARCHAR(100) NOT NULL,
+  rsa_version INT UNSIGNED NOT NULL,
   product_id VARCHAR(100) NOT NULL,
   contract_address VARCHAR(200) NOT NULL,
   contract_params TEXT NOT NULL,

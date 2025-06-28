@@ -119,6 +119,7 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
       seller_address: findSeller.address,
       seller_wallet: findSeller.wallet_name,
       seller_username: findSeller.username,
+      rsa_version: findSeller.rsa_version,
       product_id: findProduct.id,
       contract_address: BUILDER.stateMachineAddress,
       contract_params: BUILDER.serializedParams,
