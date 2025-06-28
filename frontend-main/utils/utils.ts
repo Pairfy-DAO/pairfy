@@ -61,7 +61,7 @@ export function encryptMessageWithPublicKey(publicKeyPem: string, message: strin
     const byteLength = Buffer.byteLength(message, 'utf8');
     
     if (byteLength > maxLength) {
-      throw new Error(`Message too long. Max allowed for RSA-2048 + SHA-256 is ${maxLength} bytes.`);
+      throw new Error(`Error encrypting address. Message too long. Max allowed for RSA-2048 + SHA-256 is ${maxLength} bytes.`);
     }
 
     const raw = Buffer.from(publicKeyPem, 'base64').toString('utf8');
@@ -82,7 +82,7 @@ export function encryptMessageWithPublicKey(publicKeyPem: string, message: strin
     return forge.util.encode64(encrypted);
   } catch (err) {
     console.error("🔒 encryptMessageWithPublicKey:", err);
-    throw new Error('Error encrypting address.')
+    throw err
   }
 }
 

@@ -32,7 +32,7 @@ const props = defineProps({
   placeholder: { type: String, default: 'Other indications...' },
   focus: { type: Boolean, default: false },
   required: { type: Boolean, default: true },
-  maxLength: { type: Number, default: 70 },
+  maxLength: { type: Number, default: 60 },
 })
 
 const emit = defineEmits(['update:modelValue', 'valid'])
