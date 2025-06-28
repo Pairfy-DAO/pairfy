@@ -7,21 +7,19 @@ type BinanceResponse = { mins: number; price: string; closeTime: number };
 
 export async function getAssetPriceHandler(job: Job) {
   try {
-    let symbol = job.data.symbol;
+    const { symbol, base } = job.data;
 
-    let response: any = await axiosAPI.get(`/api/v3/avgPrice?symbol=${symbol}`);
+    const response: any = await axiosAPI.get(`/api/v3/avgPrice?symbol=${symbol}`);
 
     if (response.status === 200) {
-      let payload: BinanceResponse = response.data;
+      const payload: BinanceResponse = response.data;
 
-      let assetPrice = Number(parseFloat(payload.price).toFixed(2));
+      const assetPrice = Number(parseFloat(payload.price).toFixed(2));
 
-      let key = "price:" + symbol;
-
-      await redisClient.client.set(key, assetPrice, {
+      await redisClient.client.set(`price:${base}`, assetPrice, {
         EX: 120,
       });
-      
+
       console.log(`✅${symbol}:${assetPrice}`);
     }
   } catch (err) {

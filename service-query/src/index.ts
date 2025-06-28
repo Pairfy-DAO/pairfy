@@ -3,11 +3,11 @@ import http from "http";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
-import { catchError, checkRedis, errorEvents } from "./utils/index.js";
+import { catchError, errorEvents } from "./utils/index.js";
 import { assets, feed, products } from "./graphql/resolvers.js";
 import { database } from "./database/client.js";
 import { typeDefs } from "./graphql/types.js";
-import { redisClient } from "./database/redis.js";
+import { redisPriceClient, redisFeedClient } from "./database/redis.js";
 import {
   ApiGraphQLError,
   ERROR_CODES,
@@ -26,10 +26,11 @@ const main = async () => {
       "DATABASE_USER",
       "DATABASE_PASSWORD",
       "DATABASE_NAME",
-      "SERVICE_STATE_REDIS",
-      "REDIS_RATELIMIT_URL",
       "AGENT_JWT_KEY",
       "EMBEDDING_HOST",
+      "REDIS_PRICE_HOST",
+      "REDIS_FEED_HOST",
+      "REDIS_RATELIMIT_HOST"
     ];
 
     for (const varName of requiredEnvVars) {
@@ -83,27 +84,37 @@ const main = async () => {
       database: process.env.DATABASE_NAME,
     });
 
-    console.log("✅ Database connected");
+    console.log("✅ database connected");
 
-    await redisClient
+    await redisPriceClient
       .connect({
-        url: process.env.SERVICE_STATE_REDIS,
+        url: process.env.REDIS_PRICE_HOST,
         connectTimeout: 100000,
         keepAlive: 100000,
       })
       .catch((err: any) => catchError(err));
 
-    console.log("✅ RedisClient connected");
+    console.log("✅ redisPriceClient connected");
+
+    await redisFeedClient
+      .connect({
+        url: process.env.REDIS_FEED_HOST,
+        connectTimeout: 100000,
+        keepAlive: 100000,
+      })
+      .catch((err: any) => catchError(err));
+
+    console.log("✅ redisFeedClient connected");
 
     const rateLimiter = new RateLimiter({
       source: "service-query",
-      redisUrl: process.env.REDIS_RATELIMIT_URL as string,
+      redisUrl: process.env.REDIS_RATELIMIT_HOST as string,
       jwtSecret: process.env.AGENT_JWT_KEY as string,
       maxRequests: 100,
       windowSeconds: 60,
     });
 
-    console.log("✅ RateLimiter configured");
+    console.log("✅ rateLimiter configured");
 
     app.set("trust proxy", 1);
 

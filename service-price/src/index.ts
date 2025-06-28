@@ -29,10 +29,22 @@ const main = async () => {
       connection: { url: process.env.REDIS_PRICE_HOST },
     });
 
+    const repeatableJobs = await priceQueue.getJobSchedulers();
+
+    for (const job of repeatableJobs) {
+      try {
+        await priceQueue.removeJobScheduler(job.key);
+        console.log(`✅ Removed repeatable job: ${job.name} (${job.key})`);
+      } catch (err) {
+        console.error(`❌ Failed to remove job: ${job.name} (${job.key})`, err);
+      }
+    }
+
     await priceQueue.add(
       "ADAUSDT",
       {
         symbol: "ADAUSDT",
+        base: "ADA",
       },
       {
         repeat: {
@@ -45,7 +57,7 @@ const main = async () => {
           jitter: 0.5,
         },
         removeOnComplete: { age: 600 },
-        removeOnFail: { age: 3600 },    
+        removeOnFail: { age: 3600 },
         jobId: "ADAUSDT",
       }
     );
