@@ -1,5 +1,7 @@
 import { RedisWrapper } from "@pairfy/common";
 
-export const redisClient = new RedisWrapper();
+export const redisState = new RedisWrapper();
 
-export const redisBooksClient = new RedisWrapper();
+export const redisBooks = new RedisWrapper();
+
+export const redisPrice = new RedisWrapper();

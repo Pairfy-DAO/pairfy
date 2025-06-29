@@ -14,7 +14,7 @@ export async function getAssetPriceHandler(job: Job) {
     if (response.status === 200) {
       const payload: BinanceResponse = response.data;
 
-      const assetPrice = Number(parseFloat(payload.price).toFixed(2));
+      const assetPrice = Number(Number(payload.price).toFixed(2));
 
       await redisClient.client.set(`price:${base}`, assetPrice, {
         EX: 120,

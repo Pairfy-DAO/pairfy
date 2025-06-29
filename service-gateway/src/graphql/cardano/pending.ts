@@ -9,7 +9,7 @@ import {
   findSellerById,
   UserToken,
 } from "@pairfy/common";
-import { redisClient } from "../../database/redis.js";
+import { redisPrice } from "../../database/redis.js";
 import { insertOrder } from "../../lib/order.js";
 import { chunkMetadata } from "../../lib/metadata.js";
 
@@ -37,7 +37,7 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
   let connection = null;
 
   try {
-    const timestamp = Date.now()
+    const timestamp = Date.now();
 
     const { userData: USER } = context as { userData: UserToken };
 
@@ -61,17 +61,13 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
       });
     }
 
-    /*
-    const getAssetPrice = await redisClient.client.get("price:ADAUSDT"); ///param valida
+    const getAssetPrice = await redisPrice.client.get(`price:${params.asset}`);
 
     if (!getAssetPrice) {
       throw new ApiGraphQLError(404, "Asset not found", {
         code: ERROR_CODES.NOT_FOUND,
       });
     }
-*/
-
-    const getAssetPrice = "1.00";
 
     //////////////////////////////////////////////////////////////////////////////////// START TRANSACTION
 
@@ -93,7 +89,7 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    const metadata = chunkMetadata('x'.repeat(344), 64)
+    const metadata = chunkMetadata("x".repeat(344), 64);
 
     const BUILDER = await pendingTransactionBuilder(
       operatorWallet,
@@ -108,7 +104,7 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
 
     const orderContent = {
       id: BUILDER.threadTokenPolicyId,
-      type: 'cardano',
+      type: "cardano",
       seller_id: findProduct.seller_id,
       country: findProduct.country,
       buyer_pubkeyhash: USER.pubkeyhash,
@@ -133,12 +129,12 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
       expire_until: BUILDER.expireUntil,
       created_at: timestamp,
       updated_at: timestamp,
-      schema_v: 0
+      schema_v: 0,
     };
 
     console.log(orderContent);
 
-    const [insert1] = await insertOrder(connection, orderContent)
+    const [insert1] = await insertOrder(connection, orderContent);
 
     if (insert1.affectedRows !== 1) {
       throw new ApiGraphQLError(500, "Error creating order", {
@@ -152,11 +148,12 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
 
     return {
       success: true,
-      message: "The transaction has been generated successfully, sign it and send it to the network.",
+      message:
+        "The transaction has been generated successfully, sign it and send it to the network.",
       data: {
         cbor: BUILDER.cbor,
         order: BUILDER.threadTokenPolicyId,
-        spk: findSeller.rsa_public_key
+        spk: findSeller.rsa_public_key,
       },
     };
   } catch (err: any) {
