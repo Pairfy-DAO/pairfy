@@ -31,7 +31,7 @@ type Product {
     created_at: String!
 }
 
-type Books {
+type Book {
   id: ID!
   seller_id: String!
   keeping_stock: Int!
@@ -50,7 +50,7 @@ type Books {
 }
 
 type GetBooksResponse {
-  books: [Books]!
+  books: [Book]!
   nextCursor: String
   hasPrevMore: Boolean!
   hasNextMore: Boolean!

@@ -9,7 +9,7 @@ import { collectEndpoint } from "./cardano/collect.js";
 import { cancelEndpoint } from "./cardano/cancel.js";
 import { appealEndpoint } from "./cardano/appeal.js";
 import { getBooks } from "./books/getBooks.js";
-import { editBook } from "./books/editBooks.js";
+import { editBook } from "./books/editBook.js";
 
 const getOrders = async (_: any, args: any, context: any) => {
   const params = args.updateProductInput;

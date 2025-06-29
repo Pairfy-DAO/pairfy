@@ -228,7 +228,7 @@ portForward:
     localPort: 11434
     
   - resourceType: service
-    resourceName: redis-price
+    resourceName: redis-books
     namespace: default
     port: 6379
     localPort: 6379
