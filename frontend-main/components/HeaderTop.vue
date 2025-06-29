@@ -10,11 +10,10 @@
             <nav class="flex">
                 <span class="HeaderTop-price">Discount liquidity: 834.000 ADA</span>
                 <span class="HeaderTop-price">Volume 24h: 253.894 ADA</span>
-                <span class="HeaderTop-price">ADAUSD 1.5 </span>
-                <span class="HeaderTop-price">IUSD 1.0</span>
-                <span class="HeaderTop-price">USDM 1.0</span>
-                <span class="HeaderTop-price">USDA 1.0</span>
 
+                <span class="HeaderTop-price" v-for="(price, symbol) in auth.prices" :key="symbol">
+                    {{ symbol }} {{ price.toFixed(2) }}
+                </span>
 
                 <div class="HeaderTop-network flex">
                     <div class="flex">

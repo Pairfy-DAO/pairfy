@@ -1,4 +1,19 @@
 export const useAuthStore = defineStore("auth", () => {
+  type ToastType = "success" | "error" | "info" | "default";
+
+  type ToastMessage = {
+    message: string;
+    type: ToastType;
+    duration: number;
+  };
+
+  type AssetPriceMap = {
+    ADAUSD: number;
+    IUSD: number;
+    USDM: number;
+    USDA: number;
+  };
+
   const user = ref<any>(null);
   const isAuthenticated = ref(false);
 
@@ -8,18 +23,21 @@ export const useAuthStore = defineStore("auth", () => {
   const country = ref<string | null>(null);
   const locationDialog = ref(false);
   const walletName = ref<string | null>(null);
+  const prices = ref<AssetPriceMap>({
+    ADAUSD: 0.0,
+    IUSD: 1.0,
+    USDM: 1.0,
+    USDA: 1.0,
+  });
 
   const toastMessage = ref<ToastMessage | null>(null);
-
   const loading = ref(false);
   const error = ref<string | null>(null);
 
-  type ToastType = "success" | "error" | "info" | "default";
+  const setPrices = (priceData: AssetPriceMap) => {
+    if (!import.meta.client) return;
 
-  type ToastMessage = {
-    message: string;
-    type: ToastType;
-    duration: number;
+    prices.value = priceData;
   };
 
   const checkLocation = () => {
@@ -145,5 +163,7 @@ export const useAuthStore = defineStore("auth", () => {
     setLocation,
     country,
     walletName,
+    setPrices,
+    prices,
   };
 });
