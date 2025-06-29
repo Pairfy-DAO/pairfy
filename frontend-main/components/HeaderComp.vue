@@ -34,11 +34,16 @@ const toastRef = ref(null);
 
 const currentRoute = computed(() => route.name)
 
+let subscription1;
+
 onMounted(() => {
     watch(() => auth.toastMessage, ({ message, type, duration }) => toastRef.value?.showToast(message, type, duration));
     fetchPrices()
 });
 
+onBeforeUnmount(() => {
+    subscription1?.unsubscribe()
+})
 
 async function fetchPrices() {
 
@@ -54,26 +59,27 @@ query GetAssetPrice {
 }
 `;
 
-    try {
-        const { data } = await $queryClient.query({
-            query: GET_PRICES_QUERY,
-            variables: {},
-            fetchPolicy: 'no-cache'
-        })
+    const observable =  $queryClient.watchQuery({
+        query: GET_PRICES_QUERY,
+        fetchPolicy: 'no-cache',
+        pollInterval: 60_000, 
+    })
 
-        const prices = {
-            ADAUSD: data.getAssetPrice.data.ADAUSD,
-            IUSD: 1.0,
-            USDM: 1.0,
-            USDA: 1.0,
+    subscription1 = observable.subscribe({
+        next({ data }) {
+            const prices = {
+                ADAUSD: data.getAssetPrice.data.ADAUSD,
+                IUSD: 1.0,
+                USDM: 1.0,
+                USDA: 1.0,
+            }
+            auth.setPrices(prices)
+        },
+        error(err) {
+            auth.showToast(err, 'error', 10_000)
         }
-        auth.setPrices(prices)
-
-    } catch (err) {
-        auth.showToast(err, 'error', 10_000)
-    }
+    })
 }
-
 
 </script>
 
