@@ -33,7 +33,7 @@ const props = defineProps({
   placeholder: { type: String, default: '1234 Brickell Avenue, Suite 500, Miami, FL 33131' },
   focus: { type: Boolean, default: false },
   required: { type: Boolean, default: true },
-  maxLength: { type: Number, default: 100 },
+  maxLength: { type: Number, default: 70 },
 })
 
 const emit = defineEmits(['update:modelValue', 'valid'])

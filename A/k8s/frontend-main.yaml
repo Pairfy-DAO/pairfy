@@ -26,6 +26,8 @@ spec:
               value: http://service-media.default.svc.cluster.local:8003
             - name: NUXT_SERVICE_USER_BASE
               value: http://service-user.default.svc.cluster.local:8005
+            - name: NUXT_SERVICE_GATEWAY_BASE
+              value: http://service-gateway.default.svc.cluster.local:8006                
             - name: NUXT_PUBLIC_MEDIA_CDN
               value: /api/media
 ---

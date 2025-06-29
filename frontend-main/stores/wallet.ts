@@ -35,34 +35,38 @@ export const useWalletStore = defineStore("wallet", () => {
   };
 
   const createWalletApiInstance = async (name: string) => {
-    if (import.meta.client) {
-      try {
-        walletApi.value = await window.cardano[name]?.enable();
+    if (!import.meta.client) return;
 
-        if (!walletApi.value) {
-          return;
-        }
+    try {
+      walletApi.value = await window.cardano[name]?.enable();
 
-        const networkId = await walletApi.value?.getNetworkId(); // 0 = testnet, 1 = mainnet
-
-        console.log(networkId);
-
-        if (networkId !== 0) {
-          throw new Error(
-            "⚠️ Connection failed: Please switch your wallet to Testnet and try again."
-          );
-        }
-
-        walletName.value = name;
-        connected.value = true;
-      } catch (error) {
-        console.error("Error creating wallet instance", error);
-        throw error;
+      if (!walletApi.value) {
+        return;
       }
+
+      const networkId = await walletApi.value?.getNetworkId(); // 0 = testnet, 1 = mainnet
+
+      console.log(networkId);
+
+      if (networkId !== 0) {
+        throw new Error(
+          "⚠️ Connection failed: Please switch your wallet to Testnet and try again."
+        );
+      }
+
+      walletName.value = name;
+      connected.value = true;
+    } catch (error) {
+      console.error("Error creating wallet instance", error);
+      throw error;
     }
   };
 
   const connect = async (name: string) => {
+    if (!name) {
+      console.error("walletStore: wallet name undefined");
+    }
+
     if (!walletApi.value) {
       await createWalletApiInstance(name);
     }
@@ -86,6 +90,95 @@ export const useWalletStore = defineStore("wallet", () => {
     walletName.value = null;
   };
 
+  const balanceTx = async (unbalancedTx: string, metadata = null) => {
+    if (!import.meta.client) return;
+
+    if (!walletApi.value) {
+      throw new Error("There is no walletApi instance.");
+    }
+
+    const { $CSL } = useNuxtApp();
+
+    const CardanoWasm: any = $CSL;
+
+    const oldTx = CardanoWasm.Transaction.from_hex(unbalancedTx);
+
+    console.log(
+      "-----------------------------------------------------------------------------"
+    );
+
+    console.log("OLD BODY", oldTx.to_json());
+
+    //////////////////////////////////////////////////////////////////////////   METADATA
+
+    let theBody = null;
+    let theAuxData = null;
+
+    if (metadata) {
+      const generalMetadata =
+        oldTx.auxiliary_data()?.metadata() ??
+        CardanoWasm.GeneralTransactionMetadata.new();
+
+      generalMetadata.insert(
+        CardanoWasm.BigNum.from_str("674"),
+        CardanoWasm.encode_json_str_to_metadatum(
+          JSON.stringify({ msg: metadata }),
+          0
+        )
+      );
+
+      theAuxData = CardanoWasm.AuxiliaryData.new();
+      theAuxData.set_metadata(generalMetadata);
+      const metadataHash = CardanoWasm.hash_auxiliary_data(theAuxData);
+
+      theBody = CardanoWasm.TransactionBody.from_bytes(oldTx.body().to_bytes());
+      theBody.set_auxiliary_data_hash(metadataHash);
+    } else {
+      theBody = oldTx.body();
+      theAuxData = oldTx.auxiliary_data()
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+
+    const template = CardanoWasm.Transaction.new(
+      theBody,
+      oldTx.witness_set(),
+      theAuxData
+    );
+
+    ////////////////////////////////////////////////////////////////////////// SIGNATURE
+
+    let txVkeyWitnesses = await walletApi.value.signTx(
+      Buffer.from(template.to_bytes()).toString("hex"),
+      true
+    );
+
+    txVkeyWitnesses = CardanoWasm.TransactionWitnessSet.from_bytes(
+      Buffer.from(txVkeyWitnesses, "hex")
+    );
+
+    const newTransactionWitnessSet = template.witness_set();
+    newTransactionWitnessSet.set_vkeys(txVkeyWitnesses.vkeys());
+
+    /////////////////////////////////////////////////////
+
+    const newTx = CardanoWasm.Transaction.new(
+      template.body(),
+      newTransactionWitnessSet,
+      template.auxiliary_data()
+    );
+
+    console.log(
+      "/////////////////////////////////////////////////////////////////////////////////////////"
+    );
+
+    console.log("NEWBODY", newTx.to_json());
+
+    return walletApi.value.submitTx(
+      Buffer.from(newTx.to_bytes()).toString("hex")
+    );
+  };
+
   return {
     connected,
     walletApi,
@@ -93,5 +186,6 @@ export const useWalletStore = defineStore("wallet", () => {
     connect,
     sign,
     disconnect,
+    balanceTx,
   };
 });

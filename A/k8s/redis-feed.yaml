@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-feed-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 250Mi
+  storageClassName: standard
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-feed
+  namespace: default
+  labels:
+    app: redis-feed
+spec:
+  type: ClusterIP
+  ports:
+    - port: 6379
+      targetPort: 6379
+  selector:
+    app: redis-feed
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-feed
+  namespace: default
+spec:
+  serviceName: "redis-feed"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-feed
+  template:
+    metadata:
+      labels:
+        app: redis-feed
+    spec:
+      containers:
+        - name: redis
+          image: redis
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: redis-feed-data
+              mountPath: /data
+          command: [ "redis-server", "--appendonly", "yes" ]
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-feed-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 250Mi

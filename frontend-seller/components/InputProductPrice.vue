@@ -107,7 +107,7 @@ function validate() {
 }
 
 .InputPrice-input {
-  border: 1px solid var(--border-a, #ccc);
+  border: 1px solid var(--border-b, #ccc);
   border-radius: var(--input-radius, 6px);
   transition: var(--transition-a);
   background: var(--background-b);

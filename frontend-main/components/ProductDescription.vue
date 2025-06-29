@@ -59,7 +59,7 @@ onBeforeUnmount(() => {
     line-height: 2rem;
     text-align: justify;
     color: var(--text-b);
-    font-size: var(--text-size-1);
+    font-size: var(--text-size-3);
 }
 
 

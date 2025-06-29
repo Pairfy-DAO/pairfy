@@ -13,7 +13,7 @@ export default defineNuxtPlugin(() => {
 
   return {
     provide: {
-      apollo: apolloClient,
+      queryClient: apolloClient,
     },
   };
 });

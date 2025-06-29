@@ -1,10 +1,9 @@
-import { logger } from "@pairfy/common";
-import { redisClient } from "../../database/redis.js";
 import { GraphQLError } from 'graphql';
+import { redisFeedClient } from '../../database/redis.js';
 
-const getFeed = async () => {
+export const getFeed = async () => {
   try {
-    const result = await redisClient.client.get("feed:timeline");
+    const result = await redisFeedClient.client.get("feed:timeline");
 
     if (!result) {
         throw new GraphQLError("No timeline data available.", {
@@ -15,15 +14,7 @@ const getFeed = async () => {
     return result;
 
   } catch (err) {
-    logger.error(err);
-
-    if (err instanceof GraphQLError) throw err;
-
-    throw new GraphQLError("Internal server error", {
-      extensions: { code: "INTERNAL_SERVER_ERROR" },
-    });
-    
+    throw err
   }
 };
 
-export { getFeed };

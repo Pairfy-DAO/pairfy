@@ -1,61 +1,50 @@
-import { catcher, logger } from "./utils/index.js";
+import { catchError } from "./utils/index.js";
 import { Queue, Worker } from "bullmq";
-import { redisClient } from "./db/redis.js";
-import { getAssetPrice } from "./handlers/assets.js";
+import { redisClient } from "./database/redis.js";
+import { getAssetPriceHandler } from "./handlers/assets.js";
+import { ERROR_EVENTS, logger } from "@pairfy/common";
 
 const main = async () => {
   try {
-    if (!process.env.POD_TIMEOUT) {
-      throw new Error("POD_TIMEOUT error");
+    const requiredEnvVars = ["NODE_ENV", "REDIS_PRICE_HOST"];
+
+    for (const varName of requiredEnvVars) {
+      if (!process.env[varName]) {
+        throw new Error(`${varName} error`);
+      }
     }
-
-    if (!process.env.REDIS_HOST) {
-      throw new Error("REDIS_HOST error");
-    }
-
-    const errorEvents: string[] = [
-      "exit",
-      "SIGINT",
-      "SIGTERM",
-      "SIGQUIT",
-      "uncaughtException",
-      "unhandledRejection",
-      "SIGHUP",
-      "SIGCONT",
-    ];
-
-   /////////////////////////////////////////
 
     await redisClient
       .connect({
-        url: process.env.REDIS_HOST,
+        url: process.env.REDIS_PRICE_HOST,
         connectTimeout: 100000,
         keepAlive: 100000,
       })
       .then(() => console.log("redisClient connected"))
-      .catch((err: any) => catcher(err));
+      .catch((err: any) => catchError(err));
 
-    const checkRedis = setInterval(async () => {
-      try {
-        await redisClient.client.ping();
-        console.log("Redis Online");
-      } catch (err) {
-        console.error("REDIS_CONNECTION", err);
-      }
-    }, 10_000);
-    
-    /////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    const watchAssetPriceQueue = new Queue("getAssetPrice", {
-      connection: { url: process.env.REDIS_HOST },
+    const priceQueue = new Queue("getAssetPrice", {
+      connection: { url: process.env.REDIS_PRICE_HOST },
     });
 
-    /////////////////////////////////////////////////////
+    const repeatableJobs = await priceQueue.getJobSchedulers();
 
-    await watchAssetPriceQueue.add(
+    for (const job of repeatableJobs) {
+      try {
+        await priceQueue.removeJobScheduler(job.key);
+        console.log(`✅ Removed repeatable job: ${job.name} (${job.key})`);
+      } catch (err) {
+        console.error(`❌ Failed to remove job: ${job.name} (${job.key})`, err);
+      }
+    }
+
+    await priceQueue.add(
       "ADAUSDT",
       {
         symbol: "ADAUSDT",
+        base: "ADA",
       },
       {
         repeat: {
@@ -65,59 +54,61 @@ const main = async () => {
         backoff: {
           type: "fixed",
           delay: 1000,
+          jitter: 0.5,
         },
-        removeOnComplete: false,
-        removeOnFail: false,
+        removeOnComplete: { age: 600 },
+        removeOnFail: { age: 3600 },
         jobId: "ADAUSDT",
       }
     );
 
-    logger.info("getAssetPrice added.");
+    logger.info("Queue added.");
 
-    const watchAssetPrice = new Worker("getAssetPrice", getAssetPrice, {
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    const priceWorker = new Worker("getAssetPrice", getAssetPriceHandler, {
       removeOnComplete: false,
       removeOnFail: false,
       autorun: true,
       drainDelay: 1000,
-      connection: { url: process.env.REDIS_HOST },
+      concurrency: 2,
+      connection: { url: process.env.REDIS_PRICE_HOST },
     } as any);
 
-    ////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    watchAssetPrice.on("failed", (job: any, err) => {
-      logger.info("FAILED", job.id);
-      logger.error(err);
+    priceWorker.on("failed", (job: any, err) => {
+      logger.error("FAILED", job.id, err);
     });
 
-    watchAssetPrice.on("completed", (job: any, result) => {
+    priceWorker.on("completed", (job: any, result) => {
       logger.info("COMPLETED", job.id, result);
     });
 
-    watchAssetPrice.on("error", (err) => {
+    priceWorker.on("error", (err) => {
       logger.error(err);
     });
 
-    watchAssetPrice.on("stalled", (job: any) => {
+    priceWorker.on("stalled", (job: any) => {
       logger.info("STALLED", job.id);
     });
 
-    watchAssetPrice.on("drained", () => {
+    priceWorker.on("drained", () => {
       logger.info("DRAINED");
     });
 
-    errorEvents.forEach((e: string) =>
+    ERROR_EVENTS.forEach((e: string) =>
       process.on(e, async (err) => {
         logger.error(err);
-        await watchAssetPrice.close();
-        await redisClient.client.disconnect();
-        clearInterval(checkRedis);
+        await priceWorker.close();
+        await redisClient.client.close();
         process.exit(1);
       })
     );
 
     logger.info("ONLINE");
   } catch (err) {
-    catcher(err);
+    catchError(err);
   }
 };
 

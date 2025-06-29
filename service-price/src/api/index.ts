@@ -2,7 +2,7 @@ import axios from "axios";
 
 //axios.defaults.withCredentials = true;
 
-const axiosAPI = axios.create({
+export const axiosAPI = axios.create({
   baseURL: "https://api.binance.com",
   timeout: 30000,
   headers: {
@@ -11,4 +11,3 @@ const axiosAPI = axios.create({
   },
 });
 
-export { axiosAPI };

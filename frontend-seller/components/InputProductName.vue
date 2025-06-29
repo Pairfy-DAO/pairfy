@@ -98,7 +98,7 @@ function validate() {
 }
 
 .InputProductName-input {
-  border: 1px solid var(--border-a);
+  border: 1px solid var(--border-b);
   border-radius: var(--input-radius);
   transition: var(--transition-a);
   background: var(--background-b);

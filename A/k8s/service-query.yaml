@@ -17,7 +17,17 @@ spec:
           image: pairfy/service-query
           env:
             - name: NODE_ENV
-              value: development                                          
+              value: development                                                                          
+            - name: DATABASE_NAME
+              value: service_query       
+            - name: DATABASE_USER
+              value: marketplace     
+            - name : REDIS_RATELIMIT_HOST
+              value: "redis://redis-limiter:6379"
+            - name : REDIS_PRICE_HOST
+              value: "redis://redis-price:6379"   
+            - name : REDIS_FEED_HOST
+              value: "redis://redis-feed:6379"                 
             - name: DATABASE_HOST  
               valueFrom:
                 configMapKeyRef:
@@ -32,19 +42,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: database-password-secret
-                  key: password                                  
-            - name: DATABASE_NAME
-              value: service_query       
-            - name: DATABASE_USER
-              value: marketplace    
-            - name: SERVICE_STATE_REDIS
-              value: redis://redis-state:6379    
-            - name : REDIS_RATELIMIT_URL
-              value: "redis://redis-limiter:6379"
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name       
+                  key: password                
             - name: AGENT_JWT_KEY
               valueFrom:
                 secretKeyRef:
@@ -59,13 +57,16 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: embedding-config
-                  key: host                                                                                                                                                                                                                                                         
+                  key: host              
+
+
           resources:
             limits:
               memory: "500Mi"
             requests:
               memory: "256Mi"       
 ---
+
 apiVersion: v1
 kind: Service
 metadata:

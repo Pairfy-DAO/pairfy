@@ -3,7 +3,7 @@
         <ToastComp ref="toastRef" />
 
         <HeaderTop />
-        <HeaderContent v-if="!['country', 'index'].includes(currentRoute)"/>
+        <HeaderContent v-if="!['country', 'index'].includes(currentRoute)" />
         <HeaderNav v-if="!['country', 'index'].includes(currentRoute)" />
 
         <DialogComp v-model="auth.locationDialog" @update:modelValue="auth.locationDialog = $event" :closable="false">
@@ -23,16 +23,63 @@
 </template>
 
 <script setup>
-const toastRef = ref(null);
+import { gql } from 'graphql-tag'
 
 const auth = useAuthStore()
 const route = useRoute()
 
+const { $queryClient } = useNuxtApp()
+
+const toastRef = ref(null);
+
 const currentRoute = computed(() => route.name)
+
+let subscription1;
 
 onMounted(() => {
     watch(() => auth.toastMessage, ({ message, type, duration }) => toastRef.value?.showToast(message, type, duration));
+    fetchPrices()
 });
+
+onBeforeUnmount(() => {
+    subscription1?.unsubscribe()
+})
+
+async function fetchPrices() {
+
+    const GET_PRICES_QUERY = gql`
+query getPrice {
+    getPrice {
+        success
+        message
+        data {
+            ADA
+        }
+    }
+}
+`;
+
+    const observable =  $queryClient.watchQuery({
+        query: GET_PRICES_QUERY,
+        fetchPolicy: 'no-cache',
+        pollInterval: 60_000, 
+    })
+
+    subscription1 = observable.subscribe({
+        next({ data }) {
+            const prices = {
+                ADA: data.getPrice.data.ADA,
+                IUSD: 1.0,
+                USDM: 1.0,
+                USDA: 1.0,
+            }
+            auth.setPrices(prices)
+        },
+        error(err) {
+            auth.showToast(err, 'error', 10_000)
+        }
+    })
+}
 
 </script>
 

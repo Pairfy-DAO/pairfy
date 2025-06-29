@@ -13,7 +13,7 @@
 
 <style lang="css" scoped>
 .HomeSection1 {
-    height: calc(100vh - 2rem); 
+    height: calc(100vh - 2.5rem); 
     background: var(--black-a);
 }
 </style>
