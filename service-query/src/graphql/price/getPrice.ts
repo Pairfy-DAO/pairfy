@@ -1,10 +1,10 @@
 import { redisPriceClient } from "../../database/redis.js";
 
-export const getAssetPrice = async () => {
+export const getPrice = async () => {
   try {
-    const getPrice = await redisPriceClient.client.get("price:ADA");
+    const result = await redisPriceClient.client.get("price:ADA");
 
-    if (!getPrice) {
+    if (!result) {
       throw new Error("NO_PRICE");
     }
 
@@ -12,7 +12,7 @@ export const getAssetPrice = async () => {
       success: true,
       message: 'OK',
       data: {
-        ADAUSD: parseFloat(getPrice),
+        ADA: parseFloat(result),
       },
     };
   } catch (err: any) {

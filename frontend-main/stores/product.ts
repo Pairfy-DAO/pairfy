@@ -1,11 +1,4 @@
 export const useProductStore = defineStore("product", () => {
-  const product = ref(null);
-  const media = ref([]);
-
-  const cardanoDialog = ref(true);
-
-  const toastMessage = ref<ToastMessage | null>(null);
-
   type ToastType = "success" | "error" | "info" | "default";
 
   type ToastMessage = {
@@ -13,6 +6,14 @@ export const useProductStore = defineStore("product", () => {
     type: ToastType;
     duration: number;
   };
+
+  const product = ref(null);
+  const media = ref([]);
+
+  const cardanoDialog = ref(true);
+  const price = ref<number | null>(null);
+
+  const toastMessage = ref<ToastMessage | null>(null);
 
   const showToast = (message: string, type: ToastType, duration: number) => {
     toastMessage.value = {
@@ -27,8 +28,11 @@ export const useProductStore = defineStore("product", () => {
   }
 
   function setProductData(data: any) {
-    product.value = data.product;
-    media.value = data.media;
+    const { product: productData, media: mediaData } = data;
+
+    product.value = productData;
+    media.value = mediaData;
+    price.value = productData.discount ? productData.discount_value : productData.price;
   }
 
   function clear() {
@@ -44,6 +48,7 @@ export const useProductStore = defineStore("product", () => {
     toastMessage,
     showCardanoDialog,
     cardanoDialog,
-    showToast
+    showToast,
+    price,
   };
 });

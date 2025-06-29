@@ -8,7 +8,7 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   type AssetPriceMap = {
-    ADAUSD: number;
+    ADA: number;
     IUSD: number;
     USDM: number;
     USDA: number;
@@ -24,7 +24,7 @@ export const useAuthStore = defineStore("auth", () => {
   const locationDialog = ref(false);
   const walletName = ref<string | null>(null);
   const prices = ref<AssetPriceMap>({
-    ADAUSD: 0.0,
+    ADA: 0.0,
     IUSD: 1.0,
     USDM: 1.0,
     USDA: 1.0,

@@ -118,22 +118,22 @@
                 <div class="summary-bottom">
                     <div>
                         <span class="label">Subtotal:</span>
-                        <span class="value">$422,000.50</span>
+                        <span class="value">{{ quoteTotal }}</span>
                     </div>
                     <div>
                         <span class="label">Total Qty:</span>
-                        <span class="value">2</span>
+                        <span class="value">{{ totalUnits }}</span>
                     </div>
                     <div>
                         <span class="label">Fee:</span>
-                        <span class="value">0.1</span>
+                        <span class="value">0.25</span>
                     </div>
 
                     <DividerComp margin="1rem 0" />
 
                     <div class="total">
                         <span class="label">Total:</span>
-                        <span class="value">$422,548.50</span>
+                        <span class="value">{{ baseTotal }}</span>
                     </div>
                 </div>
 
@@ -159,9 +159,11 @@
 
 <script setup>
 import { gql } from 'graphql-tag'
-import { timestampToDate, chunkMetadata, encryptMessageWithPublicKey, compressMessage, truncateText, sleep } from '@/utils/utils';
+import { formatUSD, timestampToDate, chunkMetadata, encryptMessageWithPublicKey, compressMessage, truncateText, sleep } from '@/utils/utils';
 
 const route = useRoute()
+
+const auth = useAuthStore()
 const product = useProductStore()
 const wallet = useWalletStore()
 
@@ -169,7 +171,8 @@ const { $gatewayClient } = useNuxtApp()
 
 const loading = ref(false)
 
-const availableUnits = ref(1)
+const availableUnits = ref(10)
+const orderFee = ref(0.25)
 
 const orderUnits = ref(null);
 const orderUnitsValid = ref(false)
@@ -207,6 +210,35 @@ const store = computed(() => {
         orderAddress: orderAddress.value || '1234 Brickell Avenue, Suite 500, Miami, FL 33131',
         orderAsset: orderAsset.value || 'N/A'
     }
+})
+
+const quoteTotal = computed(() => {
+    const value = product.price * orderUnits.value || 0
+
+    return '$' + formatUSD(value)
+})
+
+const totalUnits = computed(() => orderUnits.value || 0)
+
+const baseTotal = computed(() => {
+    const tag = orderAsset.value
+
+    const units = orderUnits.value
+
+    const unitPrice = product.price
+
+    if (!tag || !units || !unitPrice) return 0
+
+
+    const totalQuote = unitPrice * units || 0
+
+    const basePrice = auth.prices[tag]
+
+    const result = totalQuote / basePrice + orderFee.value
+
+    const formated = result.toFixed(2) + ' ' + tag
+
+    return formated
 })
 
 const createOrder = async () => {
@@ -252,7 +284,7 @@ mutation PendingEndpoint($pendingEndpointVariable: PendingEndpointInput!) {
 
 const isValidParams = () => {
     const values = [orderUnitsValid.value, orderAssetValid.value, orderNameValid.value, orderNoteValid.value, orderAddressValid.value]
-    
+
     console.log(values)
 
     return !values.includes(false)

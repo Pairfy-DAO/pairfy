@@ -1,6 +1,6 @@
 import { searchProducts } from "./product/searchProducts.js";
 import { getProduct } from "./product/getProduct.js";
-import { getAssetPrice } from "./price/getAssetPrice.js";
+import { getPrice } from "./price/getPrice.js";
 import { getFeed } from "./feed/getFeed.js";
 
 
@@ -19,7 +19,7 @@ export const products = {
 
 export const assets = {
   Query: {
-    getAssetPrice,
+    getPrice,
   },
 };
 

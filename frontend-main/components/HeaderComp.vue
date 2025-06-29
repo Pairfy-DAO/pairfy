@@ -48,12 +48,12 @@ onBeforeUnmount(() => {
 async function fetchPrices() {
 
     const GET_PRICES_QUERY = gql`
-query GetAssetPrice {
-    getAssetPrice {
+query getPrice {
+    getPrice {
         success
         message
         data {
-            ADAUSD
+            ADA
         }
     }
 }
@@ -68,7 +68,7 @@ query GetAssetPrice {
     subscription1 = observable.subscribe({
         next({ data }) {
             const prices = {
-                ADAUSD: data.getAssetPrice.data.ADAUSD,
+                ADA: data.getPrice.data.ADA,
                 IUSD: 1.0,
                 USDM: 1.0,
                 USDA: 1.0,

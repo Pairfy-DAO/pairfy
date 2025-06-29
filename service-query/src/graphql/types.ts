@@ -98,7 +98,7 @@ type GetProductResponse{
 }
 
 type PriceData {
-  ADAUSD: Float
+  ADA: Float
 }
 
 type PriceResponse {
@@ -165,7 +165,7 @@ type Query {
   getFeed: String!
   getProduct(getProductInput: GetProductInput!): GetProductResponse!
   searchProducts(searchProductsInput: SearchProductsInput!): [SearchProductsResponse]!
-  getAssetPrice: PriceResponse!
+  getPrice: PriceResponse!
 }
 
 

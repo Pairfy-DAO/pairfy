@@ -19,7 +19,7 @@
         </div>
 
         <div class="ProductPanel-price">
-            <span>{{ formatUSD(productData.discount ? productData.discount_value : productData.price) }}</span>
+            <span>{{ formatUSD(product.price) }}</span>
             <span>USD</span>
         </div>
 
