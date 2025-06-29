@@ -213,7 +213,7 @@ function submitPrompt() {
 
 .title {
     justify-content: center;
-    margin-top: 4rem;
+    margin-top: 3rem;
     width: inherit;
     display: flex;
 }

@@ -29,6 +29,6 @@ defineProps({
 
 <style scoped>
 .space-x-1 > * + * {
-  margin-left: 1px;
+  margin-left: 0.1px;
 }
 </style>

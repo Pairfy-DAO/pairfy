@@ -381,7 +381,7 @@ onBeforeUnmount(() => {
 }
 
 .EditorComp {
-  border: 1px solid var(--border-a);
+  border: 1px solid var(--border-b);
   border-radius: var(--radius-b);
   position: relative;
   overflow: hidden;

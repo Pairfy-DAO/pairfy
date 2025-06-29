@@ -5,7 +5,7 @@ import cookieSession from "cookie-session";
 import { ApolloServer } from "@apollo/server";
 import { catchError } from "./utils/index.js";
 import { typeDefs } from "./graphql/types.js";
-import { books, orders } from "./graphql/resolvers.js";
+import { books, cardano } from "./graphql/resolvers.js";
 import { agentMiddleware } from "./middleware/agent.js";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
@@ -18,7 +18,7 @@ import {
   normalizeGraphError,
   RateLimiter,
 } from "@pairfy/common";
-import { redisBooksClient, redisClient } from "./database/redis.js";
+import { redisBooks, redisState, redisPrice } from "./database/redis.js";
 
 const main = async () => {
   try {
@@ -28,6 +28,7 @@ const main = async () => {
       "REDIS_STATE_HOST",
       "REDIS_RATELIMIT_HOST",
       "REDIS_BOOKS_HOST",
+      "REDIS_PRICE_HOST",
       "TX_VALID_TIME",
       "TX_WATCH_WINDOW",
       "PENDING_RANGE",
@@ -67,11 +68,11 @@ const main = async () => {
     const resolvers = {
       Query: {
         ...books.Query,
-        ...orders.Query,
+        ...cardano.Query,
       },
       Mutation: {
         ...books.Mutation,
-        ...orders.Mutation,
+        ...cardano.Mutation,
       },
     };
 
@@ -92,24 +93,34 @@ const main = async () => {
       },
     });
 
-    await redisClient
+    await redisState
       .connect({
         service: "service-gateway",
         url: process.env.REDIS_STATE_HOST,
         connectTimeout: 100000,
         keepAlive: 100000,
       })
-      .then(() => console.log("redisClient connected"))
+      .then(() => console.log("✅ redisState connected"))
       .catch((err: any) => catchError(err));
 
-    await redisBooksClient
+    await redisPrice
+      .connect({
+        service: "service-gateway",
+        url: process.env.REDIS_PRICE_HOST,
+        connectTimeout: 100000,
+        keepAlive: 100000,
+      })
+      .then(() => console.log("✅ redisPrice connected"))
+      .catch((err: any) => catchError(err));
+
+    await redisBooks
       .connect({
         service: "service-gateway",
         url: process.env.REDIS_BOOKS_HOST,
         connectTimeout: 100000,
         keepAlive: 100000,
       })
-      .then(() => console.log("redisBooksClient connected"))
+      .then(() => console.log("✅ redisBooks connected"))
       .catch((err: any) => catchError(err));
 
     const databasePort = parseInt(process.env.DATABASE_PORT as string);

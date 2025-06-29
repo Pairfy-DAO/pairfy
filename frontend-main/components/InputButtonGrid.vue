@@ -23,8 +23,8 @@ const providers = [
   "UPS",
   "FedEx",
   "USPS",
-  "DHL Express",
-  "Amazon Logistics",
+  "DHL",
+  "Amazon",
   "OnTrac"
 ];
 </script>

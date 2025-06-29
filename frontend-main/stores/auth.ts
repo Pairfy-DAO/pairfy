@@ -1,18 +1,4 @@
 export const useAuthStore = defineStore("auth", () => {
-  const user = ref<any>(null);
-  const isAuthenticated = ref(false);
-
-  const authDrawer = ref(false);
-  const userDrawer = ref(false);
-
-  const country = ref<string | null>(null)
-  const locationDialog = ref(false);
-
-  const toastMessage = ref<ToastMessage | null>(null);
-
-  const loading = ref(false);
-  const error = ref<string | null>(null);
-
   type ToastType = "success" | "error" | "info" | "default";
 
   type ToastMessage = {
@@ -21,26 +7,61 @@ export const useAuthStore = defineStore("auth", () => {
     duration: number;
   };
 
-  function checkLocation() {
-    if (import.meta.client) {
-      const storedCountry = localStorage.getItem('country')
-      if (storedCountry) {
-        country.value = storedCountry
-      } else {
-        locationDialog.value = true
-      }
-    }
-  }
+  type AssetPriceMap = {
+    ADA: number;
+    IUSD: number;
+    USDM: number;
+    USDA: number;
+  };
 
-  function setLocation(value: string) {
-    if (import.meta.client) {
-      localStorage.setItem('country', value)
-      country.value = value
-      locationDialog.value = false
+  const user = ref<any>(null);
+  const isAuthenticated = ref(false);
+
+  const authDrawer = ref(false);
+  const userDrawer = ref(false);
+
+  const country = ref<string | null>(null);
+  const locationDialog = ref(false);
+  const walletName = ref<string | null>(null);
+  const prices = ref<AssetPriceMap>({
+    ADA: 0.0,
+    IUSD: 1.0,
+    USDM: 1.0,
+    USDA: 1.0,
+  });
+
+  const toastMessage = ref<ToastMessage | null>(null);
+  const loading = ref(false);
+  const error = ref<string | null>(null);
+
+  const setPrices = (priceData: AssetPriceMap) => {
+    if (!import.meta.client) return;
+
+    prices.value = priceData;
+  };
+
+  const checkLocation = () => {
+    if (!import.meta.client) return;
+
+    const storedCountry = localStorage.getItem("country");
+    if (storedCountry) {
+      country.value = storedCountry;
+    } else {
+      locationDialog.value = true;
     }
-  }
+  };
+
+  const setLocation = (value: string) => {
+    if (!import.meta.client) return;
+
+    localStorage.setItem("country", value);
+    country.value = value;
+    locationDialog.value = false;
+  };
 
   const showToast = (message: string, type: ToastType, duration: number) => {
+    if (!import.meta.client) return;
+
     toastMessage.value = {
       message,
       type,
@@ -55,7 +76,7 @@ export const useAuthStore = defineStore("auth", () => {
     country: string;
     terms_accepted: boolean;
   }) => {
-    if (import.meta.server) return;
+    if (!import.meta.client) return;
 
     loading.value = true;
 
@@ -78,7 +99,7 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   const fetchUser = async () => {
-    if (import.meta.server) return;
+    if (!import.meta.client) return;
 
     try {
       const response: any = await $fetch("/api/user/current-user", {
@@ -93,11 +114,14 @@ export const useAuthStore = defineStore("auth", () => {
 
       if (userData) {
         user.value = userData;
+        walletName.value = userData.wallet_name;
         isAuthenticated.value = true;
       }
+
+      return userData;
     } catch (err: any) {
       console.error(err);
-      
+
       showToast(err.message, "error", 10_000);
       isAuthenticated.value = false;
       user.value = null;
@@ -105,7 +129,7 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   const logout = async () => {
-    if (import.meta.server) return;
+    if (!import.meta.client) return;
 
     try {
       await $fetch("/api/user/logout-user", {
@@ -137,6 +161,9 @@ export const useAuthStore = defineStore("auth", () => {
     locationDialog,
     checkLocation,
     setLocation,
-    country
+    country,
+    walletName,
+    setPrices,
+    prices,
   };
 });

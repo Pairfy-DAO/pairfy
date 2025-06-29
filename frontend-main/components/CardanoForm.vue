@@ -23,6 +23,7 @@
 
                     <div class="form-group">
                         <div class="form-item">
+
                             <InputSelect v-model="orderUnits" :options="orderUnitOptions" label="Quantity"
                                 @valid="orderUnitsValid = $event.valid" id="order-units-select" placeholder="Units">
                                 <template #option="{ option }">
@@ -34,9 +35,8 @@
                         </div>
 
                         <div class="form-item">
-                            <InputSelect v-model="orderPayment" :options="orderPaymentOptions" label="Payment in"
-                                @valid="orderPaymentValid = $event.valid" id="order-payment-select"
-                                placeholder="Assets">
+                            <InputSelect v-model="orderAsset" :options="orderAssetOptions" label="Payment in"
+                                @valid="orderAssetValid = $event.valid" id="order-payment-select" placeholder="Assets">
                                 <template #option="{ option }">
                                     <span class="flex">
                                         <span>{{ option.label }}</span>
@@ -51,13 +51,13 @@
                     </div>
 
                     <div class="form-item">
-                        <InputTextarea v-model="orderNote" />
+                        <InputNote v-model="orderNote" @valid="orderNoteValid = $event.valid" />
                     </div>
                 </div>
 
                 <div class="CardanoForm-section">
                     <div class="subtitle flex">
-                        <span> Encrypted Address (RSA-256)
+                        <span> Encrypt Address (RSA-256)
                         </span>
                     </div>
 
@@ -66,8 +66,7 @@
                     </div>
 
                     <div class="form-item">
-                        <InputPassword v-model="orderPassword" @valid="orderPasswordValid = $event.valid"
-                            placeholder="Password" />
+                        <InputOutput v-model="encryptedMessage" />
                     </div>
                 </div>
 
@@ -93,13 +92,13 @@
                         <p id="delivery-date">{{ store.date }}</p>
 
                         <label for="receiver">Receiver alias</label>
-                        <p id="receiver">{{ store.assignTo }}</p>
+                        <p id="receiver">{{ store.orderName }}</p>
 
                         <label for="address">Address</label>
-                        <p id="address">{{ selectedAddressDetails }}</p>
+                        <p id="address">{{ store.orderAddress }}</p>
 
                         <label for="payment">Payment in</label>
-                        <p id="payment">ADA</p>
+                        <p id="payment">{{ store.orderAsset }}</p>
 
                         <DividerComp margin="1rem 0" />
 
@@ -119,22 +118,22 @@
                 <div class="summary-bottom">
                     <div>
                         <span class="label">Subtotal:</span>
-                        <span class="value">$422,000.50</span>
+                        <span class="value">{{ quoteTotal }}</span>
                     </div>
                     <div>
                         <span class="label">Total Qty:</span>
-                        <span class="value">2</span>
+                        <span class="value">{{ totalUnits }}</span>
                     </div>
                     <div>
                         <span class="label">Fee:</span>
-                        <span class="value">0.1</span>
+                        <span class="value">0.25</span>
                     </div>
 
                     <DividerComp margin="1rem 0" />
 
                     <div class="total">
                         <span class="label">Total:</span>
-                        <span class="value">$422,548.50</span>
+                        <span class="value">{{ baseTotal }}</span>
                     </div>
                 </div>
 
@@ -158,84 +157,181 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
+import { gql } from 'graphql-tag'
+import { formatUSD, timestampToDate, chunkMetadata, encryptMessageWithPublicKey, compressMessage, truncateText, sleep } from '@/utils/utils';
+
+const route = useRoute()
+
+const auth = useAuthStore()
 const product = useProductStore()
+const wallet = useWalletStore()
+
+const { $gatewayClient } = useNuxtApp()
+
+const loading = ref(false)
+
+const availableUnits = ref(10)
+const orderFee = ref(0.25)
 
 const orderUnits = ref(null);
 const orderUnitsValid = ref(false)
 const orderUnitOptions = computed(() => {
-    return Array.from({ length: 10 }, (_, i) => ({
+    return Array.from({ length: availableUnits.value }, (_, i) => ({
         label: String(i + 1),
         value: String(i + 1)
     }))
 })
 
 
-const orderPayment = ref(null)
-const orderPaymentValid = ref(false)
-const orderPaymentOptions = computed(() => [
-    { label: 'ADA', value: 'ada' }
+const orderAsset = ref(null)
+const orderAssetValid = ref(false)
+const orderAssetOptions = computed(() => [
+    { label: 'ADA', value: 'ADA' }
 ])
 
 const orderName = ref(null)
 const orderNameValid = ref(false)
 
 const orderNote = ref(null)
-
+const orderNoteValid = ref(null)
 
 const orderAddress = ref(null)
-const orderAddressValid = ref(true)
-
-
-const orderPassword = ref(null)
-const orderPasswordValid = ref(false)
-
+const orderAddressValid = ref(false)
 
 const orderProvider = ref(null)
 
+const encryptedMessage = ref(null)
 
-function isValidParams() {
-    const values = [orderUnitsValid.value, orderPaymentValid.value, orderNameValid.value, orderAddressValid.value, orderPasswordValid.value]
+const store = computed(() => {
+    return {
+        date: timestampToDate(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        orderName: orderName.value || 'Michael Brown',
+        orderAddress: orderAddress.value || '1234 Brickell Avenue, Suite 500, Miami, FL 33131',
+        orderAsset: orderAsset.value || 'N/A'
+    }
+})
+
+const quoteTotal = computed(() => {
+    const value = product.price * orderUnits.value || 0
+
+    return '$' + formatUSD(value)
+})
+
+const totalUnits = computed(() => orderUnits.value || 0)
+
+const baseTotal = computed(() => {
+    const tag = orderAsset.value
+
+    const units = orderUnits.value
+
+    const unitPrice = product.price
+
+    if (!tag || !units || !unitPrice) return 0
+
+
+    const totalQuote = unitPrice * units || 0
+
+    const basePrice = auth.prices[tag]
+
+    const result = totalQuote / basePrice + orderFee.value
+
+    const formated = result.toFixed(2) + ' ' + tag
+
+    return formated
+})
+
+const createOrder = async () => {
+    if (!import.meta.client) return;
+
+    const PENDING_ENDPOINT_MUTATION = gql`
+mutation PendingEndpoint($pendingEndpointVariable: PendingEndpointInput!) {
+    pendingEndpoint(pendingEndpointInput: $pendingEndpointVariable) {
+       success
+       message
+       data {
+        order
+        cbor
+        spk
+       }
+    }
+}
+`
+    try {
+        loading.value = true
+
+        const { data } = await $gatewayClient.mutate({
+            mutation: PENDING_ENDPOINT_MUTATION,
+            variables: {
+                "pendingEndpointVariable": {
+                    "product_id": route.params.id,
+                    "order_units": parseInt(orderUnits.value),
+                    "asset": orderAsset.value
+                }
+            },
+        });
+
+        product.showToast(data.pendingEndpoint.message, 'success', 10_000)
+
+        return data.pendingEndpoint.data
+    } catch (err) {
+        console.error('pendingEndpoint:', err);
+        product.showToast(err, 'error', 10_000)
+    } finally {
+        loading.value = false
+    }
+}
+
+const isValidParams = () => {
+    const values = [orderUnitsValid.value, orderAssetValid.value, orderNameValid.value, orderNoteValid.value, orderAddressValid.value]
+
+    console.log(values)
 
     return !values.includes(false)
 }
 
-const onSubmit = () => {
-    if (!isValidParams()) {
-        console.log('INVALID')
-        product.showToast('INVALID PARAMS', 'error', 10_000)
-        return;
-    }
+const onSubmit = async () => {
+    try {
+        if (!isValidParams()) {
+            product.showToast('Please check the mandatory parameters.', 'error', 10_000)
+            return;
+        }
 
-    product.showToast('VALID', 'success', 10_000)
+        const order = await createOrder()
+
+        const message = {
+            r: orderName.value,
+            n: orderNote.value,
+            a: orderAddress.value,
+            p: orderProvider.value
+        };
+
+        const compressed = compressMessage(JSON.stringify(message))
+
+        console.log(compressed.length);
+
+        const encrypted = encryptMessageWithPublicKey(order.spk, compressed);
+
+        console.log(encrypted.length);
+        console.log("✅Encrypted Address: ", encrypted);
+
+        encryptedMessage.value = encrypted;
+
+        const metadata = chunkMetadata(encrypted, 64)
+
+        const TxHash = await wallet.balanceTx(order.cbor, metadata)
+        console.log(TxHash)
+
+        product.showToast(`The transaction has been sent to the network. TxHash: ${TxHash}`, 'success', 10_000)
+
+        await sleep(3_000)
+
+    } catch (err) {
+        product.showToast(err, 'error', 10_000)
+    }
 }
 
 
-
-
-
-
-
-
-
-const store = reactive({
-    date: '2024/08/24',
-    assignTo: 'Homer Simpson',
-    paymentTerms: 'Cash',
-    note: '',
-    selectedAddress: 'Central Warehouse',
-    addresses: [
-        {
-            label: 'Central Warehouse',
-            details: '1234 Brickell Avenue, Suite 500, Miami, FL 33131'
-        }
-    ]
-})
-
-const selectedAddressDetails = computed(() => {
-    const found = store.addresses.find(a => a.label === store.selectedAddress)
-    return found?.details || ''
-})
 </script>
 
 <style scoped>
@@ -245,7 +341,7 @@ const selectedAddressDetails = computed(() => {
     padding: 1.5rem;
     padding-bottom: 0;
     min-width: 300px;
-    max-width: 50vw;
+    max-width: 49vw;
     padding-top: 0;
     display: flex;
     gap: 1rem;
@@ -377,6 +473,7 @@ select {
 }
 
 .CardanoForm-summary {
+    word-break: break-word;
     padding: 1.5rem;
 }
 

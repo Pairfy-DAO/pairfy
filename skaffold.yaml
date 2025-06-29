@@ -139,7 +139,14 @@ build:
         manual:
           - src: 'src/**/*.{ts,js,json,vue}'
             dest: .
-
+    - image: pairfy/service-price
+      context: service-price
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.{ts,js,json,vue}'
+            dest: .
 deploy:
   statusCheckDeadlineSeconds: 540
   kubectl:
@@ -203,6 +210,12 @@ portForward:
     localPort: 8006  
 
   - resourceType: service
+    resourceName: service-price
+    namespace: default
+    port: 8007
+    localPort: 8007  
+
+  - resourceType: service
     resourceName: weaviate
     namespace: default
     port: 8080
@@ -215,7 +228,7 @@ portForward:
     localPort: 11434
     
   - resourceType: service
-    resourceName: redis-books
+    resourceName: redis-price
     namespace: default
     port: 6379
     localPort: 6379

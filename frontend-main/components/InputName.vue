@@ -29,10 +29,10 @@ const props = defineProps({
   id: { type: String, default: 'input-name' },
   modelValue: { type: [String, null], default: null },
   label: { type: String, default: 'Name' },
-  placeholder: { type: String, default: 'Nikola Tesla' },
+  placeholder: { type: String, default: 'Michael Brown' },
   focus: { type: Boolean, default: false },
   required: { type: Boolean, default: true },
-  maxLength: { type: Number, default: 50 },
+  maxLength: { type: Number, default: 30 },
 })
 
 const emit = defineEmits(['update:modelValue', 'valid'])

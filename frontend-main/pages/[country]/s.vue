@@ -39,7 +39,7 @@ const search = useSearchStore()
 
 const toastRef = ref(null);
 
-const { $apollo } = useNuxtApp()
+const { $queryClient } = useNuxtApp()
 
 const loading = ref(true)
 
@@ -99,7 +99,7 @@ async function searchProducts(prompt) {
 
         console.log(filters, "filters")
 
-        const { data } = await $apollo.query({
+        const { data } = await $queryClient.query({
             query: SEARCH_PRODUCTS_QUERY,
             variables: {
                 searchProductsVariable: {

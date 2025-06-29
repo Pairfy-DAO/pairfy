@@ -10,18 +10,18 @@
 <script setup>
 
 const auth = useAuthStore()
+const wallet = useWalletStore()
 
 await auth.fetchUser()
 
-onMounted(() => {
-  auth.checkLocation() 
-})
+await wallet.connect(auth.walletName)
+
+onMounted(()=> auth.checkLocation())
 
 </script>
 
 <style scoped>
 .layout {
-  background: var(--background-b); 
   flex-direction: column;
   min-height: 100vh;
 }

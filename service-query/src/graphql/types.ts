@@ -96,7 +96,17 @@ type GetProductResponse{
   product: Product!
   media: [Media]!
 }
-  
+
+type PriceData {
+  ADA: Float
+}
+
+type PriceResponse {
+  success: Boolean!
+  message: String!
+  data: PriceData!
+}
+
 input GetProductInput {
   id: String!
 } 
@@ -155,7 +165,7 @@ type Query {
   getFeed: String!
   getProduct(getProductInput: GetProductInput!): GetProductResponse!
   searchProducts(searchProductsInput: SearchProductsInput!): [SearchProductsResponse]!
-  getAssetPrice: Float!
+  getPrice: PriceResponse!
 }
 
 

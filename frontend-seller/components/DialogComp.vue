@@ -65,6 +65,7 @@ function lockScroll() {
   if (isLocked) return
   scrollY = window.scrollY
   document.body.style.position = 'fixed'
+  document.body.style.overflowY = 'scroll'
   document.body.style.top = `-${scrollY}px`
   document.body.style.width = '100%'
   isLocked = true
