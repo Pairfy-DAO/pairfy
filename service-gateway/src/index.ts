@@ -5,7 +5,7 @@ import cookieSession from "cookie-session";
 import { ApolloServer } from "@apollo/server";
 import { catchError } from "./utils/index.js";
 import { typeDefs } from "./graphql/types.js";
-import { books, cardano } from "./graphql/resolvers.js";
+import { books, cardano, order } from "./graphql/resolvers.js";
 import { agentMiddleware } from "./middleware/agent.js";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
@@ -68,7 +68,7 @@ const main = async () => {
     const resolvers = {
       Query: {
         ...books.Query,
-        ...cardano.Query,
+        ...order.Query
       },
       Mutation: {
         ...books.Mutation,
@@ -168,27 +168,28 @@ const main = async () => {
       "/api/gateway/graphql",
       expressMiddleware(server, {
         context: async ({ req }) => {
-          const AGENT = req.sellerData || req.userData;
 
-          if (!AGENT) {
+          const { sellerData, userData } = req;
+
+          if (!sellerData && !userData) {
             throw new ApiGraphQLError(401, "Unauthorized", {
               code: ERROR_CODES.UNAUTHORIZED,
             });
           }
 
-          const allowed = await rateLimiter.checkId(
-            AGENT.pubkeyhash || AGENT.pubkeyhash
-          );
+          const agentId = sellerData?.id || userData.pubkeyhash;
 
-          if (!allowed) {
+          const isAllowed = await rateLimiter.checkId(agentId);
+
+          if (!isAllowed) {
             throw new ApiGraphQLError(429, "Rate limit exceeded", {
               code: ERROR_CODES.RATE_LIMIT_EXCEEDED,
             });
           }
 
           return {
-            sellerData: req.sellerData || null,
-            userData: req.userData || null,
+            sellerData,
+            userData
           };
         },
       })

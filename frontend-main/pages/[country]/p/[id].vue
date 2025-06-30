@@ -60,15 +60,6 @@ let pollIntervalId = null
 
 let observer;
 
-watch(
-  () => route.params.id,
-  (id) => {
-    productId.value = id
-    fetchProduct()
-  },
- { immediate: true }
-)
-
 useLenis()
 useLenisMultiple([rightScrollRef])
 
@@ -87,6 +78,14 @@ onBeforeUnmount(() => {
   removeSubscriptions()
 })
 
+watch(
+  () => route.params.id,
+  (id) => {
+    productId.value = id
+    fetchProduct()
+  },
+ { immediate: true }
+)
 
 async function fetchProduct() {
 
