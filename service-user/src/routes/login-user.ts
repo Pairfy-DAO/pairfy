@@ -11,7 +11,7 @@ import {
   findUserByPubKeyhash,
 } from "@pairfy/common";
 import { getPubKeyHash } from "../utils/crypto.js";
-import { verifyParams } from "../validators/login-user.js";
+import { loginUserSchema } from "../validators/login-user.js";
 
 export const loginUserMiddlewares: any = [];
 
@@ -21,15 +21,15 @@ export const loginUserHandler = async (req: Request, res: Response) => {
   let connection = null;
 
   try {
-    const result = verifyParams.safeParse(req.body);
+    const verifyParams = loginUserSchema.safeParse(req.body);
 
-    if (!result.success) {
-      throw new ApiError(401, "Unauthorized", {
-        code: ERROR_CODES.UNAUTHORIZED,
+    if (!verifyParams.success) {
+      throw new ApiError(400, `Invalid Params ${JSON.stringify(verifyParams.error.flatten())}`, {
+        code: ERROR_CODES.VALIDATION_ERROR,
       });
     }
 
-    const params = result.data;
+    const params = verifyParams.data;
 
     console.log(params);
 

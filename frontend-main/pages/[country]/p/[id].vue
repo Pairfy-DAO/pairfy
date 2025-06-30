@@ -166,7 +166,7 @@ query ($getBookVariable: GetBookInput!){
 }
 `;
 
-  const observable = await $queryClient.watchQuery({
+  const observable = $queryClient.watchQuery({
     query: GET_BOOK_QUERY,
     variables: {
       getBookVariable: {

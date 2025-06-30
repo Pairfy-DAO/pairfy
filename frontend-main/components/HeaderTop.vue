@@ -25,7 +25,7 @@
                             <path d="m21 8-4-4-4 4" />
                             <path d="M17 4v16" />
                         </svg>
-                        <span> Cardano Mainnet</span>
+                        <span> Cardano {{ network }}</span>
                     </div>
                 </div>
             </nav>
@@ -42,6 +42,7 @@ const route = useRoute()
 
 const auth = useAuthStore()
 
+const network = useRuntimeConfig().public.cardanoNetwork
 </script>
 
 <style lang="css" scoped>
@@ -71,6 +72,7 @@ const auth = useAuthStore()
 
 .HeaderTop-price,
 .HeaderTop-network {
+    text-transform: capitalize;
     margin-left: 2rem;
 }
 

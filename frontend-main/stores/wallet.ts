@@ -34,41 +34,33 @@ export const useWalletStore = defineStore("wallet", () => {
     return [signature, address];
   };
 
-  const createWalletApiInstance = async (name: string) => {
+  const connect = async (name: string) => {
     if (!import.meta.client) return;
 
-    try {
-      walletApi.value = await window.cardano[name]?.enable();
+    if (!name) return;
 
-      if (!walletApi.value) {
-        return;
-      }
+    try {
+      console.log("WALLET", name)
+      
+      walletApi.value = await window.cardano[name]?.enable();
 
       const networkId = await walletApi.value?.getNetworkId(); // 0 = testnet, 1 = mainnet
 
-      console.log(networkId);
+      const cardanoNetwork = useRuntimeConfig().public.cardanoNetwork;
 
-      if (networkId !== 0) {
+      const networkNumber = cardanoNetwork === "mainnet" ? 1 : 0;
+
+      if (networkId !== networkNumber) {
         throw new Error(
-          "⚠️ Connection failed: Please switch your wallet to Testnet and try again."
+          `⚠️ Wallet connection: Please switch your wallet to ${cardanoNetwork}.`
         );
       }
 
       walletName.value = name;
       connected.value = true;
-    } catch (error) {
-      console.error("Error creating wallet instance", error);
-      throw error;
-    }
-  };
-
-  const connect = async (name: string) => {
-    if (!name) {
-      console.error("walletStore: wallet name undefined");
-    }
-
-    if (!walletApi.value) {
-      await createWalletApiInstance(name);
+    } catch (err) {
+      console.error("Error creating wallet instance", err);
+      throw err;
     }
   };
 
@@ -135,7 +127,7 @@ export const useWalletStore = defineStore("wallet", () => {
       theBody.set_auxiliary_data_hash(metadataHash);
     } else {
       theBody = oldTx.body();
-      theAuxData = oldTx.auxiliary_data()
+      theAuxData = oldTx.auxiliary_data();
     }
 
     //////////////////////////////////////////////////////////////////////////

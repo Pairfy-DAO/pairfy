@@ -15,6 +15,7 @@ export default defineNuxtConfig({
       apiBaseBrowser: "",
       validWallets: ["lace", "nami", "eternl"],
       mediaCDNBase: process.env.NUXT_PUBLIC_MEDIA_CDN,
+      cardanoNetwork: process.env.NUXT_PUBLIC_CARDANO_NETWORK
     },
   },
   css: [
