@@ -49,6 +49,7 @@ const sizeClass = computed(() => {
 <style scoped>
 .ButtonSolid {
   border-radius: var(--button-radius);
+  border: 1px solid var(--primary-a);
   transition: var(--transition-a);
   background: var(--primary-a);
   justify-content: center;
@@ -57,7 +58,6 @@ const sizeClass = computed(() => {
   font-weight: 600;
   cursor: pointer;
   display: flex;
-  border: none;
 }
 
 .ButtonSolid.outlined {
@@ -101,11 +101,9 @@ const sizeClass = computed(() => {
   font-size: 16px;
 }
 
-
 .loader {
   width: 1rem;
   height: 1rem;
-  margin: 0 1rem;
   border: 2px solid #FFF;
   border-radius: 50%;
   display: inline-block;

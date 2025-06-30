@@ -151,8 +151,8 @@
                 </svg>
                 <span> Learn how local encryption works.</span>
             </a>
-            <button class="btn" @click="product.cardanoDialog = false">Cancel</button>
-            <button class="btn primary" @click="onSubmit">Next</button>
+            <ButtonSolid @click="product.cardanoDialog = false" label="Cancel" size="mini" outlined/>
+            <ButtonSolid @click="onSubmit" :loading="loading" label="Next" size="mini" />
         </div>
     </div>
 </template>
@@ -441,23 +441,6 @@ select {
     cursor: pointer;
     margin-top: 4px;
     align-self: flex-start;
-}
-
-.btn {
-    padding: 0.6rem 1rem;
-    border: 1px solid var(--primary-a);
-    background: #fff;
-    color: var(--primary-a);
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    text-align: center;
-}
-
-.btn.primary {
-    background: var(--primary-a);
-    color: white;
-    border: none;
 }
 
 .CardanoForm-right {

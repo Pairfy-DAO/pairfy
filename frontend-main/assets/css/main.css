@@ -85,7 +85,7 @@ body {
 
 :root {
   --input-radius: var(--radius-b);
-  --button-radius: var(--radius-c);
+  --button-radius: var(--radius-b);
 }
 
 .flex {
