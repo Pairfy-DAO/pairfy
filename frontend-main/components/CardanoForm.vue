@@ -159,7 +159,7 @@
 
 <script setup>
 import { gql } from 'graphql-tag'
-import { formatUSD, timestampToDate, chunkMetadata, encryptMessageWithPublicKey, compressMessage, truncateText, sleep } from '@/utils/utils';
+import { formatUSD, timestampToDate, chunkMetadata, encryptMessageWithPublicKey, compressMessage,  sleep } from '@/utils/utils';
 
 const route = useRoute()
 

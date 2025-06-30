@@ -48,18 +48,7 @@ const toastRef = ref(null);
 const isRightPanelFixed = ref(false)
 const rightPanelTrigger = ref(null)
 
-let observer;
-
 const rightScrollRef = ref(null)
-
-const syncScroll = () => {
-  if (rightScrollRef.value) {
-    rightScrollRef.value.scrollTop = window.scrollY
-  }
-}
-
-useLenis()
-useLenisMultiple([rightScrollRef])
 
 const getProductError = ref(null)
 
@@ -67,10 +56,18 @@ let subscription1;
 
 let pollIntervalId = null
 
+let observer;
+
+useLenis()
+useLenisMultiple([rightScrollRef])
+
+watch(
+  () => route.params.id,
+  (id) => fetchProduct(id),
+ { immediate: true }
+)
 
 onMounted(() => {
-  fetchProduct()
-  fetchBook()
   watchToast()
   observeTrigger()
   addScrollListener()
@@ -86,7 +83,7 @@ onBeforeUnmount(() => {
 })
 
 
-async function fetchProduct() {
+async function fetchProduct(id) {
 
   const GET_PRODUCT_QUERY = gql`
   query GetProduct($getProductVariable: GetProductInput!) {
@@ -141,21 +138,23 @@ async function fetchProduct() {
       query: GET_PRODUCT_QUERY,
       variables: {
         getProductVariable: {
-          id: route.params.id
+          id
         }
       },
       fetchPolicy: 'no-cache'
     })
 
     product.setProduct(data.getProduct)
+
+    fetchBook(id)
   } catch (err) {
     getProductError.value = err
   }
 }
 
-async function fetchBook() {
+async function fetchBook(id) {
 
-const GET_BOOK_QUERY = gql`
+  const GET_BOOK_QUERY = gql`
 query ($getBookVariable: GetBookInput!){
   getBook(getBookInput: $getBookVariable) {
       success
@@ -167,25 +166,32 @@ query ($getBookVariable: GetBookInput!){
 }
 `;
 
-const observable = $queryClient.watchQuery({
-  query: GET_BOOK_QUERY,
-  variables: {
-    getBookVariable: {
-      id:  route.params.id
-    }
-  },
-  fetchPolicy: 'no-cache',
-  pollInterval: 5_000,
-})
+  const observable = await $queryClient.watchQuery({
+    query: GET_BOOK_QUERY,
+    variables: {
+      getBookVariable: {
+        id
+      }
+    },
+    fetchPolicy: 'no-cache',
+    pollInterval: 5_000,
+  })
 
-subscription1 = observable.subscribe({
-  next({ data }) {
-    product.setBook(data.getBook.data)
-    console.log(product.book)
-  },
-  error(err) {
-    product.showToast(err, 'error', 10_000)
-  }})
+  subscription1 = observable.subscribe({
+    next({ data }) {
+      product.setBook(data.getBook.data)
+      console.log(product.book)
+    },
+    error(err) {
+      product.showToast(err, 'error', 10_000)
+    }
+  })
+}
+
+function syncScroll() {
+  if (rightScrollRef.value) {
+    rightScrollRef.value.scrollTop = window.scrollY
+  }
 }
 
 function removeSubscriptions() {
