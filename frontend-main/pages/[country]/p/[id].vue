@@ -52,20 +52,25 @@ const rightScrollRef = ref(null)
 
 const getProductError = ref(null)
 
+const productId = ref(null)
+
 let subscription1;
 
 let pollIntervalId = null
 
 let observer;
 
-useLenis()
-useLenisMultiple([rightScrollRef])
-
 watch(
   () => route.params.id,
-  (id) => fetchProduct(id),
+  (id) => {
+    productId.value = id
+    fetchProduct()
+  },
  { immediate: true }
 )
+
+useLenis()
+useLenisMultiple([rightScrollRef])
 
 onMounted(() => {
   watchToast()
@@ -83,7 +88,7 @@ onBeforeUnmount(() => {
 })
 
 
-async function fetchProduct(id) {
+async function fetchProduct() {
 
   const GET_PRODUCT_QUERY = gql`
   query GetProduct($getProductVariable: GetProductInput!) {
@@ -138,7 +143,7 @@ async function fetchProduct(id) {
       query: GET_PRODUCT_QUERY,
       variables: {
         getProductVariable: {
-          id
+          id: productId.value
         }
       },
       fetchPolicy: 'no-cache'
@@ -152,7 +157,7 @@ async function fetchProduct(id) {
   }
 }
 
-async function fetchBook(id) {
+async function fetchBook() {
 
   const GET_BOOK_QUERY = gql`
 query ($getBookVariable: GetBookInput!){
@@ -170,7 +175,7 @@ query ($getBookVariable: GetBookInput!){
     query: GET_BOOK_QUERY,
     variables: {
       getBookVariable: {
-        id
+        id: productId.value
       }
     },
     fetchPolicy: 'no-cache',
@@ -223,7 +228,7 @@ function deleteObserver() {
 }
 
 function fetchProductPolling() {
-  pollIntervalId = setInterval(fetchProduct, 30_000)
+  pollIntervalId = setInterval(fetchProduct, 60_000)
 }
 
 function clearIntervals() {
