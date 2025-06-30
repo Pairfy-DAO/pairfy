@@ -171,7 +171,7 @@ const { $gatewayClient } = useNuxtApp()
 
 const loading = ref(false)
 
-const availableUnits = ref(10)
+const availableUnits = computed(()=> product.book?.ready_stock || 0)
 const orderFee = ref(0.25)
 
 const orderUnits = ref(null);

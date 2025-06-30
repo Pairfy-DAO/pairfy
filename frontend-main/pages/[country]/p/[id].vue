@@ -39,8 +39,9 @@ import { useIntersectionObserver } from '@vueuse/core'
 const route = useRoute();
 
 const product = useProductStore()
-
 const productData = computed(() => product.product)
+
+const { $queryClient } = useNuxtApp()
 
 const toastRef = ref(null);
 
@@ -60,26 +61,16 @@ const syncScroll = () => {
 useLenis()
 useLenisMultiple([rightScrollRef])
 
-/////////////////////////////////
-
-const { $queryClient } = useNuxtApp()
-
-const productId = ref(null);
-
 const getProductError = ref(null)
+
+let subscription1;
 
 let pollIntervalId = null
 
-watch(
-  () => route.params.id,
-  (id) => {
-    productId.value = id
-    fetchProduct()
-  },
-  { immediate: true }
-)
 
 onMounted(() => {
+  fetchProduct()
+  fetchBook()
   watchToast()
   observeTrigger()
   addScrollListener()
@@ -91,7 +82,9 @@ onBeforeUnmount(() => {
   deleteObserver()
   removeScrollListener()
   clearIntervals()
+  removeSubscriptions()
 })
+
 
 async function fetchProduct() {
 
@@ -148,18 +141,56 @@ async function fetchProduct() {
       query: GET_PRODUCT_QUERY,
       variables: {
         getProductVariable: {
-          id: productId.value
+          id: route.params.id
         }
       },
       fetchPolicy: 'no-cache'
     })
 
-    product.setProductData(data.getProduct)
+    product.setProduct(data.getProduct)
   } catch (err) {
     getProductError.value = err
   }
 }
 
+async function fetchBook() {
+
+const GET_BOOK_QUERY = gql`
+query ($getBookVariable: GetBookInput!){
+  getBook(getBookInput: $getBookVariable) {
+      success
+      message
+      data {
+          ready_stock
+      }
+  }
+}
+`;
+
+const observable = $queryClient.watchQuery({
+  query: GET_BOOK_QUERY,
+  variables: {
+    getBookVariable: {
+      id:  route.params.id
+    }
+  },
+  fetchPolicy: 'no-cache',
+  pollInterval: 5_000,
+})
+
+subscription1 = observable.subscribe({
+  next({ data }) {
+    product.setBook(data.getBook.data)
+    console.log(product.book)
+  },
+  error(err) {
+    product.showToast(err, 'error', 10_000)
+  }})
+}
+
+function removeSubscriptions() {
+  subscription1?.unsubscribe()
+}
 
 function watchToast() {
   watch(() => product.toastMessage, ({ message, type, duration }) => toastRef.value?.showToast(message, type, duration));

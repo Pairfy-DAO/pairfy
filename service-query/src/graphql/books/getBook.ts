@@ -10,7 +10,7 @@ export const getBook = async (_: any, args: any, context: any) => {
     if (!validateParams.success) {
       throw new ApiGraphQLError(
         400,
-        `Invalid params ${validateParams.error.format()}`,
+        `Invalid params ${JSON.stringify(validateParams.error.flatten())}`,
         {
           code: ERROR_CODES.VALIDATION_ERROR,
         }
