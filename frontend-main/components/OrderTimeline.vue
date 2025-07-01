@@ -1,12 +1,12 @@
 <template>
     <div class="OrderTimeline">
         <div class="OrderTimeline-item" v-for="(item, index) in timeline" :key="index">
-     
+
             <div class="OrderTimeline-left">
                 <div class="timeline-box">
                     <div class="timeline-diamond">
                         <template v-if="item.template === 'created'">
-                            <span v-if="!order.pending_block">{{ item.number }}</span>
+                            <span v-if="!orderStore.pending_block">{{ item.number }}</span>
                             <span v-else>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -16,7 +16,7 @@
                             </span>
                         </template>
                         <template v-if="item.template === 'shipping'">
-                            <span v-if="!order.shipping_block">{{ item.number }}</span>
+                            <span v-if="!orderStore.shipping_block">{{ item.number }}</span>
                             <span v-else>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -26,7 +26,7 @@
                             </span>
                         </template>
                         <template v-if="item.template === 'received'">
-                            <span v-if="!order.finished">{{ item.number }}</span>
+                            <span v-if="!orderStore.finished">{{ item.number }}</span>
                             <span v-else>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -76,25 +76,7 @@
                             </div>
                             <div class="template-item">
                                 <span>Payment</span>
-                                <span>
-                                    <div class="payment flex" @click="openExplorer">
-                                        <div class="payment-label" :style="{ color: orderPayment.color }">
-                                            {{ orderPayment.label }}
-                                        </div>
-
-                                        <div class="payment-symbol flex" :style="{ color: orderPayment.color }">
-                                            <div v-if="orderPayment.template === 'loading'" class="payment-loader"
-                                                :class="{
-                                                    warn: orderPayment.label === 'confirming',
-                                                    danger: orderPayment.label === 'unconfirmed'
-                                                }" />
-
-                                            <div v-if="orderPayment.template === 'icon'">
-                                                <i :class="orderPayment.icon" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </span>
+                                <OrderScanner />
                             </div>
                         </div>
                     </template>
@@ -112,15 +94,15 @@
                             </div>
                             <div class="template-item">
                                 <span>Guide</span>
-                                <span class="guide flex" v-if="shippingData">
-                                    <div class="flex" @click="displayNotesDialog(true)">
+                                <span class="template-guide" v-if="shippingData">
+                                    <div class="flex" @click="">
                                         <i class="pi pi-envelope" />
                                     </div>
-                                    <div class="flex" @click="openWebsite(shippingData.website)">
+                                    <div class="flex" @click="">
                                         <i class="pi pi-globe" />
                                     </div>
-                                    <div class="flex" style="padding-right: initial; cursor: initial;"> {{
-                                        shippingData.guide }}
+                                    <div class="flex" style="padding-right: initial; cursor: initial;"> 
+                                        {{guideData.guide }}
                                     </div>
                                 </span>
                                 <span v-else>None</span>
@@ -141,23 +123,26 @@
 <script setup>
 import { formatUSD } from '@/utils/utils'
 
-const order = useOrderStore()
-const orderData = computed(() => order.order)
+const orderStore = useOrderStore()
+const orderData = computed(() => orderStore.order)
 
-const totalUSD = computed(() => orderData.value.contract_price * orderData.value.asset_price)
-
-const orderPayment = ref({
-    label: "unconfirmed",
-    template: "loading",
-    color: "var(--red-a)"
-});
 const contractPrice = ref(0);
 const shippingData = ref(null);
-const deliveryDate = ref('None');
+const deliveryDate = ref('none'); 
+const guideData = computed(() => {
+    return {
+        website: '',
+        guide: ''
+    }
+})
 
 
 const shippingStatus = computed(() => {
     const state = orderData.value.contract_state;
+
+    if (state === null) {
+        return "pending"
+    }
 
     if (state === 0) {
         return "pending"
@@ -212,47 +197,13 @@ const timeline = ref([
     }
 ])
 
-const getPaymentStatus = (pending_block) => {
-    if (!pending_block) {
-        return {
-            label: "unconfirmed",
-            template: "loading",
-            color: "var(--red-a)"
-        }
-    }
-
-    const now = Math.floor(Date.now() / 1000);
-    const diff = now - pending_block;
-    const minutes = Math.floor(diff / 60);
-
-    if (minutes <= 15) {
-        return {
-            label: "confirming",
-            template: "icon",
-            icon: "pi pi-eye",
-            color: "var(--orange-a)"
-        }
-    }
-
-
-    if (minutes >= 15) {
-        return {
-            label: "confirmed",
-            template: "icon",
-            icon: "pi pi-eye",
-            color: "var(--green-a)"
-        }
-    }
-
-}
-
 
 const openExplorer = () => {
     if (!import.meta.client) return
 
     const cardanoNetwork = useRuntimeConfig().public.cardanoNetwork;
 
-    window.open(`https://${cardanoNetwork}.cexplorer.io/tx/${order.pendingTx}`, '_blank');
+    window.open(`https://${cardanoNetwork}.cexplorer.io/tx/${orderStore.pendingTx}`, '_blank');
 }
 
 </script>
@@ -377,73 +328,9 @@ const openExplorer = () => {
     color: var(--text-b);
 }
 
-
-.guide div {
-    height: 36px;
+.template-guide div {
+    height: 2rem;
+    cursor: pointer;
     padding: 0 0.5rem;
-    cursor: pointer;
-}
-
-.payment {
-    background: inherit;
-    border-radius: 20px;
-    padding-right: 1rem;
-    overflow: hidden;
-    cursor: pointer;
-    outline: 1px solid var(--border-a);
-}
-
-.payment-label {
-    font-size: var(--text-size-1);
-    font-weight: 600;
-    border-right: 1px solid var(--border-a);
-    padding: 0 1rem;
-    margin-right: 0.75rem;
-}
-
-.payment-label.unconfirmed {
-    color: var(--red-a);
-}
-
-.payment-label.confirmed {
-    color: var(--green-a);
-}
-
-.payment-symbol {
-    justify-content: center;
-    margin-left: 1px;
-}
-
-.payment-loader {
-    width: 1rem;
-    height: 1rem;
-    border: 2px solid transparent;
-    border-bottom-color: transparent;
-    border-radius: 50%;
-    display: inline-block;
-    box-sizing: border-box;
-    animation: rotation 1s linear infinite;
-    margin-left: 1px;
-}
-
-.payment-loader.warn {
-    border: 2px solid var(--orange-a);
-    border-bottom-color: transparent;
-}
-
-.payment-loader.danger {
-    border: 2px solid var(--red-a);
-    border-bottom-color: transparent;
-}
-
-
-@keyframes rotation {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
 }
 </style>

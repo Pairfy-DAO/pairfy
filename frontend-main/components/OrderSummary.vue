@@ -18,9 +18,9 @@
         </div>
 
         <div class="OrderSummary-subtitle">
-            OrderId
+            Order Id
             <div>
-                <span>{{ truncateText(orderData.id, 20) }}</span>
+                <span>{{ truncateText(orderData.id, 30) }}</span>
             </div>
             <button class="copy-button" @click="copyToClipboard(orderData.id)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -162,12 +162,14 @@ const openExplorer = () => {
     color: var(--text-a);
     align-items: center;
     line-height: 2.5rem;
+    font-weight: 500;
     display: flex;
 }
 
 .OrderSummary-subtitle span {
     color: var(--text-b);
     margin-left: 0.5rem;
+    font-weight: 400;
 }
 
 .OrderSummary-subtitle button {
