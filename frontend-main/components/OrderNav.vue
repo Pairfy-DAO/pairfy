@@ -43,18 +43,17 @@ function updateNav(index) {
     color: var(--text-b);
     align-items: center;
     margin-right: 2rem;
+    font-weight: 500;
     cursor: pointer;
     display: flex;
 }
 
 .OrderNav-item.selected {
     color: var(--text-a);
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .OrderNav-item span {
-    color: inherit;
-    font-weight: 500;
     padding: 0.5rem 0;
 }
 
