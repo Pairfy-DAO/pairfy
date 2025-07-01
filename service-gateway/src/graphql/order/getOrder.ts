@@ -42,8 +42,6 @@ export const getOrder = async (_: any, args: any, context: any) => {
 
       const session = `${findOrder.id}:${findOrder.buyer_pubkeyhash}:${findOrder.seller_id}`;
 
-      console.log(findOrder);
-
       return {
         order: findOrder,
         shipping: null,

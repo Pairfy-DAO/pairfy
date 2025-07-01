@@ -5,9 +5,9 @@ import {
   TransactionSchema,
   UtxoResponse,
 } from "./types.js";
-import { logger } from "../utils/index.js";
 import { blockFrostAPI, axios } from "../api/index.js";
 import { Data, fromText, Kupmios, Lucid, UTxO } from "@lucid-evolution/lucid";
+import { logger } from "@pairfy/common";
 
 const provider = new Kupmios(
   process.env.KUPO_KEY as string,

@@ -1,4 +1,4 @@
-import { getEventId } from "../utils/index.js";
+import { getNotificationId } from "@pairfy/common";
 import { HandlerParams } from "./types.js";
 
 async function pending(params: HandlerParams) {
@@ -33,7 +33,7 @@ async function pending(params: HandlerParams) {
 
   const notifications = [
     {
-      id: getEventId(),
+      id: getNotificationId(),
       type: "order",
       title: "Payment Detected",
       owner: params.buyer_pubkeyhash,
@@ -45,7 +45,7 @@ async function pending(params: HandlerParams) {
       message: `The payment is being processed on the network.`,
     },
     {
-      id: getEventId(),
+      id: getNotificationId(),
       type: "order",
       title: "New Purchase",
       owner: params.seller_id,

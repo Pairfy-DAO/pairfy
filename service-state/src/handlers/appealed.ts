@@ -1,4 +1,4 @@
-import { getEventId } from "../utils/index.js";
+import { getNotificationId } from "@pairfy/common";
 import { HandlerParams } from "./types.js";
 
 async function appealed(params: HandlerParams) {
@@ -28,7 +28,7 @@ async function appealed(params: HandlerParams) {
 
   const notifications = [
     {
-      id: getEventId(),
+      id: getNotificationId(),
       type: "order",
       title: "Order Appealed",
       owner: params.buyer_pubkeyhash,
@@ -40,7 +40,7 @@ async function appealed(params: HandlerParams) {
       message: `The order has been appealed.`,
     },
     {
-      id: getEventId(),
+      id: getNotificationId(),
       type: "order",
       title: "Order Appealed",
       owner: params.seller_id,

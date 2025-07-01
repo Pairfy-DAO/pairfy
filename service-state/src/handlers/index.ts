@@ -1,4 +1,3 @@
-import { logger } from "../utils/index.js";
 import { database } from "../database/client.js";
 import { getUtxo } from "../lib/index.js";
 import { pending } from "./pending.js";
@@ -10,8 +9,54 @@ import { collected } from "./collected.js";
 import { canceled } from "./canceled.js";
 import { appealed } from "./appealed.js";
 import { HandlerParams } from "./types.js";
+import { logger, sleep } from "@pairfy/common";
+import { updateOrder } from "../common/updateOrder.js";
 
-async function scanThreadToken(job: any) {
+export async function testHandler(job: any) {
+  const timestamp = Date.now();
+
+  let connection = null;
+
+  try {
+    const orderData = job.data;
+    
+    console.log("ORDER: ", orderData);
+
+    connection = await database.client.getConnection();
+
+    await connection.beginTransaction();
+
+    const updateContent = {
+      finished: true,
+      scanned_at: timestamp,
+      status: "created",
+    };
+
+    await updateOrder(
+      connection,
+      orderData.id,
+      orderData.schema_v,
+      updateContent
+    );
+
+    await connection.commit();
+    
+    console.log("SLEEP START");
+    await sleep(120_000);
+    console.log("SLEEP END");
+
+    return { finished: true, id: orderData.id };
+  } catch (err) {
+    console.log(err)
+
+    if (connection) await connection.rollback();
+    throw err;
+  } finally {
+    if (connection) connection.release();
+  }
+}
+
+export async function threadtokenQueue(job: any) {
   let connection = null;
 
   try {
@@ -116,16 +161,10 @@ async function scanThreadToken(job: any) {
   } catch (err) {
     logger.error(err);
 
-    if (connection) {
-      await connection.rollback();
-    }
+    if (connection) await connection.rollback();
 
     throw err;
   } finally {
-    if (connection) {
-      connection.release();
-    }
+    if (connection) connection.release();
   }
 }
-
-export { scanThreadToken };

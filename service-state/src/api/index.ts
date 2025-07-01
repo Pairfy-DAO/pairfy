@@ -2,7 +2,7 @@ import axios from "axios";
 
 axios.defaults.withCredentials = true;
 
-const blockFrostAPI = axios.create({
+export const blockFrostAPI = axios.create({
   baseURL: "https://cardano-preprod.blockfrost.io/api/v0",
   timeout: 30000,
   headers: {
@@ -11,6 +11,4 @@ const blockFrostAPI = axios.create({
   },
 });
 
-
-
-export { blockFrostAPI, axios };
+export { axios };

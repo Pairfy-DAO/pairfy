@@ -147,6 +147,14 @@ build:
         manual:
           - src: 'src/**/*.{ts,js,json,vue}'
             dest: .
+    - image: pairfy/service-state
+      context: service-state
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.{ts,js,json,vue}'
+            dest: .            
 deploy:
   statusCheckDeadlineSeconds: 540
   kubectl:
@@ -228,7 +236,7 @@ portForward:
     localPort: 11434
     
   - resourceType: service
-    resourceName: redis-books
+    resourceName: redis-state
     namespace: default
     port: 6379
     localPort: 6379

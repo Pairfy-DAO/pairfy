@@ -145,8 +145,6 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
       schema_v: 0,
     };
 
-    console.log(orderContent);
-
     const [insert1] = await insertOrder(connection, orderContent);
 
     if (insert1.affectedRows !== 1) {

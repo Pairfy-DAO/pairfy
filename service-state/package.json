@@ -1,26 +1,32 @@
 {
   "name": "service-state",
   "version": "1.0.0",
+  "main": "dist/index.js",
   "type": "module",
   "scripts": {
+    "dev": "nodemon --watch src --exec tsx src/index.ts",
+    "build": "tsc --project tsconfig.json",
     "start": "node dist/index.js",
-    "build": "tsc --build"
+    "setup": "tsx setup.ts"
+  },
+  "engines": {
+    "node": ">=20.10.0"
+  },
+  "dependencies": {
+    "@lucid-evolution/lucid": "^0.4.14",
+    "@pairfy/common": "^1.0.249",
+    "@types/axios": "^0.9.36",
+    "axios": "^1.7.8",
+    "bullmq": "^5.56.0",
+    "ioredis": "^5.4.1",
+    "mysql2": "^3.11.4",
+    "nanoid": "^5.1.5",
+    "redis": "^4.7.0"
   },
   "devDependencies": {
     "@types/node": "^22.9.0",
+    "nodemon": "^3.1.10",
+    "tsx": "^4.20.3",
     "typescript": "^5.6.3"
-  },
-  "dependencies": {
-    "@elastic/elasticsearch": "^8.17.0",
-    "@lucid-evolution/lucid": "^0.4.14",
-    "@types/axios": "^0.9.36",
-    "axios": "^1.7.8",
-    "bullmq": "^5.31.0",
-    "ioredis": "^5.4.1",
-    "mysql2": "^3.11.4",
-    "nanoid": "^5.0.8",
-    "redis": "^4.7.0",
-    "ts-node": "^10.9.2",
-    "tslog": "^4.9.3"
   }
 }
