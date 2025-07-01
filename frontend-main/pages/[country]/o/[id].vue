@@ -57,14 +57,14 @@ let subscription1;
 
 onMounted(() => {
     watchToast()
-    fetchBook()
+    fetchOrder()
 });
 
 onBeforeUnmount(() => {
     removeSubscriptions()
 })
 
-async function fetchBook() {
+async function fetchOrder() {
 
     const GET_ORDER_QUERY = gql`
 query ($getOrderVariable: GetOrderInput!) {
@@ -87,12 +87,15 @@ query ($getOrderVariable: GetOrderInput!) {
             seller_username
             rsa_version
             product_id
+            product_snapshot
             contract_address
             contract_params
             contract_state
             contract_price
+            contract_quote
             contract_fee
             contract_units
+            asset_name
             asset_price
             watch_until
             pending_until
@@ -146,6 +149,7 @@ query ($getOrderVariable: GetOrderInput!) {
     subscription1 = observable.subscribe({
         next({ data }) {
             order.setOrder(data.getOrder)
+            order.pendingTx = route.query?.tx
         },
         error(err) {
             order.showToast(err, 'error', 10_000)
@@ -603,6 +607,7 @@ onUnmounted(() => {
 
 .OrderPage-body {
     max-width: var(--body-a);
+    box-sizing: border-box;
     min-height: 100vh;
     margin-top: 1rem;
     padding: 2rem;
@@ -610,7 +615,7 @@ onUnmounted(() => {
 }
 
 .OrderPage-grid {
-    grid-template-columns: 1fr 300px;
+    grid-template-columns: 1fr 600px;
     margin-top: 1rem;
     display: grid;
 }

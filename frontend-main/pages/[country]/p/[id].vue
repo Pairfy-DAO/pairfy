@@ -150,7 +150,7 @@ async function fetchProduct() {
 
     product.setProduct(data.getProduct)
 
-    fetchBook(id)
+    fetchBook()
   } catch (err) {
     getProductError.value = err
   }

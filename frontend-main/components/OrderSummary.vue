@@ -57,7 +57,7 @@
             </button>
         </div>
 
-        <DividerComp />
+        <DividerComp margin="1rem 0"/>
 
         <OrderTimeline />
     </div>
@@ -92,8 +92,6 @@ const orderTitle = computed(
         return title
     }
 )
-
-const pendingTx = ref(null)
 
 const globalTimestamp = ref(Date.now());
 
@@ -134,7 +132,7 @@ const openExplorer = () => {
 
     const cardanoNetwork = useRuntimeConfig().public.cardanoNetwork;
 
-    window.open(`https://${cardanoNetwork}.cexplorer.io/tx/${pendingTx.value}`, '_blank');
+    window.open(`https://${cardanoNetwork}.cexplorer.io/tx/${order.pendingTx}`, '_blank');
 }
 
 </script>
@@ -176,11 +174,6 @@ const openExplorer = () => {
     background: transparent;
     border: none;
     cursor: pointer;
-}
-
-.OrderSummary-subtitle button i {
-    font-size: var(--text-size-1);
-    color: var(--text-a);
 }
 
 .copy-button:hover {

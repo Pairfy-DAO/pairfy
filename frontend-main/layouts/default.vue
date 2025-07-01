@@ -19,12 +19,10 @@ onMounted(()=> auth.checkLocation())
 
 <style scoped>
 .layout {
-  flex-direction: column;
   min-height: 100vh;
 }
 
 .content {
-  overflow-y: auto;
   flex: 1;
 }
 </style>

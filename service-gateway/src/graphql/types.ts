@@ -76,15 +76,18 @@ type Order {
   seller_address: String!
   seller_wallet: String!
   seller_username: String!
-
   rsa_version: Int!
+
   product_id: ID!
+  product_snapshot: String!
   contract_address: String!
   contract_params: String!
   contract_state: Int
   contract_price: Int!
+  contract_quote: Int!
   contract_fee: Int!
   contract_units: Int!
+  asset_name: String!
   asset_price: Float!
 
   watch_until: BigInt!

@@ -12,6 +12,7 @@ export const useOrderStore = defineStore("order", () => {
   const order = ref(null);
   const state = ref(null);
   const finished = ref(null);
+  const pendingTx = ref(null);
 
   const showToast = (message: string, type: ToastType, duration: number) => {
     toastMessage.value = {
@@ -43,5 +44,6 @@ export const useOrderStore = defineStore("order", () => {
     finished,
     toastMessage,
     showToast,
+    pendingTx
   };
 });

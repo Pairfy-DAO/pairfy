@@ -146,3 +146,15 @@ textarea::placeholder {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+.red{
+  color: var(--red-a);
+}
+
+.green{
+  color: var(--green-a);
+}
+
+.blue{
+  color: var(--blue-a);
+}

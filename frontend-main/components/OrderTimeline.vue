@@ -1,70 +1,80 @@
 <template>
-    <div class="timeline">
-        <div class="timeline-item" v-for="item in timeline" :key="item">
-            <div class="timeline-pipe">
-                <div class="timeline-pipe-box">
-                    <div class="diamond">
+    <div class="OrderTimeline">
+        <div class="OrderTimeline-item" v-for="(item, index) in timeline" :key="index">
+     
+            <div class="OrderTimeline-left">
+                <div class="timeline-box">
+                    <div class="timeline-diamond">
                         <template v-if="item.template === 'created'">
-                            <span v-if="!createdStep">{{ item.number }}</span>
+                            <span v-if="!order.pending_block">{{ item.number }}</span>
                             <span v-else>
-                                <i class="pi pi-check" />
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-check-icon lucide-check">
+                                    <path d="M20 6 9 17l-5-5" />
+                                </svg>
                             </span>
                         </template>
                         <template v-if="item.template === 'shipping'">
-                            <span v-if="!shippingStep">{{ item.number }}</span>
+                            <span v-if="!order.shipping_block">{{ item.number }}</span>
                             <span v-else>
-                                <i class="pi pi-check" />
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-check-icon lucide-check">
+                                    <path d="M20 6 9 17l-5-5" />
+                                </svg>
                             </span>
                         </template>
                         <template v-if="item.template === 'received'">
                             <span v-if="!order.finished">{{ item.number }}</span>
                             <span v-else>
-                                <i class="pi pi-check" />
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-check-icon lucide-check">
+                                    <path d="M20 6 9 17l-5-5" />
+                                </svg>
                             </span>
                         </template>
-
                     </div>
                 </div>
-                <div class="timeline-pipe-line" :class="{ disabled: !item.line }" />
+                <div class="timeline-line" :class="{ disabled: !item.line }" />
             </div>
-            <div class="timeline-OrderPage">
-                <div class="timeline-title flex">
+
+            <div class="OrderTimeline-right">
+                <div class="timeline-title">
                     {{ item.title }}
                 </div>
-
-                <div v-if="item.subtitle" class="timeline-subtitle flex">
-
-                    {{ item.subtitle.buyer }}
-
+                <div class="timeline-subtitle" v-if="item.subtitle">
+                    {{ item.subtitle }}
                 </div>
-
-                <div class="timeline-content" :class="{ box: item.type === 'box', button: item.type === 'button' }">
+                <div class="OrderTimeline-content"
+                    :class="{ box: item.type === 'box', button: item.type === 'button' }">
 
                     <template v-if="item.template === 'created'">
-                        <div class="created">
-                            <div class="created-item">
+                        <div class="template">
+                            <div class="template-item">
                                 <span>Status</span>
-                                <span :class="{ red: ['returned', 'appealed', 'canceled'].includes(order.status) }">
-                                    {{ order.status }}
+                                <span :class="{ red: ['returned', 'appealed', 'canceled'].includes(orderData.status) }">
+                                    {{ orderData.status }}
                                 </span>
                             </div>
-                            <div class="created-item">
-                                <span>Fiat Amount</span>
-                                <span>{{ formatUSD(contractFiat) }} USD</span>
+                            <div class="template-item">
+                                <span>USD Amount</span>
+                                <span>{{ formatUSD(orderData.contract_quote) }} USD</span>
                             </div>
-                            <div class="created-item">
+                            <div class="template-item">
                                 <span>Asset Amount</span>
-                                <span>{{ contractPrice }} ADA</span>
+                                <span>{{ orderData.contract_quote }} {{ orderData.asset_name }}</span>
                             </div>
-                            <div class="created-item">
+                            <div class="template-item">
                                 <span>Asset Price</span>
-                                <span>{{ orderData.asset_price }} ADA</span>
+                                <span>{{ orderData.asset_price }} {{ orderData.asset_name }}</span>
                             </div>
-                            <div class="created-item">
+                            <div class="template-item">
                                 <span>Quantity</span>
                                 <span>{{ orderData.contract_units }}</span>
                             </div>
-                            <div class="created-item">
+                            <div class="template-item">
                                 <span>Payment</span>
                                 <span>
                                     <div class="payment flex" @click="openExplorer">
@@ -86,29 +96,27 @@
                                     </div>
                                 </span>
                             </div>
-
                         </div>
                     </template>
 
 
                     <template v-if="item.template === 'shipping'">
-                        <div class="created">
-                            <div class="created-item">
+                        <div class="template">
+                            <div class="template-item">
                                 <span>Status</span>
                                 <span>{{ shippingStatus }}</span>
                             </div>
-                            <div class="created-item">
+                            <div class="template-item">
                                 <span>Delivery date</span>
                                 <span>{{ deliveryDate }}</span>
                             </div>
-                            <div class="created-item">
+                            <div class="template-item">
                                 <span>Guide</span>
                                 <span class="guide flex" v-if="shippingData">
                                     <div class="flex" @click="displayNotesDialog(true)">
                                         <i class="pi pi-envelope" />
                                     </div>
-                                    <div class="flex" @click="openWebsite(shippingData.website)"
-                                        >
+                                    <div class="flex" @click="openWebsite(shippingData.website)">
                                         <i class="pi pi-globe" />
                                     </div>
                                     <div class="flex" style="padding-right: initial; cursor: initial;"> {{
@@ -121,10 +129,11 @@
                     </template>
 
                     <template v-if="item.template === 'received'">
-                       
+                        x
                     </template>
                 </div>
             </div>
+
         </div>
     </div>
 </template>
@@ -135,32 +144,20 @@ import { formatUSD } from '@/utils/utils'
 const order = useOrderStore()
 const orderData = computed(() => order.order)
 
-const contractFiat = ref(0);
+const totalUSD = computed(() => orderData.value.contract_price * orderData.value.asset_price)
+
 const orderPayment = ref({
-            label: "unconfirmed",
-            template: "loading",
-            color: "var(--red-a)"
-        });
+    label: "unconfirmed",
+    template: "loading",
+    color: "var(--red-a)"
+});
 const contractPrice = ref(0);
 const shippingData = ref(null);
 const deliveryDate = ref('None');
-const shippingStep = computed(() => {
-    if (orderData.value?.shipping_block) {
-        return true
-    }
 
-    return false
-});
-const createdStep = computed(() => {
-    if (orderData.value?.pending_block) {
-        return true
-    }
-
-    return false
-});
 
 const shippingStatus = computed(() => {
-    const state = orderData.value?.contract_state;
+    const state = orderData.value.contract_state;
 
     if (state === 0) {
         return "pending"
@@ -189,10 +186,7 @@ const timeline = ref([
     {
         number: 1,
         title: "Created",
-        subtitle: {
-            buyer: "The seller has been notified to prepare your package.",
-            seller: `Please verify the payment and click the "Accept" button.`
-        },
+        subtitle: "The seller has been notified to prepare your package.",
         completed: true,
         type: "box",
         template: "created",
@@ -201,10 +195,7 @@ const timeline = ref([
     {
         number: 2,
         title: "Shipping",
-        subtitle: {
-            buyer: "Use the tracking number to check your shipment.",
-            seller: `Dispatch the package and press the "Dispatched" button.`
-        },
+        subtitle: "Use the tracking number to check your shipment.",
         completed: false,
         type: "box",
         template: "shipping",
@@ -213,10 +204,7 @@ const timeline = ref([
     {
         number: 3,
         title: "Finished",
-        subtitle: {
-            buyer: "Please confirm that the exact product was delivered.",
-            seller: "Accept the order and dispatch the product."
-        },
+        subtitle: "Please confirm that the exact product was delivered.",
         completed: false,
         type: "button",
         template: "received",
@@ -257,21 +245,32 @@ const getPaymentStatus = (pending_block) => {
     }
 
 }
+
+
+const openExplorer = () => {
+    if (!import.meta.client) return
+
+    const cardanoNetwork = useRuntimeConfig().public.cardanoNetwork;
+
+    window.open(`https://${cardanoNetwork}.cexplorer.io/tx/${order.pendingTx}`, '_blank');
+}
+
 </script>
 
 <style lang="css" scoped>
-.timeline {
+.OrderTimeline {
+    width: 100%;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
 }
 
-.timeline-item {
+.OrderTimeline-item {
     display: flex;
-    width: 100%;
+    width: inherit;
 }
 
-.timeline-pipe {
+.OrderTimeline-left {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -279,7 +278,11 @@ const getPaymentStatus = (pending_block) => {
     margin-right: 1rem;
 }
 
-.timeline-pipe-box {
+.OrderTimeline-right {
+    width: inherit;
+}
+
+.timeline-box {
     width: inherit;
     min-height: 50px;
     display: flex;
@@ -287,25 +290,27 @@ const getPaymentStatus = (pending_block) => {
     align-items: center;
 }
 
-.timeline-pipe-line {
+.timeline-line {
     width: 2px;
     height: 100%;
     background: var(--border-a);
 }
 
-.timeline-pipe-line.disabled {
+.timeline-line.disabled {
     background: transparent;
 }
 
-.timeline-body {
+.OrderTimeline-body {
     display: flex;
     flex-direction: column;
     width: inherit;
 }
 
 .timeline-title {
+    display: flex;
     min-height: 50px;
     font-weight: 600;
+    align-items: center;
     font-size: var(--text-size-2);
 }
 
@@ -314,18 +319,17 @@ const getPaymentStatus = (pending_block) => {
     margin-bottom: 1rem;
 }
 
-.timeline-content {
+.OrderTimeline-content {
     border: 1px solid var(--border-a);
-    border-radius: 12px;
-    height: 100%;
+    border-radius: var(--radius-c);
     width: inherit;
 }
 
-.timeline-content.button {
+.OrderTimeline-content.button {
     border: initial
 }
 
-.diamond {
+.timeline-diamond {
     width: 20px;
     height: 20px;
     background: var(--border-a);
@@ -337,23 +341,26 @@ const getPaymentStatus = (pending_block) => {
     border-radius: 4px;
 }
 
-.diamond span {
-    transform: rotate(-45deg);
+.timeline-diamond span {
     font-size: var(--text-size-1);
-    font-weight: 600;
+    transform: rotate(-45deg);
     color: var(--text-a);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.diamond span i {
+.timeline-diamond span i {
     font-size: 10px;
 }
 
-.created {
+.template {
     display: block;
     padding: 1rem;
 }
 
-.created-item {
+.template-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -361,12 +368,12 @@ const getPaymentStatus = (pending_block) => {
     text-transform: capitalize;
 }
 
-.created-item span {
+.template-item span {
     font-weight: 500;
     font-size: var(--text-size-2);
 }
 
-.created-item span:nth-child(1) {
+.template-item span:nth-child(1) {
     color: var(--text-b);
 }
 

@@ -7,11 +7,11 @@ export function getContractPrice(
   assetName: string
 ) {
   try {
-    const ADAUSDT = (price: number, assetPrice: number) =>
+    const ADA = (price: number, assetPrice: number) =>
       convertUSDToLovelace(price, assetPrice);
 
     const handlers: any = {
-      ADAUSDT,
+      ADA,
     };
 
     if (discount) {
@@ -27,6 +27,20 @@ export function getContractPrice(
     throw err;
   }
 }
+
+export function getContractQuote(
+  discount: boolean,
+  discountedPrice: number,
+  originalPrice: number,
+  orderUnits: number
+) {
+  if (discount) {
+    return discountedPrice * orderUnits;
+  } else {
+    return originalPrice * orderUnits;
+  }
+}
+
 
 /**
  * Converts USD to Lovelace.

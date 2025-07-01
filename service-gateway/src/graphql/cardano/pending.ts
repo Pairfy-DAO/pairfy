@@ -1,6 +1,6 @@
 import database from "../../database/client.js";
 import { pendingTransactionBuilder } from "../../cardano/builders/pending.js";
-import { getContractFee, getContractPrice } from "../../lib/index.js";
+import { getContractFee, getContractPrice, getContractQuote } from "../../lib/index.js";
 import { pendingEndpointSchema } from "../../validators/orders.js";
 import {
   ApiGraphQLError,
@@ -12,31 +12,32 @@ import {
 import { redisPrice } from "../../database/redis.js";
 import { insertOrder } from "../../lib/order.js";
 import { chunkMetadata } from "../../lib/metadata.js";
+import { toBase64 } from "../../common/toBase64.js";
 
 export const pendingEndpoint = async (_: any, args: any, context: any) => {
-  if (!context.userData) {
-    throw new ApiGraphQLError(401, "Invalid Credentials", {
-      code: ERROR_CODES.UNAUTHORIZED,
-    });
-  }
-
-  const validateParams = pendingEndpointSchema.safeParse(
-    args.pendingEndpointInput
-  );
-
-  if (!validateParams.success) {
-    throw new ApiGraphQLError(
-      400,
-      `Invalid params ${validateParams.error.flatten()}`,
-      {
-        code: ERROR_CODES.VALIDATION_ERROR,
-      }
-    );
-  }
-
   let connection = null;
 
   try {
+    if (!context.userData) {
+      throw new ApiGraphQLError(401, "Invalid Credentials", {
+        code: ERROR_CODES.UNAUTHORIZED,
+      });
+    }
+
+    const validateParams = pendingEndpointSchema.safeParse(
+      args.pendingEndpointInput
+    );
+
+    if (!validateParams.success) {
+      throw new ApiGraphQLError(
+        400,
+        `Invalid params ${validateParams.error.flatten()}`,
+        {
+          code: ERROR_CODES.VALIDATION_ERROR,
+        }
+      );
+    }
+
     const timestamp = Date.now();
 
     const { userData: USER } = context as { userData: UserToken };
@@ -69,6 +70,8 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
       });
     }
 
+    const assetPrice = parseFloat(getAssetPrice)
+
     //////////////////////////////////////////////////////////////////////////////////// START TRANSACTION
 
     await connection.beginTransaction();
@@ -78,8 +81,15 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
       findProduct.discount_value,
       findProduct.price,
       params.order_units,
-      parseFloat(getAssetPrice),
-      "ADAUSDT"
+      assetPrice,
+      params.asset
+    );
+
+    const contractQuote: number = getContractQuote(
+      findProduct.discount,
+      findProduct.discount_value,
+      findProduct.price,
+      params.order_units
     );
 
     const contractFee: number = getContractFee(contractPrice, 10);
@@ -101,7 +111,7 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
     );
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
+    
     const orderContent = {
       id: BUILDER.threadTokenPolicyId,
       type: "cardano",
@@ -117,12 +127,15 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
       seller_username: findSeller.username,
       rsa_version: findSeller.rsa_version,
       product_id: findProduct.id,
+      product_snapshot: toBase64(findProduct.description.text),
       contract_address: BUILDER.stateMachineAddress,
       contract_params: BUILDER.serializedParams,
       contract_price: contractPrice,
+      contract_quote: contractQuote,
       contract_fee: contractFee,
       contract_units: params.order_units,
-      asset_price: parseFloat(getAssetPrice),
+      asset_name: params.asset,
+      asset_price: assetPrice,
       watch_until: BUILDER.watchUntil,
       pending_until: BUILDER.pendingUntil,
       shipping_until: BUILDER.shippingUntil,
