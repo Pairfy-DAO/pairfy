@@ -19,7 +19,7 @@ In addition, the implementation of other innovative and deterministic trading lo
 - Community-governed with chain vote (DAO constitutional model).
 - The **discount liquidity pool** to reduce the price of products.
 - Use of Cardano Network – Midnight Network 🔥.
-- Free shipping always included.
+- Free shipping is always included.
 - ADA Guarantee as purchase protection.
 - Each trade is managed by an isolated smart-contract.
 - Any member of the community can be a seller (DAO member).
