@@ -1,5 +1,5 @@
 import { database } from "../database/client.js";
-import { getUtxo } from "../lib/index.js";
+import { getUtxo, UtxoData, UtxoResponse } from "../lib/index.js";
 import { pending } from "./pending.js";
 import { returned } from "./returned.js";
 import { locking } from "./locking.js";
@@ -40,15 +40,26 @@ export async function testHandler(job: any) {
       }
     }
 
-    const UTXO = await getUtxo(orderData.id);
+    const result = await getUtxo(orderData.id);
 
-    console.log(UTXO);
-
-
+    const { success, failed, ...UTXO } = result;
 
     //////////////////////////////////////////////////////////// START TRANSACTION
 
     await connection.beginTransaction();
+
+    if (!success && !failed && UTXO) {
+
+      const data: UtxoData = UTXO as UtxoData;
+
+      switch (data.datum.state) {
+        case null:
+          break;
+        case 0n:
+          await pending(connection, timestamp, orderData, data);
+          break;
+      }
+    }
 
     const updateContent = {
       finished: false,
@@ -75,8 +86,6 @@ export async function testHandler(job: any) {
     if (connection) connection.release();
   }
 }
-
-
 
 /** 
 export async function threadtokenQueue(job: any) {

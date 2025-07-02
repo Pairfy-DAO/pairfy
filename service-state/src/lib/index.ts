@@ -7,7 +7,7 @@ import {
   TransactionSchema,
 } from "./types.js";
 import { blockFrostAPI } from "../api/index.js";
-import { Data, fromText, Kupmios, Lucid } from "@lucid-evolution/lucid";
+import { Data, fromText, Kupmios, Lucid, UTxO } from "@lucid-evolution/lucid";
 import { logger } from "@pairfy/common";
 
 const provider = new Kupmios(
@@ -55,17 +55,24 @@ async function getTxMetadata(txHash: string): Promise<MetadataList> {
   return scheme;
 }
 
-type getUtxoResponse = {
+export type UtxoResponseFailed = {
   success: boolean;
   failed: boolean;
-  txInfo: Transaction | null;
-  txMetadata: MetadataList | null;
-  blockTime: number | null;
-  datum: DatumType | null;
-  metadata: string | null;
 };
 
-async function getUtxo(threadtoken: string): Promise<getUtxoResponse> {
+export type UtxoData = {
+  utxo: UTxO,
+  txInfo: Transaction
+  txMetadata: MetadataList;
+  blockTime: number;
+  datum: DatumType;
+  metadata: string;
+  txHash: string
+}
+
+export type UtxoResponse = UtxoResponseFailed & UtxoData;
+
+async function getUtxo(threadtoken: string): Promise<UtxoResponse | UtxoResponseFailed> {
   try {
     const assetUnit = threadtoken + fromText("threadtoken");
 
@@ -74,12 +81,7 @@ async function getUtxo(threadtoken: string): Promise<getUtxoResponse> {
     if (!getUtxo) {
       return {
         success: false,
-        failed: false,
-        txInfo: null,
-        txMetadata: null,
-        blockTime: null,
-        datum: null,
-        metadata: null,
+        failed: false
       };
     }
 
@@ -90,31 +92,27 @@ async function getUtxo(threadtoken: string): Promise<getUtxoResponse> {
     const response = {
       success: true,
       failed: false,
+      utxo: getUtxo,
       txInfo,
       txMetadata,
       blockTime: txInfo.block_time,
       datum: Data.from(getUtxo.datum!, StateMachineDatum),
       metadata: JSON.stringify(txMetadata),
+      txHash: getUtxo.txHash + "#" + getUtxo.outputIndex
     };
 
     return response;
-
   } catch (err: any) {
     logger.error({
-      service: 'service-state',
-      event: 'blockchain.error',
-      message: 'getUtxo error',
-      error: err
+      service: "service-state",
+      event: "blockchain.error",
+      message: "getUtxo error",
+      error: err,
     });
 
     const response = {
       success: false,
-      failed: true,
-      txInfo: null,
-      txMetadata: null,
-      blockTime: null,
-      datum: null,
-      metadata: null,
+      failed: true
     };
 
     return response;

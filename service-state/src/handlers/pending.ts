@@ -1,8 +1,14 @@
 import { getNotificationId } from "@pairfy/common";
-import { HandlerParams } from "./types.js";
+import { UtxoData, UtxoResponse } from "../lib/index.js";
+import { Connection } from "mysql2/promise";
+import { updateOrder } from "../common/updateOrder.js";
 
-async function pending(params: HandlerParams) {
-
+export async function pending(
+  connection: Connection,
+  timestamp: number,
+  orderData: any,
+  data: UtxoData
+) {
   const updateQuery = `
     UPDATE orders
     SET scanned_at = ?,
@@ -14,33 +20,35 @@ async function pending(params: HandlerParams) {
         pending_metadata = ?
     WHERE id = ?`;
 
-  const statusLog = "pending";
+  const updateContent = {
+    scanned_at: timestamp,
+    status: "pending",
+    contract_address: data.utxo?.address,
+    contract_state: data?.datum?.state,
+    pending_tx: data.txHash,
+    pending_block: data.blockTime,
+    pending_metadata: data.metadata,
+  };
 
-  const txHash = params.utxo.txHash + "#" + params.utxo.outputIndex;
-
-  await params.connection.execute(updateQuery, [
-    params.timestamp,
-    statusLog,
-    params.utxo.address,
-    params.utxo.data.state,
-    txHash,
-    params.utxo.block_time,
-    params.utxo.metadata,
-    params.threadtoken,
-  ]);
+  await updateOrder(
+    connection,
+    orderData.id,
+    orderData.schema_v,
+    updateContent
+  );
 
   /////////////////////////////////////////////////////////////////////
-
+/** 
   const notifications = [
     {
       id: getNotificationId(),
       type: "order",
       title: "Payment Detected",
-      owner: params.buyer_pubkeyhash,
+      owner: data.buyer_pubkeyhash,
       data: JSON.stringify({
-        threadtoken: params.threadtoken,
-        buyer_address: params.buyer_address,
-        country: params.country
+        threadtoken: data.threadtoken,
+        buyer_address: data.buyer_address,
+        country: data.country,
       }),
       message: `The payment is being processed on the network.`,
     },
@@ -48,13 +56,13 @@ async function pending(params: HandlerParams) {
       id: getNotificationId(),
       type: "order",
       title: "New Purchase",
-      owner: params.seller_id,
+      owner: data.seller_id,
       data: JSON.stringify({
-        threadtoken: params.threadtoken,
-        seller_address: params.seller_address,
-        country: params.country
+        threadtoken: data.threadtoken,
+        seller_address: data.seller_address,
+        country: data.country,
       }),
-      message: `Verify payment and accept the order.`
+      message: `Verify payment and accept the order.`,
     },
   ];
 
@@ -68,15 +76,15 @@ async function pending(params: HandlerParams) {
     ) VALUES (?, ?, ?, ?, ?)
   `;
 
-  const eventId = params.threadtoken + statusLog;
+  const eventId = data.threadtoken + statusLog;
 
-  await params.connection.execute(eventSchema, [
+  await data.connection.execute(eventSchema, [
     eventId,
     "gateway",
     "CreateNotification",
     JSON.stringify(notifications),
     0,
   ]);
-}
 
-export { pending };
+  */
+}
