@@ -2,7 +2,7 @@ import { Queue, Worker } from "bullmq";
 import { testHandler, threadtokenQueue } from "./handlers/index.js";
 import { redisBooks, redisState } from "./database/redis.js";
 import { ERROR_EVENTS, logger, sleep } from "@pairfy/common";
-import { findOrdersCustom } from "./lib/order.js";
+import { findOrdersCustom, saveOrderStatus } from "./lib/order.js";
 import { database } from "./database/client.js";
 import { catchError } from "./utils/index.js";
 
@@ -60,8 +60,6 @@ const main = async () => {
       .then(() => console.log("✅ redisBooks connected"))
       .catch((err: any) => catchError(err));
 
-    ////////////////////////////////////////////////////////////////////////////////////
-
     database.connect({
       host: process.env.DATABASE_HOST,
       port: databasePort,
@@ -92,7 +90,10 @@ const main = async () => {
         backoffStrategy: () => -1,
       },
       connection: { url: process.env.REDIS_STATE_HOST },
-      concurrency: 1, //TEST
+      concurrency: 2, //TEST
+      lockDuration: 120_000,
+      stalledInterval: 120_000,
+      maxStalledCount: 1,
     });
 
     worker.on("failed", async (job: any, err) => {
@@ -100,15 +101,32 @@ const main = async () => {
     });
 
     worker.on("completed", async (job: any, result) => {
-      const { id, finished } = result;
+      try {
+        const { id, finished } = result;
 
-      console.log("✅ Completed", id);
+        console.log("✅ Completed", id);
 
-      if (finished) {
-        const removed = await queue.removeJobScheduler(id);
-        if (removed) {
-          logger.info("✅ Deleted", id);
+        if (finished) {
+          const removed = await queue.removeJobScheduler(id);
+
+          if (removed) {
+            const orderStatus = {
+              status: "finished",
+              scan_until: null,
+            };
+
+            await saveOrderStatus(redisState.client, id, orderStatus, 3600);
+
+            console.log("✅ Deleted", id);
+          }
         }
+      } catch (err) {
+        logger.error({
+          service: "service-state",
+          event: "bull.error",
+          message: "bull completed error",
+          error: err,
+        });
       }
     });
 
@@ -127,10 +145,10 @@ const main = async () => {
     ERROR_EVENTS.forEach((e: string) =>
       process.on(e, async (err) => {
         logger.error({
-          service: 'service-state',
-          event: 'signal.error',
+          service: "service-state",
+          event: "signal.error",
           message: e,
-          error: err
+          error: err,
         });
         await worker.close();
         await database.client.end();
@@ -139,8 +157,6 @@ const main = async () => {
         process.exit(1);
       })
     );
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////
 
     let connection: any = null;
 
@@ -167,7 +183,7 @@ const main = async () => {
             const createJob = await queue.upsertJobScheduler(
               order.id,
               {
-                every: 30_000,
+                every: 60_000,
                 jobId: order.id,
               },
               {
@@ -180,13 +196,15 @@ const main = async () => {
                 },
               }
             );
-            console.log("✅ Job added", createJob.name);
+
             logger.info({
               service: "service-state",
               event: "job.created",
               message: "job created",
               jobId: createJob.name,
             });
+
+            console.log("✅ Job added", createJob.name);
           } catch (err) {
             logger.error({
               service: "service-state",
@@ -201,13 +219,12 @@ const main = async () => {
         }
 
         /////////////////////////////////////////////////////////////////////////////// ITERATE ORDERS END
-
       } catch (err: any) {
         logger.error({
           service: "service-state",
           event: "mysql.error",
           message: "mysql error",
-          error: err
+          error: err,
         });
 
         if (connection) await connection.rollback();

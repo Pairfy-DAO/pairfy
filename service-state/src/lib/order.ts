@@ -28,3 +28,36 @@ export async function findOrdersCustom(
 
   return rows;
 }
+
+
+export type OrderStatus = {
+  status: string;
+  scan_until: number | null;
+};
+
+export async function saveOrderStatus(
+  client: any,
+  id: string,
+  status: OrderStatus,
+  ttlSeconds = 3600
+): Promise<void> {
+  return await client.set(`order:${id}`, JSON.stringify(status), {
+    expiration: { type: "EX", value: ttlSeconds },
+  });
+}
+
+export async function getOrderStatus(
+  client: any,
+  id: string
+): Promise<OrderStatus | null> {
+
+  try {
+    const result = await client.get(`order:${id}`);
+  
+    if (!result) return null;
+
+    return JSON.parse(result) as OrderStatus;
+  } catch (err) {
+    throw err
+  }
+}

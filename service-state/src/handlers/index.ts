@@ -11,24 +11,33 @@ import { appealed } from "./appealed.js";
 import { HandlerParams } from "./types.js";
 import { logger, sleep } from "@pairfy/common";
 import { updateOrder } from "../common/updateOrder.js";
-import { findFinishedOrder } from "../common/findFinishedOrder.js";
+import { redisState } from "../database/redis.js";
+import { getOrderStatus } from "../lib/order.js";
 
 export async function testHandler(job: any) {
-  const timestamp = Date.now();
-
   let connection = null;
 
   try {
-    const orderData = job.data;
+    const timestamp = Date.now();
 
-    console.log("ORDER: ", orderData);
+    const orderData = job.data;
 
     connection = await database.client.getConnection();
 
-    const isFinished = await findFinishedOrder(connection, orderData.id);
+    const orderStatus = await getOrderStatus(redisState.client, orderData.id);
 
-    if (isFinished) {
-      return { finished: true, id: orderData.id };
+    if (orderStatus) {
+      const { status, scan_until } = orderStatus;
+
+      if (status === "finished") {
+        return { finished: true, id: orderData.id };
+      }
+
+      if (scan_until) {
+        if (scan_until < Date.now()) {
+          return { finished: false, id: orderData.id };
+        }
+      }
     }
 
     //////////////////////////////////////////////////////////// START TRANSACTION
@@ -51,10 +60,6 @@ export async function testHandler(job: any) {
     await connection.commit();
 
     //////////////////////////////////////////////////////////// TRANSACTION END
-    
-    console.log("SLEEP START");
-    await sleep(120_000);
-    console.log("SLEEP END");
 
     return { finished: true, id: orderData.id };
   } catch (err) {
