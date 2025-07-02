@@ -11,6 +11,7 @@ import { appealed } from "./appealed.js";
 import { HandlerParams } from "./types.js";
 import { logger, sleep } from "@pairfy/common";
 import { updateOrder } from "../common/updateOrder.js";
+import { findFinishedOrder } from "../common/findFinishedOrder.js";
 
 export async function testHandler(job: any) {
   const timestamp = Date.now();
@@ -19,10 +20,18 @@ export async function testHandler(job: any) {
 
   try {
     const orderData = job.data;
-    
+
     console.log("ORDER: ", orderData);
 
     connection = await database.client.getConnection();
+
+    const isFinished = await findFinishedOrder(connection, orderData.id);
+
+    if (isFinished) {
+      return { finished: true, id: orderData.id };
+    }
+
+    //////////////////////////////////////////////////////////// START TRANSACTION
 
     await connection.beginTransaction();
 
@@ -40,6 +49,8 @@ export async function testHandler(job: any) {
     );
 
     await connection.commit();
+
+    //////////////////////////////////////////////////////////// TRANSACTION END
     
     console.log("SLEEP START");
     await sleep(120_000);
@@ -47,8 +58,6 @@ export async function testHandler(job: any) {
 
     return { finished: true, id: orderData.id };
   } catch (err) {
-    console.log(err)
-
     if (connection) await connection.rollback();
     throw err;
   } finally {

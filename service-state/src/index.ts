@@ -1,4 +1,4 @@
-import { Job, Queue, Worker } from "bullmq";
+import { Queue, Worker } from "bullmq";
 import { testHandler, threadtokenQueue } from "./handlers/index.js";
 import { redisBooks, redisState } from "./database/redis.js";
 import { ERROR_EVENTS, logger, sleep } from "@pairfy/common";
@@ -41,7 +41,7 @@ const main = async () => {
       DATABASE_PORT: databasePort,
       SCAN_RANGE: scanRange,
     });
-    
+
     await redisState
       .connect({
         url: process.env.REDIS_STATE_HOST,
@@ -92,21 +92,23 @@ const main = async () => {
         backoffStrategy: () => -1,
       },
       connection: { url: process.env.REDIS_STATE_HOST },
-      concurrency: 1,  //TEST
+      concurrency: 1, //TEST
     });
 
     worker.on("failed", async (job: any, err) => {
-      console.log("FAILED", job.id, err);
+      console.error("❌ Failed", job.id, err);
     });
 
     worker.on("completed", async (job: any, result) => {
-      console.log("COMPLETED", job.id);
-
       const { id, finished } = result;
 
+      console.log("✅ Completed", id);
+
       if (finished) {
-        await queue.removeJobScheduler(id);
-        console.log("Expired");
+        const removed = await queue.removeJobScheduler(id);
+        if (removed) {
+          logger.info("✅ Deleted", id);
+        }
       }
     });
 
@@ -114,17 +116,22 @@ const main = async () => {
       logger.error(err);
     });
 
-    worker.on("stalled", (job: any) => {
-      logger.error("STALLED", job.id);
+    worker.on("stalled", (jobId: any) => {
+      console.log("⚠️ Stalled", jobId);
     });
 
     worker.on("drained", () => {
-      logger.error("DRAINED");
+      console.log("✅ Drained");
     });
 
     ERROR_EVENTS.forEach((e: string) =>
       process.on(e, async (err) => {
-        logger.error(err);
+        logger.error({
+          service: 'service-state',
+          event: 'signal.error',
+          message: e,
+          error: err
+        });
         await worker.close();
         await database.client.end();
         await redisState.client.close();
@@ -153,6 +160,8 @@ const main = async () => {
           console.log("🚫 There are no more orders.");
         }
 
+        /////////////////////////////////////////////////////////////////////////////// ITERATE ORDERS
+
         for (const order of findOrders) {
           try {
             const createJob = await queue.upsertJobScheduler(
@@ -171,15 +180,35 @@ const main = async () => {
                 },
               }
             );
-
             console.log("✅ Job added", createJob.name);
+            logger.info({
+              service: "service-state",
+              event: "job.created",
+              message: "job created",
+              jobId: createJob.name,
+            });
           } catch (err) {
-            logger.error(err);
+            logger.error({
+              service: "service-state",
+              event: "job.error",
+              message: "job error",
+              error: err,
+              jobId: order.id,
+            });
+
             continue;
           }
         }
+
+        /////////////////////////////////////////////////////////////////////////////// ITERATE ORDERS END
+
       } catch (err: any) {
-        logger.error(err);
+        logger.error({
+          service: "service-state",
+          event: "mysql.error",
+          message: "mysql error",
+          error: err
+        });
 
         if (connection) await connection.rollback();
       } finally {
