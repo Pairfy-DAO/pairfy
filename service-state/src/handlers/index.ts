@@ -40,12 +40,18 @@ export async function testHandler(job: any) {
       }
     }
 
+    const UTXO = await getUtxo(orderData.id);
+
+    console.log(UTXO);
+
+
+
     //////////////////////////////////////////////////////////// START TRANSACTION
 
     await connection.beginTransaction();
 
     const updateContent = {
-      finished: true,
+      finished: false,
       scanned_at: timestamp,
       status: "created",
     };
@@ -61,7 +67,7 @@ export async function testHandler(job: any) {
 
     //////////////////////////////////////////////////////////// TRANSACTION END
 
-    return { finished: true, id: orderData.id };
+    return { finished: false, id: orderData.id };
   } catch (err) {
     if (connection) await connection.rollback();
     throw err;
@@ -70,6 +76,9 @@ export async function testHandler(job: any) {
   }
 }
 
+
+
+/** 
 export async function threadtokenQueue(job: any) {
   let connection = null;
 
@@ -182,3 +191,4 @@ export async function threadtokenQueue(job: any) {
     if (connection) connection.release();
   }
 }
+*/

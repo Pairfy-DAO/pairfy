@@ -47,17 +47,18 @@ async function getTxInfo(utxo: UTxO): Promise<GetTxInfoResponse> {
 
 //////////////////////////////////////////////
 
-async function getUtxo(threadtoken: string): Promise<UtxoResponse> {
-  let response = {
-    code: 0,
-    utxo: {},
-  };
+async function getUtxo(threadtoken: string): Promise<boolean> {
 
   try {
     const assetUnit = threadtoken + fromText("threadtoken");
 
     const getUtxo = await lucid.utxoByUnit(assetUnit);
 
+    console.log(getUtxo)
+
+    return true
+
+/*
     if (!getUtxo) {
       response = {
         code: 404,
@@ -76,11 +77,11 @@ async function getUtxo(threadtoken: string): Promise<UtxoResponse> {
         },
       };
     }
+    */
   } catch (err: any) {
     logger.error(err);
-  } finally {
-    return response;
-  }
+    return false
+  } 
 }
 
 export { StateMachineDatum, lucid, getUtxo };

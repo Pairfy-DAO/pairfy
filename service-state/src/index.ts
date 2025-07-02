@@ -1,5 +1,5 @@
 import { Queue, Worker } from "bullmq";
-import { testHandler, threadtokenQueue } from "./handlers/index.js";
+import { testHandler } from "./handlers/index.js";
 import { redisBooks, redisState } from "./database/redis.js";
 import { ERROR_EVENTS, logger, sleep } from "@pairfy/common";
 import { findOrdersCustom, saveOrderStatus } from "./lib/order.js";
