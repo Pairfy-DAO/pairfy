@@ -1,53 +1,92 @@
 import { Data } from "@lucid-evolution/lucid";
-
-export interface UtxoResponse {
-  code: number;
-  utxo: any;
-}
+import { z } from "zod";
 
 export const StateMachineDatum = Data.Object({
   state: Data.Integer(),
   delivery: Data.Nullable(Data.Integer()),
 });
 
-type DatumType = Data.Static<typeof StateMachineDatum>;
+export type DatumType = typeof StateMachineDatum;
 
-const DatumType = StateMachineDatum as unknown as DatumType;
+export type DatumTypeStatic = Data.Static<typeof StateMachineDatum>;
+////////////////////////////////////////////////////////////////////////
 
-export interface TransactionSchema {
-  hash: string; // Transaction hash
-  block: string; // Block hash
-  block_height: number; // Block number
-  block_time: number; // Block creation time in UNIX time
-  slot: number; // Slot number
-  index: number; // Transaction index within the block
-  output_amount: Array<{
-    unit: string; // The unit of the value
-    quantity: string; // The quantity of the unit
-  }>; // The sum of all the UTXO per asset
-  fees: string; // Fees of the transaction in Lovelaces
-  deposit: string; // Deposit within the transaction in Lovelaces
-  size: number; // Size of the transaction in Bytes
-  invalid_before: string | null; // Left (included) endpoint of the timelock validity intervals
-  invalid_hereafter: string | null; // Right (excluded) endpoint of the timelock validity intervals
-  utxo_count: number; // Count of UTXOs within the transaction
-  withdrawal_count: number; // Count of the withdrawals within the transaction
-  mir_cert_count: number; // Count of the MIR certificates within the transaction
-  delegation_count: number; // Count of the delegations within the transaction
-  stake_cert_count: number; // Count of the stake keys (de)registration within the transaction
-  pool_update_count: number; // Count of the stake pool registration and update certificates within the transaction
-  pool_retire_count: number; // Count of the stake pool retirement certificates within the transaction
-  asset_mint_or_burn_count: number; // Count of asset mints and burns within the transaction
-  redeemer_count: number; // Count of redeemers within the transaction
-  valid_contract: boolean; // True if contract script passed validation
-}
+export type OutputAmount = {
+  unit: string;
+  quantity: string;
+};
 
-interface MetadataItem {
-  label: string; // Metadata label
-  json_metadata: string | { [key: string]: any }; // Content of the metadata
-}
+export type Transaction = {
+  hash: string;
+  block: string;
+  block_height: number;
+  block_time: number;
+  slot: number;
+  index: number;
+  output_amount: OutputAmount[];
+  fees: string;
+  deposit: string;
+  size: number;
+  invalid_before: string | null;
+  invalid_hereafter: string | null;
+  utxo_count: number;
+  withdrawal_count: number;
+  mir_cert_count: number;
+  delegation_count: number;
+  stake_cert_count: number;
+  pool_update_count: number;
+  pool_retire_count: number;
+  asset_mint_or_burn_count: number;
+  redeemer_count: number;
+  valid_contract: boolean;
+};
 
-export type MetadataArray = MetadataItem[];
+export type MetadataItem = {
+  label: string;
+  json_metadata: {
+    msg: string[];
+  };
+};
 
-export type GetTxInfoResponse = TransactionSchema & { metadata: MetadataArray };
+export type MetadataList = MetadataItem[];
 
+const OutputAmountSchema = z.object({
+  unit: z.string(),
+  quantity: z.string(),
+});
+
+export const TransactionSchema = z.object({
+  hash: z.string(),
+  block: z.string(),
+  block_height: z.number(),
+  block_time: z.number(),
+  slot: z.number(),
+  index: z.number(),
+  output_amount: z.array(OutputAmountSchema),
+  fees: z.string(),
+  deposit: z.string(),
+  size: z.number(),
+  invalid_before: z.string().nullable(),
+  invalid_hereafter: z.string().nullable(),
+  utxo_count: z.number(),
+  withdrawal_count: z.number(),
+  mir_cert_count: z.number(),
+  delegation_count: z.number(),
+  stake_cert_count: z.number(),
+  pool_update_count: z.number(),
+  pool_retire_count: z.number(),
+  asset_mint_or_burn_count: z.number(),
+  redeemer_count: z.number(),
+  valid_contract: z.boolean(),
+});
+
+
+
+const MetadataItemSchema = z.object({
+  label: z.string(),
+  json_metadata: z.object({
+    msg: z.array(z.string())
+  })
+});
+
+export const MetadataListSchema = z.array(MetadataItemSchema);

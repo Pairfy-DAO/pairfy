@@ -13,7 +13,7 @@
     "node": ">=20.10.0"
   },
   "dependencies": {
-    "@lucid-evolution/lucid": "^0.4.14",
+    "@lucid-evolution/lucid": "^0.4.29",
     "@pairfy/common": "^1.0.249",
     "@types/axios": "^0.9.36",
     "axios": "^1.7.8",
@@ -21,7 +21,8 @@
     "ioredis": "^5.4.1",
     "mysql2": "^3.11.4",
     "nanoid": "^5.1.5",
-    "redis": "^4.7.0"
+    "redis": "^4.7.0",
+    "zod": "^3.25.69"
   },
   "devDependencies": {
     "@types/node": "^22.9.0",
