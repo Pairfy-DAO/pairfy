@@ -13,22 +13,30 @@ import { logger, sleep } from "@pairfy/common";
 import { updateOrder } from "../common/updateOrder.js";
 import { redisState } from "../database/redis.js";
 import { getOrderStatus, saveOrderStatus } from "../lib/order.js";
+import { findOrderById } from "../common/findOrderById.js";
 
-export async function testHandler(job: any) {
+export type jobResponse = {
+  id: string;
+  finished: boolean;
+};
+
+export async function testHandler(job: any): Promise<jobResponse> {
   let connection = null;
 
   try {
     const timestamp = Date.now();
 
-    const orderData = job.data;
+    const { id } = job.data;
 
     connection = await database.client.getConnection();
 
-    //findOrder query every iteration
+    const ORDER = await findOrderById(connection, id);
 
-    //SAVE cached order EX per state
+    if (!ORDER) {
+      throw new Error("findOrderError not found.");
+    }
 
-    const result = await getUtxo(orderData.id);
+    const result = await getUtxo(ORDER.id);
 
     const { success, failed, ...utxoData } = result;
 
@@ -36,19 +44,21 @@ export async function testHandler(job: any) {
 
     await connection.beginTransaction();
 
+    let response: jobResponse = { id: ORDER.id, finished: ORDER.finished };
+
     if (!success && !failed) {
-      const updateContent = {
-        scanned_at: timestamp,
-      };
+      if (timestamp > ORDER.watch_until) {
 
-      await updateOrder(
-        connection,
-        orderData.id,
-        orderData.schema_v,
-        updateContent
-      );
+        await updateOrder(connection, ORDER.id, ORDER.schema_v, {
+          status: 'expired',
+          finished: true,
+          scanned_at: timestamp,
+        });
 
-      return { finished: orderData.finished, id: orderData.id };
+        response.finished = true;
+
+        return response;
+      }
     }
 
     if (success && !failed && utxoData) {
@@ -58,9 +68,11 @@ export async function testHandler(job: any) {
         case null:
           break;
         case 0n:
-          return await pending(connection, timestamp, orderData, data);
+          response = await pending(connection, timestamp, ORDER, data);
       }
     }
+
+    return response;
 
     //////////////////////////////////////////////////////////// TRANSACTION END
   } catch (err) {

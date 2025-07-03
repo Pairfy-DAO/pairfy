@@ -1,11 +1,11 @@
 import { Connection, RowDataPacket } from "mysql2/promise";
 
-export async function findFinishedOrder(
+export async function findOrderById(
   connection: Connection,
   id: string
 ): Promise<any> {
   const [rows] = await connection.execute<RowDataPacket[]>(
-    `SELECT finished FROM orders WHERE id = ? LIMIT 1`,
+    `SELECT * FROM orders WHERE id = ? LIMIT 1`,
     [id]
   );
 

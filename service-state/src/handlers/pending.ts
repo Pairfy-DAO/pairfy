@@ -2,14 +2,15 @@ import { createEvent, getNotificationId } from "@pairfy/common";
 import { UtxoData } from "../lib/index.js";
 import { Connection } from "mysql2/promise";
 import { updateOrder } from "../common/updateOrder.js";
+import { jobResponse } from "./index.js";
+
 
 export async function pending(
   connection: Connection,
   timestamp: number,
   orderData: any,
   data: UtxoData
-) {
-
+): Promise<jobResponse> {
   if (!orderData.pending_notified) {
     const notifications = [
       {
@@ -48,16 +49,15 @@ export async function pending(
     );
   }
 
-
   const updateContent = {
-    scanned_at: timestamp,
     status: "pending",
     contract_address: data.utxo.address,
     contract_state: data.datum.state,
     pending_tx: data.txHash,
     pending_block: data.blockTime,
     pending_metadata: data.metadata,
-    pending_notified: true // check booleans
+    pending_notified: true,
+    scanned_at: timestamp,
   };
 
   await updateOrder(
@@ -69,5 +69,5 @@ export async function pending(
 
   await connection.commit();
 
-  return { finished: false, id: orderData.id };
+  return { id: orderData.id, finished: false};
 }
