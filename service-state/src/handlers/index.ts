@@ -12,7 +12,7 @@ import { HandlerParams } from "./types.js";
 import { logger, sleep } from "@pairfy/common";
 import { updateOrder } from "../common/updateOrder.js";
 import { redisState } from "../database/redis.js";
-import { getOrderStatus } from "../lib/order.js";
+import { getOrderStatus, saveOrderStatus } from "../lib/order.js";
 
 export async function testHandler(job: any) {
   let connection = null;
@@ -24,61 +24,45 @@ export async function testHandler(job: any) {
 
     connection = await database.client.getConnection();
 
-    const orderStatus = await getOrderStatus(redisState.client, orderData.id);
+    //findOrder query every iteration
 
-    if (orderStatus) {
-      const { status, scan_until } = orderStatus;
-
-      if (status === "finished") {
-        return { finished: true, id: orderData.id };
-      }
-
-      if (scan_until) {
-        if (scan_until < Date.now()) {
-          return { finished: false, id: orderData.id };
-        }
-      }
-    }
+    //SAVE cached order EX per state
 
     const result = await getUtxo(orderData.id);
 
-    const { success, failed, ...UTXO } = result;
+    const { success, failed, ...utxoData } = result;
 
     //////////////////////////////////////////////////////////// START TRANSACTION
 
     await connection.beginTransaction();
 
-    if (!success && !failed && UTXO) {
+    if (!success && !failed) {
+      const updateContent = {
+        scanned_at: timestamp,
+      };
 
-      const data: UtxoData = UTXO as UtxoData;
+      await updateOrder(
+        connection,
+        orderData.id,
+        orderData.schema_v,
+        updateContent
+      );
+
+      return { finished: orderData.finished, id: orderData.id };
+    }
+
+    if (success && !failed && utxoData) {
+      const data: UtxoData = utxoData as UtxoData;
 
       switch (data.datum.state) {
         case null:
           break;
         case 0n:
-          await pending(connection, timestamp, orderData, data);
-          break;
+          return await pending(connection, timestamp, orderData, data);
       }
     }
 
-    const updateContent = {
-      finished: false,
-      scanned_at: timestamp,
-      status: "created",
-    };
-
-    await updateOrder(
-      connection,
-      orderData.id,
-      orderData.schema_v,
-      updateContent
-    );
-
-    await connection.commit();
-
     //////////////////////////////////////////////////////////// TRANSACTION END
-
-    return { finished: false, id: orderData.id };
   } catch (err) {
     if (connection) await connection.rollback();
     throw err;

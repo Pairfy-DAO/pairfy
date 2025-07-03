@@ -2,7 +2,7 @@ import { Queue, Worker } from "bullmq";
 import { testHandler } from "./handlers/index.js";
 import { redisBooks, redisState } from "./database/redis.js";
 import { ERROR_EVENTS, logger, sleep } from "@pairfy/common";
-import { findOrdersCustom, saveOrderStatus } from "./lib/order.js";
+import { findOrdersCustom } from "./lib/order.js";
 import { database } from "./database/client.js";
 import { catchError } from "./utils/index.js";
 
@@ -110,13 +110,6 @@ const main = async () => {
           const removed = await queue.removeJobScheduler(id);
 
           if (removed) {
-            const orderStatus = {
-              status: "finished",
-              scan_until: null,
-            };
-
-            await saveOrderStatus(redisState.client, id, orderStatus, 3600);
-
             console.log("✅ Deleted", id);
           }
         }

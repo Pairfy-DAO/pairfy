@@ -1,5 +1,5 @@
-import { getNotificationId } from "@pairfy/common";
-import { UtxoData, UtxoResponse } from "../lib/index.js";
+import { createEvent, getNotificationId } from "@pairfy/common";
+import { UtxoData } from "../lib/index.js";
 import { Connection } from "mysql2/promise";
 import { updateOrder } from "../common/updateOrder.js";
 
@@ -9,25 +9,55 @@ export async function pending(
   orderData: any,
   data: UtxoData
 ) {
-  const updateQuery = `
-    UPDATE orders
-    SET scanned_at = ?,
-        status_log = ?,
-        contract_address = ?,
-        contract_state = ?,
-        pending_tx = ?,
-        pending_block = ?,
-        pending_metadata = ?
-    WHERE id = ?`;
+
+  if (!orderData.pending_notified) {
+    const notifications = [
+      {
+        id: getNotificationId(),
+        type: "order",
+        title: "Payment Detected",
+        owner: orderData.buyer_pubkeyhash,
+        data: JSON.stringify({
+          threadtoken: orderData.id,
+          buyer_address: orderData.buyer_address,
+          country: orderData.country,
+        }),
+        message: `The payment is being processed on the network.`,
+      },
+      {
+        id: getNotificationId(),
+        type: "order",
+        title: "New Purchase",
+        owner: orderData.seller_id,
+        data: JSON.stringify({
+          threadtoken: orderData.id,
+          seller_address: orderData.seller_address,
+          country: orderData.country,
+        }),
+        message: `Verify payment and accept the order.`,
+      },
+    ];
+
+    await createEvent(
+      connection,
+      timestamp,
+      "service-gateway",
+      "CreateNotifications",
+      JSON.stringify(notifications),
+      orderData.buyer_pubkeyhash
+    );
+  }
+
 
   const updateContent = {
     scanned_at: timestamp,
     status: "pending",
-    contract_address: data.utxo?.address,
-    contract_state: data?.datum?.state,
+    contract_address: data.utxo.address,
+    contract_state: data.datum.state,
     pending_tx: data.txHash,
     pending_block: data.blockTime,
     pending_metadata: data.metadata,
+    pending_notified: true // check booleans
   };
 
   await updateOrder(
@@ -37,54 +67,7 @@ export async function pending(
     updateContent
   );
 
-  /////////////////////////////////////////////////////////////////////
-/** 
-  const notifications = [
-    {
-      id: getNotificationId(),
-      type: "order",
-      title: "Payment Detected",
-      owner: data.buyer_pubkeyhash,
-      data: JSON.stringify({
-        threadtoken: data.threadtoken,
-        buyer_address: data.buyer_address,
-        country: data.country,
-      }),
-      message: `The payment is being processed on the network.`,
-    },
-    {
-      id: getNotificationId(),
-      type: "order",
-      title: "New Purchase",
-      owner: data.seller_id,
-      data: JSON.stringify({
-        threadtoken: data.threadtoken,
-        seller_address: data.seller_address,
-        country: data.country,
-      }),
-      message: `Verify payment and accept the order.`,
-    },
-  ];
+  await connection.commit();
 
-  const eventSchema = `
-    INSERT IGNORE INTO events (
-    id,
-    source,
-    type,
-    data,
-    spec_version
-    ) VALUES (?, ?, ?, ?, ?)
-  `;
-
-  const eventId = data.threadtoken + statusLog;
-
-  await data.connection.execute(eventSchema, [
-    eventId,
-    "gateway",
-    "CreateNotification",
-    JSON.stringify(notifications),
-    0,
-  ]);
-
-  */
+  return { finished: false, id: orderData.id };
 }

@@ -29,9 +29,7 @@ export async function findOrdersCustom(
   return rows;
 }
 
-
 export type OrderStatus = {
-  status: string;
   scan_until: number | null;
 };
 
