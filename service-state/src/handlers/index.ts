@@ -14,6 +14,7 @@ import { updateOrder } from "../common/updateOrder.js";
 import { redisState } from "../database/redis.js";
 import { getOrderStatus, saveOrderStatus } from "../lib/order.js";
 import { findOrderById } from "../common/findOrderById.js";
+import { expired } from "./expired.js";
 
 export type jobResponse = {
   id: string;
@@ -33,30 +34,26 @@ export async function testHandler(job: any): Promise<jobResponse> {
     const ORDER = await findOrderById(connection, id);
 
     if (!ORDER) {
-      throw new Error("findOrderError not found.");
+      return { id, finished: true };
     }
 
     const result = await getUtxo(ORDER.id);
 
     const { success, failed, ...utxoData } = result;
 
+    console.log(success, failed);
+
+    let response: jobResponse = { id: ORDER.id, finished: ORDER.finished };
+
     //////////////////////////////////////////////////////////// START TRANSACTION
 
     await connection.beginTransaction();
 
-    let response: jobResponse = { id: ORDER.id, finished: ORDER.finished };
-
     if (!success && !failed) {
       if (timestamp > ORDER.watch_until) {
+        console.log("🕒 Expired", ORDER.id);
 
-        await updateOrder(connection, ORDER.id, ORDER.schema_v, {
-          status: 'expired',
-          finished: true,
-          scanned_at: timestamp,
-        });
-
-        response.finished = true;
-
+        response = await expired(connection, timestamp, ORDER);
         return response;
       }
     }

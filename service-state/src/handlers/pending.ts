@@ -69,5 +69,5 @@ export async function pending(
 
   await connection.commit();
 
-  return { id: orderData.id, finished: false};
+  return { id: orderData.id, finished: false };
 }
