@@ -22,6 +22,7 @@ export async function pending(
           threadtoken: orderData.id,
           buyer_address: orderData.buyer_address,
           country: orderData.country,
+          buyer_wallet: orderData.buyer_wallet
         }),
         message: `The payment is being processed on the network.`,
       },
@@ -34,6 +35,7 @@ export async function pending(
           threadtoken: orderData.id,
           seller_address: orderData.seller_address,
           country: orderData.country,
+          seller_wallet: orderData.seller_wallet
         }),
         message: `Verify payment and accept the order.`,
       },

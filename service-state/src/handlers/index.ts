@@ -49,7 +49,7 @@ export async function testHandler(job: any): Promise<jobResponse> {
 
     await connection.beginTransaction();
 
-    if (!success && !failed) {
+    if (!success && !failed && ORDER.status === "created") {
       if (timestamp > ORDER.watch_until) {
         console.log("🕒 Expired", ORDER.id);
 
