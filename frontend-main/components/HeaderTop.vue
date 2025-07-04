@@ -52,7 +52,6 @@ const network = useRuntimeConfig().public.cardanoNetwork
     justify-content: center;
     box-sizing: border-box;
     color: var(--text-w);
-    z-index: 12000;
     height: 2.5rem;
     width: 100%;
     top: 0;

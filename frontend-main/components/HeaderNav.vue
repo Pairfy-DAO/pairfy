@@ -1,19 +1,35 @@
 <template>
     <div class="HeaderNav">
         <nav class="HeaderNav-body">
-            <ul class="HeaderNav-body-links">
-                <li><a href="#">How to sell</a></li>
-                <li><a href="#">How it works</a></li>
-                <li><a href="#">Governance</a></li>
-                <li><a href="#">Community</a></li>
-                <li><a href="#">I need Help</a></li>
-            </ul>
+            <div>
+                <ul class="navigator">
+                    <li><a href="#">How to sell</a></li>
+                    <li><a href="#">How it works</a></li>
+                    <li><a href="#">Governance</a></li>
+                    <li><a href="#">Community</a></li>
+                    <li><a href="#">I need Help</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <InboxComp v-model="isOpen" :notifications="notifications">
+                    <div class="trigger">
+                        🔔 <span>Notifications</span>
+                    </div>
+                </InboxComp>
+            </div>
+
         </nav>
     </div>
 </template>
 
 <script setup>
-const route = useRoute()
+const isOpen = ref(true);
+const notifications = ref([
+    { title: 'Nuevo mensaje', body: 'Tienes un mensaje de Laura' },
+    { title: 'Actualización disponible', body: 'Nueva versión lista para instalar' },
+    { title: 'Recordatorio', body: 'Reunión a las 15:00' },
+]);
 </script>
 
 <style scoped>
@@ -22,7 +38,7 @@ const route = useRoute()
     background: var(--blue-b);
     justify-content: center;
     box-sizing: border-box;
-    padding: 0 1rem; 
+    padding: 0 1rem;
     height: 2.5rem;
     display: flex;
     width: 100%;
@@ -31,7 +47,6 @@ const route = useRoute()
 .HeaderNav-body {
     display: flex;
     width: inherit;
-    overflow-x: scroll;
     align-items: center;
     color: var(--text-w);
     box-sizing: border-box;
@@ -43,7 +58,6 @@ const route = useRoute()
 }
 
 .HeaderNav-body {
-    overflow: auto;
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
@@ -56,7 +70,7 @@ const route = useRoute()
     font-size: 1.5rem;
 }
 
-.HeaderNav-body-links {
+.navigator {
     list-style: none;
     display: flex;
     gap: 2rem;
@@ -64,13 +78,13 @@ const route = useRoute()
     padding: 0;
 }
 
-.HeaderNav-body-links a {
+.navigator a {
     color: var(--text-w);
     text-decoration: none;
     white-space: nowrap;
 }
 
-.HeaderNav-body-links a:hover {
+.navigator a:hover {
     text-decoration: underline;
 }
 </style>

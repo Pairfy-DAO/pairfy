@@ -292,7 +292,7 @@ function showGetProductError() {
 .fixed-box {
   height: 100vh;
   width: inherit;
-  z-index: 10000;
+  z-index: 1;
   overflow: hidden;
   position: sticky;
   box-sizing: border-box;

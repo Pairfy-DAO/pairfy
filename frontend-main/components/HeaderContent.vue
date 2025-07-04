@@ -62,7 +62,6 @@ watch(() => route.path, (newPath) => {
   justify-content: center;
   box-sizing: border-box;
   color: var(--text-w);
-  z-index: 11000;
   width: 100%;
   top: 2rem;
   position: initial;
