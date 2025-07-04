@@ -155,8 +155,18 @@ build:
         manual:
           - src: 'src/**/*.{ts,js,json,vue}'
             dest: .            
+    - image: pairfy/service-notification
+      context: service-notification
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.{ts,js,json,vue}'
+            dest: .  
+
+
 deploy:
-  statusCheckDeadlineSeconds: 540
+  statusCheckDeadlineSeconds: 100
   kubectl:
     manifests:
       - ./A/k8s/*
@@ -222,6 +232,18 @@ portForward:
     namespace: default
     port: 8007
     localPort: 8007  
+
+  - resourceType: service
+    resourceName: service-state
+    namespace: default
+    port: 8008
+    localPort: 8008 
+
+  - resourceType: service
+    resourceName: service-notification
+    namespace: default
+    port: 8009
+    localPort: 8009
 
   - resourceType: service
     resourceName: weaviate

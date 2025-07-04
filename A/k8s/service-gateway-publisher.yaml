@@ -1,42 +1,37 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: service-product-publisher
+  name: service-gateway-publisher
 spec:
   replicas: 1
   selector:
     matchLabels:
-      role: service-product-publisher
+      role: service-gateway-publisher
   template:
     metadata:
       labels:
-        role: service-product-publisher
+        role: service-gateway-publisher
     spec:
       containers:
-        - name: service-product-publisher
+        - name: service-gateway-publisher
           image: pairfy/base-publisher
-          env:
+          env:                                                             
             - name: DATABASE_NAME
-              value: service_product                 
+              value: service_gateway 
             - name: DATABASE_USER
-              value: marketplace                                                                                                                                                                         
+              value: marketplace                                                                                                                                                              
             - name: STREAM_NAME
-              value: service-product
+              value: service-gateway
             - name: STREAM_SUBJECT
-              value: service-product.*              
+              value: service-gateway.*              
             - name: QUERY_INTERVAL
               value: "10000"    
             - name: QUERY_LIMIT
-              value: "500"    
+              value: "500"  
             - name: POD_NAME
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.name                                                             
-            - name: DATABASE_HOST  
-              valueFrom:
-                configMapKeyRef:
-                  name: database-config
-                  key: master     
+                  fieldPath: metadata.name                                                                
             - name: DATABASE_PORT
               valueFrom:
                 configMapKeyRef:
@@ -46,8 +41,14 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: database-password-secret
-                  key: password
+                  key: password      
+            - name: DATABASE_HOST  
+              valueFrom:
+                configMapKeyRef:
+                  name: database-config
+                  key: master  
 
+                  
           resources:
             limits:
               memory: "500Mi"

@@ -4,11 +4,10 @@ import {
   checkHandlerVariables,
   createConsumer,
   disableConnections,
-  errorEvents,
 } from "./utils/index.js";
 import { connect } from "@nats-io/transport-node";
 import database from "./database/client.js";
-import { logger } from "@pairfy/common";
+import { ERROR_EVENTS, logger } from "@pairfy/common";
 
 const main = async () => {
   try {
@@ -35,7 +34,7 @@ const main = async () => {
 
     checkHandlerVariables();
 
-    errorEvents.forEach((e: string) =>
+    ERROR_EVENTS.forEach((e: string) =>
       process.on(e, (err) => disableConnections(e, err))
     );
 
@@ -84,7 +83,7 @@ const main = async () => {
       ? process.env.FILTER_SUBJECTS.split(",").map((subject) => subject.trim())
       : [];
 
-    console.log("Listening:", filterSubjects);
+    console.log("✅ Filters:", filterSubjects);
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -107,7 +106,7 @@ const main = async () => {
           process.env.DURABLE_NAME
         );
 
-        console.log(`🎧 Listening on stream: ${stream}`);
+        console.log(`🕒 Waiting for events on stream: ${stream}`);
 
         while (true) {
           const message = await consumer.next();
@@ -116,14 +115,20 @@ const main = async () => {
             const success = await MODU.processEvent(message);
             await (success ? message.ack() : message.nak(30_000));
           } else {
-            console.log(`🔍 EmptyQueue for stream: ${stream}`);
+            console.log(`❌ Empty queue for stream: ${stream}`);
           }
         }
       });
-    } catch (error: any) {
-      logger.error(error);
+    } catch (err: any) {
+      logger.error({
+        service: process.env.SERVICE_NAME,
+        event: "consumer.error",
+        message: "Consumer error",
+        error: err,
+      });
       await disableConnections(database, natsClient);
-      throw error;
+
+      throw err;
     }
   } catch (err) {
     catchError(err);

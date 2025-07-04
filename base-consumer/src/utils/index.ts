@@ -40,17 +40,6 @@ export function checkHandlerVariables() {
   return handlerVars;
 }
 
-export const errorEvents: string[] = [
-  "exit",
-  "SIGINT",
-  "SIGTERM",
-  "SIGQUIT",
-  "uncaughtException",
-  "unhandledRejection",
-  "SIGHUP",
-  "SIGCONT",
-];
-
 export async function createConsumer(
   jetStreamManager: JetStreamManager,
   stream: string,

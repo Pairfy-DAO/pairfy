@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-notification-consumer
+spec:
+  selector:
+    matchLabels:
+      role: service-notification-consumer
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        role: service-notification-consumer
+    spec:
+      terminationGracePeriodSeconds: 15
+      containers:
+        - name: service-notification-consumer
+          image: pairfy/base-consumer
+          ports:
+            - containerPort: 3000                    
+          env:  
+            - name: NODE_ENV
+              value: development   
+            - name: SERVICE_NAME
+              value: service-notification   
+            - name: CONSUMER_GROUP
+              value: service-notification-group         
+            - name: DURABLE_NAME
+              value: service-notification-consumer   
+            - name: STREAM_LIST
+              value: service-gateway
+            - name: FILTER_SUBJECTS
+              value: "service-gateway.CreateNotifications"
+            - name: DATABASE_NAME
+              value: service_notification      
+            - name: DATABASE_USER
+              value: marketplace               
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: DATABASE_HOST  
+              valueFrom:
+                configMapKeyRef:
+                  name: database-config
+                  key: master  
+            - name: DATABASE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: database-config
+                  key: port                                     
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-password-secret
+                  key: password 
+            - name: NATS_SERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: nats-cluster-config
+                  key: hosts 
+
+                  
+          resources:
+            limits:
+              memory: "500Mi"
+            requests:
+              memory: "256Mi"
+
+
+     

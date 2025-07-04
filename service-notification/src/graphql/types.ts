@@ -1,32 +1,36 @@
 const typeDefs = `#graphql
 
+scalar BigInt
+
 type Notification {
-  id: String!
+  id: ID!
   type: String!
   title: String!
   owner: String!
   seen: Boolean!
   data: String!
   message: String!
-  created_at: String!
+  created_at: BigInt!
+  updated_at: BigInt!
 }
 
 type Query {
-  getNotifications: [Notification]
+  getNotifications: [Notification!]
 }
 
-#------------------------------------------------------------ MUTATIONS
+#----------------------------------------------------------------MUTATIONS
 
-type UpdateNotificationResponse {
+type EditNotificationsResponse {
   success: Boolean!
+  message: String!
 }
 
-input UpdateNotificationInput {
-  notification_id: String!
+input EditNotificationsInput {
+  ids: String!
 } 
 
 type Mutation {
-  updateNotification(updateNotificationInput: UpdateNotificationInput!): UpdateNotificationResponse!
+  editNotifications(editNotificationsInput: EditNotificationsInput!): EditNotificationsResponse!
 }
 
 `;
