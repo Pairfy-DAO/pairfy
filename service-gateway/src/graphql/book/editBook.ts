@@ -1,6 +1,5 @@
 import database from "../../database/client.js";
-import { ApiGraphQLError, ERROR_CODES } from "@pairfy/common";
-import { findBookBySeller } from "../../common/findBookBySeller.js";
+import { ApiGraphQLError, ERROR_CODES, findBookBySeller } from "@pairfy/common";
 import { verifyParams } from "../../validators/editBook.js";
 import { updateBook } from "../../common/updateBook.js";
 import { redisBooks } from "../../database/redis.js";
@@ -63,7 +62,9 @@ export const editBook = async (_: any, args: any, context: any) => {
       });
     }
 
-    await redisBooks.client.set(findBook.id, JSON.stringify(updateContent))
+    const BOOK = await findBookBySeller(connection, findBook.id, findBook.seller_id);
+
+    await redisBooks.client.set(findBook.id, JSON.stringify(BOOK))
 
     ///////////////////////////////////////////////////////////////// END TRANSACTION
 

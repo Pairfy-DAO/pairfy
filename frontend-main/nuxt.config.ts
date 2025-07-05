@@ -15,12 +15,13 @@ export default defineNuxtConfig({
       apiBaseBrowser: "",
       validWallets: ["lace", "nami", "eternl"],
       mediaCDNBase: process.env.NUXT_PUBLIC_MEDIA_CDN,
+      cardanoNetwork: process.env.NUXT_PUBLIC_CARDANO_NETWORK
     },
   },
   css: [
     "~/assets/css/main.css", // global CSS
   ],
-  modules: ["@pinia/nuxt"],
+  modules: ["@pinia/nuxt", '@vueuse/nuxt'],
   vite: {
     plugins: [wasm()],
     build: {

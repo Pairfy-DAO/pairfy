@@ -1,4 +1,5 @@
-import { getEventId } from "../utils/index.js";
+
+import { getNotificationId } from "@pairfy/common";
 import { HandlerParams } from "./types.js";
 
 async function handleReceived(params: HandlerParams) {
@@ -28,7 +29,7 @@ async function handleReceived(params: HandlerParams) {
 
   const notifications = [
     {
-      id: getEventId(),
+      id: getNotificationId(),
       type: "order",
       title: "Package Received",
       owner: params.buyer_pubkeyhash,
@@ -40,7 +41,7 @@ async function handleReceived(params: HandlerParams) {
       message: `The order has been finished.`,
     },
     {
-      id: getEventId(),
+      id: getNotificationId(),
       type: "order",
       title: "Package Received",
       owner: params.seller_id,

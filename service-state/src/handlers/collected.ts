@@ -1,4 +1,4 @@
-import { getEventId } from "../utils/index.js";
+import { getNotificationId } from "@pairfy/common";
 import { HandlerParams } from "./types.js";
 
 async function collected(params: HandlerParams) {
@@ -30,7 +30,7 @@ async function collected(params: HandlerParams) {
 
   const notifications = [
     {
-      id: getEventId(),
+      id: getNotificationId(),
       type: "order",
       title: "Order Finished",
       owner: params.buyer_pubkeyhash,
@@ -42,7 +42,7 @@ async function collected(params: HandlerParams) {
       message: `The order has ended without appeal.`,
     },
     {
-      id: getEventId(),
+      id: getNotificationId(),
       type: "order",
       title: "Funds Collected",
       owner: params.seller_id,

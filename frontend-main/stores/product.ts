@@ -9,8 +9,9 @@ export const useProductStore = defineStore("product", () => {
 
   const product = ref(null);
   const media = ref([]);
+  const book = ref(null);
 
-  const cardanoDialog = ref(true);
+  const cardanoDialog = ref(false);
   const price = ref<number | null>(null);
 
   const toastMessage = ref<ToastMessage | null>(null);
@@ -23,16 +24,22 @@ export const useProductStore = defineStore("product", () => {
     };
   };
 
+  const setBook = (data: any) => {
+    book.value = data
+  };
+
   function showCardanoDialog(value: boolean) {
     cardanoDialog.value = value;
   }
 
-  function setProductData(data: any) {
+  function setProduct(data: any) {
     const { product: productData, media: mediaData } = data;
 
     product.value = productData;
     media.value = mediaData;
-    price.value = productData.discount ? productData.discount_value : productData.price;
+    price.value = productData.discount
+      ? productData.discount_value
+      : productData.price;
   }
 
   function clear() {
@@ -44,11 +51,13 @@ export const useProductStore = defineStore("product", () => {
     product,
     media,
     clear,
-    setProductData,
+    setProduct,
     toastMessage,
     showCardanoDialog,
     cardanoDialog,
     showToast,
+    setBook,
     price,
+    book,
   };
 });

@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-notification
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: service-notification
+  template:
+    metadata:
+      labels:
+        role: service-notification
+    spec:
+      containers:
+        - name: service-notification
+          image: pairfy/service-notification
+          env:
+            - name: NODE_ENV
+              value: development                                                                                                                                                    
+            - name: DATABASE_NAME
+              value: service_notification       
+            - name: DATABASE_USER
+              value: marketplace 
+            - name: REDIS_RATELIMIT_HOST
+              value: redis://redis-limiter:6379  
+            - name: AGENT_JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: agent-token-secret
+                  key: AGENT_TOKEN_KEY  
+            - name: DATABASE_HOST  
+              valueFrom:
+                configMapKeyRef:
+                  name: database-config
+                  key: master  
+            - name: DATABASE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: database-config
+                  key: port                                     
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-password-secret
+                  key: password  
+                                        
+          resources:
+            limits:
+              memory: "500Mi"
+            requests:
+              memory: "256Mi"       
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-notification
+spec:
+  selector:
+    role: service-notification
+  ports:
+    - name: service-notification
+      protocol: TCP
+      port: 8009
+      targetPort: 8009

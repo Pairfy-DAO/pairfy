@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createEvent = createEvent;
 const index_1 = require("./index");
-async function createEvent(connection, timestamp, source, type, data, agentId) {
+async function createEvent(connection, timestamp, source, type, data, agentId = null) {
     const sql = `
     INSERT INTO events (
       id,

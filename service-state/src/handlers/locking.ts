@@ -1,4 +1,5 @@
-import { getEventId } from "../utils/index.js";
+
+import { getNotificationId } from "@pairfy/common";
 import { HandlerParams } from "./types.js";
 
 async function locking(params: HandlerParams) {
@@ -30,7 +31,7 @@ async function locking(params: HandlerParams) {
 
   const notifications = [
     {
-      id: getEventId(),
+      id: getNotificationId(),
       type: "order",
       title: "Preparing Package",
       owner: params.buyer_pubkeyhash,
@@ -42,7 +43,7 @@ async function locking(params: HandlerParams) {
       message: `The seller is preparing the package.`,
     },
     {
-      id: getEventId(),
+      id: getNotificationId(),
       type: "order",
       title: "Prepare the Product",
       owner: params.seller_id,

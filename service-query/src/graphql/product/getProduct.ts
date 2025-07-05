@@ -6,15 +6,28 @@ import {
   sortMediaByPosition,
   findProductById,
 } from "@pairfy/common";
+import { getProductSchema } from "../../validators/getProduct.js";
 
 export const getProduct = async (_: any, args: any, context: any) => {
-  const params = args.getProductInput;
-
-  console.log(params);
-
   let connection = null;
 
   try {
+    const validateParams = getProductSchema.safeParse(args.getProductInput);
+
+    if (!validateParams.success) {
+      throw new ApiGraphQLError(
+        400,
+        `Invalid params ${JSON.stringify(validateParams.error.flatten())}`,
+        {
+          code: ERROR_CODES.VALIDATION_ERROR,
+        }
+      );
+    }
+
+    const params = validateParams.data;
+
+    console.log(params); //TEST
+
     connection = await database.client.getConnection();
 
     const findProduct = await findProductById(connection, params.id);
@@ -31,12 +44,14 @@ export const getProduct = async (_: any, args: any, context: any) => {
 
     const response = {
       product,
-      media:  findMedia.length ? sortMediaByPosition(product.media_position, findMedia) : []
+      media: findMedia.length
+        ? sortMediaByPosition(product.media_position, findMedia)
+        : [],
     };
 
     return response;
-  } catch (error: any) {
-    throw error;
+  } catch (err: any) {
+    throw err;
   } finally {
     if (connection) connection.release();
   }

@@ -4,10 +4,10 @@ import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import { catchError, errorEvents } from "./utils/index.js";
-import { assets, feed, products } from "./graphql/resolvers.js";
+import { assets, books, feed, products } from "./graphql/resolvers.js";
 import { database } from "./database/client.js";
 import { typeDefs } from "./graphql/types.js";
-import { redisPriceClient, redisFeedClient } from "./database/redis.js";
+import { redisPriceClient, redisFeedClient, redisBooks } from "./database/redis.js";
 import {
   ApiGraphQLError,
   ERROR_CODES,
@@ -30,7 +30,8 @@ const main = async () => {
       "EMBEDDING_HOST",
       "REDIS_PRICE_HOST",
       "REDIS_FEED_HOST",
-      "REDIS_RATELIMIT_HOST"
+      "REDIS_BOOKS_HOST",
+      "REDIS_RATELIMIT_HOST",
     ];
 
     for (const varName of requiredEnvVars) {
@@ -54,6 +55,7 @@ const main = async () => {
         ...products.Query,
         ...assets.Query,
         ...feed.Query,
+        ...books.Query
       },
     };
 
@@ -92,9 +94,8 @@ const main = async () => {
         connectTimeout: 100000,
         keepAlive: 100000,
       })
+      .then(() => console.log("✅ redisPriceClient connected"))
       .catch((err: any) => catchError(err));
-
-    console.log("✅ redisPriceClient connected");
 
     await redisFeedClient
       .connect({
@@ -102,9 +103,17 @@ const main = async () => {
         connectTimeout: 100000,
         keepAlive: 100000,
       })
+      .then(() => console.log("✅ redisFeedClient connected"))
       .catch((err: any) => catchError(err));
 
-    console.log("✅ redisFeedClient connected");
+    await redisBooks
+      .connect({
+        url: process.env.REDIS_BOOKS_HOST,
+        connectTimeout: 100000,
+        keepAlive: 100000,
+      })
+      .then(() => console.log("✅ redisBooksClient connected"))
+      .catch((err: any) => catchError(err));
 
     const rateLimiter = new RateLimiter({
       source: "service-query",

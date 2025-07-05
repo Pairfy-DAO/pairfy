@@ -1,82 +1,78 @@
-import { getEventId } from "../utils/index.js";
-import { HandlerParams } from "./types.js";
+import { createEvent, getNotificationId } from "@pairfy/common";
+import { UtxoData } from "../lib/index.js";
+import { Connection } from "mysql2/promise";
+import { updateOrder } from "../common/updateOrder.js";
+import { jobResponse } from "./index.js";
 
-async function pending(params: HandlerParams) {
+export async function pending(
+  connection: Connection,
+  timestamp: number,
+  orderData: any,
+  data: UtxoData
+): Promise<jobResponse> {
+  if (!orderData.pending_notified) {
+    const notifications = [
+      {
+        id: getNotificationId(),
+        type: "order",
+        title: "Payment Detected",
+        owner: orderData.buyer_pubkeyhash,
+        data: JSON.stringify({
+          threadtoken: orderData.id,
+          buyer_address: orderData.buyer_address,
+          country: orderData.country,
+          buyer_wallet: orderData.buyer_wallet,
+        }),
+        message: `The payment is being processed on the network.`,
+        created_at: timestamp,
+        updated_at: timestamp,
+      },
+      {
+        id: getNotificationId(),
+        type: "order",
+        title: "New Purchase",
+        owner: orderData.seller_id,
+        data: JSON.stringify({
+          threadtoken: orderData.id,
+          seller_address: orderData.seller_address,
+          country: orderData.country,
+          seller_wallet: orderData.seller_wallet,
+        }),
+        message: `Verify payment and accept the order.`,
+        created_at: timestamp,
+        updated_at: timestamp,
+      },
+    ];
 
-  const updateQuery = `
-    UPDATE orders
-    SET scanned_at = ?,
-        status_log = ?,
-        contract_address = ?,
-        contract_state = ?,
-        pending_tx = ?,
-        pending_block = ?,
-        pending_metadata = ?
-    WHERE id = ?`;
+    await createEvent(
+      connection,
+      timestamp,
+      "service-gateway",
+      "CreateNotifications",
+      JSON.stringify(notifications),
+      orderData.buyer_pubkeyhash
+    );
+  }
 
-  const statusLog = "pending";
+  const updateContent = {
+    status: "pending",
+    contract_address: data.utxo.address,
+    contract_state: data.datum.state,
+    pending_tx: data.txHash,
+    pending_block: data.blockTime,
+    pending_metadata: data.metadata,
+    pending_notified: true,
+    scanned_at: timestamp,
+  };
 
-  const txHash = params.utxo.txHash + "#" + params.utxo.outputIndex;
+  await updateOrder(
+    connection,
+    orderData.id,
+    orderData.schema_v,
+    updateContent
+  );
 
-  await params.connection.execute(updateQuery, [
-    params.timestamp,
-    statusLog,
-    params.utxo.address,
-    params.utxo.data.state,
-    txHash,
-    params.utxo.block_time,
-    params.utxo.metadata,
-    params.threadtoken,
-  ]);
+  await connection.commit();
 
-  /////////////////////////////////////////////////////////////////////
-
-  const notifications = [
-    {
-      id: getEventId(),
-      type: "order",
-      title: "Payment Detected",
-      owner: params.buyer_pubkeyhash,
-      data: JSON.stringify({
-        threadtoken: params.threadtoken,
-        buyer_address: params.buyer_address,
-        country: params.country
-      }),
-      message: `The payment is being processed on the network.`,
-    },
-    {
-      id: getEventId(),
-      type: "order",
-      title: "New Purchase",
-      owner: params.seller_id,
-      data: JSON.stringify({
-        threadtoken: params.threadtoken,
-        seller_address: params.seller_address,
-        country: params.country
-      }),
-      message: `Verify payment and accept the order.`
-    },
-  ];
-
-  const eventSchema = `
-    INSERT IGNORE INTO events (
-    id,
-    source,
-    type,
-    data,
-    spec_version
-    ) VALUES (?, ?, ?, ?, ?)
-  `;
-
-  const eventId = params.threadtoken + statusLog;
-
-  await params.connection.execute(eventSchema, [
-    eventId,
-    "gateway",
-    "CreateNotification",
-    JSON.stringify(notifications),
-    0,
-  ]);
+  return { id: orderData.id, finished: false };
 }
-
-export { pending };

@@ -12,7 +12,7 @@ fi
 set -euo pipefail
 
 PACKAGE_NAME="@pairfy/common"
-TARGET_DIRS=("service-seller" "service-email" "base-consumer" "service-product" "service-query" "service-media" "service-processor" "base-publisher" "service-user" "service-gateway" "service-price")
+TARGET_DIRS=("service-notification" "service-state" "service-seller" "service-email" "base-consumer" "service-product" "service-query" "service-media" "service-processor" "base-publisher" "service-user" "service-gateway" "service-price")
 
 echo "📦 Fetching the latest version of $PACKAGE_NAME from NPM..."
 LATEST_VERSION=$(npm show "$PACKAGE_NAME" version)
@@ -51,13 +51,24 @@ for dir in "${TARGET_DIRS[@]}"; do
     npm install "$PACKAGE_NAME@$LATEST_VERSION"
   )
   echo "✅ Updated in $dir"
-  echo
+
 done
 
-echo "🎉 Done: updates were applied where needed."
+set -euo pipefail
+
+terminating_pods=$(kubectl get pods --all-namespaces | grep Terminating || true)
+
+if [[ -n "$terminating_pods" ]]; then
+  echo "⚠️  Pods in 'Terminating' state were found. Forcing deletion..."
+
+  echo "$terminating_pods" | while read -r namespace pod _; do
+    echo "➡️  Deleting pod: $pod in namespace: $namespace"
+    kubectl delete pod "$pod" --namespace="$namespace" --grace-period=0 --force || true
+  done
+
+  echo "✅ All pods marked for deletion."
+else
+  echo "✅ No pods in 'Terminating' state."
+fi
 
 skaffold dev
-
-
-
-

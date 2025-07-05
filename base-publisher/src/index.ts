@@ -29,12 +29,14 @@ const main = async () => {
         throw new Error(`${key} error`);
       }
     }
-
+    
     errorEvents.forEach((e: string) => process.on(e, (err) => catchError(err)));
 
     const databasePort = parseInt(process.env.DATABASE_PORT as string, 10);
 
     const queryLimit = parseInt(process.env.QUERY_LIMIT as string, 10);
+    
+    const queryInterval = parseInt(process.env.QUERY_INTERVAL as string, 10)
 
     database.connect({
       host: process.env.DATABASE_HOST,
@@ -86,7 +88,7 @@ const main = async () => {
     let connection: any = null;
 
     while (true) {
-      await sleep(parseInt(process.env.QUERY_INTERVAL as string, 10));
+      await sleep(queryInterval);
 
       try {
         connection = await database.client.getConnection();
@@ -102,11 +104,11 @@ const main = async () => {
         );
 
         if (findEvents.length < 1) {
-          console.log("Waiting for events");
+          console.log("🕕 Waiting for events.");
           continue;
         }
 
-        console.log("Publishing: " + findEvents.length);
+        console.log("✅ Publishing: " + findEvents.length);
 
         for (const EVENT of findEvents) {
           try {

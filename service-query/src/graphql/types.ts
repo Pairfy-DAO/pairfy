@@ -97,6 +97,27 @@ type GetProductResponse{
   media: [Media]!
 }
 
+type Book {
+  id: ID!
+  seller_id: String!
+  keeping_stock: Int!
+  ready_stock: Int!
+  blocked_stock: Int!
+  purchase_limit: Boolean!
+  purchase_limit_value: Int
+  stop_purchases: Boolean!
+  sold_count: Int!
+  created_at: BigInt!
+  updated_at: BigInt!
+  schema_v: Int!
+}
+
+type GetBookResponse{
+  success: Boolean!
+  message: String!
+  data: Book!
+}
+
 type PriceData {
   ADA: Float
 }
@@ -161,8 +182,13 @@ input SearchProductsInput {
   filters: SearchProductsFiltersInput!
 } 
 
+input GetBookInput{
+  id: ID!
+}
+
 type Query {
   getFeed: String!
+  getBook(getBookInput: GetBookInput!): GetBookResponse!
   getProduct(getProductInput: GetProductInput!): GetProductResponse!
   searchProducts(searchProductsInput: SearchProductsInput!): [SearchProductsResponse]!
   getPrice: PriceResponse!

@@ -16,12 +16,24 @@ spec:
         - name: service-state
           image: pairfy/service-state
           env:
+            - name: DATABASE_NAME
+              value: service_gateway       
+            - name: DATABASE_USER
+              value: marketplace 
+            - name: REDIS_STATE_HOST
+              value: redis://redis-state:6379
+            - name: REDIS_BOOKS_HOST
+              value: redis://redis-books:6379              
+            - name: QUERY_LIMIT
+              value: "1000"        
+            - name: QUERY_INTERVAL
+              value: "60000"       
+            - name: SCAN_RANGE
+              value: "300000"           
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            - name: POD_TIMEOUT
-              value: "120000"
             - name: DATABASE_HOST  
               valueFrom:
                 configMapKeyRef:
@@ -35,20 +47,8 @@ spec:
             - name: DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: db-password
-                  key: password   
-            - name: DATABASE_NAME
-              value: service_gateway       
-            - name: DATABASE_USER
-              value: marketplace 
-            - name: REDIS_HOST
-              value: redis://service-state-redis:6379
-            - name: QUERY_LIMIT
-              value: "1000"        
-            - name: QUERY_INTERVAL
-              value: "120000"       
-            - name: SCAN_RANGE
-              value: "5"                               
+                  name: database-password-secret
+                  key: password                       
             - name: PROJECT_ID
               valueFrom:
                 secretKeyRef:
@@ -63,17 +63,8 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: ogmios-key
-                  key: key   
-            - name: ELASTIC_NODE
-              valueFrom:
-                secretKeyRef:
-                  name: elastic-endpoint
-                  key: key
-            - name: ELASTIC_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: elastic-api-key
-                  key: key                                             
+                  key: key    
+
           resources:
             limits:
               memory: "500Mi"
@@ -90,5 +81,5 @@ spec:
   ports:
     - name: service-state
       protocol: TCP
-      port: 8000
-      targetPort: 8000
+      port: 8008
+      targetPort: 8008

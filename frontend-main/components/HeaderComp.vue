@@ -26,6 +26,8 @@
 import { gql } from 'graphql-tag'
 
 const auth = useAuthStore()
+const wallet = useWalletStore()
+
 const route = useRoute()
 
 const { $queryClient } = useNuxtApp()
@@ -37,13 +39,24 @@ const currentRoute = computed(() => route.name)
 let subscription1;
 
 onMounted(() => {
-    watch(() => auth.toastMessage, ({ message, type, duration }) => toastRef.value?.showToast(message, type, duration));
+    watchToast()
+    connectWallet()
     fetchPrices()
 });
 
 onBeforeUnmount(() => {
     subscription1?.unsubscribe()
 })
+
+
+async function connectWallet() {
+    try {
+        await wallet.connect(auth.walletName)
+    } catch (err) {
+        auth.showToast(err.message, 'error', 5_000)
+    }
+}
+
 
 async function fetchPrices() {
 
@@ -59,10 +72,10 @@ query getPrice {
 }
 `;
 
-    const observable =  $queryClient.watchQuery({
+    const observable = $queryClient.watchQuery({
         query: GET_PRICES_QUERY,
         fetchPolicy: 'no-cache',
-        pollInterval: 60_000, 
+        pollInterval: 60_000,
     })
 
     subscription1 = observable.subscribe({
@@ -81,6 +94,10 @@ query getPrice {
     })
 }
 
+
+function watchToast() {
+    watch(() => auth.toastMessage, ({ message, type, duration }) => toastRef.value?.showToast(message, type, duration));
+}
 </script>
 
 <style scoped>

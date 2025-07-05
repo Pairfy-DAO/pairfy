@@ -8,7 +8,7 @@ export async function createEvent(
   source: string,
   type: string,
   data: string,
-  agentId: string
+  agentId: string | null = null
 ): Promise<any> {
   const sql = `
     INSERT INTO events (

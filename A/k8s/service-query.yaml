@@ -27,7 +27,9 @@ spec:
             - name : REDIS_PRICE_HOST
               value: "redis://redis-price:6379"   
             - name : REDIS_FEED_HOST
-              value: "redis://redis-feed:6379"                 
+              value: "redis://redis-feed:6379" 
+            - name : REDIS_BOOKS_HOST
+              value: "redis://redis-books:6379"                               
             - name: DATABASE_HOST  
               valueFrom:
                 configMapKeyRef:
