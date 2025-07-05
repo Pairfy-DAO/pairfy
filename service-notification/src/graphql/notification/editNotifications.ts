@@ -8,7 +8,7 @@ export const editNotifications = async (_: any, args: any, context: any) => {
   let connection = null;
 
   try {
-    const params = args.editNotifications;
+    const params = args.editNotificationsInput;
 
     console.log(params);
 

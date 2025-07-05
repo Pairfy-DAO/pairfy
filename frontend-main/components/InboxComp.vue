@@ -6,39 +6,69 @@
 
     <transition name="fade-slide">
       <div class="InboxComp-body" v-if="props.modelValue">
-        <div class="notification-empty" v-if="props.notifications.length === 0">
+        <div class="notification-empty" v-if="notifications.length === 0">
           No notifications
         </div>
         <ul v-else class="InboxComp-box">
           <div class="notification-header">
             <span>Notifications</span>
-            <span>You have {{ props.notifications.length }} notifications today.</span>
+            <span>You have {{ notifications.length }} notifications today.</span>
           </div>
 
-          <li class="notification-item" v-for="(n, i) in props.notifications" :key="i">
-
-            <div class="notification-content">
-              <div class="icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                  class="lucide lucide-mail-icon lucide-mail">
-                  <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
-                  <rect x="2" y="4" width="20" height="16" rx="2" />
-                </svg>
-              </div>
-              <div class="notification-message">
-                <p class="title">{{ n.title }}</p>
-
-                <span class="message">{{ n.message }}</span>
-
-                <span class="date">
-                  {{ formatWithDateFns(n.created_at) }}
-                </span>
-
-              </div>
-
+          <div class="notification-section">
+            <div class="title">
+              Latest
             </div>
-          </li>
+            <li class="notification-item" v-for="(n, i) in notifications.unseen" :key="i">
+              <div class="notification-content">
+                <div class="icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-mail-icon lucide-mail">
+                    <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                  </svg>
+                </div>
+                <div class="notification-message">
+                  <p class="subtitle">{{ n.title }}</p>
+
+                  <span class="message">{{ n.message }}</span>
+
+                  <span class="date">
+                    {{ formatWithDateFns(n.created_at) }}
+                  </span>
+                </div>
+              </div>
+            </li>
+          </div>
+
+          <div class="notification-section">
+            <div class="title">
+              Seen
+            </div>
+            <li class="notification-item" v-for="(n, i) in notifications.seen" :key="i">
+              <div class="notification-content">
+                <div class="icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-mail-icon lucide-mail">
+                    <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                  </svg>
+                </div>
+                <div class="notification-message">
+                  <p class="subtitle">{{ n.title }}</p>
+
+                  <span class="message">{{ n.message }}</span>
+
+                  <span class="date">
+                    {{ formatWithDateFns(n.created_at) }}
+                  </span>
+                </div>
+              </div>
+            </li>
+          </div>
+
         </ul>
       </div>
     </transition>
@@ -47,23 +77,22 @@
 </template>
 
 <script setup>
+import { gql } from 'graphql-tag'
 
 const props = defineProps({
-  notifications: {
-    type: Array,
-    required: true,
-  },
   modelValue: {
     type: Boolean,
     required: true,
   },
 });
 
-const emit = defineEmits(['update:modelValue']);
+const authStore = useAuthStore()
 
-const toggle = () => {
-  emit('update:modelValue', !props.modelValue);
-};
+const notifications = computed(() => authStore.notifications)
+
+const { $notificationClient } = useNuxtApp()
+
+const emit = defineEmits(['update:modelValue']);
 
 const wrapperRef = ref(null);
 
@@ -72,6 +101,43 @@ onClickOutside(wrapperRef, () => {
     emit('update:modelValue', false)
   }
 })
+
+const editNotifications = async () => {
+  if (!import.meta.client) return;
+
+  if (!notifications.value.unseen.length) return;
+
+  const EDIT_NOTIFICATION_MUTATION = gql`
+mutation EditNotifications($editNotificationsVariable: EditNotificationsInput!) {
+    editNotifications(editNotificationsInput: $editNotificationsVariable) {
+        success
+        message
+    }
+}
+
+`
+  try {
+    await $notificationClient.mutate({
+      mutation: EDIT_NOTIFICATION_MUTATION,
+      variables: {
+        "editNotificationsVariable": {
+          "ids": notifications.value.unseen.map(n => n.id),
+        }
+      },
+    });
+
+  } catch (err) {
+    console.error('editNotifications', err);
+  }
+}
+
+const toggle = () => {
+  emit('update:modelValue', !props.modelValue);
+
+  if (!props.modelValue) {
+    editNotifications()
+  }
+};
 </script>
 
 <style scoped>
@@ -122,6 +188,13 @@ onClickOutside(wrapperRef, () => {
 }
 
 .title {
+  padding: 1rem;
+  font-weight: bold;
+  font-size: var(--text-size-2);
+  border-top: 1px solid var(--border-a);
+}
+
+.subtitle {
   margin: 0;
   font-weight: bold;
   font-size: var(--text-size-1);

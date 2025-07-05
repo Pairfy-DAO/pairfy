@@ -31,7 +31,7 @@ type EditNotificationsResponse {
 }
 
 input EditNotificationsInput {
-  ids: String!
+  ids: [String!]
 } 
 
 type Mutation {

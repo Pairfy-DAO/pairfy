@@ -12,7 +12,7 @@
             </div>
 
             <div>
-                <InboxComp v-model="isOpen" :notifications="notifications">
+                <InboxComp v-model="isOpen">
                     <div class="notification">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell-icon lucide-bell"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg>
                         <div>{{ authStore.notifications.unseen.length }}</div>
@@ -28,25 +28,8 @@
 <script setup>
 const authStore = useAuthStore()
 
-const isOpen = ref(true);
+const isOpen = ref(false);
 
-const data = {
-    id: 'zd5zti1do3p564o1',
-    type: 'order',
-    title: 'Payment Detected',
-    owner: 'a239e6c2bbd6a9f3249d65afef89c28e1471ed07c529ec06848cc141',
-    seen: 0,
-    data: '{"threadtoken":"512c745edc9bcca15300512004de0652de4eb7dca9b0b2374ce00d65","buyer_address":"addr_test1qz3rnekzh0t2nueyn4j6lmufc28pgu0dqlzjnmqxsjxvzs24qtjuxnphyqxz46t40nudnm3kxu8hkau2mq6nw7svg7jswruwy3","country":"US","buyer_wallet":"lace"}',
-    message: 'The payment is being processed on the network.',
-    created_at: 1751658616793,
-    updated_at: 1751658616793
-}
-
-const notifications = ref([
-    { title: 'Payment Detected', type: 'order', message:  'The payment is being processed on the network.', created_at: 1751658616793 },
-    { title: 'Payment Detected', message: 'The payment is being processed on the network.', created_at: 1751658616793 },
-    { title: 'Payment Detected', message: 'The payment is being processed on the network.', created_at: 1751658616793 },
-]);
 </script>
 
 <style scoped>
@@ -69,7 +52,6 @@ const notifications = ref([
     box-sizing: border-box;
     scroll-behavior: smooth;
     max-width: var(--body-a);
-    text-transform: capitalize;
     font-size: var(--text-size-0);
     justify-content: space-between;
 }
@@ -96,8 +78,9 @@ const notifications = ref([
 }
 
 .navigator a {
-    color: var(--text-w);
+    text-transform: capitalize;
     text-decoration: none;
+    color: var(--text-w);
     white-space: nowrap;
 }
 
