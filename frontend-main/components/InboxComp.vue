@@ -12,7 +12,7 @@
         <ul v-else class="InboxComp-box">
           <div class="notification-header">
             <span>Notifications</span>
-            <span>You have 3 notifications today.</span>
+            <span>You have {{ props.notifications.length }} notifications today.</span>
           </div>
 
           <li class="notification-item" v-for="(n, i) in props.notifications" :key="i">
@@ -92,7 +92,7 @@ onClickOutside(wrapperRef, () => {
   padding: 0.5rem;
   right: 0;
   top: 100%;
-  width: 400px;
+  width: 375px;
   z-index: 14000;
   overflow-y: auto;
   max-height: 600px;
@@ -145,8 +145,9 @@ onClickOutside(wrapperRef, () => {
 
 .message {
   font-size: var(--text-size-0);
-  font-weight: 500;
+  line-height: 1.5rem;
   margin-top: 0.5rem;
+  font-weight: 500;
 }
 
 .date {
