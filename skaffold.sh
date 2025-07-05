@@ -59,17 +59,16 @@ set -euo pipefail
 terminating_pods=$(kubectl get pods --all-namespaces | grep Terminating || true)
 
 if [[ -n "$terminating_pods" ]]; then
-  echo "⚠️  Se encontraron pods en estado 'Terminating'. Forzando eliminación..."
+  echo "⚠️  Pods in 'Terminating' state were found. Forcing deletion..."
 
   echo "$terminating_pods" | while read -r namespace pod _; do
-    echo "➡️  Eliminando pod: $pod en namespace: $namespace"
+    echo "➡️  Deleting pod: $pod in namespace: $namespace"
     kubectl delete pod "$pod" --namespace="$namespace" --grace-period=0 --force || true
   done
 
-  echo "✅ Todos los pods marcados para eliminación."
+  echo "✅ All pods marked for deletion."
 else
-  echo "✅ No hay pods en estado 'Terminating'."
+  echo "✅ No pods in 'Terminating' state."
 fi
-
 
 skaffold dev

@@ -1,6 +1,7 @@
 import forge from "node-forge";
 import { gzip } from "pako";
 import { Buffer } from "buffer";
+import { format, formatDistanceToNow } from 'date-fns';
 
 // utils/utils.ts
 export function truncateByWords(text: string, wordCount: number): string {
@@ -115,4 +116,13 @@ export async function copyToClipboard(text: string) {
   } catch (err) {
     console.error("Failed to copy text: ", err);
   }
+}
+
+/**15 February 2025 . 8:05 AM - 13 minutes ago*/
+export function formatWithDateFns(timestamp: string) {
+  const date = new Date(timestamp);
+  const formattedDate = format(date, "dd MMMM yyyy . h:mm a"); 
+  let timeAgo = formatDistanceToNow(date, { addSuffix: true }); 
+  timeAgo = timeAgo.replace(/^about /, "");
+  return `${formattedDate} - ${timeAgo}`;
 }

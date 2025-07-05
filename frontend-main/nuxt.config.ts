@@ -21,7 +21,7 @@ export default defineNuxtConfig({
   css: [
     "~/assets/css/main.css", // global CSS
   ],
-  modules: ["@pinia/nuxt"],
+  modules: ["@pinia/nuxt", '@vueuse/nuxt'],
   vite: {
     plugins: [wasm()],
     build: {

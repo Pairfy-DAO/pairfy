@@ -11,7 +11,7 @@ export const useProductStore = defineStore("product", () => {
   const media = ref([]);
   const book = ref(null);
 
-  const cardanoDialog = ref(true);
+  const cardanoDialog = ref(false);
   const price = ref<number | null>(null);
 
   const toastMessage = ref<ToastMessage | null>(null);
