@@ -39,45 +39,29 @@ import { useIntersectionObserver } from '@vueuse/core'
 const route = useRoute();
 
 const product = useProductStore()
-
 const productData = computed(() => product.product)
+
+const { $queryClient } = useNuxtApp()
 
 const toastRef = ref(null);
 
 const isRightPanelFixed = ref(false)
 const rightPanelTrigger = ref(null)
 
-let observer;
-
 const rightScrollRef = ref(null)
-
-const syncScroll = () => {
-  if (rightScrollRef.value) {
-    rightScrollRef.value.scrollTop = window.scrollY
-  }
-}
-
-useLenis()
-useLenisMultiple([rightScrollRef])
-
-/////////////////////////////////
-
-const { $queryClient } = useNuxtApp()
-
-const productId = ref(null);
 
 const getProductError = ref(null)
 
+const productId = ref(null)
+
+let subscription1;
+
 let pollIntervalId = null
 
-watch(
-  () => route.params.id,
-  (id) => {
-    productId.value = id
-    fetchProduct()
-  },
-  { immediate: true }
-)
+let observer;
+
+useLenis()
+useLenisMultiple([rightScrollRef])
 
 onMounted(() => {
   watchToast()
@@ -91,7 +75,17 @@ onBeforeUnmount(() => {
   deleteObserver()
   removeScrollListener()
   clearIntervals()
+  removeSubscriptions()
 })
+
+watch(
+  () => route.params.id,
+  (id) => {
+    productId.value = id
+    fetchProduct()
+  },
+ { immediate: true }
+)
 
 async function fetchProduct() {
 
@@ -154,12 +148,59 @@ async function fetchProduct() {
       fetchPolicy: 'no-cache'
     })
 
-    product.setProductData(data.getProduct)
+    product.setProduct(data.getProduct)
+
+    fetchBook()
   } catch (err) {
     getProductError.value = err
   }
 }
 
+async function fetchBook() {
+
+  const GET_BOOK_QUERY = gql`
+query ($getBookVariable: GetBookInput!){
+  getBook(getBookInput: $getBookVariable) {
+      success
+      message
+      data {
+          ready_stock
+      }
+  }
+}
+`;
+
+  const observable = $queryClient.watchQuery({
+    query: GET_BOOK_QUERY,
+    variables: {
+      getBookVariable: {
+        id: productId.value
+      }
+    },
+    fetchPolicy: 'no-cache',
+    pollInterval: 5_000,
+  })
+
+  subscription1 = observable.subscribe({
+    next({ data }) {
+      product.setBook(data.getBook.data)
+      console.log(product.book)
+    },
+    error(err) {
+      product.showToast(err, 'error', 10_000)
+    }
+  })
+}
+
+function syncScroll() {
+  if (rightScrollRef.value) {
+    rightScrollRef.value.scrollTop = window.scrollY
+  }
+}
+
+function removeSubscriptions() {
+  subscription1?.unsubscribe()
+}
 
 function watchToast() {
   watch(() => product.toastMessage, ({ message, type, duration }) => toastRef.value?.showToast(message, type, duration));
@@ -186,7 +227,7 @@ function deleteObserver() {
 }
 
 function fetchProductPolling() {
-  pollIntervalId = setInterval(fetchProduct, 30_000)
+  pollIntervalId = setInterval(fetchProduct, 60_000)
 }
 
 function clearIntervals() {
@@ -251,7 +292,7 @@ function showGetProductError() {
 .fixed-box {
   height: 100vh;
   width: inherit;
-  z-index: 10000;
+  z-index: 1;
   overflow: hidden;
   position: sticky;
   box-sizing: border-box;

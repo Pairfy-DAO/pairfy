@@ -7,3 +7,4 @@ export declare const getProductId: () => string;
 export declare const getEventId: () => string;
 export declare const getFileId: () => string;
 export declare const getMediaGroupId: () => string;
+export declare const getNotificationId: () => string;

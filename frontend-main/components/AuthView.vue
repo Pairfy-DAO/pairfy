@@ -55,8 +55,8 @@ const connectWallet = async (name) => {
         await auth.login({
             signature,
             address,
-            wallet_name: "lace",
-            country: "US",
+            wallet_name: name,
+            country: auth.country?.toUpperCase(),
             terms_accepted: true
         })
 

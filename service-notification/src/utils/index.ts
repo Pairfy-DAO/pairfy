@@ -1,39 +1,49 @@
-import { Logger } from "tslog";
-import { customAlphabet } from "nanoid";
-import { redisClient } from "../db/redis.js";
-import { database } from "../db/client.js";
+import mysql from "mysql2/promise";
+import { logger } from "@pairfy/common";
+import { Connection } from "mysql2/promise";
 
-const logger = new Logger({
-  name: "POD",
-  prettyLogTemplate: "{{logLevelName}} {{dateIsoStr}} {{fileNameWithLine}}",
-  type: "pretty",
-});
+export const catchError = (error: any) => {
+  logger.error(`[EXIT]:${error}`);
 
-const catcher = async (message?: any, error?: any, bypass?: boolean) => {
-  logger.error(`[EXIT]:${message}-${error}`);
-
-  if(redisClient.ready) {
-    await redisClient.client.disconnect();
-  }
-  
-  if(database.ready) {
-    await database.client.end();
-  }
-
-  return bypass || process.exit(1);
+  return process.exit(1);
 };
 
-const createId = customAlphabet("0123456789ABCDEFGHIKLMNOPQRSTUVWXYZ", 15);
+export async function findNotifications(
+  connection: Connection,
+  owner: string,
+  limit = 50
+) {
+  const query = `
+    SELECT *
+    FROM notifications
+    WHERE owner = ?
+    ORDER BY created_at ASC
+    LIMIT ?
+  `;
 
-const errorEvents: string[] = [
-  "exit",
-  "SIGINT",
-  "SIGTERM",
-  "SIGQUIT",
-  "uncaughtException",
-  "unhandledRejection",
-  "SIGHUP",
-  "SIGCONT",
-];
+  const [result] = await connection.query(query, [owner, limit]);
 
-export { logger, catcher, createId, errorEvents };
+  return result || [];
+}
+
+export async function updateNotifications(
+  connection: Connection,
+  ids: string[],
+  owner: string
+) {
+  if (!ids.length) return;
+
+  const placeholders = ids.map(() => "?").join(", ");
+  
+  const query = `
+    UPDATE notifications
+    SET seen = ?
+    WHERE id IN (${placeholders}) AND owner = ?
+  `;
+
+  const values = [true, ...ids, owner];
+
+  const [result] = await connection.execute<mysql.ResultSetHeader>(query, values);
+
+  return result;
+}

@@ -16,12 +16,22 @@ spec:
         - name: service-product-publisher
           image: pairfy/base-publisher
           env:
+            - name: DATABASE_NAME
+              value: service_product                 
+            - name: DATABASE_USER
+              value: marketplace                                                                                                                                                                         
+            - name: STREAM_NAME
+              value: service-product
+            - name: STREAM_SUBJECT
+              value: service-product.*              
+            - name: QUERY_INTERVAL
+              value: "10000"    
+            - name: QUERY_LIMIT
+              value: "500"    
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name                                                             
-            - name: POD_TIMEOUT
-              value: '120000'   
             - name: DATABASE_HOST  
               valueFrom:
                 configMapKeyRef:
@@ -37,19 +47,7 @@ spec:
                 secretKeyRef:
                   name: database-password-secret
                   key: password
-            - name: DATABASE_NAME
-              value: service_product                 
-            - name: DATABASE_USER
-              value: marketplace                                                                                                                                                                         
-            - name: STREAM_NAME
-              value: service-product
-            - name: STREAM_SUBJECT
-              value: service-product.*              
-            - name: QUERY_INTERVAL
-              value: "10000"    
-            - name: QUERY_LIMIT
-              value: "500"    
-                                             
+
           resources:
             limits:
               memory: "500Mi"

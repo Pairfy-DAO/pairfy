@@ -31,7 +31,7 @@ type Product {
     created_at: String!
 }
 
-type Books {
+type Book {
   id: ID!
   seller_id: String!
   keeping_stock: Int!
@@ -50,7 +50,7 @@ type Books {
 }
 
 type GetBooksResponse {
-  books: [Books]!
+  books: [Book]!
   nextCursor: String
   hasPrevMore: Boolean!
   hasNextMore: Boolean!
@@ -58,57 +58,79 @@ type GetBooksResponse {
 }
 
 type Order {
-  id: String!
+  id: ID!
+  type: String!
+  status: String!
   finished: Boolean!
-  scanned_at: Float!
-  status_log: String!
+  completed: Boolean!
+
+  country: String!
+  
+  buyer_pubkeyhash: String!
+  buyer_address: String!
+  buyer_wallet: String!
   buyer_username: String!
-  ada_price: Float!
+
+  seller_id: ID!
+  seller_pubkeyhash: String!
+  seller_address: String!
+  seller_wallet: String!
+  seller_username: String!
+  rsa_version: Int!
+
+  product_id: ID!
+  product_snapshot: String!
   contract_address: String!
+  contract_params: String!
   contract_state: Int
   contract_price: Int!
+  contract_quote: Int!
   contract_fee: Int!
   contract_units: Int!
-  product_id: String!
-  product_name: String!
-  product_price: Int!
-  product_sku: String!
-  product_model: String!
-  product_brand: String!
-  product_features: String!
-  product_bullet_list: String!
-  product_discount: Boolean!
-  product_discount_value: Int!
-  product_media_url: String!
-  product_image_path: String!
-  product_video_path: String!
-  product_image_set: String!
-  product_video_set: String!
-  watch_until: Float!
-  pending_until: Float!
-  shipping_until: Float!
+  asset_name: String!
+  asset_price: Float!
+
+  watch_until: BigInt!
+  pending_until: BigInt!
+  shipping_until: BigInt!
+  expire_until: BigInt!
+
   pending_tx: String
   pending_block: String
+  pending_metadata: String
+
   returned_tx: String
-  returned_block: String  
+  returned_block: String
+  returned_metadata: String
+
   locking_tx: String
-  locking_block: String  
+  locking_block: String
+  locking_metadata: String
+
   canceled_tx: String
-  canceled_block: String  
+  canceled_block: String
+  canceled_metadata: String
+
   shipping_tx: String
   shipping_block: String
   shipping_metadata: String
+
   appealed_tx: String
-  appealed_block: String    
+  appealed_block: String
+  appealed_metadata: String
+
   received_tx: String
   received_block: String
+  received_metadata: String
+
   collected_tx: String
-  collected_block: String  
-  seller_username: String
-  seller_verified: Boolean
-  seller_trade_terms: String
-  seller_avatar_base: String
-  seller_avatar_path: String
+  collected_block: String
+  collected_metadata: String
+
+  scanned_at: BigInt
+  created_at: BigInt!
+  updated_at: BigInt!
+  schema_v: Int!
 }
 
 type getOrderResponse {
@@ -128,12 +150,11 @@ input GetOrdersInput {
 } 
 
 input GetOrderInput {
-  id: String!
+  id: ID!
 } 
 
 type Query {
   getOrder(getOrderInput: GetOrderInput!): getOrderResponse!
-  getOrders: String
   getBooks(getBooksInput: GetBooksInput!): GetBooksResponse!
 }
 

@@ -1,6 +1,5 @@
-import { logger } from "../utils/index.js";
 import { database } from "../database/client.js";
-import { getUtxo } from "../lib/index.js";
+import { getUtxo, UtxoData, UtxoResponse } from "../lib/index.js";
 import { pending } from "./pending.js";
 import { returned } from "./returned.js";
 import { locking } from "./locking.js";
@@ -10,8 +9,79 @@ import { collected } from "./collected.js";
 import { canceled } from "./canceled.js";
 import { appealed } from "./appealed.js";
 import { HandlerParams } from "./types.js";
+import { logger, sleep } from "@pairfy/common";
+import { updateOrder } from "../common/updateOrder.js";
+import { redisState } from "../database/redis.js";
+import { getOrderStatus, saveOrderStatus } from "../lib/order.js";
+import { findOrderById } from "../common/findOrderById.js";
+import { expired } from "./expired.js";
 
-async function scanThreadToken(job: any) {
+export type jobResponse = {
+  id: string;
+  finished: boolean;
+};
+
+export async function testHandler(job: any): Promise<jobResponse> {
+  let connection = null;
+
+  try {
+    const timestamp = Date.now();
+
+    const { id } = job.data;
+
+    connection = await database.client.getConnection();
+
+    const ORDER = await findOrderById(connection, id);
+
+    if (!ORDER) {
+      return { id, finished: true };
+    }
+
+    const result = await getUtxo(ORDER.id);
+
+    const { success, failed, ...utxoData } = result;
+
+    console.log(success, failed);
+
+    let response: jobResponse = { id: ORDER.id, finished: ORDER.finished };
+
+    //////////////////////////////////////////////////////////// START TRANSACTION
+
+    await connection.beginTransaction();
+
+    if (!success && !failed && ORDER.status === "created") {
+      if (timestamp > ORDER.watch_until) {
+        console.log("🕒 Expired", ORDER.id);
+
+        response = await expired(connection, timestamp, ORDER);
+        return response;
+      }
+    }
+
+    if (success && !failed && utxoData) {
+      const data: UtxoData = utxoData as UtxoData;
+
+      switch (data.datum.state) {
+        case null:
+          break;
+        case 0n:
+          response = await pending(connection, timestamp, ORDER, data);
+      }
+    }
+
+    return response;
+
+    //////////////////////////////////////////////////////////// TRANSACTION END
+  } catch (err) {
+    if (connection) await connection.rollback();
+    throw err;
+  } finally {
+    if (connection) connection.release();
+  }
+}
+
+/** 
+export async function threadtokenQueue(job: any) {
   let connection = null;
 
   try {
@@ -116,16 +186,11 @@ async function scanThreadToken(job: any) {
   } catch (err) {
     logger.error(err);
 
-    if (connection) {
-      await connection.rollback();
-    }
+    if (connection) await connection.rollback();
 
     throw err;
   } finally {
-    if (connection) {
-      connection.release();
-    }
+    if (connection) connection.release();
   }
 }
-
-export { scanThreadToken };
+*/

@@ -51,3 +51,8 @@ export const getMediaGroupId = () => {
     raw.slice(20),
   ].join('-');
 };
+
+export const getNotificationId = (): string => {
+  const generate = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 16);
+  return generate();
+};

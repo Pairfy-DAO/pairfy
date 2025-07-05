@@ -1,91 +1,68 @@
-import {
-  catchError,
-  errorEvents,
-  logger,
-  redisChecker,
-  sleep,
-} from "./utils/index.js";
-import { Job, Queue, Worker } from "bullmq";
-import { scanThreadToken } from "./handlers/index.js";
-import { redisClient } from "./database/redis.js";
+import { Queue, Worker } from "bullmq";
+import { testHandler } from "./handlers/index.js";
+import { redisBooks, redisState } from "./database/redis.js";
+import { ERROR_EVENTS, logger, sleep } from "@pairfy/common";
+import { findOrdersCustom } from "./lib/order.js";
 import { database } from "./database/client.js";
+import { catchError } from "./utils/index.js";
 
 const main = async () => {
   try {
-    if (!process.env.POD_TIMEOUT) {
-      throw new Error("POD_TIMEOUT error");
-    }
+    const requiredEnvVars = [
+      "DATABASE_HOST",
+      "DATABASE_PORT",
+      "DATABASE_USER",
+      "DATABASE_PASSWORD",
+      "DATABASE_NAME",
+      "QUERY_LIMIT",
+      "QUERY_INTERVAL",
+      "SCAN_RANGE",
+      "PROJECT_ID",
+      "KUPO_KEY",
+      "OGMIOS_KEY",
+      "REDIS_BOOKS_HOST",
+      "REDIS_STATE_HOST",
+    ];
 
-    if (!process.env.DATABASE_HOST) {
-      throw new Error("DATABASE_HOST error");
+    for (const varName of requiredEnvVars) {
+      if (!process.env[varName]) {
+        throw new Error(`${varName} error`);
+      }
     }
+    const timestamp = Date.now();
+    const queryInterval = parseInt(process.env.QUERY_INTERVAL as string);
+    const queryLimit = parseInt(process.env.QUERY_LIMIT as string);
+    const databasePort = parseInt(process.env.DATABASE_PORT as string);
+    const scanRange = timestamp - parseInt(process.env.SCAN_RANGE as string);
 
-    if (!process.env.DATABASE_PORT) {
-      throw new Error("DATABASE_PORT error");
-    }
+    console.log({
+      QUERY_INTERVAL: queryInterval,
+      QUERY_LIMIT: queryLimit,
+      DATABASE_PORT: databasePort,
+      SCAN_RANGE: scanRange,
+    });
 
-    if (!process.env.DATABASE_USER) {
-      throw new Error("DATABASE_USER error");
-    }
-
-    if (!process.env.DATABASE_PASSWORD) {
-      throw new Error("DATABASE_PASSWORD error");
-    }
-
-    if (!process.env.DATABASE_NAME) {
-      throw new Error("DATABASE_NAME error");
-    }
-
-    if (!process.env.REDIS_HOST) {
-      throw new Error("REDIS_HOST error");
-    }
-
-    if (!process.env.QUERY_LIMIT) {
-      throw new Error("QUERY_LIMIT error");
-    }
-
-    if (!process.env.QUERY_INTERVAL) {
-      throw new Error("QUERY_INTERVAL error");
-    }
-
-    if (!process.env.SCAN_RANGE) {
-      throw new Error("SCAN_RANGE error");
-    }
-
-    if (!process.env.PROJECT_ID) {
-      throw new Error("PROJECT_ID error");
-    }
-
-    if (!process.env.KUPO_KEY) {
-      throw new Error("KUPO_KEY error");
-    }
-
-    if (!process.env.OGMIOS_KEY) {
-      throw new Error("OGMIOS_KEY error");
-    }
-
-    if (!process.env.ELASTIC_NODE) {
-      throw new Error("ELASTIC_NODE error");
-    }
-
-    if (!process.env.ELASTIC_KEY) {
-      throw new Error("ELASTIC_KEY error");
-    }
-
-    await redisClient
+    await redisState
       .connect({
-        url: process.env.REDIS_HOST,
+        url: process.env.REDIS_STATE_HOST,
         connectTimeout: 100000,
         keepAlive: 100000,
       })
-      .then(() => redisChecker(redisClient))
+      .then(() => console.log("✅ redisState connected"))
       .catch((err: any) => catchError(err));
 
-    //////////////////////////////////////////
+    await redisBooks
+      .connect({
+        url: process.env.REDIS_BOOKS_HOST,
+        connectTimeout: 100000,
+        keepAlive: 100000,
+      })
+      .then(() => console.log("✅ redisBooks connected"))
+      .catch((err: any) => catchError(err));
 
     database.connect({
       host: process.env.DATABASE_HOST,
-      port: parseInt(process.env.DATABASE_PORT),
+      port: databasePort,
       user: process.env.DATABASE_USER,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
@@ -100,30 +77,49 @@ const main = async () => {
       bigNumberStrings: true,
     });
 
-    /////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////
 
-    const mainQueue = new Queue("scanThreadToken", {
-      connection: { url: process.env.REDIS_HOST },
+    const queue = new Queue("threadtokenQueue", {
+      connection: { url: process.env.REDIS_STATE_HOST },
     });
 
-    const worker = new Worker("scanThreadToken", scanThreadToken, {
+    const worker = new Worker("threadtokenQueue", testHandler, {
       autorun: true,
       drainDelay: 10,
       settings: {
         backoffStrategy: () => -1,
       },
-      connection: { url: process.env.REDIS_HOST },
+      connection: { url: process.env.REDIS_STATE_HOST },
+      concurrency: 2, //TEST
+      lockDuration: 120_000,
+      stalledInterval: 120_000,
+      maxStalledCount: 1,
     });
 
-    worker.on("failed", (job: any, err) => logger.error("FAILED", job.id, err));
+    worker.on("failed", async (job: any, err) => {
+      console.error("❌ Failed", job.id, err);
+    });
 
-    worker.on("completed", async (job: Job, result) => {
-      console.log("COMPLETED", job.id);
-      const { threadtoken, finished } = result;
+    worker.on("completed", async (job: any, result) => {
+      try {
+        const { id, finished } = result;
 
-      if (finished) {
-        await mainQueue.removeJobScheduler(threadtoken);
-        console.log("Expired");
+        console.log("✅ Completed", id);
+
+        if (finished) {
+          const removed = await queue.removeJobScheduler(id);
+
+          if (removed) {
+            console.log("✅ Deleted", id);
+          }
+        }
+      } catch (err) {
+        logger.error({
+          service: "service-state",
+          event: "bull.error",
+          message: "bull completed error",
+          error: err,
+        });
       }
     });
 
@@ -131,121 +127,106 @@ const main = async () => {
       logger.error(err);
     });
 
-    worker.on("stalled", (job: any) => {
-      logger.error("STALLED", job.id);
+    worker.on("stalled", (jobId: any) => {
+      console.log("⚠️ Stalled", jobId);
     });
 
     worker.on("drained", () => {
-      logger.error("DRAINED");
+      console.log("✅ Drained");
     });
 
-    errorEvents.forEach((e: string) =>
+    ERROR_EVENTS.forEach((e: string) =>
       process.on(e, async (err) => {
-        logger.error(err);
+        logger.error({
+          service: "service-state",
+          event: "signal.error",
+          message: e,
+          error: err,
+        });
         await worker.close();
         await database.client.end();
-        await redisClient.client.disconnect();
+        await redisState.client.close();
+        await redisBooks.client.close();
         process.exit(1);
       })
     );
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////
-
     let connection: any = null;
 
     while (true) {
-      console.log("Scanning");
+      console.log("🔍 Scanning new orders.");
 
       try {
         connection = await database.client.getConnection();
 
-        const queryScheme = `
-          SELECT id,
-                 finished,
-                 scanned_at,
-                 country,
-                 seller_id,
-                 buyer_pubkeyhash,
-                 buyer_address,
-                 seller_address,
-                 watch_until
-          FROM orders
-          WHERE finished = ? AND scanned_at < ?
-          ORDER BY created_at ASC
-          LIMIT ? 
-          FOR UPDATE SKIP LOCKED`;
-
-        const scanRange =
-          Date.now() - parseInt(process.env.SCAN_RANGE) * 60 * 1000;
-
-        const [findOrders] = await connection.query(queryScheme, [
-          false,
+        const findOrders = await findOrdersCustom(
+          connection,
           scanRange,
-          parseInt(process.env.QUERY_LIMIT),
-        ]);
+          queryLimit
+        );
 
         if (!findOrders.length) {
-          console.log("EmptyOrder");
+          console.log("🚫 There are no more orders.");
         }
+
+        /////////////////////////////////////////////////////////////////////////////// ITERATE ORDERS
 
         for (const order of findOrders) {
           try {
-            const createWork = await mainQueue.upsertJobScheduler(
+            const createJob = await queue.upsertJobScheduler(
               order.id,
               {
-                every: 60000,
+                every: 60_000,
                 jobId: order.id,
               },
               {
                 name: order.id,
-                data: {
-                  threadtoken: order.id,
-                  watch_until: order.watch_until,
-                  seller_id: order.seller_id,
-                  buyer_pubkeyhash: order.buyer_pubkeyhash,
-                  buyer_address: order.buyer_address,
-                  seller_address: order.seller_address,
-                  country: order.country,
-                },
+                data: order,
                 opts: {
                   attempts: 0,
-                  backoff: {
-                    type: "fixed",
-                    delay: 60000,
-                  },
-                  removeOnComplete: false,
-                  removeOnFail: false,
+                  removeOnComplete: true,
+                  removeOnFail: true,
                 },
               }
             );
 
-            if (!createWork.name) {
-              throw new Error("CreateWorkError");
-            }
+            logger.info({
+              service: "service-state",
+              event: "job.created",
+              message: "job created",
+              jobId: createJob.name,
+            });
 
-            console.log("WorkAdded", createWork.name);
+            console.log("✅ Job added", createJob.name);
           } catch (err) {
-            logger.error(err);
+            logger.error({
+              service: "service-state",
+              event: "job.error",
+              message: "job error",
+              error: err,
+              jobId: order.id,
+            });
+
             continue;
           }
         }
-      } catch (err: any) {
-        logger.error(err);
 
-        if (connection) {
-          await connection.rollback();
-        }
+        /////////////////////////////////////////////////////////////////////////////// ITERATE ORDERS END
+      } catch (err: any) {
+        logger.error({
+          service: "service-state",
+          event: "mysql.error",
+          message: "mysql error",
+          error: err,
+        });
+
+        if (connection) await connection.rollback();
       } finally {
-        if (connection) {
-          connection.release();
-        }
+        if (connection) connection.release();
       }
 
-      await sleep(parseInt(process.env.QUERY_INTERVAL));
+      await sleep(queryInterval);
     }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////
-
   } catch (err) {
     catchError(err);
   }

@@ -1,4 +1,4 @@
-import { getEventId } from "../utils/index.js";
+import { getNotificationId } from "@pairfy/common";
 import { HandlerParams } from "./types.js";
 
 async function canceled(params: HandlerParams) {
@@ -30,7 +30,7 @@ async function canceled(params: HandlerParams) {
 
   const notifications = [
     {
-      id: getEventId(),
+      id: getNotificationId(),
       type: "order",
       title: "Order Cancelled",
       owner: params.buyer_pubkeyhash,
@@ -42,7 +42,7 @@ async function canceled(params: HandlerParams) {
       message: `The order has been cancelled and payment returned.`,
     },
     {
-      id: getEventId(),
+      id: getNotificationId(),
       type: "order",
       title: "Order Cancelled",
       owner: params.seller_id,

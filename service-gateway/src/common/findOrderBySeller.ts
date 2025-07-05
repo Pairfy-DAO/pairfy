@@ -1,13 +1,13 @@
 import { Connection, RowDataPacket } from "mysql2/promise";
 
-export async function findBookBySeller(
+export async function findOrderBySeller(
   connection: Connection,
-  id: string,
+  orderId: string,
   sellerId: string
 ): Promise<any> {
   const [rows] = await connection.execute<RowDataPacket[]>(
-    `SELECT * FROM books WHERE id = ? AND seller_id = ? LIMIT 1`,
-    [id, sellerId]
+    `SELECT * FROM orders WHERE id = ? AND seller_id = ? LIMIT 1`,
+    [orderId, sellerId]
   );
 
   return rows?.[0] || null

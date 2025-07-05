@@ -85,7 +85,7 @@ body {
 
 :root {
   --input-radius: var(--radius-b);
-  --button-radius: var(--radius-c);
+  --button-radius: var(--radius-b);
 }
 
 .flex {
@@ -145,4 +145,34 @@ textarea::placeholder {
   background: linear-gradient(90deg, #3BAA57, #0D7744);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.red{
+  color: var(--red-a);
+}
+
+.green{
+  color: var(--green-a);
+}
+
+.blue{
+  color: var(--blue-a);
+}
+
+/* Transición fade + slide */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-5px);
+}
+
+.fade-slide-enter-to,
+.fade-slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
 }

@@ -151,17 +151,18 @@
                 </svg>
                 <span> Learn how local encryption works.</span>
             </a>
-            <button class="btn" @click="product.cardanoDialog = false">Cancel</button>
-            <button class="btn primary" @click="onSubmit">Next</button>
+            <ButtonSolid @click="product.cardanoDialog = false" label="Cancel" size="mini" outlined />
+            <ButtonSolid @click="onSubmit" :loading="loading" label="Next" size="mini" />
         </div>
     </div>
 </template>
 
 <script setup>
 import { gql } from 'graphql-tag'
-import { formatUSD, timestampToDate, chunkMetadata, encryptMessageWithPublicKey, compressMessage, truncateText, sleep } from '@/utils/utils';
+import { formatUSD, timestampToDate, chunkMetadata, encryptMessageWithPublicKey, compressMessage } from '@/utils/utils';
 
 const route = useRoute()
+const router = useRouter()
 
 const auth = useAuthStore()
 const product = useProductStore()
@@ -171,7 +172,7 @@ const { $gatewayClient } = useNuxtApp()
 
 const loading = ref(false)
 
-const availableUnits = ref(10)
+const availableUnits = computed(() => product.book?.ready_stock || 0)
 const orderFee = ref(0.25)
 
 const orderUnits = ref(null);
@@ -297,7 +298,7 @@ const onSubmit = async () => {
             return;
         }
 
-        const order = await createOrder()
+        const { order, spk, cbor } = await createOrder()
 
         const message = {
             r: orderName.value,
@@ -310,7 +311,7 @@ const onSubmit = async () => {
 
         console.log(compressed.length);
 
-        const encrypted = encryptMessageWithPublicKey(order.spk, compressed);
+        const encrypted = encryptMessageWithPublicKey(spk, compressed);
 
         console.log(encrypted.length);
         console.log("✅Encrypted Address: ", encrypted);
@@ -319,12 +320,20 @@ const onSubmit = async () => {
 
         const metadata = chunkMetadata(encrypted, 64)
 
-        const TxHash = await wallet.balanceTx(order.cbor, metadata)
-        console.log(TxHash)
+        const txHash = await wallet.balanceTx(cbor, metadata)
+        console.log(txHash)
 
-        product.showToast(`The transaction has been sent to the network. TxHash: ${TxHash}`, 'success', 10_000)
+        product.showToast(`The transaction has been sent to the network. TxHash: ${txHash}`, 'success', 10_000)
 
-        await sleep(3_000)
+        router.push({
+            name: 'country-o-id',
+            params: {
+                id: order
+            },
+            query: {
+                tx: txHash
+            }
+        })
 
     } catch (err) {
         product.showToast(err, 'error', 10_000)
@@ -441,23 +450,6 @@ select {
     cursor: pointer;
     margin-top: 4px;
     align-self: flex-start;
-}
-
-.btn {
-    padding: 0.6rem 1rem;
-    border: 1px solid var(--primary-a);
-    background: #fff;
-    color: var(--primary-a);
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    text-align: center;
-}
-
-.btn.primary {
-    background: var(--primary-a);
-    color: white;
-    border: none;
 }
 
 .CardanoForm-right {
