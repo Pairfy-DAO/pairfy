@@ -92,7 +92,7 @@ onClickOutside(wrapperRef, () => {
   padding: 0.5rem;
   right: 0;
   top: 100%;
-  width: 350px;
+  width: 400px;
   z-index: 14000;
   overflow-y: auto;
   max-height: 600px;
@@ -130,6 +130,7 @@ onClickOutside(wrapperRef, () => {
 .notification-content {
   display: flex;
   align-items: flex-start;
+  transition: var(--transition-a);
 }
 
 .notification-item:hover {
