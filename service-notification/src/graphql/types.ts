@@ -14,8 +14,13 @@ type Notification {
   updated_at: BigInt!
 }
 
+type GetNotificationResponse {
+  unseen: [Notification!]
+  seen: [Notification!]
+}
+
 type Query {
-  getNotifications: [Notification!]
+  getNotifications: GetNotificationResponse
 }
 
 #----------------------------------------------------------------MUTATIONS

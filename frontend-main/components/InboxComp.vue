@@ -87,8 +87,8 @@ onClickOutside(wrapperRef, () => {
   box-shadow: var(--shadow-e);
   box-sizing: border-box;
   color: var(--text-a);
-  position: absolute;
   margin-top: 1rem;
+  position: absolute;
   padding: 0.5rem;
   right: 0;
   top: 100%;

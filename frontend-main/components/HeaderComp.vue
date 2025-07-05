@@ -29,25 +29,25 @@ const auth = useAuthStore()
 const wallet = useWalletStore()
 
 const route = useRoute()
-
-const { $queryClient } = useNuxtApp()
-
-const toastRef = ref(null);
-
 const currentRoute = computed(() => route.name)
 
+const { $queryClient, $notificationClient } = useNuxtApp()
+const toastRef = ref(null);
+
 let subscription1;
+let subscription2;
 
 onMounted(() => {
     watchToast()
     connectWallet()
     fetchPrices()
+    fetchNotifications()
 });
 
 onBeforeUnmount(() => {
     subscription1?.unsubscribe()
+    subscription2?.unsubscribe()
 })
-
 
 async function connectWallet() {
     try {
@@ -57,11 +57,9 @@ async function connectWallet() {
     }
 }
 
-
 async function fetchPrices() {
-
     const GET_PRICES_QUERY = gql`
-query getPrice {
+query GetPrice {
     getPrice {
         success
         message
@@ -70,6 +68,7 @@ query getPrice {
         }
     }
 }
+
 `;
 
     const observable = $queryClient.watchQuery({
@@ -94,6 +93,53 @@ query getPrice {
     })
 }
 
+async function fetchNotifications() {
+    const GET_NOTIFICATIONS_QUERY = gql`
+query GetNotifications {
+    getNotifications {
+        unseen {
+            id
+            type
+            title
+            owner
+            seen
+            data
+            message
+            created_at
+            updated_at
+        }
+        seen {
+            id
+            type
+            title
+            owner
+            seen
+            data
+            message
+            created_at
+            updated_at
+        }
+    }
+}
+
+`;
+
+    const observable = $notificationClient.watchQuery({
+        query: GET_NOTIFICATIONS_QUERY,
+        fetchPolicy: 'no-cache',
+        pollInterval: 60_000,
+    })
+
+    subscription2 = observable.subscribe({
+        next({ data }) {
+            auth.setNotifications(data.getNotifications)
+            console.log(auth.notifications)
+        },
+        error(err) {
+            auth.showToast(err, 'error', 10_000)
+        }
+    })
+}
 
 function watchToast() {
     watch(() => auth.toastMessage, ({ message, type, duration }) => toastRef.value?.showToast(message, type, duration));
