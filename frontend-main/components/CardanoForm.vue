@@ -25,7 +25,7 @@
                         <div class="form-item">
 
                             <InputSelect v-model="orderUnits" :options="orderUnitOptions" label="Quantity"
-                                @valid="orderUnitsValid = $event.valid" id="order-units-select" placeholder="Units">
+                                @valid="orderUnitsValid = $event.valid" id="order-units-select" placeholder="Quantity">
                                 <template #option="{ option }">
                                     <span class="flex">
                                         <span>{{ option.label }}</span>

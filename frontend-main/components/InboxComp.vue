@@ -10,14 +10,25 @@
           No notifications
         </div>
         <ul v-else class="InboxComp-box">
+
           <div class="notification-header">
-            <span>Notifications</span>
-            <span>You have {{ notifications.length }} notifications today.</span>
+            <div class="left">
+              <span>Notifications</span>
+              <span>You have {{ notifications.unseen.length }} notifications today.</span>
+            </div>
+            <div class="right" @click="toggle">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-x-icon lucide-x">
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+              </svg>
+            </div>
           </div>
 
           <div class="notification-section">
             <div class="title">
-              Latest
+              Latest ({{ notifications.unseen.length }})
             </div>
             <li class="notification-item" v-for="(n, i) in notifications.unseen" :key="i">
               <div class="notification-content">
@@ -44,7 +55,7 @@
 
           <div class="notification-section">
             <div class="title">
-              Seen
+              Seen ({{ notifications.seen.length }})
             </div>
             <li class="notification-item" v-for="(n, i) in notifications.seen" :key="i">
               <div class="notification-content">
@@ -241,10 +252,11 @@ const toggle = () => {
 }
 
 .notification-header {
+  width: 100%;
   display: flex;
   padding: 1rem;
+  padding-right: 0;
   box-sizing: border-box;
-  flex-direction: column;
 }
 
 .notification-header span:nth-child(1) {
@@ -253,9 +265,22 @@ const toggle = () => {
 }
 
 .notification-header span:nth-child(2) {
-  font-size: var(--text-size-0);
+  font-size: var(--text-size-1);
   color: var(--text-b);
-  margin-top: 0.25rem;
+  margin-top: 0.5rem;
   font-weight: 400;
+}
+
+.notification-header .left {
+  display: flex;
+  width: inherit;
+  flex-direction: column;
+}
+
+.notification-header .right {
+  display: flex;
+  cursor: pointer;
+  padding: 1rem;
+  align-items: center;
 }
 </style>
