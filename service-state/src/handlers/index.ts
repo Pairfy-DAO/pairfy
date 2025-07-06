@@ -37,6 +37,10 @@ export async function testHandler(job: any): Promise<jobResponse> {
       return { id, finished: true };
     }
 
+    if (ORDER.finished) {
+      return { id, finished: true };
+    }
+
     const result = await getUtxo(ORDER.id);
 
     const { success, failed, ...utxoData } = result;

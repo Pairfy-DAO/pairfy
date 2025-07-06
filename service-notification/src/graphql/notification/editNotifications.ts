@@ -1,3 +1,4 @@
+import { EditNotificationsSchema } from "../../validators/editNotifications.js";
 import { ApiGraphQLError, ERROR_CODES } from "@pairfy/common";
 import { updateNotifications } from "../../utils/index.js";
 import { database } from "../../database/client.js";
@@ -8,7 +9,17 @@ export const editNotifications = async (_: any, args: any, context: any) => {
   let connection = null;
 
   try {
-    const params = args.editNotificationsInput;
+    const verifyParams = EditNotificationsSchema.safeParse(args.editNotificationsInput);
+
+    if (!verifyParams.success) {
+      throw new ApiGraphQLError(
+        400,
+        `Invalid params ${JSON.stringify(verifyParams.error.flatten())}`,
+        { code: ERROR_CODES.VALIDATION_ERROR }
+      );
+    }
+
+    const params = verifyParams.data;
 
     console.log(params);
 

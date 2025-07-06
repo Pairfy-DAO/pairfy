@@ -23,8 +23,6 @@ export const useOrderStore = defineStore("order", () => {
   };
 
   const setOrder = (data: any) => {
-    console.log(data)
-
     const { order: orderData, shipping, address, session } = data;
 
     order.value = orderData;

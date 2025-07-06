@@ -30,7 +30,7 @@
             <div class="title">
               Latest ({{ notifications.unseen.length }})
             </div>
-            <li class="notification-item" v-for="(n, i) in notifications.unseen" :key="i">
+            <li class="notification-item" v-for="(n, i) in notifications.unseen" :key="i" @click="openNotification(n)">
               <div class="notification-content">
                 <div class="icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -57,7 +57,7 @@
             <div class="title">
               Seen ({{ notifications.seen.length }})
             </div>
-            <li class="notification-item" v-for="(n, i) in notifications.seen" :key="i">
+            <li class="notification-item" v-for="(n, i) in notifications.seen" :key="i"  @click="openNotification(n)">
               <div class="notification-content">
                 <div class="icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -96,6 +96,9 @@ const props = defineProps({
     required: true,
   },
 });
+
+const route = useRoute()
+const router = useRouter()
 
 const authStore = useAuthStore()
 
@@ -147,6 +150,21 @@ const toggle = () => {
 
   if (!props.modelValue) {
     editNotifications()
+  }
+};
+
+const openNotification = (value) => {
+  if (value.type === 'order') {
+    const data = JSON.parse(value.data)
+
+    router.push({
+      ...route.query,
+      name: 'country-o-id',
+      params: {
+        id: data.id
+      }
+    })
+
   }
 };
 </script>

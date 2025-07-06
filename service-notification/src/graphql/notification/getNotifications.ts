@@ -21,7 +21,7 @@ export const getNotifications = async (_: any, args: any, context: any) => {
 
     const unseen = await findNotifications(connection, owner, false, 25);
 
-    const seen = await findNotifications(connection, owner, true, 50);
+    const seen = await findNotifications(connection, owner, true, 25);
 
     return {
       unseen,
