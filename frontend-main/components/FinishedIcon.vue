@@ -1,22 +1,34 @@
 <template>
     <div class="icon" :class="{ visible: color, red: color === 'red', green: color === 'green' }">
-        <div class="circle" :class="{ red: color === 'red', green: color === 'green' }">
-            <i class="pi pi-check" v-if="color === 'green'" />
-            <i class="pi pi-times" v-if="color === 'red'" />
+        <div class="circle" :class="{ green: color === 'green' }" v-if="color === 'green'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-check-icon lucide-check">
+                <path d="M20 6 9 17l-5-5" />
+            </svg>
+        </div>
+
+        <div class="circle" :class="{ red: color === 'red' }" v-if="color === 'red'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-x-icon lucide-x">
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+            </svg>
         </div>
     </div>
 </template>
 
 <script setup>
 
-const order = useOrderStore()
+const orderStore = useOrderStore()
 
 const color = computed(() => {
 
-    if (order.finished) {
-        if ([-1, -2].includes(order.state)) return 'red'
+    if (orderStore.finished) {
+        if ([-1, -2, null].includes(orderStore.state)) return 'red'
 
-        if ([3, 4].includes(order.state)) return 'green'
+        if ([3, 4].includes(orderStore.state)) return 'green'
     }
 
     return false
@@ -35,27 +47,20 @@ const color = computed(() => {
     border-radius: 50%;
     right: 0;
     background: color-mix(in srgb, var(--green-a), transparent 50%);
-    display: none;
 }
-
 
 .icon.visible {
     display: flex;
-}
-
-.icon i {
-    font-size: 20px;
-    font-weight: bold;
-    color: var(--text-w);
 }
 
 .circle {
     width: 38px;
     height: 38px;
     display: flex;
-    justify-content: center;
-    align-items: center;
     border-radius: 50%;
+    align-items: center;
+    color: var(--text-w);
+    justify-content: center;
 }
 
 .icon.red {
@@ -65,7 +70,6 @@ const color = computed(() => {
 .icon.green {
     background: color-mix(in srgb, var(--green-a), transparent 50%);
 }
-
 
 .circle.red {
     background: var(--red-a);

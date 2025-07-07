@@ -11,8 +11,14 @@
             }" v-if="status.template === 'loading'" />
 
             <div v-if="status.template === 'icon'">
-                <template v-if="status.icon ==='eye'">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-icon lucide-eye"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                <template v-if="status.icon === 'eye'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-eye-icon lucide-eye">
+                        <path
+                            d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+                        <circle cx="12" cy="12" r="3" />
+                    </svg>
                 </template>
             </div>
         </div>
@@ -21,9 +27,10 @@
 
 <script setup>
 const orderStore = useOrderStore()
+const orderData = computed(() => orderStore.order)
 
 const status = computed(() => {
-    const pendingBlock = orderStore.order.pending_block
+    const pendingBlock = orderData.value.pending_block
 
     if (!pendingBlock) {
         return {
@@ -56,7 +63,7 @@ const status = computed(() => {
     }
 })
 
-const openExplorer = () => {
+function openExplorer() {
     if (!import.meta.client) return
 
     const cardanoNetwork = useRuntimeConfig().public.cardanoNetwork;
@@ -133,5 +140,4 @@ const openExplorer = () => {
         transform: rotate(360deg);
     }
 }
-
 </style>

@@ -84,12 +84,11 @@ const tabIndex = ref(0)
 
 const toastRef = ref(null);
 
-const columns = ref([
-    { label: "Title", field: "title" },
-    { label: "Message", field: "message" },
-    { label: "Type", field: "type" },
-    { label: "Date", field: "created_at" },
-    { label: "Data", field: "data" }
+const columns = ref([{ label: "Date", field: "created_at" },
+{ label: "Title", field: "title" },
+{ label: "Message", field: "message" },
+{ label: "Type", field: "type" },
+{ label: "Data", field: "data" }
 ])
 
 const dottedMenuOptions = ref([

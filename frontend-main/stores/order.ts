@@ -28,6 +28,7 @@ export const useOrderStore = defineStore("order", () => {
     order.value = orderData;
     state.value = orderData.contract_state;
     finished.value = orderData.finished;
+    pendingTx.value = orderData.pending_tx;
   };
 
   function clear() {

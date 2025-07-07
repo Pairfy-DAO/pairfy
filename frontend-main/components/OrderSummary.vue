@@ -1,20 +1,14 @@
 <template>
     <div class="OrderSummary">
-        <div class="OrderSummary-title flex">
-            <template v-if="!order.finished">
-                <div>
-                    {{ orderTitle }}
-                </div>
-                <span>{{ globalCountdown }}</span>
-            </template>
 
-            <template v-else="order.finished">
-                <div>
-                    {{ orderTitle }}
-                </div>
+        <div class="OrderSummary-title">
+            <div>
+                {{ orderTitle }}
+            </div>
 
-                <FinishedIcon />
-            </template>
+            <span v-if="!orderStore.finished">{{ globalCountdown }}</span>
+
+            <FinishedIcon />
         </div>
 
         <div class="OrderSummary-subtitle">
@@ -57,7 +51,7 @@
             </button>
         </div>
 
-        <DividerComp margin="1rem 0"/>
+        <DividerComp margin="1rem 0" />
 
         <OrderTimeline />
     </div>
@@ -66,26 +60,28 @@
 <script setup>
 import { truncateText } from '@/utils/utils'
 
-const order = useOrderStore()
-const orderData = computed(() => order.order)
+const orderStore = useOrderStore()
+const orderData = computed(() => orderStore.order)
 
 const orderTitle = computed(
     () => {
+        const state = orderStore.state
+
         let title = "Preparing your package, Time Remaining"
 
-        if (order.state === 0) {
+        if (state === 0) {
             title = "Preparing your package, Time Remaining"
         }
 
-        if (order.state === 1) {
+        if (state === 1) {
             title = "Prepare the package, Time Remaining "
         }
 
-        if (order.state === 2) {
+        if (state === 2) {
             title = "The Package is Arriving, Time Remaining "
         }
 
-        if (order.state === 3) {
+        if (state === 3) {
             title = "The Package is Arriving, Time Remaining "
         }
 
@@ -93,14 +89,50 @@ const orderTitle = computed(
     }
 )
 
-const globalTimestamp = ref(Date.now());
+const globalTimestamp = computed(() => {
+    const state = orderStore.state
 
-const globalTimeLeft = ref(globalTimestamp.value - Date.now());
+    if (state === null) {
+        return orderData.value.watch_until
+    }
+
+    if (state === 0) {
+        return orderData.value.pending_until
+    }
+
+    if (state === -1) {
+        return Date.now()
+    }
+
+    if (state === 1) {
+        return orderData.value.shipping_until
+    }
+
+    if (state === 2) {
+        return orderStore.value.shipping
+    }
+
+    if (state === 3) {
+        return Date.now()
+    }
+
+    if (state === -3) {
+        return Date.now()
+    }
+})
+
+const now = ref(Date.now());
+
+const interval = setInterval(() => {
+  now.value = Date.now(); 
+}, 1000);
 
 const globalCountdown = computed(() => {
-    if (globalTimeLeft.value <= 0) return "00:00";
+    const globalTimeLeft = globalTimestamp.value - now.value;
 
-    const totalSeconds = Math.floor(globalTimeLeft.value / 1000);
+    if (globalTimeLeft <= 0) return "00:00";
+
+    const totalSeconds = Math.floor(globalTimeLeft / 1000);
     const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
     const seconds = (totalSeconds % 60).toString().padStart(2, '0');
 
@@ -127,14 +159,17 @@ function formatTime(value) {
     return `${days}d : ${remainingHours}h : ${minutes}m : ${seconds}s`;
 }
 
-const openExplorer = () => {
+function openExplorer() {
     if (!import.meta.client) return
 
     const cardanoNetwork = useRuntimeConfig().public.cardanoNetwork;
 
-    window.open(`https://${cardanoNetwork}.cexplorer.io/tx/${order.pendingTx}`, '_blank');
+    window.open(`https://${cardanoNetwork}.cexplorer.io/tx/${orderStore.pendingTx}`, '_blank');
 }
 
+onUnmounted(() => {
+  clearInterval(interval);
+});
 </script>
 
 <style lang="css" scoped>
@@ -145,10 +180,11 @@ const openExplorer = () => {
 }
 
 .OrderSummary-title {
-    font-size: var(--text-size-3);
+    display: flex;
     font-weight: 600;
     line-height: 3rem;
     position: relative;
+    font-size: var(--text-size-3);
 }
 
 .OrderSummary-title span {

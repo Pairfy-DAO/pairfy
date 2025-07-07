@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="MessageComp">
       <div
         ref="contentRef"
         class="json-card"
@@ -83,6 +83,12 @@
   </script>
   
   <style scoped>
+  .MessageComp{
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+  }
+  
   .json-card {
     border: 1px solid var(--border-a);
     border-radius: var(--radius-c);

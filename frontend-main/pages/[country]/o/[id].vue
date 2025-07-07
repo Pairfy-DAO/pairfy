@@ -1,5 +1,5 @@
 <template>
-    <div class="OrderPage flex">
+    <div class="OrderPage">
 
         <ToastComp ref="toastRef" />
 
@@ -16,14 +16,14 @@
 
 
 
-                <!--               
+<!--               
                 <ProductComp v-if="currentNav === 1" />
 
                 <TransactionsComp v-if="currentNav === 2" />
  -->
 
                 <div class="panel">
-                    <!--
+<!--
                     <template v-if="getCurrentSeller || getCurrentUser">
                         <ChatComp v-if="orderData" />
                     </template>
@@ -44,27 +44,16 @@ import { gql } from 'graphql-tag'
 const route = useRoute();
 
 const order = useOrderStore()
-
-const orderData = computed(()=> order.order)
+const orderData = computed(() => order.order)
 
 const { $gatewayClient } = useNuxtApp()
 
 const toastRef = ref(null);
-
 const currentNav = ref(0);
 
 let subscription1;
 
-onMounted(() => {
-    watchToast()
-    fetchOrder()
-});
-
-onBeforeUnmount(() => {
-    removeSubscriptions()
-})
-
-async function fetchOrder() {
+const fetchOrder = async () => {
 
     const GET_ORDER_QUERY = gql`
 query ($getOrderVariable: GetOrderInput!) {
@@ -149,7 +138,7 @@ query ($getOrderVariable: GetOrderInput!) {
     subscription1 = observable.subscribe({
         next({ data }) {
             order.setOrder(data.getOrder)
-            order.pendingTx = route.query?.tx
+            order.pendingTx = route.query?.tx || data.getOrder.order.pending_tx
         },
         error(err) {
             order.showToast(err, 'error', 10_000)
@@ -164,6 +153,15 @@ function removeSubscriptions() {
 function watchToast() {
     watch(() => order.toastMessage, ({ message, type, duration }) => toastRef.value?.showToast(message, type, duration));
 }
+
+onMounted(() => {
+    watchToast()
+    fetchOrder()
+});
+
+onBeforeUnmount(() => {
+    removeSubscriptions()
+})
 
 
 /*
@@ -603,6 +601,7 @@ onUnmounted(() => {
 .OrderPage {
     background: var(--background-a);
     justify-content: center;
+    display: flex;
 }
 
 .OrderPage-body {
@@ -619,5 +618,4 @@ onUnmounted(() => {
     margin-top: 1rem;
     display: grid;
 }
-
 </style>
