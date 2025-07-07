@@ -119,7 +119,14 @@ export async function copyToClipboard(text: string) {
 }
 
 /**15 February 2025 . 8:05 AM - 13 minutes ago*/
-export function formatWithDateFns(timestamp: string) {
+export function formatWithDateFns(timestamp: string | number, seg?: boolean) {
+
+  if(!timestamp)return;
+  
+  if(seg){
+    timestamp = Number(timestamp) * 1000
+  }
+
   const date = new Date(timestamp);
   const formattedDate = format(date, "dd MMMM yyyy '·' h:mm a"); 
   let timeAgo = formatDistanceToNow(date, { addSuffix: true }); 

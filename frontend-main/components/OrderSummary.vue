@@ -8,7 +8,7 @@
 
             <span v-if="!orderStore.finished">{{ globalCountdown }}</span>
 
-            <FinishedIcon />
+            <FinishedIcon v-if="orderStore.finished"/>
         </div>
 
         <div class="OrderSummary-subtitle">

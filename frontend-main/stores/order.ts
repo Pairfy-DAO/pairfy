@@ -11,6 +11,7 @@ export const useOrderStore = defineStore("order", () => {
 
   const order = ref(null);
   const state = ref(null);
+  const product = ref(null);
   const finished = ref(null);
   const pendingTx = ref(null);
 
@@ -23,12 +24,13 @@ export const useOrderStore = defineStore("order", () => {
   };
 
   const setOrder = (data: any) => {
-    const { order: orderData, shipping, address, session } = data;
+    const { order: orderData, product: productData, shipping, address, session } = data;
 
     order.value = orderData;
     state.value = orderData.contract_state;
     finished.value = orderData.finished;
     pendingTx.value = orderData.pending_tx;
+    product.value = JSON.parse(productData);
   };
 
   function clear() {
@@ -43,6 +45,7 @@ export const useOrderStore = defineStore("order", () => {
     finished,
     toastMessage,
     showToast,
-    pendingTx
+    pendingTx,
+    product
   };
 });

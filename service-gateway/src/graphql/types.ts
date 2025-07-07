@@ -135,6 +135,7 @@ type Order {
 
 type getOrderResponse {
   order: Order!
+  product: String!
   shipping: String
   address: String
   session: String!

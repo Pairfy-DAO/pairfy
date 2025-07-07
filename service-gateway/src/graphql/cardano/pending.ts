@@ -8,11 +8,11 @@ import {
   findProductById,
   findSellerById,
   UserToken,
+  compress
 } from "@pairfy/common";
 import { redisPrice } from "../../database/redis.js";
 import { insertOrder } from "../../lib/order.js";
 import { chunkMetadata } from "../../lib/metadata.js";
-import { toBase64 } from "../../common/toBase64.js";
 
 export const pendingEndpoint = async (_: any, args: any, context: any) => {
   let connection = null;
@@ -127,7 +127,7 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
       seller_username: findSeller.username,
       rsa_version: findSeller.rsa_version,
       product_id: findProduct.id,
-      product_snapshot: toBase64(findProduct.description.text),
+      product_snapshot: compress(findProduct),
       contract_address: BUILDER.stateMachineAddress,
       contract_params: BUILDER.serializedParams,
       contract_price: contractPrice,

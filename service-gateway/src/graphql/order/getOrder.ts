@@ -1,6 +1,6 @@
 import database from "../../database/client.js";
 import { findOrderByUser } from "../../common/findOrderByUser.js";
-import { ApiGraphQLError, ERROR_CODES } from "@pairfy/common";
+import { ApiGraphQLError, ERROR_CODES, decompress } from "@pairfy/common";
 import { getOrderSchema } from "../../validators/getOrder.js";
 
 export const getOrder = async (_: any, args: any, context: any) => {
@@ -44,6 +44,7 @@ export const getOrder = async (_: any, args: any, context: any) => {
 
       return {
         order: findOrder,
+        product: decompress(findOrder.product_snapshot),
         shipping: null,
         address: null,
         session,

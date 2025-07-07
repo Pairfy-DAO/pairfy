@@ -12,15 +12,8 @@
             <div class="OrderPage-grid" v-if="orderData">
 
                 <OrderSummary v-if="currentNav === 0" />
-
-
-
-
-<!--               
-                <ProductComp v-if="currentNav === 1" />
-
-                <TransactionsComp v-if="currentNav === 2" />
- -->
+                <OrderProduct v-if="currentNav === 1" />
+                <OrderTxs v-if="currentNav === 2" />
 
                 <div class="panel">
 <!--
@@ -49,7 +42,7 @@ const orderData = computed(() => order.order)
 const { $gatewayClient } = useNuxtApp()
 
 const toastRef = ref(null);
-const currentNav = ref(0);
+const currentNav = ref(2);
 
 let subscription1;
 
@@ -119,6 +112,8 @@ query ($getOrderVariable: GetOrderInput!) {
             updated_at
             schema_v
        }
+
+       product
     }
 }
 
