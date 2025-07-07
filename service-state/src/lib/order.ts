@@ -29,33 +29,64 @@ export async function findOrdersCustom(
   return rows;
 }
 
-export type OrderStatus = {
-  scan_until: number | null;
-};
-
-export async function saveOrderStatus(
+export async function saveStatus(
   client: any,
-  id: string,
-  status: OrderStatus,
-  ttlSeconds = 3600
+  orderId: string,
+  status: string
 ): Promise<void> {
-  return await client.set(`order:${id}`, JSON.stringify(status), {
-    expiration: { type: "EX", value: ttlSeconds },
-  });
+  try {
+    const statusKey = `${orderId}:${status}`;
+
+    const exists = await client.exists(statusKey);
+
+    if (!exists) {
+      await client.set(statusKey, 0, { expiration: { type: "EX", value: 3600 } });
+    } else {
+      await client.incr(statusKey);
+
+      const iterationsStr = await client.get(statusKey);
+
+      if (iterationsStr) {
+        const iterations = parseInt(iterationsStr);
+
+        let scanUntil = null;
+
+        const now = Date.now();
+
+        if (iterations === 3) {
+          scanUntil = now + 5 * 60 * 1000;
+          console.log("🕛 Sleep 5m SET");
+        } else if (iterations === 4) {
+          scanUntil = now + 10 * 60 * 1000;
+          console.log("🕛 Sleep 10m SET");
+        } else if (iterations >= 5) {
+          scanUntil = now + 15 * 60 * 1000;
+          console.log("🕛 Sleep 15m SET");
+        }
+
+        if (scanUntil) {
+          await client.set(`${orderId}:sleep`, scanUntil.toString(), {
+            expiration: { type: "EX", value: 3600 }
+          });
+        }
+      }
+    }
+  } catch (err: any) {
+    console.error(err);
+  }
 }
 
-export async function getOrderStatus(
-  client: any,
-  id: string
-): Promise<OrderStatus | null> {
-
+export async function getSleepUntil(client: any, orderId: string) {
   try {
-    const result = await client.get(`order:${id}`);
-  
-    if (!result) return null;
+    const result = await client.get(`${orderId}:sleep`);
 
-    return JSON.parse(result) as OrderStatus;
-  } catch (err) {
-    throw err
+    if (result) {
+      return parseInt(result);
+    }
+
+    return null;
+  } catch (err: any) {
+    console.error(err);
+    return null;
   }
 }

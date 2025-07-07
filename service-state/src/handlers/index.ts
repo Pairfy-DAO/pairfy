@@ -12,7 +12,7 @@ import { HandlerParams } from "./types.js";
 import { logger, sleep } from "@pairfy/common";
 import { updateOrder } from "../common/updateOrder.js";
 import { redisState } from "../database/redis.js";
-import { getOrderStatus, saveOrderStatus } from "../lib/order.js";
+import { getSleepUntil } from "../lib/order.js";
 import { findOrderById } from "../common/findOrderById.js";
 import { expired } from "./expired.js";
 
@@ -29,6 +29,15 @@ export async function testHandler(job: any): Promise<jobResponse> {
 
     const { id } = job.data;
 
+    const sleepUntil = await getSleepUntil(redisState.client, id);
+
+    if (sleepUntil) {
+      if (timestamp < sleepUntil) {
+        console.log("🕛 SLEEPING", sleepUntil, timestamp);
+        return { id, finished: false };
+      }
+    }
+
     connection = await database.client.getConnection();
 
     const ORDER = await findOrderById(connection, id);
@@ -37,17 +46,16 @@ export async function testHandler(job: any): Promise<jobResponse> {
       return { id, finished: true };
     }
 
+    let response: jobResponse = { id: ORDER.id, finished: ORDER.finished };
+
     if (ORDER.finished) {
-      return { id, finished: true };
+      return response;
     }
 
     const result = await getUtxo(ORDER.id);
-
     const { success, failed, ...utxoData } = result;
 
     console.log(success, failed);
-
-    let response: jobResponse = { id: ORDER.id, finished: ORDER.finished };
 
     //////////////////////////////////////////////////////////// START TRANSACTION
 

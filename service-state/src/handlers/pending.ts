@@ -3,6 +3,8 @@ import { UtxoData } from "../lib/index.js";
 import { Connection } from "mysql2/promise";
 import { updateOrder } from "../common/updateOrder.js";
 import { jobResponse } from "./index.js";
+import { redisState } from "../database/redis.js";
+import { saveStatus } from "../lib/order.js";
 
 export async function pending(
   connection: Connection,
@@ -10,6 +12,8 @@ export async function pending(
   orderData: any,
   data: UtxoData
 ): Promise<jobResponse> {
+  const newStatus = "pending";
+
   if (!orderData.pending_notified) {
     const notifications = [
       {
@@ -23,7 +27,10 @@ export async function pending(
           country: orderData.country,
           buyer_wallet: orderData.buyer_wallet,
         }),
-        message: `The payment is being processed on the network - Order N° ${orderData.id.slice(0, 10)}`,
+        message: `The payment is being processed on the network - Order N° ${orderData.id.slice(
+          0,
+          10
+        )}`,
         created_at: timestamp,
         updated_at: timestamp,
       },
@@ -38,7 +45,10 @@ export async function pending(
           country: orderData.country,
           seller_wallet: orderData.seller_wallet,
         }),
-        message: `Verify payment and accept the order - Order N° ${orderData.id.slice(0, 10)}`,
+        message: `Verify payment and accept the order - Order N° ${orderData.id.slice(
+          0,
+          10
+        )}`,
         created_at: timestamp,
         updated_at: timestamp,
       },
@@ -55,7 +65,7 @@ export async function pending(
   }
 
   const updateContent = {
-    status: "pending",
+    status: newStatus,
     contract_address: data.utxo.address,
     contract_state: data.datum.state,
     pending_tx: data.txHash,
@@ -72,6 +82,8 @@ export async function pending(
     updateContent
   );
 
+  await saveStatus(redisState.client, orderData.id, newStatus)
+  
   await connection.commit();
 
   return { id: orderData.id, finished: false };
