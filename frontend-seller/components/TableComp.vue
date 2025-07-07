@@ -72,8 +72,8 @@
             </slot>
           </td>
 
-          <td class="row" :style="{ width: columnWidths['action'] || 'auto' }">
-            <slot name="action" :item="item" />
+          <td class="row" :style="{ width: columnWidths['actions'] || 'auto' }" v-if="actions">
+            <slot name="actions" :item="item" />
           </td>
         </tr>
       </tbody>
@@ -90,6 +90,7 @@ const props = defineProps({
   limit: { type: Number, default: 16 },
   count: { type: Number, default: 0 },
   images: { type: Boolean, default: false },
+  actions: { type: Boolean, default: false },
   columnWidths: { type: Object, default: () => ({}) },
   range: { type: String, default: "" },
   page: { type: Number, default: 1 },
@@ -143,14 +144,11 @@ const nextPage = () => {
 }
 </script>
 
-
-
-
 <style scoped>
 .datatable {
   border: 1px solid var(--border-a);
   background: var(--background-a);
-  border-radius: var(--radius-b);
+  border-radius: var(--radius-a);
   font-size: var(--text-size-1);
   flex-direction: column;
   color: var(--text-a);

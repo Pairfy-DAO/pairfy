@@ -21,6 +21,7 @@
     "@tiptap/starter-kit": "^2.11.7",
     "@tiptap/vue-3": "^2.11.7",
     "cross-fetch": "^4.1.0",
+    "date-fns": "^4.1.0",
     "form-data": "^4.0.2",
     "graphql": "^16.10.0",
     "node-fetch": "^3.3.2",

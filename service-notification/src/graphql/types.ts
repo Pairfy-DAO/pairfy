@@ -19,8 +19,22 @@ type GetNotificationResponse {
   seen: [Notification!]
 }
 
+type GetCursorResponse {
+  notifications: [Notification!]
+  nextCursor: String
+  hasPrevMore: Boolean!
+  hasNextMore: Boolean!
+  totalCount: Int!
+}
+
+input GetCursorInput {
+  cursor: String
+  reverseCursor: String
+}  
+
 type Query {
-  getNotifications: GetNotificationResponse
+  getNotifications: GetNotificationResponse!
+  getCursor(getCursorInput: GetCursorInput!): GetCursorResponse!
 }
 
 #----------------------------------------------------------------MUTATIONS
