@@ -1,8 +1,8 @@
 <template>
     <div class="OrderChat">
         <div class="OrderChat-body">
-            <div class="header flex">
-                <div class="avatar flex">
+            <div class="OrderChat-header">
+                <div class="avatar">
                     <img src="https://api.dicebear.com/9.x/initials/svg?seed=Luis" alt="">
                 </div>
                 <div class="name">
@@ -26,12 +26,12 @@
                 </div>
 
                 <div class="footer-bottom flex">
-                    <textarea class="OrderChat-input" v-model="inputValue" rows="1" cols="30"
-                        placeholder="Chat with the other party..." @input="autoResize" @keydown="onEnter"
+                    <textarea class="OrderChat-input" v-model="inputValue" rows="1" cols="30" 
+                        placeholder="Chat with counterparty" @input="autoResize" @keydown="onEnter"
                         ref="chatTextarea" />
 
-                    <div class="OrderChat-send flex" @click="onSend">
-                        <i class="pi pi-send" />
+                    <div class="OrderChat-send" @click="onSend">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send-horizontal-icon lucide-send-horizontal"><path d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z"/><path d="M6 12h16"/></svg>
                     </div>
                 </div>
             </div>
@@ -73,10 +73,6 @@ const autoResize = () => {
     }
 };
 
-
-onMounted(() => {
-    autoResize();
-});
 
 watch(inputValue, () => {
     autoResize();
@@ -278,13 +274,16 @@ const { mutate: createMessage, onDone: onCreateMessageDone } = useMutation(gql`
     width: 400px;
     overflow: hidden;
     height: 700px;
+    box-sizing: border-box;
     border-radius: var(--radius-c);
     transition: var(--transition-a);
     border: 2px solid var(--border-a);
 }
 
-.header {
+.OrderChat-header {
     border-bottom: 1px solid var(--border-a);
+    align-items: center;
+    display: flex;
     padding: 1rem;
 }
 
@@ -292,7 +291,9 @@ const { mutate: createMessage, onDone: onCreateMessageDone } = useMutation(gql`
     background: var(--background-a);
     border-radius: var(--radius-b);
     border: 1px solid transparent;
+    align-items: center;
     overflow: hidden;
+    display: flex;
     width: 40px;
     height: 40px;
 }
@@ -348,6 +349,7 @@ const { mutate: createMessage, onDone: onCreateMessageDone } = useMutation(gql`
 .footer {
     border-top: 1px solid var(--border-a);
     width: inherit;
+    box-sizing: border-box;
 }
 
 .footer-top {
@@ -364,6 +366,7 @@ const { mutate: createMessage, onDone: onCreateMessageDone } = useMutation(gql`
 }
 
 .footer-bottom {
+    box-sizing: border-box;
     width: inherit;
     padding: 1rem;
 }
@@ -394,13 +397,13 @@ const { mutate: createMessage, onDone: onCreateMessageDone } = useMutation(gql`
 
 .OrderChat-send {
     justify-content: center;
-    width: 60px;
-    height: inherit;
+    align-items: center;
+    display: flex;
+    height: 3rem;
     cursor: pointer;
+    padding-left: 1rem;
+    padding-right: 0.25rem;
+   
 }
 
-.OrderChat-send i {
-    font-size: var(--text-size-3);
-    transform: rotate(45deg);
-}
 </style>

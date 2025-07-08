@@ -1,11 +1,11 @@
 <template>
     <div class="OrderNav flex">
         <div class="OrderNav-item" :class="{ selected: modelValue === 0 }" @click="updateNav(0)">
-            <span>Details</span>
+            <span>P2P</span>
             <div class="border" :class="{ selected: modelValue === 0 }" />
         </div>
         <div class="OrderNav-item" :class="{ selected: modelValue === 1 }" @click="updateNav(1)">
-            <span>Product</span>
+            <span>Details</span>
             <div class="border" :class="{ selected: modelValue === 1 }" />
         </div>
         <div class="OrderNav-item" :class="{ selected: modelValue === 2 }" @click="updateNav(2)">

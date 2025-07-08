@@ -247,7 +247,6 @@ onUnmounted(() => {
     max-width: var(--body-a);
     box-sizing: border-box;
     min-height: 100vh;
-    margin-top: 1rem;
     padding: 2rem;
     width: 100%;
 }

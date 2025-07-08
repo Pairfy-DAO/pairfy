@@ -12,7 +12,7 @@
         </div>
 
         <div class="OrderSummary-subtitle">
-            Order Id
+            Order ID
             <div>
                 <span>{{ truncateText(orderData.id, 30) }}</span>
             </div>
