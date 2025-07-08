@@ -6,7 +6,7 @@
 
                 <span class="ago flex">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-icon lucide-clock"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
-                    {{ formatWithDateFns(orderData.pending_block, true) }}
+                    {{ formatCompleteDate(orderData.pending_block, true) }}
                 </span>
             </div>
             <div class="card-body">
@@ -23,7 +23,7 @@
 
                 <span class="ago flex">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-icon lucide-clock"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
-                    {{ formatWithDateFns(orderData.returned_block, true) }}
+                    {{ formatCompleteDate(orderData.returned_block, true) }}
                 </span>
             </div>
             <div class="card-body">
@@ -40,7 +40,7 @@
 
                 <span class="ago flex">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-icon lucide-clock"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
-                    {{ formatWithDateFns(orderData.locking_block, true) }}
+                    {{ formatCompleteDate(orderData.locking_block, true) }}
                 </span>
             </div>
             <div class="card-body">
@@ -57,7 +57,7 @@
 
                 <span class="ago flex">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-icon lucide-clock"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
-                    {{ formatWithDateFns(orderData.canceled_block, true) }}
+                    {{ formatCompleteDate(orderData.canceled_block, true) }}
                 </span>
             </div>
             <div class="card-body">
@@ -75,7 +75,7 @@
 
                 <span class="ago flex">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-icon lucide-clock"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
-                    {{ formatWithDateFns(orderData.shipping_block, true) }}
+                    {{ formatCompleteDate(orderData.shipping_block, true) }}
                 </span>
             </div>
             <div class="card-body">
@@ -92,7 +92,7 @@
 
                 <span class="ago flex">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-icon lucide-clock"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
-                    {{ formatWithDateFns(orderData.appealed_block, true) }}
+                    {{ formatCompleteDate(orderData.appealed_block, true) }}
                 </span>
             </div>
             <div class="card-body">
@@ -109,7 +109,7 @@
 
                 <span class="ago flex">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-icon lucide-clock"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
-                    {{ formatWithDateFns(orderData.received_block, true) }}
+                    {{ formatCompleteDate(orderData.received_block, true) }}
                 </span>
             </div>
             <div class="card-body">
@@ -126,7 +126,7 @@
 
                 <span class="ago flex">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-icon lucide-clock"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
-                    {{ formatWithDateFns(orderData.collected_block, true) }}
+                    {{ formatCompleteDate(orderData.collected_block, true) }}
                 </span>
             </div>
             <div class="card-body">
@@ -154,12 +154,11 @@ function openExplorer() {
     window.open(`https://${cardanoNetwork}.cexplorer.io/tx/${orderStore.pendingTx}`, '_blank');
 }
 
-
 </script>
 
 <style lang="css" scoped>
 .transactions {
-    width: 80%;
+   
 }
 
 .card {

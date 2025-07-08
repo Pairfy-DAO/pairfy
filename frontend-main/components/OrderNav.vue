@@ -1,7 +1,7 @@
 <template>
     <div class="OrderNav flex">
         <div class="OrderNav-item" :class="{ selected: modelValue === 0 }" @click="updateNav(0)">
-            <span>Information</span>
+            <span>Details</span>
             <div class="border" :class="{ selected: modelValue === 0 }" />
         </div>
         <div class="OrderNav-item" :class="{ selected: modelValue === 1 }" @click="updateNav(1)">
@@ -54,7 +54,7 @@ function updateNav(index) {
 }
 
 .OrderNav-item span {
-    padding: 0.5rem 0;
+    padding: 0.75rem 0;
 }
 
 .OrderNav-item .border {

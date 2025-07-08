@@ -46,7 +46,7 @@
                   <span class="message">{{ n.message }}</span>
 
                   <span class="date">
-                    {{ formatWithDateFns(n.created_at) }}
+                    {{ formatCompleteDate(n.created_at) }}
                   </span>
                 </div>
               </div>
@@ -55,7 +55,7 @@
 
           <div class="notification-section">
             <div class="title">
-              Seen ({{ notifications.seen.length }})
+              Seen
             </div>
             <li class="notification-item" v-for="(n, i) in notifications.seen" :key="i"  @click="openNotification(n)">
               <div class="notification-content">
@@ -73,7 +73,7 @@
                   <span class="message">{{ n.message }}</span>
 
                   <span class="date">
-                    {{ formatWithDateFns(n.created_at) }}
+                    {{ formatCompleteDate(n.created_at) }}
                   </span>
                 </div>
               </div>

@@ -19,7 +19,7 @@
             <div class="product-bottom">
                 <div class="product-price">
                     <span class="price-discounted">${{ discountedPrice }}</span>
-                    <span class="price-original" v-if="product.discount_value" >
+                    <span class="price-original" v-if="product.discount_value">
                         ${{ product.price.toFixed(2) }}
                     </span>
                     <div class="discount-label" v-if="product.discount_percent">
@@ -50,11 +50,6 @@ function getImageSrc(item) {
 .product-summary {
     display: flex;
     flex-direction: column;
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    padding: 20px;
-    max-width: 900px;
     gap: 20px;
 }
 
@@ -62,6 +57,11 @@ function getImageSrc(item) {
     .product-summary {
         flex-direction: row;
     }
+}
+
+.product-image {
+    background: var(--background-b);
+    padding: 1rem;
 }
 
 .product-image img {
