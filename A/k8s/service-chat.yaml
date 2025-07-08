@@ -16,25 +16,16 @@ spec:
         - name: service-chat
           image: pairfy/service-chat
           env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
+            - name: NODE_ENV
+              value: development                       
+            - name: REDIS_HOST
+              value: redis://redis-chat:6379
             - name: AGENT_JWT_KEY
               valueFrom:
                 secretKeyRef:
                   name: agent-token-secret
                   key: AGENT_TOKEN_KEY
-            - name: POD_TIMEOUT
-              value: "120000"
-            - name: EXPRESS_PORT
-              value: "8000"
-            - name: EXPRESS_TIMEOUT
-              value: "30000"
-            - name: REDIS_HOST
-              value: redis://service-state-redis:6379
-            - name: CORS_DOMAINS
-              value: "http://localhost:5173,http://localhost:5174,http://localhost:8080,http://localhost:8081,http://localhost:443,localhost,https://pairfy.dev,https://dashboard.pairfy.dev"
+
           resources:
             limits:
               memory: "500Mi"
@@ -51,5 +42,5 @@ spec:
   ports:
     - name: service-chat
       protocol: TCP
-      port: 4000
-      targetPort: 4000
+      port: 8010
+      targetPort: 8010

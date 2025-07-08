@@ -8,3 +8,4 @@ export declare const getEventId: () => string;
 export declare const getFileId: () => string;
 export declare const getMediaGroupId: () => string;
 export declare const getNotificationId: () => string;
+export declare const getMessageId: () => string;

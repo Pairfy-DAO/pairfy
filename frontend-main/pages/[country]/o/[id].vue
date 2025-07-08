@@ -244,16 +244,16 @@ onUnmounted(() => {
 }
 
 .OrderPage-body {
-    max-width: var(--body-a);
+    max-width: calc(var(--body-a) - 100px);
     box-sizing: border-box;
     min-height: 100vh;
-    padding: 2rem;
+    margin-top: 1rem;
     width: 100%;
 }
 
 .OrderPage-grid {
     grid-template-columns: 1fr 600px;
-    margin-top: 1rem;
+    margin-top: 1rem; 
     display: grid;
 }
 </style>

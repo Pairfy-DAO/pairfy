@@ -163,7 +163,14 @@ build:
         manual:
           - src: 'src/**/*.{ts,js,json,vue}'
             dest: .  
-
+    - image: pairfy/service-chat
+      context: service-chat
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.{ts,js,json,vue}'
+            dest: . 
 
 deploy:
   statusCheckDeadlineSeconds: 100
@@ -246,6 +253,12 @@ portForward:
     localPort: 8009
 
   - resourceType: service
+    resourceName: service-chat
+    namespace: default
+    port: 8010
+    localPort: 8010
+
+  - resourceType: service
     resourceName: weaviate
     namespace: default
     port: 8080
@@ -258,7 +271,7 @@ portForward:
     localPort: 11434
     
   - resourceType: service
-    resourceName: redis-state
+    resourceName: redis-chat
     namespace: default
     port: 6379
     localPort: 6379

@@ -22,14 +22,16 @@ type Query {
   getMessages(getMessagesInput: GetMessagesInput!): GetMessagesResponse!
 }
 
-#///////////////////////////////////////////////// MUTATIONS
+#--------------------------------------------------------------------------- MUTATIONS
 
 type CreateMessageResponse {
   success: Boolean!
+  message:  String!
 }
 
 type UpdateMessageResponse {
   success: Boolean!
+   message:  String!
 }
 
 input UpdateMessageInput {
@@ -46,11 +48,12 @@ type Mutation {
   updateMessage(updateMessageInput: UpdateMessageInput!): UpdateMessageResponse!
 }
 
-#///////////////////////////////////////////////// SUBSCRIPTIONS
+#--------------------------------------------------------------------------- SUBSCRIPTIONS
  
 type Subscription {
     newMessages(session: ID!): Message!
 }
+
 
 `;
 
