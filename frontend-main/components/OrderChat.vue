@@ -15,7 +15,7 @@
             <div class="content" id="scrollable">
                 <div class="message" v-for="(item, index) in messages" :key="index" :id="`m-${index}`">
                     <UserBubble :data="item" />
-                    <PartyBubble :data="item" />
+                    <PartyBubble :data="item" v-if="item.agent !== authStore.user?.pubkeyhash"/>
                 </div>
             </div>
             <div class="footer">
@@ -26,12 +26,18 @@
                 </div>
 
                 <div class="footer-bottom flex">
-                    <textarea class="OrderChat-input" v-model="inputValue" rows="1" cols="30" 
+                    <textarea class="OrderChat-input" v-model="inputValue" rows="1" cols="30"
                         placeholder="Chat with counterparty" @input="autoResize" @keydown="onEnter"
-                        ref="chatTextarea" />
+                        ref="textareaRef" />
 
-                    <div class="OrderChat-send" @click="onSend">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send-horizontal-icon lucide-send-horizontal"><path d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z"/><path d="M6 12h16"/></svg>
+                    <div class="OrderChat-send" @click="onSubmit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-send-horizontal-icon lucide-send-horizontal">
+                            <path
+                                d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z" />
+                            <path d="M6 12h16" />
+                        </svg>
                     </div>
                 </div>
             </div>
@@ -43,7 +49,11 @@
 import gql from 'graphql-tag'
 import { timeAgo } from "@/utils/utils"
 
+const { $chatClient } = useNuxtApp()
+
 const orderStore = useOrderStore()
+
+const authStore = useAuthStore()
 
 const orderData = computed(() => orderStore.order)
 
@@ -54,7 +64,7 @@ const inputValue = ref("");
 const messages = ref([]);
 
 const lastSeenTime = computed(() => {
-    const msg = messages.value.filter(msg => msg.seen && msg.agent === currentAgent.value).at(-1);
+    const msg = messages.value.filter(i => i.seen && i.agent === authStore.user?.pubkeyhash).at(-1);
 
     if (msg) {
         return "Last seen " + timeAgo(msg.created_at);
@@ -63,30 +73,54 @@ const lastSeenTime = computed(() => {
     return null
 });
 
-const chatTextarea = ref(null);
+const textareaRef = ref(null);
 
 const autoResize = () => {
-    const el = chatTextarea.value;
+    const el = textareaRef.value;
     if (el) {
         el.style.height = 'auto'; // Reset height
         el.style.height = el.scrollHeight + 'px'; // Set to scroll height
     }
 };
 
-
 watch(inputValue, () => {
     autoResize();
 });
 
-const onSend = () => {
-    createMessage({
-        "createMessageVariable": {
-            session: orderData.value.session,
-            content: inputValue.value
-        }
-    })
-}
+const loading = ref(false)
 
+const onSubmit = async () => {
+    if (!import.meta.client) return;
+
+    const CREATE_MESSAGE_MUTATION = gql`
+mutation CreateMessage($createMessageVariable: CreateMessageInput!) {
+    createMessage(createMessageInput: $createMessageVariable) {
+        success
+    }
+}
+`;
+
+    try {
+        loading.value = true
+
+        await $chatClient.mutate({
+            mutation: CREATE_MESSAGE_MUTATION,
+            variables: {
+                createMessageVariable: {
+                    session: orderStore.session,
+                    content: inputValue.value
+                }
+            },
+        });
+
+    } catch (err) {
+        console.error('createMessage:', err);
+        order.showToast(err, 'error', 10_000)
+    } finally {
+        loading.value = false
+    }
+
+}
 
 const onEnter = (event) => {
     if (event.key === 'Enter' && event.shiftKey) {
@@ -103,9 +137,81 @@ const onEnter = (event) => {
         });
     } else if (event.key === 'Enter') {
         event.preventDefault();
-        onSend()
+        onSubmit()
     }
 };
+
+const updateUnseenMessages = (messages, seen) => {
+    const seenList = new Set(Object.keys(seen));
+
+    const processed = messages.map(item => {
+        if (!item.seen && seenList.has(item.id)) {
+            return { ...item, seen: true };
+        }
+        return item;
+    });
+
+    return processed
+};
+
+let subscription1;
+
+
+const fetchMessages = async () => {
+
+    const GET_MESSAGES_QUERY = gql`
+query GetMessages($getMessagesVariable: GetMessagesInput!) {
+    getMessages(getMessagesInput: $getMessagesVariable) {
+        success
+        message
+        data {
+            messages {
+                id
+                agent
+                role
+                content
+                seen
+                created_at
+            }
+            seen
+        }
+    }
+}
+`;
+
+    const observable = await $chatClient.watchQuery({
+        query: GET_MESSAGES_QUERY,
+        variables: {
+            getMessagesVariable: {
+                session: orderStore.session
+            }
+        },
+        fetchPolicy: 'no-cache',
+        pollInterval: 60_000,
+    })
+
+    subscription1 = observable.subscribe({
+        next({ data }) {
+            console.log(data.getMessages.data.messages)
+
+            const newMessages = data.getMessages.data.messages
+            const seenMessages = data.getMessages.data.seen
+
+            messages.value.push(...newMessages)
+            messages.value = updateUnseenMessages(messages.value, seenMessages);
+
+            scrollToBottom()
+        },
+        error(err) {
+            console.error(err)
+        }
+    })
+
+}
+
+function removeSubscriptions() {
+    subscription1?.unsubscribe()
+}
 
 function scrollToBottom() {
     nextTick(() => {
@@ -125,24 +231,9 @@ function handleVisibilityChange() {
         userViewing.value = true;
     }
 };
-
-function updateUnseenMessages(messages, seen) {
-    const seenList = new Set(Object.keys(JSON.parse(seen)));
-
-    const processed = messages.map(item => {
-        if (!item.seen && seenList.has(item.id)) {
-            return { ...item, seen: true };
-        }
-        return item;
-    });
-
-    return processed
-
-};
-
-
 onMounted(() => {
     document.addEventListener("visibilitychange", handleVisibilityChange);
+    fetchMessages()
 });
 
 onUnmounted(() => {
@@ -150,7 +241,7 @@ onUnmounted(() => {
 });
 
 onBeforeUnmount(() => {
-
+    removeSubscriptions()
 })
 
 
@@ -403,7 +494,6 @@ const { mutate: createMessage, onDone: onCreateMessageDone } = useMutation(gql`
     cursor: pointer;
     padding-left: 1rem;
     padding-right: 0.25rem;
-   
-}
 
+}
 </style>

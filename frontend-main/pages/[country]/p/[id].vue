@@ -178,7 +178,7 @@ query ($getBookVariable: GetBookInput!){
       }
     },
     fetchPolicy: 'no-cache',
-    pollInterval: 5_000,
+    pollInterval: 10_000,
   })
 
   subscription1 = observable.subscribe({

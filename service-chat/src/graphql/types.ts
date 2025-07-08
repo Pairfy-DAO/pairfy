@@ -1,4 +1,6 @@
 const typeDefs = `#graphql
+scalar JSON
+scalar BigInt
 
 type Message {
     id: ID!
@@ -6,12 +8,18 @@ type Message {
     role: String!
     content: String!
     seen: Boolean!
-    created_at: Float!
+    created_at: BigInt!
+}
+
+type GetMessagesData {
+    messages: [Message!]
+    seen: JSON!
 }
 
 type GetMessagesResponse {
-  messages: [Message!]
-  seen: String!
+  success: Boolean!
+  message: String!
+  data: GetMessagesData!
 }
 
 input GetMessagesInput {

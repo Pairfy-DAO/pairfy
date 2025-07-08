@@ -29,7 +29,9 @@ spec:
             - name: NUXT_SERVICE_GATEWAY_BASE
               value: http://service-gateway.default.svc.cluster.local:8006   
             - name: NUXT_SERVICE_NOTIFICATION_BASE
-              value: http://service-notification.default.svc.cluster.local:8009               
+              value: http://service-notification.default.svc.cluster.local:8009   
+            - name: NUXT_SERVICE_CHAT_BASE
+              value: http://service-chat.default.svc.cluster.local:8010                            
             - name: NUXT_PUBLIC_MEDIA_CDN
               value: /api/media
 ---

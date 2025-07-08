@@ -102,6 +102,7 @@ query ($getOrderVariable: GetOrderInput!) {
        }
 
        product
+       session
     }
 }
 

@@ -1,23 +1,25 @@
 export const getMessages = async (_: any, args: any, context: any) => {
   try {
+    const { userData: USER, sellerData: SELLER } = context;
+
     const params = args.getMessagesInput;
 
     const SESSION = params.session.split(":");
 
-    const seenKey = `chat:seen:${SESSION[0]}`;
+    const ORDER = SESSION[0];
 
     let chatKey = "";
 
     let ownerId = "";
 
-    if (context.userData) {
-      chatKey = `chat:${SESSION[0]}:${context.userData.pubkeyhash}:${SESSION[2]}`;
-      ownerId = context.userData.pubkeyhash;
+    if (USER) {
+      chatKey = `chat:${ORDER}:${USER.pubkeyhash}:${SESSION[2]}`;
+      ownerId = USER.pubkeyhash;
     }
 
-    if (context.sellerData) {
-      chatKey = `chat:${SESSION[0]}:${SESSION[1]}:${context.sellerData.id}`;
-      ownerId = context.sellerData.id;
+    if (SELLER) {
+      chatKey = `chat:${ORDER}:${SESSION[1]}:${SELLER.id}`;
+      ownerId = SELLER.id;
     }
 
     const getMessages = await context.redisClient.zRange(chatKey, 0, -1);
@@ -28,15 +30,22 @@ export const getMessages = async (_: any, args: any, context: any) => {
       (message: any) => message.agent !== ownerId
     );
 
+    const seenKey = `chat:seen:${ORDER}`;
+    
     for (const item of partyMessages) {
       await context.redisClient.HSETNX(seenKey, item.id, "true");
     }
-
     const seen = await context.redisClient.HGETALL(seenKey);
 
+    console.log({ ...seen });
+
     return {
-      messages,
-      seen: JSON.stringify({ ...seen }),
+      success: true,
+      message: "OK",
+      data: {
+        messages,
+        seen: { ...seen },
+      },
     };
   } catch (err: any) {
     throw err;
