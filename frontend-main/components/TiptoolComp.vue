@@ -89,7 +89,7 @@ onMounted(() => {
   color: var(--text-w);
   pointer-events: none;
   background: #1e293b;
-  padding: 0.5rem 0.5rem;
+  padding: 0.5rem 0.75rem;
   font-size: var(--text-size-1);
   border-radius: var(--radius-b);
   animation: fadeIn 0.2s ease forwards;

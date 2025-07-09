@@ -36,7 +36,8 @@
 
                 <div class="editor">
                     <textarea class="textarea" v-model="inputValue" rows="1" cols="30"
-                        placeholder="Chat with counterparty" @input="autoResize" @keydown="onEnter" ref="textareaRef" />
+                        placeholder="Chat with counterparty" @input="handleInput" @keydown="onEnter" ref="textareaRef"
+                        :maxlength="maxLength" />
 
                     <div class="send-button" @click="onSubmit">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -86,22 +87,41 @@ const lastSeenTime = computed(() => {
 
 const textareaRef = ref(null);
 
-const autoResize = () => {
-    const el = textareaRef.value;
-    if (el) {
-        el.style.height = 'auto'; // Reset height
-        el.style.height = el.scrollHeight + 'px'; // Set to scroll height
+const maxLength = ref(200);
+
+const handleInput = () => {
+    const element = textareaRef.value;
+
+    if (!element) return;
+
+    const value = inputValue.value
+    const valueLength = value.length
+
+    if (valueLength > maxLength.value) {
+        inputValue.value = value.slice(0, maxLength.value);
+    }
+
+    element.style.height = 'auto';
+
+    if (value.trim() === '') {
+        element.style.height = '';
+    } else {
+        if (value.includes('\n') || (valueLength > 30) ){
+            element.style.height = `${element.scrollHeight}px`;
+        }
     }
 };
 
 watch(inputValue, () => {
-    autoResize();
+    handleInput();
 });
 
 const loading = ref(false)
 
 const onSubmit = async () => {
     if (!import.meta.client) return;
+
+    if (!inputValue.value.trim()) return;
 
     const CREATE_MESSAGE_MUTATION = gql`
 mutation CreateMessage($createMessageVariable: CreateMessageInput!) {
@@ -120,10 +140,12 @@ mutation CreateMessage($createMessageVariable: CreateMessageInput!) {
             variables: {
                 createMessageVariable: {
                     session: orderStore.session,
-                    content: inputValue.value
+                    content: inputValue.value.trim()
                 }
             },
         });
+
+        inputValue.value = ("")
 
     } catch (err) {
         console.error('createMessage:', err);
@@ -134,22 +156,25 @@ mutation CreateMessage($createMessageVariable: CreateMessageInput!) {
 
 }
 
-const onEnter = (event) => {
+const onEnter = async (event) => {
+    const textarea = textareaRef.value;
+    if (!textarea) return;
+
     if (event.key === 'Enter' && event.shiftKey) {
         event.preventDefault();
-        const textarea = document.getElementById('inputValue');
+
         const cursorPos = textarea.selectionStart;
         inputValue.value =
             inputValue.value.slice(0, cursorPos) +
             '\n' +
             inputValue.value.slice(cursorPos);
 
-        setTimeout(() => {
-            textarea.selectionStart = textarea.selectionEnd = cursorPos + 1;
-        });
+        await nextTick();
+        textarea.selectionStart = textarea.selectionEnd = cursorPos + 1;
     } else if (event.key === 'Enter') {
-        event.preventDefault();
+        event.preventDefault()
         onSubmit()
+        handleInput()
     }
 };
 
@@ -189,7 +214,6 @@ query GetMessages($getMessagesVariable: GetMessagesInput!) {
 
     subscription1 = observable.subscribe({
         next({ data }) {
-            console.log(data.getMessages.data)
 
             const newMessages = data.getMessages.data.messages
             const seenMessages = data.getMessages.data.seen
@@ -250,14 +274,12 @@ function removeSubscriptions() {
 }
 
 function scrollToBottom() {
-    nextTick(() => {
-        const element = document.getElementById(`m-${messages.value.length - 1}`);
-
-        if (element) {
-            element.scrollIntoView({ behavior: "smooth", block: "end" });
+    nextTick(function () {
+        const el = document.getElementById('scrollable');
+        if (el) {
+            el.scrollTop = el.scrollHeight;
         }
-
-    })
+    });
 }
 
 function handleVisibilityChange() {
@@ -350,7 +372,7 @@ onBeforeUnmount(() => {
     overflow-y: scroll;
     overflow-x: hidden;
     box-sizing: border-box;
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
     padding: 1rem;
 }
 
@@ -396,8 +418,8 @@ onBeforeUnmount(() => {
 }
 
 .editor {
+    align-items: flex-start;
     box-sizing: border-box;
-    align-items: center;
     width: inherit;
     display: flex;
     padding: 1rem;
@@ -407,15 +429,15 @@ onBeforeUnmount(() => {
     padding: 0.75rem;
     outline: none;
     color: inherit;
-    font-family: inherit;
-    font-size: var(--text-size-1);
-    transition: 0.2s;
-    max-height: 100px;
-    border: 1px solid var(--border-a);
-    border-radius: 8px;
     resize: none;
     width: inherit;
+    max-height: 100px;
+    font-family: inherit;
+    font-size: var(--text-size-1);
+    border-radius: var(--radius-b);
+    transition: var(--transition-a);
     background: var(--background-b);
+    border: 1px solid var(--border-a);
 }
 
 .textarea:focus-within {

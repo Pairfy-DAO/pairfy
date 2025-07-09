@@ -133,7 +133,6 @@ query GetNotifications {
     subscription2 = observable.subscribe({
         next({ data }) {
             auth.setNotifications(data.getNotifications)
-            console.log(auth.notifications)
         },
         error(err) {
             auth.showToast(err, 'error', 10_000)

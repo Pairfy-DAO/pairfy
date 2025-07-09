@@ -19,9 +19,9 @@ const props = defineProps(['data'])
 <style lang="css" scoped>
 .message {
     display: flex;
-    justify-content: flex-end;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
+    justify-content: flex-end;
 }
 
 .bubble {
@@ -29,9 +29,11 @@ const props = defineProps(['data'])
     border-radius: 12px;
     border-bottom-right-radius: 0px;
     background: var(--primary-a);
-    position: relative;
+    word-break: break-word;
     box-sizing: border-box;
+    white-space: pre-line;
     color: var(--text-w);
+    position: relative;
 }
 
 .marker {

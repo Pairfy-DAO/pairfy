@@ -18,9 +18,9 @@ const date = computed(() => timeAgo(props.data.created_at))
 <style lang="css" scoped>
 .message {
     display: flex;
-    justify-content: flex-start;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
+    justify-content: flex-start;
 }
 
 .bubble {
@@ -29,8 +29,10 @@ const date = computed(() => timeAgo(props.data.created_at))
     border-bottom-left-radius: 0px;
     background: color-mix(in srgb, black, transparent 80%);
     background: var(--background-b);
-    position: relative;
     box-sizing: border-box;
+    word-break: break-word;
+    white-space: pre-line;
+    position: relative;
 }
 
 .marker {
