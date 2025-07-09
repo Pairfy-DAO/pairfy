@@ -2,9 +2,9 @@
     <div class="transactions">
         <div class="card">
             <div class="card-head flex">
-                <span>Pending State</span>
+                <span>Pending Tx</span>
 
-                <span class="ago flex">
+                <span class="timestamp">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-icon lucide-clock"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
                     {{ formatCompleteDate(orderData.pending_block, true) }}
                 </span>
@@ -19,9 +19,9 @@
 
         <div class="card">
             <div class="card-head flex">
-                <span>Return State</span>
+                <span>Return Tx</span>
 
-                <span class="ago flex">
+                <span class="timestamp">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-icon lucide-clock"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
                     {{ formatCompleteDate(orderData.returned_block, true) }}
                 </span>
@@ -36,9 +36,9 @@
 
         <div class="card">
             <div class="card-head flex">
-                <span>Locking State</span>
+                <span>Locking Tx</span>
 
-                <span class="ago flex">
+                <span class="timestamp">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-icon lucide-clock"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
                     {{ formatCompleteDate(orderData.locking_block, true) }}
                 </span>
@@ -53,9 +53,9 @@
 
         <div class="card">
             <div class="card-head flex">
-                <span>Canceled State</span>
+                <span>Canceled Tx</span>
 
-                <span class="ago flex">
+                <span class="timestamp">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-icon lucide-clock"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
                     {{ formatCompleteDate(orderData.canceled_block, true) }}
                 </span>
@@ -71,9 +71,9 @@
 
         <div class="card">
             <div class="card-head flex">
-                <span>Shipping State</span>
+                <span>Shipping Tx</span>
 
-                <span class="ago flex">
+                <span class="timestamp">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-icon lucide-clock"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
                     {{ formatCompleteDate(orderData.shipping_block, true) }}
                 </span>
@@ -88,9 +88,9 @@
 
         <div class="card">
             <div class="card-head flex">
-                <span>Appeal State</span>
+                <span>Appeal Tx</span>
 
-                <span class="ago flex">
+                <span class="timestamp">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-icon lucide-clock"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
                     {{ formatCompleteDate(orderData.appealed_block, true) }}
                 </span>
@@ -105,9 +105,9 @@
 
         <div class="card">
             <div class="card-head flex">
-                <span>Received State</span>
+                <span>Received Tx</span>
 
-                <span class="ago flex">
+                <span class="timestamp">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-icon lucide-clock"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
                     {{ formatCompleteDate(orderData.received_block, true) }}
                 </span>
@@ -122,9 +122,9 @@
 
         <div class="card">
             <div class="card-head flex">
-                <span>Collected State</span>
+                <span>Collected Tx</span>
 
-                <span class="ago flex">
+                <span class="timestamp">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-icon lucide-clock"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
                     {{ formatCompleteDate(orderData.collected_block, true) }}
                 </span>
@@ -146,12 +146,12 @@ const orderStore = useOrderStore()
 
 const orderData = computed(() => orderStore.order)
 
-function openExplorer() {
+function openExplorer(txHash) {
     if (!import.meta.client) return
 
     const cardanoNetwork = useRuntimeConfig().public.cardanoNetwork;
 
-    window.open(`https://${cardanoNetwork}.cexplorer.io/tx/${orderStore.pendingTx}`, '_blank');
+    window.open(`https://${cardanoNetwork}.cexplorer.io/tx/${txHash}`, '_blank');
 }
 
 </script>
@@ -169,10 +169,10 @@ function openExplorer() {
 
 .card-head {
     border-bottom: 1px solid var(--border-a);
-    padding: 1rem;
-    font-weight: 500;
     justify-content: space-between;
     font-size: var(--text-size-1);
+    font-weight: 700;
+    padding: 1rem;
 }
 
 .card-body {
@@ -181,12 +181,14 @@ function openExplorer() {
     align-items: center;
 }
 
-.ago {
+.timestamp {
     font-size: var(--text-size-0);
+    align-items: center;
     color: var(--text-b);
+    display: flex;
 }
 
-.ago i {
+.timestamp svg{
     margin-right: 0.5rem;
 }
 
@@ -198,7 +200,6 @@ function openExplorer() {
 }
 
 .explore {
-    padding: 1rem;
     color: var(--text-b);
     cursor: pointer;
 }

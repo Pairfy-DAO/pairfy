@@ -1,133 +1,163 @@
 <template>
-    <div class="product-summary">
+  <div class="OrderProduct">
 
-        <div class="product-image">
-            <img :src="getImageSrc(product.thumbnail_url)" :alt="product.name" />
-        </div>
-
-
-        <div class="product-details">
-            <h2 class="product-title">{{ product.name }}</h2>
-            <p class="product-meta">{{ product.brand }} • Modelo: {{ product.model }}</p>
-
-            <ul class="product-bullets">
-                <li v-for="(bullet, index) in product.bullet_list" :key="index">
-                    {{ bullet }}
-                </li>
-            </ul>
-
-            <div class="product-bottom">
-                <div class="product-price">
-                    <span class="price-discounted">${{ discountedPrice }}</span>
-                    <span class="price-original" v-if="product.discount_value">
-                        ${{ product.price.toFixed(2) }}
-                    </span>
-                    <div class="discount-label" v-if="product.discount_percent">
-                        {{ product.discount_percent }}% de descuento
-                    </div>
-                </div>
-
-            </div>
-        </div>
+    <div class="OrderProduct-image">
+      <img :src="getImageSrc(product.thumbnail_url)" :alt="product.name" />
     </div>
+
+    <div class="OrderProduct-body">
+
+      <h2 class="name">{{ product.name }}</h2>
+      <p class="model">{{ product.brand }} • Model: {{ product.model }}</p>
+
+
+      <div class="product-pricing">
+        <div class="price-section">
+          <span class="price-final">${{ discountedPrice }}</span>
+
+          <span class="price-original" v-if="product.discount">
+            ${{ formatUSD(product.price) }}
+          </span>
+        </div>
+
+        <div class="discount-label" v-if="product.discount">
+          <span class="label">Discount applied</span>
+          <span class="badge">{{ product.discount_percent }}% OFF</span>
+        </div>
+      </div>
+
+      <ul class="features">
+        <li v-for="(feature, index) in product.bullet_list" :key="index">
+          {{ feature }}
+        </li>
+      </ul>
+
+    </div>
+  </div>
 </template>
 
 <script setup>
 import placeholderImage from '@/assets/icon/image.svg'
 
 const orderStore = useOrderStore()
-
 const product = computed(() => orderStore.product)
 
-const discountedPrice = computed(() => product.value.discount ? product.value.discount_value : product.value.price)
+const discountedPrice = computed(() =>
+  product.value.discount ? product.value.discount_value : product.value.price
+)
 
-function getImageSrc(item) {
-    return item ? useMediaUrl(item) : placeholderImage
+function getImageSrc(src) {
+  return src ? useMediaUrl(src) : placeholderImage
 }
 </script>
 
 <style scoped>
-.product-summary {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+.OrderProduct {
+  gap: 2rem;
+  display: flex;
+  padding: 1.5rem;
+  flex-direction: column;
+  border-radius: var(--radius-c);
+  border: 1px solid var(--border-a);
 }
 
 @media (min-width: 768px) {
-    .product-summary {
-        flex-direction: row;
-    }
+  .OrderProduct {
+    flex-direction: row;
+    align-items: flex-start;
+  }
 }
 
-.product-image {
-    background: var(--background-b);
-    padding: 1rem;
+.OrderProduct-image {
+  background-color: var(--background-b);
+  padding: 1rem;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
 }
 
-.product-image img {
-    width: 100%;
-    max-width: 260px;
-    border-radius: 10px;
-    object-fit: cover;
+.OrderProduct-image img {
+  width: 100%;
+  max-width: 260px;
+  border-radius: 10px;
+  object-fit: cover;
 }
 
-.product-details {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+.OrderProduct-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.product-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 6px;
-    color: #222;
+.name {
+  font-size: var(--text-size-5);
+  line-height: 2.25rem;
+  margin-bottom: 0;
+  font-weight: 600;
 }
 
-.product-meta {
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 12px;
+.model {
+  font-size: var(--text-size-2);
+  color: var(--text-b);
+  margin-bottom: 1rem;
 }
 
-.product-bullets {
-    list-style: disc inside;
-    margin: 0 0 16px;
-    padding: 0;
-    color: #444;
-    font-size: 0.95rem;
+.features {
+  font-size: var(--text-size-2);
+  list-style: disc inside;
+  margin-bottom: 1.5rem;
+  color: var(--text-b);
+  padding-left: 1rem;
+  line-height: 1.5;
 }
 
-.product-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
+.features li{
+  margin-bottom: 0.25rem;
 }
 
-.product-price {
-    display: flex;
-    flex-direction: column;
+.product-pricing {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-.price-discounted {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: #2e7d32;
+.price-section {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.price-final {
+  font-size: var(--text-size-5);
+  font-weight: 700;
 }
 
 .price-original {
-    text-decoration: line-through;
-    font-size: 0.9rem;
-    color: #999;
-    margin-top: 4px;
+  color: var(--text-b);
+  font-size: var(--text-size-2);
+  text-decoration: line-through;
 }
 
 .discount-label {
-    font-size: 0.8rem;
-    color: #f44336;
-    margin-top: 2px;
+  gap: 0.5rem;
+  display: flex;
+  align-items: center;
+  color: var(--red-a);
+  padding: 0.4rem 0.75rem;
+  font-size: var(--text-size-2);
+  background: rgb(239 68 68 / 10%);
+  border-radius: var(--radius-a);
+  width: fit-content;
+}
+
+.discount-label .label {
+  font-weight: 500;
+}
+
+.discount-label .badge {
+  font-weight: 700;
 }
 </style>
