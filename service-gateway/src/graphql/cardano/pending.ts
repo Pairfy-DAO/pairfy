@@ -1,6 +1,10 @@
 import database from "../../database/client.js";
 import { pendingTransactionBuilder } from "../../cardano/builders/pending.js";
-import { getContractFee, getContractPrice, getContractQuote } from "../../lib/index.js";
+import {
+  getContractFee,
+  getContractPrice,
+  getContractQuote,
+} from "../../lib/index.js";
 import { pendingEndpointSchema } from "../../validators/orders.js";
 import {
   ApiGraphQLError,
@@ -8,11 +12,12 @@ import {
   findProductById,
   findSellerById,
   UserToken,
-  compress
+  compress,
 } from "@pairfy/common";
-import { redisPrice } from "../../database/redis.js";
+import { redisChat, redisPrice } from "../../database/redis.js";
 import { insertOrder } from "../../lib/order.js";
 import { chunkMetadata } from "../../lib/metadata.js";
+import { createChat } from "../../lib/chat.js";
 
 export const pendingEndpoint = async (_: any, args: any, context: any) => {
   let connection = null;
@@ -70,7 +75,7 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
       });
     }
 
-    const assetPrice = parseFloat(getAssetPrice)
+    const assetPrice = parseFloat(getAssetPrice);
 
     //////////////////////////////////////////////////////////////////////////////////// START TRANSACTION
 
@@ -111,7 +116,7 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
     );
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    
+
     const orderContent = {
       id: BUILDER.threadTokenPolicyId,
       type: "cardano",
@@ -152,6 +157,15 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
         code: ERROR_CODES.INTERNAL_ERROR,
       });
     }
+
+    const chatKey = `chat:${orderContent.id}:${orderContent.buyer_pubkeyhash}:${orderContent.seller_id}`;
+
+    await createChat(
+      redisChat.client,
+      chatKey,
+      orderContent.buyer_pubkeyhash,
+      "Hello 👋"
+    );
 
     //////////////////////////////////////////////////////////////////////////////////// END TRANSACTION
 

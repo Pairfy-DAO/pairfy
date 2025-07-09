@@ -1,6 +1,7 @@
 <template>
     <div class="OrderChat">
         <div class="OrderChat-body">
+            <!--HEADER START-->
             <div class="OrderChat-header">
                 <div class="avatar">
                     <img src="https://api.dicebear.com/9.x/initials/svg?seed=Luis" alt="">
@@ -12,25 +13,32 @@
                     </div>
                 </div>
             </div>
-            <div class="content" id="scrollable">
+            <!--CONTENT START-->
+            <div class="OrderChat-content" id="scrollable">
                 <div class="message" v-for="(item, index) in messages" :key="index" :id="`m-${index}`">
                     <UserBubble :data="item" />
-                    <PartyBubble :data="item" v-if="item.agent !== authStore.user?.pubkeyhash"/>
+                    <PartyBubble :data="item" v-if="item.sender !== agentId" />
                 </div>
             </div>
-            <div class="footer">
-                <div class="footer-top flex">
-                    <button class="flex">
-                        <i class="pi pi-image" />
+            <!--FOOTER-->
+            <div class="OrderChat-footer">
+                <div class="controls">
+                    <button>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-circle-plus-icon lucide-circle-plus">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M8 12h8" />
+                            <path d="M12 8v8" />
+                        </svg>
                     </button>
                 </div>
 
-                <div class="footer-bottom flex">
-                    <textarea class="OrderChat-input" v-model="inputValue" rows="1" cols="30"
-                        placeholder="Chat with counterparty" @input="autoResize" @keydown="onEnter"
-                        ref="textareaRef" />
+                <div class="editor">
+                    <textarea class="textarea" v-model="inputValue" rows="1" cols="30"
+                        placeholder="Chat with counterparty" @input="autoResize" @keydown="onEnter" ref="textareaRef" />
 
-                    <div class="OrderChat-send" @click="onSubmit">
+                    <div class="send-button" @click="onSubmit">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="lucide lucide-send-horizontal-icon lucide-send-horizontal">
@@ -41,6 +49,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </template>
@@ -63,8 +72,10 @@ const inputValue = ref("");
 
 const messages = ref([]);
 
+const agentId = computed(() => authStore.user?.pubkeyhash)
+
 const lastSeenTime = computed(() => {
-    const msg = messages.value.filter(i => i.seen && i.agent === authStore.user?.pubkeyhash).at(-1);
+    const msg = messages.value.filter(e => e.seen && e.agent === agentId.value).at(-1);
 
     if (msg) {
         return "Last seen " + timeAgo(msg.created_at);
@@ -98,6 +109,7 @@ mutation CreateMessage($createMessageVariable: CreateMessageInput!) {
         success
     }
 }
+
 `;
 
     try {
@@ -141,24 +153,9 @@ const onEnter = (event) => {
     }
 };
 
-const updateUnseenMessages = (messages, seen) => {
-    const seenList = new Set(Object.keys(seen));
-
-    const processed = messages.map(item => {
-        if (!item.seen && seenList.has(item.id)) {
-            return { ...item, seen: true };
-        }
-        return item;
-    });
-
-    return processed
-};
-
 let subscription1;
 
-
 const fetchMessages = async () => {
-
     const GET_MESSAGES_QUERY = gql`
 query GetMessages($getMessagesVariable: GetMessagesInput!) {
     getMessages(getMessagesInput: $getMessagesVariable) {
@@ -167,9 +164,9 @@ query GetMessages($getMessagesVariable: GetMessagesInput!) {
         data {
             messages {
                 id
-                agent
+                sender
                 role
-                content
+                message
                 seen
                 created_at
             }
@@ -192,12 +189,12 @@ query GetMessages($getMessagesVariable: GetMessagesInput!) {
 
     subscription1 = observable.subscribe({
         next({ data }) {
-            console.log(data.getMessages.data.messages)
+            console.log(data.getMessages.data)
 
             const newMessages = data.getMessages.data.messages
             const seenMessages = data.getMessages.data.seen
 
-            messages.value.push(...newMessages)
+            messages.value = newMessages.sort((a, b) => a.created_at - b.created_at);
             messages.value = updateUnseenMessages(messages.value, seenMessages);
 
             scrollToBottom()
@@ -206,8 +203,45 @@ query GetMessages($getMessagesVariable: GetMessagesInput!) {
             console.error(err)
         }
     })
-
 }
+
+const listenMessages = () => {
+    const source = new EventSource('/api/stream?channel=5b2db94d0396210e2e790cef6adafb6843f53cc249333bfe4408e43c:a239e6c2bbd6a9f3249d65afef89c28e1471ed07c529ec06848cc141:95C9D9250530A974CDC0D')
+
+    source.onmessage = (event) => {
+        try {
+            const parsed = JSON.parse(event.data);
+
+            console.log(parsed);
+
+            if (parsed.message) {
+                messages.value.push(parsed.message)
+                scrollToBottom()
+            }
+        } catch (e) {
+            console.error("Error parsing JSON:", e);
+        }
+    }
+
+    source.onerror = (err) => {
+        console.error('❌ SSE error:', err)
+        source.close()
+    }
+}
+
+function updateUnseenMessages(messages, seen) {
+    const seenList = new Set(...seen);
+
+    const processed = messages.map(item => {
+        if (!item.seen && seenList.has(item.id)) {
+            return { ...item, seen: true };
+        }
+        return item;
+    });
+
+    return processed
+};
+
 
 function removeSubscriptions() {
     subscription1?.unsubscribe()
@@ -231,9 +265,11 @@ function handleVisibilityChange() {
         userViewing.value = true;
     }
 };
+
 onMounted(() => {
     document.addEventListener("visibilitychange", handleVisibilityChange);
     fetchMessages()
+    listenMessages()
 });
 
 onUnmounted(() => {
@@ -244,129 +280,19 @@ onBeforeUnmount(() => {
     removeSubscriptions()
 })
 
-
-/**
-const getMessagesVariables = ref({
-    "getMessagesVariables": {
-        session: orderData.value.session,
-    }
-
-})
-
-const { result: onGetMessagesResult } = useQuery(gql`
-      query getMessages($getMessagesVariables: GetMessagesInput!) {
-        getMessages(getMessagesInput: $getMessagesVariables) {
-           messages { 
-            id
-            agent
-            role
-            content
-            seen
-            created_at
-           }
-    
-           seen
-        }
-      }
-    `,
-    getMessagesVariables,
-    {
-        clientId: 'chat',
-        pollInterval: 60000,
-        enabled: true,
-        lazy: true
-    })
-
-
- watch(onGetMessagesResult, value => {
-    messages.value = [];
-
-    messages.value.push(...value.getMessages.messages);
-
-    messages.value = updateUnseenMessages(messages.value, value.getMessages.seen);
-
-    scrollToBottom();
-})
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-
-const { result: onNewMessagesResult, onError: onNewMessagesError } = useSubscription(gql`
-      subscription newMessages($session: ID!){
-         newMessages(session: $session) {
-          id
-          agent
-          role
-          content
-          seen
-          created_at
-        }
-      }
-    `,
-
-    () => ({
-        session: orderData.value.session
-    }),
-    {
-        clientId: "chat",
-        enabled: true,
-        lazy: true
-    }
-)
-
-onNewMessagesError((error, context) => {
-    console.error(error, context)
-})
-
-const unwatchChat = watch(
-    onNewMessagesResult,
-    data => {
-        console.log("New message received:", data.newMessages);
-
-        messages.value.push(data.newMessages);
-
-        scrollToBottom();
-
-        if (!userViewing.value) {
-            playNotification()
-            document.title = `${document.title} | New Message`;
-        }
-
-    },
-    {
-        lazy: true
-    }
-)
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-
-const { mutate: createMessage, onDone: onCreateMessageDone } = useMutation(gql`
-  mutation createMessage ($createMessageVariable: CreateMessageInput!) {
-    createMessage(createMessageInput: $createMessageVariable) {
-      success
-    }
-  }
-`,
-    {
-        clientId: "chat"
-    })
-
- */
 </script>
 
 <style lang="css" scoped>
 .OrderChat {
     width: 100%;
-    display: flex;
-    justify-content: flex-end;
 }
 
 .OrderChat-body {
-    width: 400px;
+    width: 428px;
     overflow: hidden;
-    height: 700px;
+    margin-left: auto;
     box-sizing: border-box;
-    border-radius: var(--radius-c);
+    border-radius: var(--radius-d);
     transition: var(--transition-a);
     border: 2px solid var(--border-a);
 }
@@ -383,10 +309,11 @@ const { mutate: createMessage, onDone: onCreateMessageDone } = useMutation(gql`
     border-radius: var(--radius-b);
     border: 1px solid transparent;
     align-items: center;
+    border-radius: 50%;
     overflow: hidden;
     display: flex;
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
 }
 
 .avatar img {
@@ -404,7 +331,7 @@ const { mutate: createMessage, onDone: onCreateMessageDone } = useMutation(gql`
     color: var(--text-b);
 }
 
-.content {
+.OrderChat-content {
     display: flex;
     flex-direction: column;
     padding: 1rem;
@@ -417,52 +344,56 @@ const { mutate: createMessage, onDone: onCreateMessageDone } = useMutation(gql`
     padding: 1rem;
 }
 
-.content::-webkit-scrollbar {
+.OrderChat-content::-webkit-scrollbar {
     width: 7px;
     height: 7px;
 }
 
-.content::-webkit-scrollbar-thumb {
+.OrderChat-content::-webkit-scrollbar-thumb {
     background: #f1f1f1;
     border-radius: 2px;
 }
 
-.content::-webkit-scrollbar-thumb:hover {
+.OrderChat-content::-webkit-scrollbar-thumb:hover {
     background: #c1c1c1;
 }
 
-.content::-webkit-scrollbar-track {
+.OrderChat-content::-webkit-scrollbar-track {
     background: transparent;
     border-radius: 10px;
 }
 
 
-.footer {
+.OrderChat-footer {
     border-top: 1px solid var(--border-a);
     width: inherit;
     box-sizing: border-box;
 }
 
-.footer-top {
+.controls {
+    display: flex;
+    padding-bottom: 0;
     padding-top: 1rem;
     padding-left: 1rem;
-    padding-bottom: 0;
+    align-items: center;
 }
 
-.footer-top button {
+.controls button {
     background: transparent;
     border: none;
     justify-content: center;
     cursor: pointer;
 }
 
-.footer-bottom {
+.editor {
     box-sizing: border-box;
+    align-items: center;
     width: inherit;
+    display: flex;
     padding: 1rem;
 }
 
-.OrderChat-input {
+.textarea {
     padding: 0.75rem;
     outline: none;
     color: inherit;
@@ -477,16 +408,16 @@ const { mutate: createMessage, onDone: onCreateMessageDone } = useMutation(gql`
     background: var(--background-b);
 }
 
-.OrderChat-input:focus-within {
+.textarea:focus-within {
     border: 1px solid var(--text-a);
 }
 
-.OrderChat-input::placeholder {
+.textarea::placeholder {
     color: var(--text-b);
     opacity: 0.5;
 }
 
-.OrderChat-send {
+.send-button {
     justify-content: center;
     align-items: center;
     display: flex;

@@ -4,16 +4,16 @@ scalar BigInt
 
 type Message {
     id: ID!
-    agent: String!
+    sender: String!
     role: String!
-    content: String!
+    message: String!
     seen: Boolean!
     created_at: BigInt!
 }
 
 type GetMessagesData {
     messages: [Message!]
-    seen: JSON!
+    seen: [String]
 }
 
 type GetMessagesResponse {
@@ -55,13 +55,6 @@ type Mutation {
   createMessage(createMessageInput: CreateMessageInput!): CreateMessageResponse!
   updateMessage(updateMessageInput: UpdateMessageInput!): UpdateMessageResponse!
 }
-
-#--------------------------------------------------------------------------- SUBSCRIPTIONS
- 
-type Subscription {
-    newMessages(session: ID!): Message!
-}
-
 
 `;
 

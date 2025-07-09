@@ -19,6 +19,7 @@ import {
   getPublicAddress,
   logger,
   normalizeGraphError,
+  RateLimiter,
   verifyToken,
 } from "@pairfy/common";
 import { agentMiddleware } from "./common/agent.js";
@@ -26,13 +27,13 @@ import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHt
 
 const main = async () => {
   try {
-    const requiredEnvVars = ["AGENT_JWT_KEY", "REDIS_HOST"];
+    const requiredEnvVars = ["AGENT_JWT_KEY", "REDIS_CHAT_HOST", "REDIS_RATELIMIT_HOST"];
 
-    requiredEnvVars.forEach((key) => {
-      if (!process.env[key]) {
-        throw new Error(`${key} error`);
+    for (const varName of requiredEnvVars) {
+      if (!process.env[varName]) {
+        throw new Error(`${varName} error`);
       }
-    });
+    }
 
     ERROR_EVENTS.forEach((e: string) =>
       process.on(e, (err) => catchError(err))
@@ -40,16 +41,38 @@ const main = async () => {
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
+    await redisClient
+      .connect({
+        url: process.env.REDIS_CHAT_HOST,
+        connectTimeout: 100000,
+        keepAlive: 100000,
+        retryStrategy: (times: any) => Math.min(times * 50, 2000),
+      })
+      .then(() => console.log("✅ redisClient connected"))
+      .catch((err: any) => catchError(err));
+      
     const pubsubOptions = {
       connectTimeout: 100000,
       keepAlive: 100000,
       retryStrategy: (times: any) => Math.min(times * 50, 2000),
     };
 
-    const pubsub = new RedisPubSub({
-      publisher: new Redis(process.env.REDIS_HOST as string, pubsubOptions),
-      subscriber: new Redis(process.env.REDIS_HOST as string, pubsubOptions),
+    const pubSub = new RedisPubSub({
+      publisher: new Redis(process.env.REDIS_CHAT_HOST as string, pubsubOptions),
+      subscriber: new Redis(process.env.REDIS_CHAT_HOST as string, pubsubOptions),
     });
+
+    const rateLimiter = new RateLimiter({
+      source: "service-chat",
+      redisUrl: process.env.REDIS_RATELIMIT_HOST as string,
+      jwtSecret: process.env.AGENT_JWT_KEY as string,
+      maxRequests: 100,
+      windowSeconds: 60,
+    });
+
+    const app = express();
+
+    const httpServer = createServer(app);
 
     const resolvers = {
       Query: {
@@ -58,74 +81,12 @@ const main = async () => {
       Mutation: {
         ...messages.Mutation,
       },
-      Subscription: {
-        ...messages.Subscription,
-      },
     };
 
-    const schema = makeExecutableSchema({ typeDefs, resolvers });
-
-    const app = express();
-
-    const httpServer = createServer(app);
-
-    const wsServer = new WebSocketServer({
-      server: httpServer,
-      path: "/api/chat/graphql",
-    });
-
-    const serverCleanup = useServer(
-      {
-        schema,
-        onConnect: async (ctx) => {
-          const authToken = ctx.connectionParams?.authToken;
-
-          if (!authToken) {
-            throw new Error("Unauthorized");
-          }
-
-          if (typeof authToken !== "string") {
-            throw new Error("Unauthorized");
-          }
-        },
-        context: async (ctx, msg, args) => {
-          const agentData = verifyToken(
-            ctx.connectionParams?.authToken as string,
-            process.env.AGENT_JWT_KEY as string
-          );
-
-          if (!agentData) {
-            throw new Error("Unauthorized");
-          }
-
-          logger.info("ChatConnection", agentData);
-
-          return {
-            pubsub,
-            agentData,
-          };
-        },
-        onDisconnect(ctx, code, reason) {
-          console.log("Disconnected!");
-        },
-      },
-      wsServer
-    );
-
     const server = new ApolloServer({
-      schema,
-      plugins: [
-        ApolloServerPluginDrainHttpServer({ httpServer }),
-        {
-          async serverWillStart() {
-            return {
-              async drainServer() {
-                await serverCleanup.dispose();
-              },
-            };
-          },
-        },
-      ],
+      typeDefs,
+      resolvers,
+      plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
       formatError: (formattedError, error) => {
         logger.error({
           service: "service-chat",
@@ -139,18 +100,6 @@ const main = async () => {
       },
     });
 
-     //////////////////////////////////////////////////////////////////////////////////////////////////
-
-    await redisClient
-      .connect({
-        url: process.env.REDIS_HOST,
-        connectTimeout: 100000,
-        keepAlive: 100000,
-        retryStrategy: (times: any) => Math.min(times * 50, 2000),
-      })
-      .then(() => console.log("✅ redisClient connected"))
-      .catch((err: any) => catchError(err));
-
     const sessionOptions: object = {
       name: "session",
       maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -163,7 +112,7 @@ const main = async () => {
     app.set("trust proxy", 1);
 
     app.use(cookieSession(sessionOptions));
-    
+
     app.use(express.json({ limit: "5mb" }));
 
     app.use(express.urlencoded({ limit: "5mb", extended: true }));
@@ -187,12 +136,21 @@ const main = async () => {
               code: ERROR_CODES.UNAUTHORIZED,
             });
           }
+          const agentId = sellerData?.id || userData.pubkeyhash;
+
+          const isAllowed = await rateLimiter.checkId(agentId);
+
+          if (!isAllowed) {
+            throw new ApiGraphQLError(429, "Rate limit exceeded", {
+              code: ERROR_CODES.RATE_LIMIT_EXCEEDED,
+            });
+          }
 
           return {
             sellerData,
             userData,
             redisClient: redisClient.client,
-            pubsub,
+            pubSub,
           };
         },
       })

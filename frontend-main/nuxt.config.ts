@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     serviceGatewayBase: process.env.NUXT_SERVICE_GATEWAY_BASE,
     serviceNotificationBase: process.env.NUXT_SERVICE_NOTIFICATION_BASE,
     serviceChatBase: process.env.NUXT_SERVICE_CHAT_BASE,
+    redisChatBase: process.env.NUXT_REDIS_CHAT_BASE,
     public: {
       apiBaseBrowser: "",
       validWallets: ["lace", "nami", "eternl"],

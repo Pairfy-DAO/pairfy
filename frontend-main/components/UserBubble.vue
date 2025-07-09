@@ -1,7 +1,7 @@
 <template>
     <div class="message">
         <div class="bubble">
-            {{ props.data.content }}
+            {{ props.data.message }}
             <span class="marker" :class="{ seen: props.data.seen }"></span>
         </div>
     </div>

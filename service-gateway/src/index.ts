@@ -18,7 +18,7 @@ import {
   normalizeGraphError,
   RateLimiter,
 } from "@pairfy/common";
-import { redisBooks, redisState, redisPrice } from "./database/redis.js";
+import { redisBooks, redisState, redisPrice, redisChat } from "./database/redis.js";
 
 const main = async () => {
   try {
@@ -29,6 +29,7 @@ const main = async () => {
       "REDIS_RATELIMIT_HOST",
       "REDIS_BOOKS_HOST",
       "REDIS_PRICE_HOST",
+      "REDIS_CHAT_HOST",
       "TX_VALID_TIME",
       "TX_WATCH_WINDOW",
       "PENDING_RANGE",
@@ -68,7 +69,7 @@ const main = async () => {
     const resolvers = {
       Query: {
         ...books.Query,
-        ...order.Query
+        ...order.Query,
       },
       Mutation: {
         ...books.Mutation,
@@ -123,6 +124,16 @@ const main = async () => {
       .then(() => console.log("✅ redisBooks connected"))
       .catch((err: any) => catchError(err));
 
+    await redisChat
+      .connect({
+        service: "service-gateway",
+        url: process.env.REDIS_CHAT_HOST,
+        connectTimeout: 100000,
+        keepAlive: 100000,
+      })
+      .then(() => console.log("✅ redisChat connected"))
+      .catch((err: any) => catchError(err));
+
     const databasePort = parseInt(process.env.DATABASE_PORT as string);
 
     database.connect({
@@ -168,7 +179,6 @@ const main = async () => {
       "/api/gateway/graphql",
       expressMiddleware(server, {
         context: async ({ req }) => {
-
           const { sellerData, userData } = req;
 
           if (!sellerData && !userData) {
@@ -189,7 +199,7 @@ const main = async () => {
 
           return {
             sellerData,
-            userData
+            userData,
           };
         },
       })

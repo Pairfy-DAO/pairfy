@@ -6,44 +6,33 @@ export const createMessage = async (_: any, args: any, context: any) => {
 
     const params = args.createMessageInput;
 
-    const SESSION = params.session.split(":");
+    const chatKey = `chat:${params.session}`;
 
-    const ORDER = SESSION[0];
-
-    let chatKey = "";
-
-    let channelKey = "";
+    const channelKey = `channel:${params.session}`;
 
     let scheme = {
       id: getMessageId(),
-      agent: "",
+      sender: "",
       role: "",
-      content: params.content,
+      message: params.content,
       seen: false,
       created_at: Date.now(),
     };
 
     if (USER) {
-      scheme.agent = USER.pubkeyhash;
-      scheme.role = "buyer";
-      chatKey = `chat:${ORDER}:${scheme.agent}:${SESSION[2]}`;
-      channelKey = `chat:channel:${ORDER}:${scheme.agent}:${SESSION[2]}`;
+      scheme.sender = USER.pubkeyhash;
+      scheme.role = "USER";
     }
 
     if (SELLER) {
-      scheme.agent = SELLER.id;
-      scheme.role = "seller";
-      chatKey = `chat:${ORDER}:${SESSION[1]}:${scheme.agent}`;
-      channelKey = `chat:channel:${ORDER}:${SESSION[1]}:${scheme.agent}`;
+      scheme.sender = SELLER.id;
+      scheme.role = "SELLER";
     }
 
-    await context.redisClient.zAdd(chatKey, {
-      score: Date.now(),
-      value: JSON.stringify(scheme),
-    });
+    await context.redisClient.lPush(chatKey, JSON.stringify(scheme));
 
-    await context.pubsub.publish(channelKey, { newMessages: scheme });
-    
+    await context.pubSub.publish(channelKey, { message: scheme });
+
     console.log(scheme);
 
     return {

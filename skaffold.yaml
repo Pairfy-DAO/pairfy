@@ -259,6 +259,12 @@ portForward:
     localPort: 8010
 
   - resourceType: service
+    resourceName: redis-chat
+    namespace: default
+    port: 6379
+    localPort: 6380
+
+  - resourceType: service
     resourceName: weaviate
     namespace: default
     port: 8080
@@ -270,8 +276,3 @@ portForward:
     port: 11434
     localPort: 11434
     
-  - resourceType: service
-    resourceName: redis-chat
-    namespace: default
-    port: 6379
-    localPort: 6379

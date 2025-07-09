@@ -18,8 +18,10 @@ spec:
           env:
             - name: NODE_ENV
               value: development                       
-            - name: REDIS_HOST
+            - name: REDIS_CHAT_HOST
               value: redis://redis-chat:6379
+            - name: REDIS_RATELIMIT_HOST
+              value: redis://redis-limiter:6379                     
             - name: AGENT_JWT_KEY
               valueFrom:
                 secretKeyRef:
