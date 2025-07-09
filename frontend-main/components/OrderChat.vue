@@ -205,14 +205,16 @@ query GetMessages($getMessagesVariable: GetMessagesInput!) {
     })
 }
 
-const listenMessages = () => {
-    const source = new EventSource('/api/stream?channel=5b2db94d0396210e2e790cef6adafb6843f53cc249333bfe4408e43c:a239e6c2bbd6a9f3249d65afef89c28e1471ed07c529ec06848cc141:95C9D9250530A974CDC0D')
+let stream1 = null;
 
-    source.onmessage = (event) => {
+const listenMessages = () => {
+    if (stream1) return;
+
+    stream1 = new EventSource(`/api/stream?channel=${orderStore.session}`)
+
+    stream1.onmessage = (event) => {
         try {
             const parsed = JSON.parse(event.data);
-
-            console.log(parsed);
 
             if (parsed.message) {
                 messages.value.push(parsed.message)
@@ -223,9 +225,9 @@ const listenMessages = () => {
         }
     }
 
-    source.onerror = (err) => {
+    stream1.onerror = (err) => {
         console.error('❌ SSE error:', err)
-        source.close()
+        stream1.close()
     }
 }
 
@@ -266,6 +268,13 @@ function handleVisibilityChange() {
     }
 };
 
+function removeStream() {
+    if (stream1) {
+        stream1.close();
+        stream1 = null;
+    }
+}
+
 onMounted(() => {
     document.addEventListener("visibilitychange", handleVisibilityChange);
     fetchMessages()
@@ -278,6 +287,7 @@ onUnmounted(() => {
 
 onBeforeUnmount(() => {
     removeSubscriptions()
+    removeStream()
 })
 
 </script>
