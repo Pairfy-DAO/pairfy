@@ -111,7 +111,6 @@ if (import.meta.client) {
   right: 0;
   bottom: 0;
   display: flex;
-  padding: 1rem;
   z-index: 20000;
   padding-right: 0;
   align-items: center;

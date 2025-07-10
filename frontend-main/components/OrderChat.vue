@@ -87,7 +87,9 @@ const lastSeenTime = computed(() => {
 
 const textareaRef = ref(null);
 
-const maxLength = ref(200);
+const maxLength = ref(300);
+
+const owaspSafeRegex = /^[a-zA-Z0-9\s!@#$%^&*()_\+\-=\[\]{}|\\:'",.\/?]*$/;
 
 const handleInput = () => {
     const element = textareaRef.value;
@@ -96,6 +98,11 @@ const handleInput = () => {
 
     const value = inputValue.value
     const valueLength = value.length
+
+    if (!owaspSafeRegex.test(value)) {
+        value = value.replace(/[^a-zA-Z0-9\s!@#$%^&*()_\+\-=\[\]{}|\\:'",.\/?]/g, '');
+        inputValue.value = value;
+    }
 
     if (valueLength > maxLength.value) {
         inputValue.value = value.slice(0, maxLength.value);
@@ -110,6 +117,8 @@ const handleInput = () => {
             element.style.height = `${element.scrollHeight}px`;
         }
     }
+
+    element.scrollTop = element.scrollHeight;
 };
 
 watch(inputValue, () => {
@@ -368,12 +377,12 @@ onBeforeUnmount(() => {
     flex-direction: column;
     padding: 1rem;
     height: 500px;
-    font-size: var(--text-size-1);
+    padding: 1rem;
     overflow-y: scroll;
     overflow-x: hidden;
     box-sizing: border-box;
     scroll-behavior: auto;
-    padding: 1rem;
+    font-size: var(--text-size-1);
 }
 
 .OrderChat-content::-webkit-scrollbar {
@@ -418,8 +427,8 @@ onBeforeUnmount(() => {
 }
 
 .editor {
-    align-items: flex-start;
     box-sizing: border-box;
+    align-items: center;
     width: inherit;
     display: flex;
     padding: 1rem;

@@ -1,10 +1,23 @@
-import { getMessageId } from "@pairfy/common";
+import { ApiGraphQLError, ERROR_CODES, getMessageId } from "@pairfy/common";
+import { createMessageSchema } from "../../validators/createMessage.js";
 
 export const createMessage = async (_: any, args: any, context: any) => {
   try {
     const { userData: USER, sellerData: SELLER } = context;
 
-    const params = args.createMessageInput;
+    const validateParams = createMessageSchema.safeParse(
+      args.createMessageInput
+    );
+
+    if (!validateParams.success) {
+      throw new ApiGraphQLError(
+        400,
+        `Invalid params ${JSON.stringify(validateParams.error.flatten())}`,
+        { code: ERROR_CODES.VALIDATION_ERROR }
+      );
+    }
+
+    const params = validateParams.data;
 
     const chatKey = `chat:${params.session}`;
 

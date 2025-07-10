@@ -25,7 +25,7 @@
                         <div class="form-item">
 
                             <InputSelect v-model="orderUnits" :options="orderUnitOptions" label="Quantity"
-                                @valid="orderUnitsValid = $event.valid" id="order-units-select" placeholder="Quantity">
+                                @valid="orderUnitsValid = $event.valid" id="order-units-select" placeholder="Units">
                                 <template #option="{ option }">
                                     <span class="flex">
                                         <span>{{ option.label }}</span>
@@ -350,7 +350,7 @@ const onSubmit = async () => {
     padding: 1.5rem;
     padding-bottom: 0;
     min-width: 300px;
-    max-width: 49vw;
+    max-width: 50vw;
     padding-top: 0;
     display: flex;
     gap: 1rem;

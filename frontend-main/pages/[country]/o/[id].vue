@@ -11,7 +11,6 @@
                 <OrderSummary v-if="currentNav === 0" />
                 <OrderProduct v-if="currentNav === 1" />
                 <OrderTxs v-if="currentNav === 2" />
-
                 <OrderChat />
             </div>
 
@@ -24,8 +23,8 @@ import { gql } from 'graphql-tag'
 
 const route = useRoute();
 
-const order = useOrderStore()
-const orderData = computed(() => order.order)
+const orderStore = useOrderStore()
+const orderData = computed(() => orderStore.order)
 
 const { $gatewayClient } = useNuxtApp()
 
@@ -121,11 +120,11 @@ query ($getOrderVariable: GetOrderInput!) {
 
     subscription1 = observable.subscribe({
         next({ data }) {
-            order.setOrder(data.getOrder)
-            order.pendingTx = route.query?.tx || data.getOrder.order.pending_tx
+            orderStore.setOrder(data.getOrder)
+            orderStore.pendingTx = route.query?.tx || data.getOrder.order.pending_tx
         },
         error(err) {
-            order.showToast(err, 'error', 10_000)
+            orderStore.showToast(err, 'error', 10_000)
         }
     })
 }
@@ -135,7 +134,7 @@ function removeSubscriptions() {
 }
 
 function watchToast() {
-    watch(() => order.toastMessage, ({ message, type, duration }) => toastRef.value?.showToast(message, type, duration));
+    watch(() => orderStore.toastMessage, ({ message, type, duration }) => toastRef.value?.showToast(message, type, duration));
 }
 
 onMounted(() => {
