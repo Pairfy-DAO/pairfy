@@ -61,10 +61,9 @@ import { timeAgo } from "@/utils/utils"
 
 const { $chatClient } = useNuxtApp()
 
-const orderStore = useOrderStore()
-
 const authStore = useAuthStore()
 
+const orderStore = useOrderStore()
 const orderData = computed(() => orderStore.order)
 
 const userViewing = ref(true);
@@ -158,7 +157,7 @@ mutation CreateMessage($createMessageVariable: CreateMessageInput!) {
 
     } catch (err) {
         console.error('createMessage:', err);
-        order.showToast(err, 'error', 10_000)
+        orderStore.showToast(err, 'error', 10_000)
     } finally {
         loading.value = false
     }
@@ -243,7 +242,7 @@ let stream1 = null;
 const listenMessages = () => {
     if (stream1) return;
 
-    stream1 = new EventSource(`/api/stream?channel=${orderStore.session}`)
+    stream1 = new EventSource(`/api/chat/stream?channel=${orderStore.session}`)
 
     stream1.onmessage = (event) => {
         try {

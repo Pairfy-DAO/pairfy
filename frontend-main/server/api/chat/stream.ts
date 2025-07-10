@@ -1,4 +1,4 @@
-// server/api/stream.ts
+// server/api/chat/stream.ts
 import { createClient } from "redis";
 import { throwRemoteError } from "~/server/utils/fetch";
 import { defineEventHandler, createEventStream } from "h3";
