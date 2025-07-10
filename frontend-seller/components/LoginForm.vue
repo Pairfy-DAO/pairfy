@@ -24,9 +24,9 @@
 <script setup>
 import { useAuthStore } from '@/stores/auth'
 import { useWalletStore } from '@/stores/wallet'
-import eternl from '@/assets/wallets/eternl.png'
-import lace from '@/assets/wallets/lace.svg'
-import nami from '@/assets/wallets/nami.svg'
+import eternl from '@/assets/icon/eternl.png'
+import lace from '@/assets/icon/lace.svg'
+import nami from '@/assets/icon/nami.svg'
 
 const config = useRuntimeConfig()
 

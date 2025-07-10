@@ -16,7 +16,7 @@
             <!--CONTENT START-->
             <div class="OrderChat-content" id="scrollable">
                 <div class="message" v-for="(item, index) in messages" :key="index" :id="`m-${index}`">
-                    <UserBubble :data="item" />
+                    <MyBubble :data="item" v-if="item.sender === agentId"/>
                     <PartyBubble :data="item" v-if="item.sender !== agentId" />
                 </div>
             </div>

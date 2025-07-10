@@ -1,10 +1,11 @@
 # Introduction
 
-Pairfy funded by catalyst R11 is a native Cardano decentralized application for trading physical products.
+Pairfy is a native Cardano e-commerce dApp for trading physical products, funded by Catalyst Round 11.
 ![Catalyst](assets/f11.png)
 
+Imagine a platform like Amazon, but owned by its buyers and sellers — 
+where they can vote on platform decisions, use a common repository of product vendors, marketing templates, and product templates.
 It uses the collective intelligence of its DAO members to conduct market and product research for the benefit of the Cardano community.
-Imagine a site like Amazon where product sellers own Amazon itself and can vote in governance, contribute to the repository of suppliers and templates of all kinds.
 This makes it easy for any community member to become a seller and generate an ecosystem of value exchange.
 
 The trading process between the seller and the buyer is handled by individual Plutus scripts (Cardano smart-contract).
@@ -23,7 +24,7 @@ In addition, the implementation of other innovative and deterministic trading lo
 - ADA Guarantee as purchase protection.
 - Each trade is managed by an isolated smart-contract.
 - Any member of the community can be a seller (DAO member).
-- Community repository of products and page templates.
+- Community repository of products, suppliers, marketing, landing pages templates.
 - Seller incentive program.
 - Open-source development (Apache 2.0).
 - Integration of AI models.

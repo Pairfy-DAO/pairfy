@@ -24,20 +24,7 @@ build:
           - src: 'nuxt.config.*'
             dest: .
 
-    - image: pairfy/frontend-seller
-      context: frontend-seller
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: 'pages/**/*'
-            dest: pages
-          - src: 'components/**/*'
-            dest: components
-          - src: 'app.vue'
-            dest: .
-          - src: 'nuxt.config.*'
-            dest: .
+
 
     - image: pairfy/service-seller
       context: service-seller
@@ -84,16 +71,16 @@ build:
           - src: 'src/**/*.{ts,js,json,vue}'
             dest: .                
 
-    - image: pairfy/service-llm
-      context: service-llm
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: '**/*.py'
-            dest: .
-          - src: 'requirements.txt'
-            dest: .
+#    - image: pairfy/service-llm
+#      context: service-llm
+#      docker:
+#        dockerfile: Dockerfile
+#      sync:
+#        manual:
+#          - src: '**/*.py'
+#            dest: .
+#          - src: 'requirements.txt'
+#            dest: .
 
     - image: pairfy/service-query
       context: service-query
@@ -186,11 +173,11 @@ portForward:
     port: 80
     localPort: 8081
 
-  - resourceType: service
-    resourceName: frontend-seller
-    namespace: default
-    port: 81
-    localPort: 8082
+#  - resourceType: service
+#    resourceName: frontend-seller
+#    namespace: default
+#    port: 81
+#    localPort: 8082
 
   - resourceType: service
     resourceName: service-seller
@@ -204,11 +191,11 @@ portForward:
     port: 8001
     localPort: 8001    
 
-  - resourceType: service
-    resourceName: service-llm
-    namespace: default
-    port: 8002
-    localPort: 8002
+#  - resourceType: service
+#    resourceName: service-llm
+#    namespace: default
+#    port: 8002
+#    localPort: 8002
 
   - resourceType: service
     resourceName: service-media

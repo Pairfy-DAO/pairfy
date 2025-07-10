@@ -18,7 +18,12 @@ import {
   normalizeGraphError,
   RateLimiter,
 } from "@pairfy/common";
-import { redisBooks, redisState, redisPrice, redisChat } from "./database/redis.js";
+import {
+  redisBooks,
+  redisState,
+  redisPrice,
+  redisChat,
+} from "./database/redis.js";
 
 const main = async () => {
   try {
@@ -180,7 +185,7 @@ const main = async () => {
       expressMiddleware(server, {
         context: async ({ req }) => {
           const { sellerData, userData } = req;
-
+          
           if (!sellerData && !userData) {
             throw new ApiGraphQLError(401, "Unauthorized", {
               code: ERROR_CODES.UNAUTHORIZED,

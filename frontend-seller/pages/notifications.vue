@@ -51,7 +51,7 @@
                     </template>
 
                     <template #col-created_at="{ value }">
-                        {{ formatWithDateFns(value) }}
+                        {{ formatCompleteDate(value) }}
                     </template>
 
                     <template #actions="{ item }">
@@ -73,7 +73,7 @@
 </template>
 
 <script setup>
-import { formatWithDateFns } from "@/utils/utils"
+import { formatCompleteDate } from "@/utils/utils"
 import { gql } from 'graphql-tag'
 
 const { $notificationClient } = useNuxtApp()

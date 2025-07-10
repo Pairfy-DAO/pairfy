@@ -26,6 +26,8 @@
     "graphql": "^16.10.0",
     "node-fetch": "^3.3.2",
     "nuxt": "^3.16.2",
+    "pako": "^2.1.0",
+    "redis": "^5.6.0",
     "sortablejs": "^1.15.6",
     "vite-plugin-wasm": "^3.4.1",
     "vue": "^3.5.13",

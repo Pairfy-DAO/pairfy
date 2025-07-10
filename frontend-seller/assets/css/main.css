@@ -68,7 +68,10 @@ body {
   --orange-a: #fb923c; /* Soft alert / Attention */
   --purple-a: #8b5cf6; /* Info / Highlighted elements */
   --gray-a: #1E293B;
-
+  --black-a: #000000;
+  --blue-b: #0C4AD2;
+  --blue-c: #0030B8;
+  
   --red-bg: rgba(239, 68, 68, 0.1); /* Soft background for error states */
   --yellow-bg: rgba(250, 204, 21, 0.1); /* Soft background for warnings */
   --green-bg: rgba(34, 197, 94, 0.1); /* Soft background for success messages */

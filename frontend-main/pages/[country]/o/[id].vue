@@ -101,6 +101,8 @@ query ($getOrderVariable: GetOrderInput!) {
        }
 
        product
+       address
+       shipping
        session
     }
 }
