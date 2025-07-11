@@ -9,8 +9,8 @@
 </template>
 
 <script setup>
+import { decryptMessageWithPrivateKey, decryptAESGCM, decompress } from '@pairfy/common-f';
 import { z } from 'zod';
-import { decryptMessageWithPrivateKey, decompress } from '@pairfy/common-f';
 import DOMPurify from 'dompurify';
 
 const orderStore = useOrderStore()
@@ -46,46 +46,39 @@ const sanitizedString = z
 
 const addressSchema = z.strictObject({
     r: sanitizedString,
-    n: sanitizedString,
+    n: sanitizedString.optional(),
     a: sanitizedString,
-    p: sanitizedString,
+    p: sanitizedString.optional(),
 });
 
 const onShow = async () => {
     try {
-
-        const parsedData = JSON.parse(orderStore.address);
-
-        const result = metadataSchema.safeParse(parsedData)
-
-        if (!result.success) {
-            console.error("Validation failed:", result.error.treeifyError())
-        } else {
-            const encrypted = result.data[0].json_metadata.msg.join('')
-
-            console.log(encrypted)
-
-            const privateKeyB64 = await decryptAESGCM(orderStore.encryptedPrivateKey, 'Password123@')
-
-            console.log(privateKeyB64)
-
-            const decriptedAddress = await decryptMessageWithPrivateKey(privateKeyB64, encrypted)
-
-            console.log(decriptedAddress)
-
-            const decompressed = decompress(decriptedAddress)
-
-            console.log(JSON.parse(decompressed))
-
-            const verifyFormat = addressSchema.safeParse(JSON.parse(decompressed))
-
-            if (!verifyFormat.success) {
-
-                console.error("Validation failed:", z.treeifyError(verifyFormat.error))
-            } else {
-                console.log(verifyFormat.data)
-            }
+        if (!orderStore.address) {
+            throw new Error('Empty address')
         }
+
+        const validation1 = metadataSchema.safeParse(JSON.parse(orderStore.address))
+
+        if (!validation1.success) {
+            throw new Error(`Invalid metadata format ${z.treeifyError(validation1.error)}`)
+        }
+
+        const unchunked = validation1.data[0].json_metadata.msg.join('')
+
+        const privateKeyB64 = await decryptAESGCM(orderStore.encryptedPrivateKey, 'Password123@')
+
+        const compressed = await decryptMessageWithPrivateKey(privateKeyB64, unchunked)
+
+        const decompressed = decompress(compressed)
+
+        const validation2 = addressSchema.safeParse(JSON.parse(decompressed))
+
+        if (!validation2.success) {
+            throw new Error(`Invalid metadata format ${z.treeifyError(validation2.error)}`)
+        } 
+        
+        console.log(validation2.data)
+
     } catch (err) {
         console.error(err)
     }
