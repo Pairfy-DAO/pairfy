@@ -2,7 +2,6 @@
     <div class="OrderAddress">
 
         <div class="OrderAddress-body">
-            {{ orderStore.address }}
             <button @click="onShow">Show</button>
         </div>
     </div>
@@ -67,7 +66,7 @@ const onShow = async () => {
 
         const privateKeyB64 = await decryptAESGCM(orderStore.encryptedPrivateKey, 'Password123@')
 
-        const compressed = await decryptMessageWithPrivateKey(privateKeyB64, unchunked)
+        const compressed = decryptMessageWithPrivateKey(privateKeyB64, unchunked)
 
         const decompressed = decompress(compressed)
 

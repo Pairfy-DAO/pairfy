@@ -4,7 +4,7 @@ import { Buffer } from "buffer";
 /**decrypt a string with privateKeyB64 RSA private key
  * @WARNING no error handling*
  * @returns utf-8 string */
-export async function decryptMessageWithPrivateKey(
+export function decryptMessageWithPrivateKey(
   privateKeyB64: string,
   ciphertextB64: string
 ) {
