@@ -15,7 +15,7 @@ import {
   verifyTokenType,
 } from "../validators/update-password.js";
 import { generateRSA } from "../utils/rsa.js";
-import { encryptAESGCM } from "../utils/aes.js";
+import { encryptAESGCM } from "../common/aes.js";
 
 export const updatePasswordMiddlewares: any = [];
 

@@ -1,16 +1,16 @@
 // crypto-aes-gcm-browser.ts
 // ------------------------------------------------------------
-//  WebCrypto y utilidades disponibles en el navegador
+//  WebCrypto and utilities available in the browser
 // ------------------------------------------------------------
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
 // ------------------------------------------------------------
-//  Utilidades Base64  (Uint8Array <-> base64, compatibles con Node)
+//  Base64 utilities (Uint8Array <-> base64, compatible with Node)
 // ------------------------------------------------------------
 function uint8ToBase64(data: Uint8Array): string {
-  // btoa/atob manejan strings en latin-1 ⇒ se convierte byte-a-byte
+  // btoa/atob handle latin-1 strings ⇒ convert byte-by-byte
   let binary = "";
   data.forEach((byte) => (binary += String.fromCharCode(byte)));
   return btoa(binary);
@@ -25,15 +25,15 @@ function base64ToUint8(b64: string): Uint8Array {
 }
 
 // ------------------------------------------------------------
-//  Parámetros de seguridad (idénticos a la versión Node)
+//  Security parameters (identical to the Node version)
 // ------------------------------------------------------------
 const PBKDF2_ITERATIONS = 100_000;
 const KEY_LENGTH_BITS = 256; // 32 bytes
-const IV_LENGTH = 12; // 12 bytes (96 bits, estándar GCM)
+const IV_LENGTH = 12; // 12 bytes (96 bits, GCM standard)
 const SALT_LENGTH = 16; // 16 bytes
 
 // ------------------------------------------------------------
-//  Derivación de clave (PBKDF2-HMAC-SHA-256)
+//  Key derivation (PBKDF2-HMAC-SHA-256)
 // ------------------------------------------------------------
 async function deriveKey(
   password: string,
@@ -62,17 +62,17 @@ async function deriveKey(
 }
 
 // ------------------------------------------------------------
-//  Tipado del resultado
+//  Result typing
 // ------------------------------------------------------------
 export interface EncryptedData {
   readonly salt: string; // base64
   readonly iv: string; // base64
-  readonly authTag: string; // base64 (16 bytes finales del ciphertext)
+  readonly authTag: string; // base64 (last 16 bytes of ciphertext)
   readonly ciphertext: string; // base64 (ciphertext + authTag)
 }
 
 // ------------------------------------------------------------
-//  Cifrado
+//  Encryption
 // ------------------------------------------------------------
 export async function encryptAESGCM(
   plaintext: string,
@@ -98,7 +98,7 @@ export async function encryptAESGCM(
 }
 
 // ------------------------------------------------------------
-//  Descifrado
+//  Decryption
 // ------------------------------------------------------------
 
 /**@WARNING no error handling */
@@ -111,10 +111,10 @@ export async function decryptAESGCM(
   const ciphertext = base64ToUint8(encrypted.ciphertext); // n bytes
 
   if (iv.length !== IV_LENGTH) {
-    throw new Error(`IV inválido: se esperaban ${IV_LENGTH} bytes`);
+    throw new Error(`Invalid IV: expected ${IV_LENGTH} bytes`);
   }
   if (salt.length !== SALT_LENGTH) {
-    throw new Error(`Salt inválida: se esperaban ${SALT_LENGTH} bytes`);
+    throw new Error(`Invalid salt: expected ${SALT_LENGTH} bytes`);
   }
 
   const key = await deriveKey(password, salt);
