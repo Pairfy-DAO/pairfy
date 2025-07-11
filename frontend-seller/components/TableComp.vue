@@ -196,7 +196,7 @@ const nextPage = () => {
 
 .search input {
   background: transparent;
-  padding: 0.65rem 1rem;
+  padding: var(--input-padding);
   min-width: 300px;
   width: inherit;
   border: none;

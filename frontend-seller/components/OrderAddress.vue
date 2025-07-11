@@ -2,17 +2,58 @@
     <div class="OrderAddress">
 
         <div class="OrderAddress-body">
-            <button @click="onShow">Show</button>
+            <div class="title">
+                <span>Destination address</span>
+            </div>
+
+            <template v-if="!display">
+                <div class="password-input">
+                    <InputPassword v-model="passwordValue" @valid="passwordValueValid = $event.valid" />
+                </div>
+
+                <ButtonSolid label="Unlock" outlined @click="onShow" :disabled="disableButton" size="mini"
+                    style="margin-top: 1rem;">
+                    <template #icon>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-lock-open-icon lucide-lock-open">
+                            <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+                        </svg>
+                    </template>
+                </ButtonSolid>
+            </template>
+            <template v-if="display">
+                <div class="destination-layout">
+                    <div class="card">
+                        <span class="card-title">{{ destination.r }}</span>
+                        <DividerComp margin="1rem 0px" />
+                        <p class="card-field"><strong>Destination:</strong> {{ destination.a }}</p>
+                        <p class="card-field"><strong>Preference:</strong> {{ destination.p }}</p>
+                        <p class="card-field"><strong>Notes:</strong> {{ destination.n }}</p>
+                    </div>
+                </div>
+            </template>
         </div>
+
     </div>
 </template>
 
 <script setup>
+import DOMPurify from 'dompurify';
 import { decryptMessageWithPrivateKey, decryptAESGCM, decompress } from '@pairfy/common-f';
 import { z } from 'zod';
-import DOMPurify from 'dompurify';
 
 const orderStore = useOrderStore()
+
+const display = ref(false)
+
+const destination = ref({})
+
+const passwordValue = ref(null)
+const passwordValueValid = ref(false)
+
+const disableButton = computed(() => !passwordValue.value || !passwordValueValid.value)
 
 const base64Regex = /^[A-Za-z0-9+/]+={0,2}$/
 
@@ -74,12 +115,15 @@ const onShow = async () => {
 
         if (!validation2.success) {
             throw new Error(`Invalid metadata format ${z.treeifyError(validation2.error)}`)
-        } 
-        
-        console.log(validation2.data)
+        }
+
+        destination.value = validation2.data
+
+        display.value = true
 
     } catch (err) {
         console.error(err)
+        orderStore.showToast(err, 'error', 10_000)
     }
 }
 </script>
@@ -91,14 +135,73 @@ const onShow = async () => {
 
 .OrderAddress-body {
     width: 428px;
-    height: 142px;
     padding: 1rem;
+    display: flex;
     margin-top: 1rem;
     overflow: hidden;
     margin-left: auto;
+    flex-direction: column;
     box-sizing: border-box;
     border-radius: var(--radius-d);
     transition: var(--transition-a);
     border: 2px solid var(--border-a);
 }
+
+.title {
+    font-size: var(--text-size-2);
+    font-weight: 700;
+}
+
+.password-input {
+    width: 100%;
+    display: flex;
+    margin-top: 1rem;
+    align-items: center;
+}
+
+.show-button {
+    display: flex;
+    cursor: pointer;
+    margin-top: 1rem;
+    font-weight: bold;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--primary-a);
+    padding: var(--input-padding);
+    border: 1px solid var(--primary-a);
+    border-radius: var(--button-radius);
+}
+
+.show-button span {
+    margin-left: 0.5rem;
+}
+
+.destination-layout {
+    border: 1px solid var(--border-a);
+    background: var(--background-b);
+    border-radius: var(--radius-b);
+    margin-top: 1rem;
+    padding: 1rem;
+}
+
+.card {
+    max-width: 400px;
+    border-radius: var(--radius-c);
+}
+
+.card-title {
+    margin-top: 0;
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: var(--text-b);
+    font-size: var(--text-size-3);
+}
+
+.card-field {
+    margin: 0.5rem 0;
+    color: var(--text-b);
+}
+
+
 </style>

@@ -1,7 +1,11 @@
 <template>
-  <button class="ButtonSolid" :class="[{ disabled, outlined }, sizeClass]" @click="$emit('click')" :disabled="disabled" >
+  <button class="ButtonSolid" :class="[{ disabled, outlined }, sizeClass]" @click="$emit('click')" :disabled="disabled">
 
-    <div class="ButtonSolid-body">
+    <div class="ButtonSolid-body flex">
+      <div class="icon">
+        <slot name="icon" />
+      </div>
+
       <span class="loader" v-if="loading" />
       <span class="label" v-if="!loading">{{ label }}</span>
     </div>
@@ -55,21 +59,9 @@ const sizeClass = computed(() => {
   justify-content: center;
   color: var(--text-w);
   align-items: center;
-  font-weight: 600;
+  font-weight: bold;
   cursor: pointer;
   display: flex;
-}
-
-.ButtonSolid.outlined {
-  border: 1px solid var(--primary-a); 
-  background: transparent;
-  color: var(--primary-a);
-}
-
-.ButtonSolid.outlined:hover {
-  border: 1px solid var(--primary-a); 
-  background: var(--primary-a);
-  color: var(--text-w);
 }
 
 .ButtonSolid:hover {
@@ -84,6 +76,22 @@ const sizeClass = computed(() => {
 .ButtonSolid-body {
   align-items: center;
   display: flex;
+}
+
+.ButtonSolid.outlined {
+  border: 1px solid var(--primary-a);
+  background: transparent;
+  color: var(--primary-a);
+}
+
+.ButtonSolid.outlined:hover {
+  border: 1px solid var(--primary-a);
+  background: var(--primary-a);
+  color: var(--text-w);
+}
+
+.ButtonSolid.outlined.disabled {
+  pointer-events: none;
 }
 
 .btn-mini {
@@ -120,5 +128,9 @@ const sizeClass = computed(() => {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.icon {
+  margin-right: 0.5rem;
 }
 </style>
