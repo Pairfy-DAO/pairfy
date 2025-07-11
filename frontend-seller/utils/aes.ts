@@ -1,32 +1,36 @@
-// crypto-aes-gcm-node.ts
+// crypto-aes-gcm-browser.ts
 // ------------------------------------------------------------
-//  Dependencias y alias WebCrypto para Node
+//  WebCrypto y utilidades disponibles en el navegador
 // ------------------------------------------------------------
-import { webcrypto as _webcrypto } from "node:crypto";
-import { TextEncoder, TextDecoder } from "node:util";
 
-const crypto = _webcrypto; // Web Crypto nativo en Node
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
 // ------------------------------------------------------------
-//  Utilidades Base64  (Uint8Array <-> base64)
+//  Utilidades Base64  (Uint8Array <-> base64, compatibles con Node)
 // ------------------------------------------------------------
 function uint8ToBase64(data: Uint8Array): string {
-  return Buffer.from(data).toString("base64");
+  // btoa/atob manejan strings en latin-1 ⇒ se convierte byte-a-byte
+  let binary = "";
+  data.forEach(byte => (binary += String.fromCharCode(byte)));
+  return btoa(binary);
 }
 
 function base64ToUint8(b64: string): Uint8Array {
-  return Buffer.from(b64, "base64");
+  const binary = atob(b64);
+  const len    = binary.length;
+  const bytes  = new Uint8Array(len);
+  for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
 }
 
 // ------------------------------------------------------------
-//  Parámetros de seguridad
+//  Parámetros de seguridad (idénticos a la versión Node)
 // ------------------------------------------------------------
 const PBKDF2_ITERATIONS = 100_000;
-const KEY_LENGTH_BITS = 256; // 32 bytes
-const IV_LENGTH = 12; // 12 bytes (96 bits, estándar GCM)
-const SALT_LENGTH = 16; // 16 bytes
+const KEY_LENGTH_BITS   = 256; // 32 bytes
+const IV_LENGTH         = 12;  // 12 bytes (96 bits, estándar GCM)
+const SALT_LENGTH       = 16;  // 16 bytes
 
 // ------------------------------------------------------------
 //  Derivación de clave (PBKDF2-HMAC-SHA-256)
@@ -45,10 +49,10 @@ async function deriveKey(
 
   return crypto.subtle.deriveKey(
     {
-      name: "PBKDF2",
+      name:       "PBKDF2",
       salt,
       iterations: PBKDF2_ITERATIONS,
-      hash: "SHA-256",
+      hash:       "SHA-256"
     },
     keyMaterial,
     { name: "AES-GCM", length: KEY_LENGTH_BITS },
@@ -61,9 +65,9 @@ async function deriveKey(
 //  Tipado del resultado
 // ------------------------------------------------------------
 export interface EncryptedData {
-  readonly salt: string; // base64
-  readonly iv: string; // base64
-  readonly authTag: string; // base64 (16 bytes finales del ciphertext)
+  readonly salt:       string; // base64
+  readonly iv:         string; // base64
+  readonly authTag:    string; // base64 (16 bytes finales del ciphertext)
   readonly ciphertext: string; // base64 (ciphertext + authTag)
 }
 
@@ -72,12 +76,12 @@ export interface EncryptedData {
 // ------------------------------------------------------------
 export async function encryptAESGCM(
   plaintext: string,
-  password: string
+  password:  string
 ): Promise<EncryptedData> {
   const salt = crypto.getRandomValues(new Uint8Array(SALT_LENGTH));
-  const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH));
+  const iv   = crypto.getRandomValues(new Uint8Array(IV_LENGTH));
 
-  const key = await deriveKey(password, salt); // salt correcto
+  const key = await deriveKey(password, salt);
 
   const ciphertextBuf = await crypto.subtle.encrypt(
     { name: "AES-GCM", iv },
@@ -86,10 +90,10 @@ export async function encryptAESGCM(
   );
 
   return {
-    salt: uint8ToBase64(salt),
-    iv: uint8ToBase64(iv),
-    authTag: uint8ToBase64(new Uint8Array(ciphertextBuf.slice(-16))),
-    ciphertext: uint8ToBase64(new Uint8Array(ciphertextBuf)),
+    salt:       uint8ToBase64(salt),
+    iv:         uint8ToBase64(iv),
+    authTag:    uint8ToBase64(new Uint8Array(ciphertextBuf.slice(-16))),
+    ciphertext: uint8ToBase64(new Uint8Array(ciphertextBuf))
   };
 }
 
@@ -98,11 +102,11 @@ export async function encryptAESGCM(
 // ------------------------------------------------------------
 export async function decryptAESGCM(
   encrypted: EncryptedData,
-  password: string
+  password:  string
 ): Promise<string | null> {
   try {
-    const salt = base64ToUint8(encrypted.salt); // 16 bytes
-    const iv = base64ToUint8(encrypted.iv); // 12 bytes
+    const salt       = base64ToUint8(encrypted.salt);       // 16 bytes
+    const iv         = base64ToUint8(encrypted.iv);         // 12 bytes
     const ciphertext = base64ToUint8(encrypted.ciphertext); // n bytes
 
     if (iv.length !== IV_LENGTH) {
@@ -123,31 +127,6 @@ export async function decryptAESGCM(
     return decoder.decode(plaintextBuf);
   } catch (err) {
     console.error("Descifrado fallido:", err);
-    return null; // o vuelve a lanzar el error si prefieres
+    return null; // Devuelve null en caso de fallo (clave incorrecta o datos corruptos)
   }
-}
-
-const main = async () => {
-  const secret = "correct horse battery staple";
-  const password = "password";
-
-  const encrypted = await encryptAESGCM(secret, password);
-  console.log("🔒 Encrypted:", encrypted);
-
-  const test = {
-    "salt": "SEzd6SlrBl6HAm6RC/KKmQ==",
-    "iv": "Y62C9Ivvz1F7akIF",
-    "authTag": "B5a7a/QLnfJOflTgOcU+3A==",
-    "ciphertext": "u8LT1QeWu2v0C53yTn5U4DnFPtw="
-}
-
-  const decrypted = await decryptAESGCM(test, password);
-  console.log("🔓 Decrypted:", decrypted);
-};
-
-let iteration = 1;
-
-while (iteration) {
-  main();
-  iteration -= 1;
 }

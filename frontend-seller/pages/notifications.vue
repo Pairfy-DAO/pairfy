@@ -37,8 +37,7 @@
                     actions @onPrev="handleOnPrev" @onNext="handleOnNext" :columnWidths="{
                         title: '4rem',
                         message: '8rem',
-                        type: '4rem',
-                        data: '20rem',
+                        type: '2rem',
                         data: '20rem',
                         actions: '4rem',
                         created_at: '4rem',

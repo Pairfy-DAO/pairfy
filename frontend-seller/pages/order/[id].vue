@@ -11,7 +11,7 @@
                 <OrderSummary v-if="currentNav === 0" />
                 <OrderProduct v-if="currentNav === 1" />
                 <OrderTxs v-if="currentNav === 2" />
-                <OrderChat />
+                <OrderPanel />
             </div>
 
         </div>
@@ -168,7 +168,7 @@ onBeforeUnmount(() => {
 
 .OrderPage-grid {
     grid-template-columns: 1fr 600px;
-    margin-top: 1rem; 
+    margin-top: 1rem;
     display: grid;
 }
 </style>

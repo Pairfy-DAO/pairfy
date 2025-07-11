@@ -22,7 +22,7 @@ In addition, the implementation of other innovative and deterministic trading lo
 - Use of Cardano Network – Midnight Network 🔥.
 - Free shipping is always included.
 - ADA Guarantee as purchase protection.
-- Each trade is managed by an isolated smart-contract.
+- Each trade is managed by an isolated smart-contract (Important for high horizontal scalability).
 - Any member of the community can be a seller (DAO member).
 - Community repository of products, suppliers, marketing, landing pages templates.
 - Seller incentive program.

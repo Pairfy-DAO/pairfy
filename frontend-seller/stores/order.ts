@@ -11,10 +11,14 @@ export const useOrderStore = defineStore("order", () => {
 
   const order = ref(null);
   const state = ref(null);
-  const product = ref(null);
-  const session = ref(null);
   const finished = ref(null);
   const pendingTx = ref(null);
+
+  const product = ref(null);
+  const address = ref(null);
+  const shipping = ref(null);
+  const session = ref(null);
+  const encryptedPrivateKey = ref(null);
 
   const showToast = (message: string, type: ToastType, duration: number) => {
     toastMessage.value = {
@@ -28,18 +32,22 @@ export const useOrderStore = defineStore("order", () => {
     const {
       order: orderData,
       product: productData,
-      shipping: shippingData,
       address: addressData,
+      shipping: shippingData,
       session: sessionData,
-      encrypted_private_key: pKeyData
+      encrypted_private_key,
     } = data;
 
     order.value = orderData;
     state.value = orderData.contract_state;
     finished.value = orderData.finished;
     pendingTx.value = orderData.pending_tx;
+
     product.value = JSON.parse(productData);
+    address.value = addressData;
+    shipping.value = shippingData;
     session.value = sessionData;
+    encryptedPrivateKey.value = JSON.parse(encrypted_private_key);
   };
 
   function clear() {
@@ -56,6 +64,9 @@ export const useOrderStore = defineStore("order", () => {
     showToast,
     pendingTx,
     product,
+    address,
+    shipping,
     session,
+    encryptedPrivateKey
   };
 });

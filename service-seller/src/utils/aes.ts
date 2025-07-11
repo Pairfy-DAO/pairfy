@@ -1,70 +1,128 @@
-import crypto from "crypto";
+// crypto-aes-gcm-node.ts
+// ------------------------------------------------------------
+//  Dependencias y alias WebCrypto para Node
+// ------------------------------------------------------------
+import { webcrypto as _webcrypto } from "node:crypto";
+import { TextEncoder, TextDecoder } from "node:util";
 
+const crypto = _webcrypto; // Web Crypto nativo en Node
+const encoder = new TextEncoder();
+const decoder = new TextDecoder();
+
+// ------------------------------------------------------------
+//  Utilidades Base64  (Uint8Array <-> base64)
+// ------------------------------------------------------------
+function uint8ToBase64(data: Uint8Array): string {
+  return Buffer.from(data).toString("base64");
+}
+
+function base64ToUint8(b64: string): Uint8Array {
+  return Buffer.from(b64, "base64");
+}
+
+// ------------------------------------------------------------
+//  Parámetros de seguridad
+// ------------------------------------------------------------
 const PBKDF2_ITERATIONS = 100_000;
-const KEY_LENGTH = 32;
-const IV_LENGTH = 12;
-const SALT_LENGTH = 16;
+const KEY_LENGTH_BITS = 256; // 32 bytes
+const IV_LENGTH = 12; // 12 bytes (96 bits, estándar GCM)
+const SALT_LENGTH = 16; // 16 bytes
 
-function deriveKey(password: string, salt: Buffer): Buffer {
-  return crypto.pbkdf2Sync(
-    password,
-    salt,
-    PBKDF2_ITERATIONS,
-    KEY_LENGTH,
-    "sha256"
+// ------------------------------------------------------------
+//  Derivación de clave (PBKDF2-HMAC-SHA-256)
+// ------------------------------------------------------------
+async function deriveKey(
+  password: string,
+  salt: Uint8Array
+): Promise<CryptoKey> {
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(password),
+    { name: "PBKDF2" },
+    false,
+    ["deriveKey"]
+  );
+
+  return crypto.subtle.deriveKey(
+    {
+      name: "PBKDF2",
+      salt,
+      iterations: PBKDF2_ITERATIONS,
+      hash: "SHA-256",
+    },
+    keyMaterial,
+    { name: "AES-GCM", length: KEY_LENGTH_BITS },
+    false,
+    ["encrypt", "decrypt"]
   );
 }
 
+// ------------------------------------------------------------
+//  Tipado del resultado
+// ------------------------------------------------------------
 export interface EncryptedData {
-  readonly salt: string;
-  readonly iv: string;
-  readonly authTag: string;
-  readonly ciphertext: string;
+  readonly salt: string; // base64
+  readonly iv: string; // base64
+  readonly authTag: string; // base64 (16 bytes finales del ciphertext)
+  readonly ciphertext: string; // base64 (ciphertext + authTag)
 }
 
-export function encryptAESGCM(
+// ------------------------------------------------------------
+//  Cifrado
+// ------------------------------------------------------------
+export async function encryptAESGCM(
   plaintext: string,
   password: string
-): EncryptedData {
-  const salt = crypto.randomBytes(SALT_LENGTH);
-  const iv = crypto.randomBytes(IV_LENGTH);
-  const key = deriveKey(password, salt);
+): Promise<EncryptedData> {
+  const salt = crypto.getRandomValues(new Uint8Array(SALT_LENGTH));
+  const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH));
 
-  const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
-
-  const ciphertext = Buffer.concat([
-    cipher.update(plaintext, "utf8"),
-    cipher.final(),
-  ]);
-
-  const authTag = cipher.getAuthTag();
+  const key = await deriveKey(password, salt);
+  
+  const ciphertextBuf = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    key,
+    encoder.encode(plaintext)
+  );
 
   return {
-    salt: salt.toString("base64"),
-    iv: iv.toString("base64"),
-    authTag: authTag.toString("base64"),
-    ciphertext: ciphertext.toString("base64"),
+    salt: uint8ToBase64(salt),
+    iv: uint8ToBase64(iv),
+    authTag: uint8ToBase64(new Uint8Array(ciphertextBuf.slice(-16))),
+    ciphertext: uint8ToBase64(new Uint8Array(ciphertextBuf)),
   };
 }
 
-export function decryptAESGCM(
+// ------------------------------------------------------------
+//  Descifrado
+// ------------------------------------------------------------
+export async function decryptAESGCM(
   encrypted: EncryptedData,
   password: string
-): string {
-  const salt = Buffer.from(encrypted.salt, "base64");
-  const iv = Buffer.from(encrypted.iv, "base64");
-  const authTag = Buffer.from(encrypted.authTag, "base64");
-  const ciphertext = Buffer.from(encrypted.ciphertext, "base64");
+): Promise<string | null> {
+  try {
+    const salt = base64ToUint8(encrypted.salt); // 16 bytes
+    const iv = base64ToUint8(encrypted.iv); // 12 bytes
+    const ciphertext = base64ToUint8(encrypted.ciphertext); // n bytes
 
-  const key = deriveKey(password, salt);
+    if (iv.length !== IV_LENGTH) {
+      throw new Error(`IV inválido: se esperaban ${IV_LENGTH} bytes`);
+    }
+    if (salt.length !== SALT_LENGTH) {
+      throw new Error(`Salt inválida: se esperaban ${SALT_LENGTH} bytes`);
+    }
 
-  const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
-  decipher.setAuthTag(authTag);
+    const key = await deriveKey(password, salt);
 
-  const decrypted = Buffer.concat([
-    decipher.update(ciphertext),
-    decipher.final(),
-  ]);
+    const plaintextBuf = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv },
+      key,
+      ciphertext
+    );
 
-  return decrypted.toString("utf8");
+    return decoder.decode(plaintextBuf);
+  } catch (err) {
+    console.error("Descifrado fallido:", err);
+    return null; // o vuelve a lanzar el error si prefieres
+  }
 }
