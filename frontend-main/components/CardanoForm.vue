@@ -159,7 +159,8 @@
 
 <script setup>
 import { gql } from 'graphql-tag'
-import { formatUSD, timestampToDate, chunkMetadata, encryptMessageWithPublicKey, compressMessage } from '@/utils/utils';
+import { encryptMessageWithPublicKey, compress, chunkMetadata } from '@pairfy/common-f'
+import { formatUSD, timestampToDate } from '@/utils/utils'
 
 const route = useRoute()
 const router = useRouter()
@@ -307,7 +308,7 @@ const onSubmit = async () => {
             p: orderProvider.value
         };
 
-        const compressed = compressMessage(JSON.stringify(message))
+        const compressed = compress(message)
 
         console.log(compressed.length);
 
