@@ -1,72 +1,78 @@
 import express from "express";
 import Redis from "ioredis";
-import cors from "cors";
 import cookieSession from "cookie-session";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
-import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
-import { catcher, errorEvents, logger, redisChecker } from "./utils/index.js";
-import { redisClient } from "./db/redis.js";
+import { catchError } from "./utils/index.js";
+import { redisClient } from "./database/redis.js";
 import { typeDefs } from "./graphql/types.js";
-import { requireAuth } from "./middleware/required.js";
 import { messages } from "./graphql/resolvers.js";
-import { createServer } from "http";
 import { makeExecutableSchema } from "@graphql-tools/schema";
-import { WebSocketServer } from "ws";
-import { useServer } from "graphql-ws/lib/use/ws";
 import { RedisPubSub } from "graphql-redis-subscriptions";
-import { agentMiddleware, verifyToken } from "./middleware/agent.js";
+import { useServer } from "graphql-ws/lib/use/ws";
+import { WebSocketServer } from "ws";
+import { createServer } from "http";
+import {
+  ApiGraphQLError,
+  ERROR_CODES,
+  ERROR_EVENTS,
+  getPublicAddress,
+  logger,
+  normalizeGraphError,
+  RateLimiter,
+  verifyToken,
+} from "@pairfy/common";
+import { agentMiddleware } from "./common/agent.js";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 
 const main = async () => {
   try {
-    if (!process.env.POD_TIMEOUT) {
-      throw new Error("POD_TIMEOUT error");
+    const requiredEnvVars = ["AGENT_JWT_KEY", "REDIS_CHAT_HOST", "REDIS_RATELIMIT_HOST"];
+
+    for (const varName of requiredEnvVars) {
+      if (!process.env[varName]) {
+        throw new Error(`${varName} error`);
+      }
     }
 
-    if (!process.env.EXPRESS_PORT) {
-      throw new Error("EXPRESS_PORT error");
-    }
+    ERROR_EVENTS.forEach((e: string) =>
+      process.on(e, (err) => catchError(err))
+    );
 
-    if (!process.env.EXPRESS_TIMEOUT) {
-      throw new Error("EXPRESS_TIMEOUT error");
-    }
-
-    if (!process.env.CORS_DOMAINS) {
-      throw new Error("CORS_DOMAINS error");
-    }
-
-    if (!process.env.AGENT_JWT_KEY) {
-      throw new Error("AGENT_JWT_KEY error");
-    }
-
-    if (!process.env.REDIS_HOST) {
-      throw new Error("REDIS_HOST error");
-    }
-
-    ///////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////
 
     await redisClient
       .connect({
-        url: process.env.REDIS_HOST,
+        url: process.env.REDIS_CHAT_HOST,
         connectTimeout: 100000,
         keepAlive: 100000,
         retryStrategy: (times: any) => Math.min(times * 50, 2000),
       })
-      .then(() => redisChecker(redisClient))
-      .catch((err: any) => catcher(err));
-
+      .then(() => console.log("✅ redisClient connected"))
+      .catch((err: any) => catchError(err));
+      
     const pubsubOptions = {
       connectTimeout: 100000,
       keepAlive: 100000,
       retryStrategy: (times: any) => Math.min(times * 50, 2000),
     };
 
-    const pubsub = new RedisPubSub({
-      publisher: new Redis(process.env.REDIS_HOST, pubsubOptions),
-      subscriber: new Redis(process.env.REDIS_HOST, pubsubOptions),
+    const pubSub = new RedisPubSub({
+      publisher: new Redis(process.env.REDIS_CHAT_HOST as string, pubsubOptions),
+      subscriber: new Redis(process.env.REDIS_CHAT_HOST as string, pubsubOptions),
     });
 
-    ///////////////////////////////////////////////////////////////
+    const rateLimiter = new RateLimiter({
+      source: "service-chat",
+      redisUrl: process.env.REDIS_RATELIMIT_HOST as string,
+      jwtSecret: process.env.AGENT_JWT_KEY as string,
+      maxRequests: 100,
+      windowSeconds: 60,
+    });
+
+    const app = express();
+
+    const httpServer = createServer(app);
 
     const resolvers = {
       Query: {
@@ -75,136 +81,88 @@ const main = async () => {
       Mutation: {
         ...messages.Mutation,
       },
-      Subscription: {
-        ...messages.Subscription,
-      },
     };
-
-    const schema = makeExecutableSchema({ typeDefs, resolvers });
-
-    const app = express();
-
-    const httpServer = createServer(app);
-
-    const wsServer = new WebSocketServer({
-      server: httpServer,
-      path: "/api/chat/graphql",
-    });
-
-    const serverCleanup = useServer(
-      {
-        schema,
-        onConnect: async (ctx) => {
-          const authToken = ctx.connectionParams?.authToken;
-
-          if (!authToken) {
-            throw new Error("Unauthorized");
-          }
-
-          if (typeof authToken !== "string") {
-            throw new Error("Unauthorized");
-          }
-        },
-        context: async (ctx, msg, args) => {
-          const agentData = verifyToken(ctx.connectionParams?.authToken as string);
-
-          if (!agentData) {
-            throw new Error("Unauthorized");
-          }
-
-          logger.info("ChatConnection", agentData);
-
-          return {
-            pubsub,
-            agentData,
-          };
-        },
-        onDisconnect(ctx, code, reason) {
-          console.log("Disconnected!");
-        },
-      },
-      wsServer
-    );
 
     const server = new ApolloServer({
-      schema,
-      plugins: [
-        ApolloServerPluginDrainHttpServer({ httpServer }),
-        {
-          async serverWillStart() {
-            return {
-              async drainServer() {
-                await serverCleanup.dispose();
-              },
-            };
-          },
-        },
-      ],
-      formatError: (error) => {
-        logger.error(error);
+      typeDefs,
+      resolvers,
+      plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+      formatError: (formattedError, error) => {
+        logger.error({
+          service: "service-chat",
+          event: "graphql.error",
+          message: "service-chat graphql error",
+          error: formattedError,
+          stack: error,
+        });
 
-        return {
-          message: error.message,
-          details: error.message,
-          code: "INTERNAL_SERVER_ERROR",
-        };
+        return normalizeGraphError(error);
       },
     });
 
-    /////////////////////////////////////////////////////////////////
-
     const sessionOptions: object = {
-      maxAge: 168 * 60 * 60 * 1000,
+      name: "session",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       signed: false,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     };
 
-    const corsOptions = {
-      origin: process.env.CORS_DOMAINS.split(",") || "*",
-      credentials: true,
-      maxAge: 86400,
-      preflightContinue: false,
-      exposedHeaders: ["Set-Cookie", "Cookie"],
-      optionsSuccessStatus: 204,
-    };
-
-    errorEvents.forEach((e: string) => process.on(e, (err) => catcher(err)));
-
-    /////////////////////////////////////////////////////////////////////
-
-    app.options("*", cors(corsOptions));
+    app.set("trust proxy", 1);
 
     app.use(cookieSession(sessionOptions));
 
-    app.use(agentMiddleware);
+    app.use(express.json({ limit: "5mb" }));
 
-    app.use(requireAuth);
+    app.use(express.urlencoded({ limit: "5mb", extended: true }));
+
+    app.use(getPublicAddress);
+
+    app.use(agentMiddleware);
 
     await server.start();
 
     app.use(
       "/api/chat/graphql",
-      cors<cors.CorsRequest>(corsOptions),
-      express.json(),
       expressMiddleware(server, {
-        context: async ({ req }) => ({
-          sellerData: req.sellerData,
-          userData: req.userData,
-          redisClient: redisClient.client,
-          pubsub,
-        }),
+        context: async ({ req }) => {
+          const { sellerData, userData } = req;
+
+          console.log(sellerData, userData);
+
+          if (!sellerData && !userData) {
+            throw new ApiGraphQLError(401, "Unauthorized", {
+              code: ERROR_CODES.UNAUTHORIZED,
+            });
+          }
+          const agentId = sellerData?.id || userData.pubkeyhash;
+
+          const isAllowed = await rateLimiter.checkId(agentId);
+
+          if (!isAllowed) {
+            throw new ApiGraphQLError(429, "Rate limit exceeded", {
+              code: ERROR_CODES.RATE_LIMIT_EXCEEDED,
+            });
+          }
+
+          return {
+            sellerData,
+            userData,
+            redisClient: redisClient.client,
+            pubSub,
+          };
+        },
       })
     );
 
     await new Promise<void>((resolve) =>
-      httpServer.listen({ port: 4000 }, resolve)
+      httpServer.listen({ port: 8010 }, resolve)
     );
 
     logger.info("ONLINE");
   } catch (err) {
-    catcher(err);
+    catchError(err);
   }
 };
 

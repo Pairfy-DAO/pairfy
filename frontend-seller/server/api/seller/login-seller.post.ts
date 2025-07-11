@@ -10,10 +10,6 @@ export default defineEventHandler(async (event) => {
         method: "POST",
         body,
         credentials: "include",
-        headers: {
-          cookie: getHeader(event, "cookie") || "",
-        },
-
         async onResponse({ response }) {
           const setCookies = response.headers.getSetCookie?.();
           if (Array.isArray(setCookies)) {

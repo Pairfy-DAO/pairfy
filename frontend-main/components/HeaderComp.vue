@@ -28,28 +28,17 @@ import { gql } from 'graphql-tag'
 const auth = useAuthStore()
 const wallet = useWalletStore()
 
-const route = useRoute()
+const { $queryClient, $notificationClient } = useNuxtApp()
 
-const { $queryClient } = useNuxtApp()
+const route = useRoute()
+const currentRoute = computed(() => route.name)
 
 const toastRef = ref(null);
 
-const currentRoute = computed(() => route.name)
-
 let subscription1;
+let subscription2;
 
-onMounted(() => {
-    watchToast()
-    connectWallet()
-    fetchPrices()
-});
-
-onBeforeUnmount(() => {
-    subscription1?.unsubscribe()
-})
-
-
-async function connectWallet() {
+const connectWallet = async () => {
     try {
         await wallet.connect(auth.walletName)
     } catch (err) {
@@ -57,11 +46,9 @@ async function connectWallet() {
     }
 }
 
-
-async function fetchPrices() {
-
+const fetchPrices = async () => {
     const GET_PRICES_QUERY = gql`
-query getPrice {
+query GetPrice {
     getPrice {
         success
         message
@@ -70,6 +57,7 @@ query getPrice {
         }
     }
 }
+
 `;
 
     const observable = $queryClient.watchQuery({
@@ -94,10 +82,69 @@ query getPrice {
     })
 }
 
+const fetchNotifications = async () => {
+    const GET_NOTIFICATIONS_QUERY = gql`
+query GetNotifications {
+    getNotifications {
+        unseen {
+            id
+            type
+            title
+            owner
+            seen
+            data
+            message
+            created_at
+            updated_at
+        }
+        seen {
+            id
+            type
+            title
+            owner
+            seen
+            data
+            message
+            created_at
+            updated_at
+        }
+    }
+}
+
+`;
+
+    const observable = $notificationClient.watchQuery({
+        query: GET_NOTIFICATIONS_QUERY,
+        fetchPolicy: 'no-cache',
+        pollInterval: 60_000,
+    })
+
+    subscription2 = observable.subscribe({
+        next({ data }) {
+            auth.setNotifications(data.getNotifications)
+        },
+        error(err) {
+            auth.showToast(err, 'error', 10_000)
+        }
+    })
+}
 
 function watchToast() {
     watch(() => auth.toastMessage, ({ message, type, duration }) => toastRef.value?.showToast(message, type, duration));
 }
+
+onMounted(() => {
+    watchToast()
+    connectWallet()
+    fetchPrices()
+    fetchNotifications()
+});
+
+onBeforeUnmount(() => {
+    subscription1?.unsubscribe()
+    subscription2?.unsubscribe()
+})
+
 </script>
 
 <style scoped>

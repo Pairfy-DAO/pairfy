@@ -27,7 +27,9 @@ spec:
             - name: REDIS_PRICE_HOST
               value: redis://redis-price:6379      
             - name: REDIS_STATE_HOST
-              value: redis://redis-state:6379                    
+              value: redis://redis-state:6379    
+            - name: REDIS_CHAT_HOST
+              value: redis://redis-chat:6379                              
             - name: TX_VALID_TIME
               value: "360000"
             - name: TX_WATCH_WINDOW

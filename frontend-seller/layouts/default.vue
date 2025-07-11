@@ -67,8 +67,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { useAuthStore } from '@/stores/auth'
+<script setup>
 
 const route = useRoute()
 const currentPath = computed(() => route.name)
@@ -78,9 +77,7 @@ const auth = useAuthStore()
 const isCollapsed = ref(false)
 const isHovering = ref(false)
 
-if (import.meta.server) {
-  await auth.fetchProfile()
-}
+await auth.fetchUser()
 </script>
 
 <style scoped>
@@ -91,13 +88,12 @@ if (import.meta.server) {
 }
 
 .layout-content {
+  box-sizing: border-box;
   overflow-y: auto;
   flex: 1;
 }
 
 .sidebar {
-  border-bottom-right-radius: var(--radius-c);
-  border-top-right-radius: var(--radius-c);
   border-right: 1px solid var(--border-a);
   background: var(--background-a);
   transition: width 0.3s ease;

@@ -1,7 +1,9 @@
 import database from "../../database/client.js";
 import { findOrderByUser } from "../../common/findOrderByUser.js";
-import { ApiGraphQLError, ERROR_CODES } from "@pairfy/common";
+import { ApiGraphQLError, ERROR_CODES, decompress } from "@pairfy/common";
 import { getOrderSchema } from "../../validators/getOrder.js";
+import { findOrderBySeller } from "../../common/findOrderBySeller.js";
+import { findSellerPrivateKey } from "../../common/findSellerPrivateKey.js";
 
 export const getOrder = async (_: any, args: any, context: any) => {
   let connection = null;
@@ -28,25 +30,79 @@ export const getOrder = async (_: any, args: any, context: any) => {
     connection = await database.client.getConnection();
 
     if (USER) {
-      const findOrder = await findOrderByUser(
+      const order = await findOrderByUser(
         connection,
         params.id,
         USER.pubkeyhash
       );
 
-      if (!findOrder) {
+      if (!order) {
         throw new ApiGraphQLError(404, "Order not found", {
           code: ERROR_CODES.NOT_FOUND,
         });
       }
 
-      const session = `${findOrder.id}:${findOrder.buyer_pubkeyhash}:${findOrder.seller_id}`;
+      const product = decompress(order.product_snapshot);
+
+      const address = null;
+
+      const shipping = null;
+
+      const session = `${order.id}:${order.buyer_pubkeyhash}:${order.seller_id}`;
+
+      const encrypted_private_key = "none";
 
       return {
-        order: findOrder,
-        shipping: null,
-        address: null,
+        order,
+        product,
+        address,
+        shipping,
         session,
+        encrypted_private_key,
+      };
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    if (SELLER) {
+      const order = await findOrderBySeller(connection, params.id, SELLER.id);
+
+      if (!order) {
+        throw new ApiGraphQLError(404, "Order not found", {
+          code: ERROR_CODES.NOT_FOUND,
+        });
+      }
+
+      const { rsa_private_key } = await findSellerPrivateKey(
+        connection,
+        SELLER.id
+      );
+
+      if (!rsa_private_key || rsa_private_key.length < 1) {
+        throw new ApiGraphQLError(505, "Internal Error", {
+          code: ERROR_CODES.NOT_FOUND,
+        });
+      }
+
+      const product = decompress(order.product_snapshot);
+
+      const address = order.pending_metadata;
+
+      const shipping = null;
+
+      const session = `${order.id}:${order.buyer_pubkeyhash}:${order.seller_id}`;
+      
+      const encrypted_private_key = JSON.stringify(
+        rsa_private_key[order.rsa_version]
+      );
+
+      return {
+        order,
+        product,
+        address,
+        shipping,
+        session,
+        encrypted_private_key,
       };
     }
   } catch (err: any) {

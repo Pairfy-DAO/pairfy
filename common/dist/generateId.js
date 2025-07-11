@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNotificationId = exports.getMediaGroupId = exports.getFileId = exports.getEventId = exports.getProductId = exports.productIdSchema = exports.productIdRegex = exports.getSellerId = void 0;
+exports.getMessageId = exports.getNotificationId = exports.getMediaGroupId = exports.getFileId = exports.getEventId = exports.getProductId = exports.productIdSchema = exports.productIdRegex = exports.getSellerId = void 0;
 exports.createId = createId;
 const nanoid_1 = require("nanoid");
 const uuid_1 = require("uuid");
@@ -54,3 +54,8 @@ const getNotificationId = () => {
     return generate();
 };
 exports.getNotificationId = getNotificationId;
+const getMessageId = () => {
+    const generate = (0, nanoid_1.customAlphabet)("abcdefghijklmnopqrstuvwxyz0123456789", 21);
+    return generate();
+};
+exports.getMessageId = getMessageId;

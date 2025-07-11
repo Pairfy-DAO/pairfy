@@ -14,8 +14,27 @@ type Notification {
   updated_at: BigInt!
 }
 
+type GetNotificationResponse {
+  unseen: [Notification!]
+  seen: [Notification!]
+}
+
+type GetCursorResponse {
+  notifications: [Notification!]
+  nextCursor: String
+  hasPrevMore: Boolean!
+  hasNextMore: Boolean!
+  totalCount: Int!
+}
+
+input GetCursorInput {
+  cursor: String
+  reverseCursor: String
+}  
+
 type Query {
-  getNotifications: [Notification!]
+  getNotifications: GetNotificationResponse!
+  getCursor(getCursorInput: GetCursorInput!): GetCursorResponse!
 }
 
 #----------------------------------------------------------------MUTATIONS
@@ -26,7 +45,7 @@ type EditNotificationsResponse {
 }
 
 input EditNotificationsInput {
-  ids: String!
+  ids: [String!]
 } 
 
 type Mutation {

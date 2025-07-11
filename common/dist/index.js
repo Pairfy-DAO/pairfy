@@ -60,3 +60,5 @@ __exportStar(require("./deleteBookById"), exports);
 __exportStar(require("./findBookById"), exports);
 __exportStar(require("./redisClient"), exports);
 __exportStar(require("./findBookBySeller"), exports);
+__exportStar(require("./compress"), exports);
+__exportStar(require("./decompress"), exports);

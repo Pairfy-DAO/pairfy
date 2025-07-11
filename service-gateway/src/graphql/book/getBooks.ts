@@ -1,69 +1,69 @@
 import database from "../../database/client.js";
 import { ApiGraphQLError, ERROR_CODES } from "@pairfy/common";
-import { verifyParams } from "../../validators/getBooks.js";
+import { getBooksSchema } from "../../validators/getBooks.js";
 
 export const getBooks = async (_: any, args: any, context: any) => {
-  const validation = verifyParams.safeParse(args.getBooksInput);
-
-  if (!validation.success) {
-    throw new ApiGraphQLError(
-      400,
-      `Invalid input ${validation.error.format()}`,
-      {
-        code: ERROR_CODES.VALIDATION_ERROR,
-      }
-    );
-  }
-
-  const { cursor, reverseCursor } = validation.data;
-  const { sellerData: SELLER } = context;
-
-  if (cursor && reverseCursor) {
-    throw new ApiGraphQLError(400, "Cannot use both cursor and reverseCursor", {
-      code: ERROR_CODES.VALIDATION_ERROR,
-    });
-  }
-
-  const pageSize = 16;
-  const realLimit = pageSize + 1;
-
-  const queryParams: any[] = [SELLER.id];
-  let whereClause = "WHERE books.seller_id = ?";
-  let orderClause = "ORDER BY created_at DESC, id DESC";
-  let isReversing = false;
-
-  if (cursor) {
-    const [createdAt, id] = cursor.split("_");
-    whereClause += " AND (created_at < ? OR (created_at = ? AND id < ?))";
-    queryParams.push(createdAt, createdAt, id);
-  }
-
-  if (reverseCursor) {
-    const [createdAt, id] = reverseCursor.split("_");
-    whereClause += " AND (created_at > ? OR (created_at = ? AND id > ?))";
-    queryParams.push(createdAt, createdAt, id);
-    orderClause = "ORDER BY created_at ASC, id ASC";
-    isReversing = true;
-  }
-
-  const query = `
-  SELECT 
-    books.*,
-    products.name AS product_name,
-    products.sku AS product_sku,
-    products.thumbnail_url AS thumbnail_url
-  FROM books
-  JOIN products ON books.id = products.id
-  ${whereClause}
-  ${orderClause}
-  LIMIT ?
-`;
-
-  queryParams.push(realLimit);
-
   let connection = null;
 
   try {
+    const validation = getBooksSchema.safeParse(args.getBooksInput);
+
+    if (!validation.success) {
+      throw new ApiGraphQLError(
+        400,
+        `Invalid params ${JSON.stringify(validation.error.flatten())}`,
+        {
+          code: ERROR_CODES.VALIDATION_ERROR,
+        }
+      );
+    }
+  
+    const { cursor, reverseCursor } = validation.data;
+    const { sellerData: SELLER } = context;
+  
+    if (cursor && reverseCursor) {
+      throw new ApiGraphQLError(400, "Cannot use both cursor and reverseCursor", {
+        code: ERROR_CODES.VALIDATION_ERROR,
+      });
+    }
+  
+    const pageSize = 16;
+    const realLimit = pageSize + 1;
+  
+    const queryParams: any[] = [SELLER.id];
+    let whereClause = "WHERE books.seller_id = ?";
+    let orderClause = "ORDER BY created_at DESC, id DESC";
+    let isReversing = false;
+  
+    if (cursor) {
+      const [createdAt, id] = cursor.split("_");
+      whereClause += " AND (created_at < ? OR (created_at = ? AND id < ?))";
+      queryParams.push(createdAt, createdAt, id);
+    }
+  
+    if (reverseCursor) {
+      const [createdAt, id] = reverseCursor.split("_");
+      whereClause += " AND (created_at > ? OR (created_at = ? AND id > ?))";
+      queryParams.push(createdAt, createdAt, id);
+      orderClause = "ORDER BY created_at ASC, id ASC";
+      isReversing = true;
+    }
+  
+    const query = `
+    SELECT 
+      books.*,
+      products.name AS product_name,
+      products.sku AS product_sku,
+      products.thumbnail_url AS thumbnail_url
+    FROM books
+    JOIN products ON books.id = products.id
+    ${whereClause}
+    ${orderClause}
+    LIMIT ?
+  `;
+  
+    queryParams.push(realLimit);
+    
     connection = await database.client.getConnection();
     const [result] = await connection.query(query, queryParams);
 

@@ -19,11 +19,14 @@ export const getNotifications = async (_: any, args: any, context: any) => {
       owner = SELLER.id;
     }
 
-    const result = await findNotifications(connection, owner, 50);
+    const unseen = await findNotifications(connection, owner, false, 25);
 
-    console.log(result);
+    const seen = await findNotifications(connection, owner, true, 25);
 
-    return result;
+    return {
+      unseen,
+      seen
+    };
   } catch (err: any) {
     if (connection) await connection.rollback();
 

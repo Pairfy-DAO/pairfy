@@ -1,6 +1,6 @@
 import { throwRemoteError } from "~/server/utils/fetch";
 
-// server/api/query/graphql.ts
+// server/api/gateway/graphql.ts
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
 

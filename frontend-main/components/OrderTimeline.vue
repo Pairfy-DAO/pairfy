@@ -6,7 +6,7 @@
                 <div class="timeline-box">
                     <div class="timeline-diamond">
                         <template v-if="item.template === 'created'">
-                            <span v-if="!orderStore.pending_block">{{ item.number }}</span>
+                            <span v-if="!orderData.pending_block">{{ item.number }}</span>
                             <span v-else>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -16,7 +16,7 @@
                             </span>
                         </template>
                         <template v-if="item.template === 'shipping'">
-                            <span v-if="!orderStore.shipping_block">{{ item.number }}</span>
+                            <span v-if="!orderData.shipping_block">{{ item.number }}</span>
                             <span v-else>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -26,7 +26,7 @@
                             </span>
                         </template>
                         <template v-if="item.template === 'received'">
-                            <span v-if="!orderStore.finished">{{ item.number }}</span>
+                            <span v-if="!orderData.finished">{{ item.number }}</span>
                             <span v-else>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -44,7 +44,7 @@
                 <div class="timeline-title">
                     {{ item.title }}
                 </div>
-                <div class="timeline-subtitle" v-if="item.subtitle">
+                <div class="timeline-subtitle">
                     {{ item.subtitle }}
                 </div>
                 <div class="OrderTimeline-content"
@@ -126,7 +126,6 @@ import { formatUSD } from '@/utils/utils'
 const orderStore = useOrderStore()
 const orderData = computed(() => orderStore.order)
 
-const contractPrice = ref(0);
 const shippingData = ref(null);
 const deliveryDate = ref('none'); 
 const guideData = computed(() => {
@@ -198,7 +197,7 @@ const timeline = ref([
 ])
 
 
-const openExplorer = () => {
+function openExplorer() {
     if (!import.meta.client) return
 
     const cardanoNetwork = useRuntimeConfig().public.cardanoNetwork;

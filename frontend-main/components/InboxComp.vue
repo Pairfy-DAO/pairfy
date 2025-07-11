@@ -6,39 +6,80 @@
 
     <transition name="fade-slide">
       <div class="InboxComp-body" v-if="props.modelValue">
-        <div class="notification-empty" v-if="props.notifications.length === 0">
+        <div class="notification-empty" v-if="notifications.length === 0">
           No notifications
         </div>
         <ul v-else class="InboxComp-box">
+
           <div class="notification-header">
-            <span>Notifications</span>
-            <span>You have 3 notifications today.</span>
+            <div class="left">
+              <span>Notifications</span>
+              <span>You have {{ notifications.unseen.length }} notifications today.</span>
+            </div>
+            <div class="right" @click="toggle">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-x-icon lucide-x">
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+              </svg>
+            </div>
           </div>
 
-          <li class="notification-item" v-for="(n, i) in props.notifications" :key="i">
-
-            <div class="notification-content">
-              <div class="icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                  class="lucide lucide-mail-icon lucide-mail">
-                  <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
-                  <rect x="2" y="4" width="20" height="16" rx="2" />
-                </svg>
-              </div>
-              <div class="notification-message">
-                <p class="title">{{ n.title }}</p>
-
-                <span class="message">{{ n.message }}</span>
-
-                <span class="date">
-                  {{ formatWithDateFns(n.created_at) }}
-                </span>
-
-              </div>
-
+          <div class="notification-section">
+            <div class="title">
+              Latest ({{ notifications.unseen.length }})
             </div>
-          </li>
+            <li class="notification-item" v-for="(n, i) in notifications.unseen" :key="i" @click="openNotification(n)">
+              <div class="notification-content">
+                <div class="icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-mail-icon lucide-mail">
+                    <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                  </svg>
+                </div>
+                <div class="notification-message">
+                  <p class="subtitle">{{ n.title }}</p>
+
+                  <span class="message">{{ n.message }}</span>
+
+                  <span class="date">
+                    {{ formatCompleteDate(n.created_at) }}
+                  </span>
+                </div>
+              </div>
+            </li>
+          </div>
+
+          <div class="notification-section">
+            <div class="title">
+              Seen
+            </div>
+            <li class="notification-item" v-for="(n, i) in notifications.seen" :key="i"  @click="openNotification(n)">
+              <div class="notification-content">
+                <div class="icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-mail-icon lucide-mail">
+                    <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                  </svg>
+                </div>
+                <div class="notification-message">
+                  <p class="subtitle">{{ n.title }}</p>
+
+                  <span class="message">{{ n.message }}</span>
+
+                  <span class="date">
+                    {{ formatCompleteDate(n.created_at) }}
+                  </span>
+                </div>
+              </div>
+            </li>
+          </div>
+
         </ul>
       </div>
     </transition>
@@ -47,23 +88,25 @@
 </template>
 
 <script setup>
+import { gql } from 'graphql-tag'
 
 const props = defineProps({
-  notifications: {
-    type: Array,
-    required: true,
-  },
   modelValue: {
     type: Boolean,
     required: true,
   },
 });
 
-const emit = defineEmits(['update:modelValue']);
+const route = useRoute()
+const router = useRouter()
 
-const toggle = () => {
-  emit('update:modelValue', !props.modelValue);
-};
+const authStore = useAuthStore()
+
+const notifications = computed(() => authStore.notifications)
+
+const { $notificationClient } = useNuxtApp()
+
+const emit = defineEmits(['update:modelValue']);
 
 const wrapperRef = ref(null);
 
@@ -72,6 +115,58 @@ onClickOutside(wrapperRef, () => {
     emit('update:modelValue', false)
   }
 })
+
+const editNotifications = async () => {
+  if (!import.meta.client) return;
+
+  if (!notifications.value.unseen.length) return;
+
+  const EDIT_NOTIFICATION_MUTATION = gql`
+mutation EditNotifications($editNotificationsVariable: EditNotificationsInput!) {
+    editNotifications(editNotificationsInput: $editNotificationsVariable) {
+        success
+        message
+    }
+}
+
+`
+  try {
+    await $notificationClient.mutate({
+      mutation: EDIT_NOTIFICATION_MUTATION,
+      variables: {
+        "editNotificationsVariable": {
+          "ids": notifications.value.unseen.map(n => n.id),
+        }
+      },
+    });
+
+  } catch (err) {
+    console.error('editNotifications', err);
+  }
+}
+
+const toggle = () => {
+  emit('update:modelValue', !props.modelValue);
+
+  if (!props.modelValue) {
+    editNotifications()
+  }
+};
+
+const openNotification = (value) => {
+  if (value.type === 'order') {
+    const data = JSON.parse(value.data)
+
+    router.push({
+      ...route.query,
+      name: 'country-o-id',
+      params: {
+        id: data.id
+      }
+    })
+
+  }
+};
 </script>
 
 <style scoped>
@@ -87,12 +182,12 @@ onClickOutside(wrapperRef, () => {
   box-shadow: var(--shadow-e);
   box-sizing: border-box;
   color: var(--text-a);
-  position: absolute;
   margin-top: 1rem;
+  position: absolute;
   padding: 0.5rem;
   right: 0;
   top: 100%;
-  width: 400px;
+  width: 375px;
   z-index: 14000;
   overflow-y: auto;
   max-height: 600px;
@@ -122,6 +217,13 @@ onClickOutside(wrapperRef, () => {
 }
 
 .title {
+  padding: 1rem;
+  font-weight: bold;
+  font-size: var(--text-size-2);
+  border-top: 1px solid var(--border-a);
+}
+
+.subtitle {
   margin: 0;
   font-weight: bold;
   font-size: var(--text-size-1);
@@ -145,8 +247,9 @@ onClickOutside(wrapperRef, () => {
 
 .message {
   font-size: var(--text-size-0);
-  font-weight: 500;
+  line-height: 1.5rem;
   margin-top: 0.5rem;
+  font-weight: 500;
 }
 
 .date {
@@ -167,10 +270,11 @@ onClickOutside(wrapperRef, () => {
 }
 
 .notification-header {
+  width: 100%;
   display: flex;
   padding: 1rem;
+  padding-right: 0;
   box-sizing: border-box;
-  flex-direction: column;
 }
 
 .notification-header span:nth-child(1) {
@@ -179,9 +283,22 @@ onClickOutside(wrapperRef, () => {
 }
 
 .notification-header span:nth-child(2) {
-  font-size: var(--text-size-0);
+  font-size: var(--text-size-1);
   color: var(--text-b);
-  margin-top: 0.25rem;
+  margin-top: 0.5rem;
   font-weight: 400;
+}
+
+.notification-header .left {
+  display: flex;
+  width: inherit;
+  flex-direction: column;
+}
+
+.notification-header .right {
+  display: flex;
+  cursor: pointer;
+  padding: 1rem;
+  align-items: center;
 }
 </style>

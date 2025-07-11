@@ -9,7 +9,7 @@
     "cardano"
   ],
   "author": "https://github.com/rey-sudo",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "tsc --build",
     "dev": "ts-node-dev src/index.ts",

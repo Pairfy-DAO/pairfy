@@ -135,9 +135,11 @@ type Order {
 
 type getOrderResponse {
   order: Order!
-  shipping: String
+  product: String!
   address: String
+  shipping: String
   session: String!
+  encrypted_private_key: String!
 }
 
 input GetBooksInput {

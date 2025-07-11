@@ -44,3 +44,5 @@ export * from "./deleteBookById"
 export * from "./findBookById";
 export * from "./redisClient";
 export * from "./findBookBySeller";
+export * from "./compress";
+export * from "./decompress";

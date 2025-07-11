@@ -7,16 +7,10 @@
 </template>
 
 
-<script setup lang="ts">
-import { useAuthStore } from '@/stores/auth'
-
+<script setup>
 const auth = useAuthStore()
-if (import.meta.server) {
 
-  await auth.fetchProfile()
-  console.log('[layout-entry] Perfil cargado:', auth.seller)
-
-}
+await auth.fetchUser()
 
 </script>
 

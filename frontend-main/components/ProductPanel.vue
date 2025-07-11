@@ -29,8 +29,8 @@
 
         <ProductModel v-for="n in 1" :key="n" :id="productData.id" :model="productData.model"
             :condition="productData.condition_" :color="productData.color" :price="productData.price"
-            :discount="productData.discount" :discount_percent="productData.discount_percent"
-            :discount_value="productData.discount_value" />
+            :discount="productData.discount" :discountPercent="productData.discount_percent"
+            :discountValue="productData.discount_value" />
 
         <div class="subtitle">
             Finish. <span>Choose your network.</span>

@@ -11,17 +11,18 @@ export const catchError = (error: any) => {
 export async function findNotifications(
   connection: Connection,
   owner: string,
+  seen: boolean = false,
   limit = 50
 ) {
   const query = `
     SELECT *
     FROM notifications
-    WHERE owner = ?
-    ORDER BY created_at ASC
+    WHERE owner = ? AND seen = ?
+    ORDER BY created_at DESC
     LIMIT ?
   `;
 
-  const [result] = await connection.query(query, [owner, limit]);
+  const [result] = await connection.query(query, [owner, seen, limit]);
 
   return result || [];
 }

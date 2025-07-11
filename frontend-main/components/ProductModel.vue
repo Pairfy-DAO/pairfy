@@ -42,8 +42,8 @@ const props = defineProps({
     color: String,
     price: [Number],
     discount: [Boolean],
-    discount_percent: [Number],
-    discount_value: [Number]
+    discountPercent: [Number],
+    discountValue: [Number]
 })
 
 const model = computed(() => props.model)
@@ -51,8 +51,8 @@ const condition = computed(() => props.condition)
 const color = computed(() => props.color)
 const price = computed(() => props.price)
 const discount = computed(() => props.discount)
-const discount_percent = computed(() => props.discount_percent)
-const discount_value = computed(() => props.discount_value)
+const discount_percent = computed(() => props.discountPercent)
+const discount_value = computed(() => props.discountValue)
 
 const isCurrent = computed(() => props.id === route.params?.id)
 
