@@ -178,7 +178,7 @@ query ($getBookVariable: GetBookInput!){
       }
     },
     fetchPolicy: 'no-cache',
-    pollInterval: 5_000,
+    pollInterval: 10_000,
   })
 
   subscription1 = observable.subscribe({
@@ -281,7 +281,6 @@ function showGetProductError() {
   box-sizing: border-box;
   border-radius: var(--radius-b);
   background: var(--background-a);
-  border: 1px solid var(--border-a);
 }
 
 .trigger {
@@ -309,7 +308,7 @@ function showGetProductError() {
 
 .right-scroll {
   height: 100%;
-  padding: 1.5rem;
+  padding: 1rem;
   overflow-y: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;

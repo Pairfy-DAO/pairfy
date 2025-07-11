@@ -14,6 +14,16 @@ export const useAuthStore = defineStore("auth", () => {
     USDA: number;
   };
 
+  type NotificationMap = {
+    unseen: any[];
+    seen: any[];
+  };
+
+  const toastMessage = ref<ToastMessage | null>(null);
+  const loading = ref(false);
+  const error = ref<string | null>(null);
+  const locationDialog = ref(false);
+
   const user = ref<any>(null);
   const isAuthenticated = ref(false);
 
@@ -21,8 +31,8 @@ export const useAuthStore = defineStore("auth", () => {
   const userDrawer = ref(false);
 
   const country = ref<string | null>(null);
-  const locationDialog = ref(false);
   const walletName = ref<string | null>(null);
+ 
   const prices = ref<AssetPriceMap>({
     ADA: 0.0,
     IUSD: 1.0,
@@ -30,9 +40,16 @@ export const useAuthStore = defineStore("auth", () => {
     USDA: 1.0,
   });
 
-  const toastMessage = ref<ToastMessage | null>(null);
-  const loading = ref(false);
-  const error = ref<string | null>(null);
+  const notifications = ref<NotificationMap>({
+    unseen: [],
+    seen: [],
+  });
+
+  const setNotifications = (data: any) => {
+    if (!import.meta.client) return;
+
+    notifications.value = data;
+  };
 
   const setPrices = (priceData: AssetPriceMap) => {
     if (!import.meta.client) return;
@@ -165,5 +182,7 @@ export const useAuthStore = defineStore("auth", () => {
     walletName,
     setPrices,
     prices,
+    notifications,
+    setNotifications,
   };
 });

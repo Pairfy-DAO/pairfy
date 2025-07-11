@@ -18,7 +18,7 @@
 
                 <TableComp v-if="products.length" :columns="columns" :items="products" :limit="limit"
                     :hasNextPage="hasNextPage" :hasPrevPage="hasPrevPage" :range="range" :page="page"
-                    :count="productCount" :images="true" @onPrev="handleOnPrev" @onNext="handleOnNext"
+                    :count="productCount" images actions @onPrev="handleOnPrev" @onNext="handleOnNext"
                     :columnWidths="{ 
                     image: '6rem',
                     id: '10rem',
@@ -29,7 +29,7 @@
                     category: '10rem',
                     created_at: '6rem',
                     moderated: '4rem',
-                    action: '4rem'
+                    actions: '4rem'
                     }">
 
                     <template #image="{ item }">
@@ -62,7 +62,7 @@
                         {{ formatDateYYMMDD(value) }}
                     </template>
 
-                    <template #action="{ item }">
+                    <template #actions="{ item }">
 
                         <div class="flex center">
                             <DottedMenu :options="dottedMenuOptions" :value="item" @onSelected="handleDottedMenu" />

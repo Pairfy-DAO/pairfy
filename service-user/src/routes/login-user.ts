@@ -131,10 +131,7 @@ export const loginUserHandler = async (req: Request, res: Response) => {
       jwt: token,
     };
 
-    const userData = {
-      ...tokenData,
-      token,
-    };
+    const userData = tokenData
 
     await connection.commit();
 

@@ -4,25 +4,27 @@ export const useAuthStore = defineStore("auth", () => {
   const loading = ref(false);
   const error = ref<string | null>(null);
 
-  const login = async (credentials: {
+  const login = async (params: {
     email: string;
     password: string;
-    wallet_name: string,
+    wallet_name: string;
     signature: string;
     address: string;
   }) => {
+    if (!import.meta.client) return;
+
     loading.value = true;
 
     try {
       await $fetch("/api/seller/login-seller", {
         method: "POST",
-        body: credentials,
+        body: params,
         credentials: "include",
         async onResponseError({ response }) {
           throw new Error(JSON.stringify(response._data.data));
         },
       });
-      await fetchProfile();
+      await fetchUser();
     } catch (err: any) {
       throw new Error(err.message);
     } finally {
@@ -30,7 +32,50 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  const fetchUser = async () => {
+    if (!import.meta.client) return;
+
+    try {
+      const response: any = await $fetch("/api/seller/current-seller", {
+        method: "GET",
+        credentials: "include",
+        async onResponseError({ response }) {
+          throw new Error(JSON.stringify(response._data.data));
+        },
+      });
+      const sellerData = response.sellerData;
+
+      if (sellerData) {
+        seller.value = sellerData;
+        isAuthenticated.value = true;
+      }
+    } catch (err: any) {
+      console.error(err);
+
+      isAuthenticated.value = false;
+      seller.value = null;
+    }
+  };
+
+  const logout = async () => {
+    if (!import.meta.client) return;
+
+    try {
+      await $fetch("/api/seller/logout-seller", {
+        method: "GET",
+        credentials: "include",
+      });
+    } catch (err: any) {
+      throw err;
+    } finally {
+      isAuthenticated.value = false;
+      seller.value = null;
+    }
+  };
+
   const recovery = async (credentials: { email: string }) => {
+    if (!import.meta.client) return;
+
     loading.value = true;
 
     try {
@@ -58,6 +103,9 @@ export const useAuthStore = defineStore("auth", () => {
     country: string;
     terms_accepted: boolean;
   }) => {
+
+    if (!import.meta.client) return;
+
     loading.value = true;
 
     try {
@@ -71,7 +119,7 @@ export const useAuthStore = defineStore("auth", () => {
 
       return response;
     } catch (err: any) {
-      throw new Error(err.message);
+      throw err;
     } finally {
       loading.value = false;
     }
@@ -81,6 +129,9 @@ export const useAuthStore = defineStore("auth", () => {
     token: string;
     password: string;
   }) => {
+
+    if (!import.meta.client) return;
+
     loading.value = true;
 
     try {
@@ -94,30 +145,16 @@ export const useAuthStore = defineStore("auth", () => {
 
       return response;
     } catch (err: any) {
-      throw new Error(err.message);
+      throw err;
     } finally {
       loading.value = false;
     }
   };
 
-  const fetchProfile = async () => {
-    if (!import.meta.server) return;
-
-    try {
-      const data = await $fetch("/api/seller/current-seller", {
-        method: "GET",
-        credentials: "include",
-      });
-
-      seller.value = data;
-      isAuthenticated.value = true;
-    } catch (err: any) {
-      isAuthenticated.value = false;
-      seller.value = null;
-    }
-  };
-
   const verify = async (body: { token: string }) => {
+
+    if (!import.meta.client) return;
+
     loading.value = true;
 
     try {
@@ -131,22 +168,10 @@ export const useAuthStore = defineStore("auth", () => {
 
       return response;
     } catch (err: any) {
-      throw new Error(err.message);
+      throw err;
     } finally {
       loading.value = false;
     }
-  };
-
-  const logout = async () => {
-    try {
-      await $fetch("/api/seller/logout-seller", {
-        method: "GET",
-        credentials: "include",
-      });
-    } catch {}
-
-    isAuthenticated.value = false;
-    seller.value = null;
   };
 
   return {
@@ -159,7 +184,7 @@ export const useAuthStore = defineStore("auth", () => {
     logout,
     verify,
     recovery,
-    fetchProfile,
+    fetchUser,
     updatePassword,
   };
 });

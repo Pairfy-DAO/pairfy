@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-chat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: service-chat
+  template:
+    metadata:
+      labels:
+        role: service-chat
+    spec:
+      containers:
+        - name: service-chat
+          image: pairfy/service-chat
+          env:
+            - name: NODE_ENV
+              value: development                       
+            - name: REDIS_CHAT_HOST
+              value: redis://redis-chat:6379
+            - name: REDIS_RATELIMIT_HOST
+              value: redis://redis-limiter:6379                     
+            - name: AGENT_JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: agent-token-secret
+                  key: AGENT_TOKEN_KEY
+
+          resources:
+            limits:
+              memory: "500Mi"
+            requests:
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-chat
+spec:
+  selector:
+    role: service-chat
+  ports:
+    - name: service-chat
+      protocol: TCP
+      port: 8010
+      targetPort: 8010

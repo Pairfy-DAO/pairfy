@@ -63,8 +63,8 @@
                 <div v-if="!books.length"></div>
 
                 <TableComp v-if="books.length" :columns="columns" :items="books" :limit="limit"
-                    :hasNextPage="hasNextPage" :hasPrevPage="hasPrevPage" :range="range" :page="page" :count="bookCount"
-                    :images="true" @onPrev="handleOnPrev" @onNext="handleOnNext" :columnWidths="{
+                    :hasNextPage="hasNextPage" :hasPrevPage="hasPrevPage" :range="range" :page="page" :count="bookCount" actions
+                    images @onPrev="handleOnPrev" @onNext="handleOnNext" :columnWidths="{
                         image: '6rem',
                         id: '8rem',
                         product_sku: '8rem',
@@ -76,7 +76,7 @@
                         purchase_limit_value: '4rem',
                         stop_purchases: '4rem',
                         created_at: '4rem',
-                        action: '4rem'
+                        actions: '4rem'
                     }">
 
                     <template #image="{ item }">
@@ -103,7 +103,7 @@
                         {{ formatDateYYMMDD(value) }}
                     </template>
 
-                    <template #action="{ item }">
+                    <template #actions="{ item }">
 
                         <div class="flex center">
                             <DottedMenu :options="dottedMenuOptions" :value="item" @onSelected="handleDottedMenu" />

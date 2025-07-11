@@ -56,3 +56,8 @@ export const getNotificationId = (): string => {
   const generate = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 16);
   return generate();
 };
+
+export const getMessageId = (): string => {
+  const generate = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 21);
+  return generate();
+};
