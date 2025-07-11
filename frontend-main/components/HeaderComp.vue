@@ -28,28 +28,17 @@ import { gql } from 'graphql-tag'
 const auth = useAuthStore()
 const wallet = useWalletStore()
 
+const { $queryClient, $notificationClient } = useNuxtApp()
+
 const route = useRoute()
 const currentRoute = computed(() => route.name)
 
-const { $queryClient, $notificationClient } = useNuxtApp()
 const toastRef = ref(null);
 
 let subscription1;
 let subscription2;
 
-onMounted(() => {
-    watchToast()
-    connectWallet()
-    fetchPrices()
-    fetchNotifications()
-});
-
-onBeforeUnmount(() => {
-    subscription1?.unsubscribe()
-    subscription2?.unsubscribe()
-})
-
-async function connectWallet() {
+const connectWallet = async () => {
     try {
         await wallet.connect(auth.walletName)
     } catch (err) {
@@ -57,7 +46,7 @@ async function connectWallet() {
     }
 }
 
-async function fetchPrices() {
+const fetchPrices = async () => {
     const GET_PRICES_QUERY = gql`
 query GetPrice {
     getPrice {
@@ -93,7 +82,7 @@ query GetPrice {
     })
 }
 
-async function fetchNotifications() {
+const fetchNotifications = async () => {
     const GET_NOTIFICATIONS_QUERY = gql`
 query GetNotifications {
     getNotifications {
@@ -143,6 +132,19 @@ query GetNotifications {
 function watchToast() {
     watch(() => auth.toastMessage, ({ message, type, duration }) => toastRef.value?.showToast(message, type, duration));
 }
+
+onMounted(() => {
+    watchToast()
+    connectWallet()
+    fetchPrices()
+    fetchNotifications()
+});
+
+onBeforeUnmount(() => {
+    subscription1?.unsubscribe()
+    subscription2?.unsubscribe()
+})
+
 </script>
 
 <style scoped>
