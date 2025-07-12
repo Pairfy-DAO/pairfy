@@ -1,11 +1,12 @@
 <template>
     <div class="OrderPanel">
         <OrderChat />
-        <OrderAddress v-if="orderStore.address"/>
+        <OrderDestination v-if="orderStore.address"/>
     </div>
 </template>
 
 <script setup>
+
 const orderStore = useOrderStore()
 
 </script>

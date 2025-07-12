@@ -1,14 +1,14 @@
 <template>
-    <div class="OrderAddress">
+    <div class="OrderDestination">
 
-        <div class="OrderAddress-body">
+        <div class="OrderDestination-body">
             <div class="title">
                 <span>Destination address</span>
             </div>
 
             <template v-if="!display">
                 <div class="password-input">
-                    <InputPassword v-model="passwordValue" @valid="passwordValueValid = $event.valid" />
+                    <InputPassword v-model="passwordValue" @valid="passwordValueValid = $event.valid" :label="passwordVersion"/>
                 </div>
 
                 <ButtonSolid label="Unlock" outlined @click="onShow" :disabled="disableButton" size="mini"
@@ -55,8 +55,9 @@ const passwordValueValid = ref(false)
 
 const disableButton = computed(() => !passwordValue.value || !passwordValueValid.value)
 
-const base64Regex = /^[A-Za-z0-9+/]+={0,2}$/
+const passwordVersion = computed(() => `Password v${orderStore.order?.rsa_version}`)
 
+const base64Regex = /^[A-Za-z0-9+/]+={0,2}$/
 const metadataSchema = z.array(
     z.object({
         label: z.literal("674"),
@@ -129,11 +130,11 @@ const onShow = async () => {
 </script>
 
 <style lang="css" scoped>
-.OrderAddress {
+.OrderDestination {
     width: 100%;
 }
 
-.OrderAddress-body {
+.OrderDestination-body {
     width: 428px;
     padding: 1rem;
     display: flex;
@@ -195,13 +196,12 @@ const onShow = async () => {
     font-weight: bold;
     font-size: 1.5rem;
     color: var(--text-b);
-    font-size: var(--text-size-3);
+    font-size: var(--text-size-2);
 }
 
 .card-field {
     margin: 0.5rem 0;
     color: var(--text-b);
+    font-size: var(--text-size-1);
 }
-
-
 </style>
