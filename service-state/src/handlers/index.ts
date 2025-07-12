@@ -22,12 +22,12 @@ export type jobResponse = {
 };
 
 export async function testHandler(job: any): Promise<jobResponse> {
+  const { id } = job.data;
+
   let connection = null;
 
   try {
     const timestamp = Date.now();
-
-    const { id } = job.data;
 
     const sleepUntil = await getSleepUntil(redisState.client, id);
 
@@ -52,8 +52,7 @@ export async function testHandler(job: any): Promise<jobResponse> {
       return response;
     }
 
-    const result = await getUtxo(ORDER.id);
-    const { success, failed, ...utxoData } = result;
+    const { success, failed, ...data } = await getUtxo(ORDER.id);
 
     console.log(success, failed);
 
@@ -70,14 +69,18 @@ export async function testHandler(job: any): Promise<jobResponse> {
       }
     }
 
-    if (success && !failed && utxoData) {
-      const data: UtxoData = utxoData as UtxoData;
+    if (success && !failed && data) {
+      const utxoData: UtxoData = data as UtxoData;
 
-      switch (data.datum.state) {
+      switch (utxoData.datum.state) {
         case null:
-          break;
+          break
         case 0n:
-          response = await pending(connection, timestamp, ORDER, data);
+          response = await pending(connection, timestamp, ORDER, utxoData);
+          break;
+        case 1n:
+          response = await locking(connection, timestamp, ORDER, utxoData);
+          break;
       }
     }
 
