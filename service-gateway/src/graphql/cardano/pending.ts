@@ -36,7 +36,7 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
     if (!validateParams.success) {
       throw new ApiGraphQLError(
         400,
-        `Invalid params ${validateParams.error.flatten()}`,
+        `Invalid params ${JSON.stringify(validateParams.error.flatten())}`,
         {
           code: ERROR_CODES.VALIDATION_ERROR,
         }
