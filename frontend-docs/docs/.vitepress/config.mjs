@@ -17,6 +17,7 @@ export default defineConfig({
         items: [
           { text: 'Introduction', link: '/introduction' },
           { text: 'How to buy?', link: '/buy' },
+          { text: 'CONTRIBUTING', link: '/contributing' },
           { text: 'Runtime API Examples', link: '/api-examples' }
         ]
       }
