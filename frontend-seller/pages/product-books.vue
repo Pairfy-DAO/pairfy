@@ -320,7 +320,7 @@ function getImageSrc(item) {
     border: 1px solid var(--border-a);
     border-radius: var(--radius-c);
     margin: 0.5rem;
-    padding: 1rem;
+    padding: 0.5rem;
 }
 
 .edit-form {
