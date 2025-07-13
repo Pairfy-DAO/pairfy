@@ -153,13 +153,16 @@ onBeforeUnmount(() => {
 
 <style lang="css" scoped>
 .OrderPage {
+    border: 1px solid var(--border-a);
+    background: var(--background-a);
+    border-radius: var(--radius-c);
     justify-content: center;
-    padding: 0.25rem;
+    margin: 0.5rem;
     display: flex;
 }
 
 .OrderPage-body {
-    background: var(--background-a);
+
     box-sizing: border-box;
     min-height: 100vh;
     padding: 2rem;

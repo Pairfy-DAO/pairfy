@@ -214,7 +214,10 @@ onBeforeUnmount(() => {
 
 <style lang="css" scoped>
 .card {
-    padding: 0.1rem;
-    padding-top: 1rem;
+    background-image: var(--gradient-a);
+    border: 1px solid var(--border-a);
+    border-radius: var(--radius-c);
+    margin: 0.5rem;
+    padding: 1rem;
 }
 </style>

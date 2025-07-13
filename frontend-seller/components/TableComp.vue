@@ -270,7 +270,7 @@ const nextPage = () => {
   max-width: 15rem;
   text-align: left;
   overflow-wrap: break-word;
-  border-left: 1px solid var(--border-a);
+  border-right: 1px solid var(--border-a);
 }
 
 .row.hidden {

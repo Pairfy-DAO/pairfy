@@ -19,7 +19,7 @@ export async function pending(
       {
         id: getNotificationId(),
         type: "order",
-        title: "Payment detected ✅",
+        title: "Payment detected 💵",
         owner: orderData.buyer_pubkeyhash,
         data: JSON.stringify({
           id: orderData.id,

@@ -136,7 +136,7 @@ onMounted(() => {
 
 <style scoped>
 .layout {
-  background: var(--gradient-a);
+  background: var(--background-b);
   display: flex;
   height: 100vh;
 }
@@ -148,8 +148,6 @@ onMounted(() => {
 }
 
 .sidebar {
-  border-right: 1px solid var(--border-a);
-  background: var(--background-a);
   transition: width 0.3s ease;
   box-sizing: border-box;
   position: relative;
