@@ -71,7 +71,7 @@ export const lockingEndpoint = async (_: any, args: any, context: any) => {
 
     return {
       success: true,
-      payload: {
+      data: {
         cbor: BUILDER.cbor,
       },
     };

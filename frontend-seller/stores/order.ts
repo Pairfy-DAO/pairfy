@@ -20,6 +20,8 @@ export const useOrderStore = defineStore("order", () => {
   const session = ref(null);
   const encryptedPrivateKey = ref(null);
 
+  const countdown = ref(null);
+
   const showToast = (message: string, type: ToastType, duration: number) => {
     toastMessage.value = {
       message,
@@ -67,6 +69,7 @@ export const useOrderStore = defineStore("order", () => {
     address,
     shipping,
     session,
-    encryptedPrivateKey
+    encryptedPrivateKey,
+    countdown
   };
 });

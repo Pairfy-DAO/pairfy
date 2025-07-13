@@ -101,8 +101,8 @@
                                     <div class="flex" @click="">
                                         <i class="pi pi-globe" />
                                     </div>
-                                    <div class="flex" style="padding-right: initial; cursor: initial;"> 
-                                        {{guideData.guide }}
+                                    <div class="flex" style="padding-right: initial; cursor: initial;">
+                                        {{ guideData.guide }}
                                     </div>
                                 </span>
                                 <span v-else>None</span>
@@ -111,7 +111,7 @@
                     </template>
 
                     <template v-if="item.template === 'received'">
-                        x
+                        <SellerPad />
                     </template>
                 </div>
             </div>
@@ -127,7 +127,7 @@ const orderStore = useOrderStore()
 const orderData = computed(() => orderStore.order)
 
 const shippingData = ref(null);
-const deliveryDate = ref('none'); 
+const deliveryDate = ref('none');
 const guideData = computed(() => {
     return {
         website: '',
@@ -137,7 +137,7 @@ const guideData = computed(() => {
 
 
 const shippingStatus = computed(() => {
-    const state = orderData.value.contract_state;
+    const state = orderStore.state;
 
     if (state === null) {
         return "pending"
@@ -148,7 +148,7 @@ const shippingStatus = computed(() => {
     }
 
     if (state === 1) {
-        return "preparing the package"
+        return "preparing"
     }
 
     if (state === 2) {

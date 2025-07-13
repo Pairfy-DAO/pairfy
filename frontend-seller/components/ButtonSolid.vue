@@ -2,7 +2,7 @@
   <button class="ButtonSolid" :class="[{ disabled, outlined }, sizeClass]" @click="$emit('click')" :disabled="disabled">
 
     <div class="ButtonSolid-body flex">
-      <div class="icon">
+      <div class="slot" :class="{ icon }">
         <slot name="icon" />
       </div>
 
@@ -32,6 +32,10 @@ const props = defineProps({
     default: false
   },
   loading: {
+    type: Boolean,
+    default: false
+  },
+  icon: {
     type: Boolean,
     default: false
   }

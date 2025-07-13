@@ -74,7 +74,7 @@ const orderTitle = computed(
         }
 
         if (state === 1) {
-            title = "Prepare the package, Time Remaining "
+            title = "Preparing your package, Time Remaining"
         }
 
         if (state === 2) {
@@ -138,6 +138,11 @@ const globalCountdown = computed(() => {
 
     return formatTime(`${minutes}:${seconds}`);
 });
+
+watch(globalCountdown, (e) => {
+    orderStore.countdown = e
+}, { immediate: true })
+
 
 function formatTime(value) {
     let [minutes, seconds] = value.split(":").map(Number);

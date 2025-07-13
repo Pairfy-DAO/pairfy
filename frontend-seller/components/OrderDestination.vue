@@ -11,7 +11,7 @@
                     <InputPassword v-model="passwordValue" @valid="passwordValueValid = $event.valid" :label="passwordVersion"/>
                 </div>
 
-                <ButtonSolid label="Unlock" outlined @click="onShow" :disabled="disableButton" size="mini"
+                <ButtonSolid label="Unlock" outlined @click="onShow" :disabled="disableButton" size="mini" icon
                     style="margin-top: 1rem;">
                     <template #icon>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -106,7 +106,7 @@ const onShow = async () => {
 
         const unchunked = validation1.data[0].json_metadata.msg.join('')
 
-        const privateKeyB64 = await decryptAESGCM(orderStore.encryptedPrivateKey, 'Password123@')
+        const privateKeyB64 = await decryptAESGCM(orderStore.encryptedPrivateKey, passwordValue.value)
 
         const compressed = decryptMessageWithPrivateKey(privateKeyB64, unchunked)
 

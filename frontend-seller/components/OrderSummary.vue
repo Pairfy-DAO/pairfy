@@ -8,7 +8,7 @@
 
             <span v-if="!orderStore.finished">{{ globalCountdown }}</span>
 
-            <FinishedIcon v-if="orderStore.finished"/>
+            <FinishedIcon v-if="orderStore.finished" />
         </div>
 
         <div class="OrderSummary-subtitle">
@@ -124,7 +124,7 @@ const globalTimestamp = computed(() => {
 const now = ref(Date.now());
 
 const interval = setInterval(() => {
-  now.value = Date.now(); 
+    now.value = Date.now();
 }, 1000);
 
 const globalCountdown = computed(() => {
@@ -138,6 +138,10 @@ const globalCountdown = computed(() => {
 
     return formatTime(`${minutes}:${seconds}`);
 });
+
+watch(globalCountdown, (e) => {
+    orderStore.countdown = e
+}, { immediate: true })
 
 function formatTime(value) {
     let [minutes, seconds] = value.split(":").map(Number);
@@ -168,7 +172,7 @@ function openExplorer() {
 }
 
 onUnmounted(() => {
-  clearInterval(interval);
+    clearInterval(interval);
 });
 </script>
 

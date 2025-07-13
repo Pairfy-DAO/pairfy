@@ -1,8 +1,29 @@
 export const useAuthStore = defineStore("auth", () => {
-  const isAuthenticated = useState<boolean>("isAuthenticated", () => false);
-  const seller = useState<any>("seller", () => null);
+  type ToastType = "success" | "error" | "info" | "default";
+
+  type ToastMessage = {
+    message: string;
+    type: ToastType;
+    duration: number;
+  };
+
+  const toastMessage = ref<ToastMessage | null>(null);
   const loading = ref(false);
   const error = ref<string | null>(null);
+
+  const seller = useState<any>("seller", () => null);
+  const isAuthenticated = useState<boolean>("isAuthenticated", () => false);
+  const walletName = ref<string | null>(null);
+
+  const showToast = (message: string, type: ToastType, duration: number) => {
+    if (!import.meta.client) return;
+
+    toastMessage.value = {
+      message,
+      type,
+      duration,
+    };
+  };
 
   const login = async (params: {
     email: string;
@@ -26,7 +47,7 @@ export const useAuthStore = defineStore("auth", () => {
       });
       await fetchUser();
     } catch (err: any) {
-      throw new Error(err.message);
+      throw err;
     } finally {
       loading.value = false;
     }
@@ -47,11 +68,15 @@ export const useAuthStore = defineStore("auth", () => {
 
       if (sellerData) {
         seller.value = sellerData;
+        walletName.value = sellerData.wallet_name;
         isAuthenticated.value = true;
       }
+
+      return sellerData;
     } catch (err: any) {
       console.error(err);
 
+      showToast(err.message, "error", 10_000);
       isAuthenticated.value = false;
       seller.value = null;
     }
@@ -90,7 +115,7 @@ export const useAuthStore = defineStore("auth", () => {
 
       return response;
     } catch (err: any) {
-      throw new Error(err.message);
+      throw err;
     } finally {
       loading.value = false;
     }
@@ -103,7 +128,6 @@ export const useAuthStore = defineStore("auth", () => {
     country: string;
     terms_accepted: boolean;
   }) => {
-
     if (!import.meta.client) return;
 
     loading.value = true;
@@ -129,7 +153,6 @@ export const useAuthStore = defineStore("auth", () => {
     token: string;
     password: string;
   }) => {
-
     if (!import.meta.client) return;
 
     loading.value = true;
@@ -186,5 +209,7 @@ export const useAuthStore = defineStore("auth", () => {
     recovery,
     fetchUser,
     updatePassword,
+    showToast,
+    walletName
   };
 });

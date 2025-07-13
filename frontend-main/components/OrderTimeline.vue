@@ -137,7 +137,7 @@ const guideData = computed(() => {
 
 
 const shippingStatus = computed(() => {
-    const state = orderData.value.contract_state;
+    const state = orderStore.state;
 
     if (state === null) {
         return "pending"
@@ -148,7 +148,7 @@ const shippingStatus = computed(() => {
     }
 
     if (state === 1) {
-        return "preparing the package"
+        return "preparing"
     }
 
     if (state === 2) {

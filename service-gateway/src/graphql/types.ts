@@ -167,7 +167,7 @@ type EditBookResponse {
   message: String!
 }
 
-type CborPayload {
+type CborData {
   cbor: String!
 }
 
@@ -185,37 +185,37 @@ type PendingEndpointResponse {
 
 type CancelEndpointResponse {
   success: Boolean!
-  payload: CborPayload!
+  data: CborData!
 }
 
 type ReturnEndpointResponse {
   success: Boolean!
-  payload: CborPayload!
+  data: CborData!
 }
 
 type LockingEndpointResponse {
   success: Boolean!
-  payload: CborPayload!
+  data: CborData!
 }
 
 type ShippingEndpointResponse {
   success: Boolean!
-  payload: CborPayload!
+  data: CborData!
 }
 
 type AppealEndpointResponse {
   success: Boolean!
-  payload: CborPayload!
+  data: CborData!
 }
 
 type ReceivedEndpointResponse {
   success: Boolean!
-  payload: CborPayload!
+  data: CborData!
 }
 
 type CollectEndpointResponse {
   success: Boolean!
-  payload: CborPayload!
+  data: CborData!
 }
 
 input EditBookInput {

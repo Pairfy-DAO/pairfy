@@ -125,7 +125,7 @@
   
   .InputPassword-input {
     border-radius: var(--input-radius);
-    border: 1px solid var(--border-b);
+    border: 1px solid var(--border-a);
     transition: var(--transition-a);
     background: var(--background-b);
     box-sizing: border-box;
@@ -142,6 +142,7 @@
     justify-content: space-between;
     font-size: var(--text-size-0);
     margin-bottom: 0.75rem;
+    white-space: nowrap;
     align-items: center;
     display: flex;
   }

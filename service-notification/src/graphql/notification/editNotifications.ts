@@ -39,17 +39,11 @@ export const editNotifications = async (_: any, args: any, context: any) => {
       owner = SELLER.id;
     }
 
-    const updateResult = await updateNotifications(
+    await updateNotifications(
       connection,
       params.ids,
       owner
     );
-
-    if (updateResult?.affectedRows !== 1) {
-      throw new ApiGraphQLError(500, "Error updating notifications", {
-        code: ERROR_CODES.INTERNAL_ERROR,
-      });
-    }
 
     await connection.commit();
 

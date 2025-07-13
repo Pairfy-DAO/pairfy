@@ -16,6 +16,8 @@ export const useOrderStore = defineStore("order", () => {
   const finished = ref(null);
   const pendingTx = ref(null);
 
+  const countdown = ref(null);
+
   const showToast = (message: string, type: ToastType, duration: number) => {
     toastMessage.value = {
       message,
@@ -49,6 +51,7 @@ export const useOrderStore = defineStore("order", () => {
     showToast,
     pendingTx,
     product,
-    session
+    session,
+    countdown
   };
 });
