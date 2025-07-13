@@ -625,7 +625,7 @@ function displayMessage(message, type, duration) {
     justify-content: center;
     background-image: var(--gradient-a);
     border: 1px solid var(--border-a);
-    border-radius: var(--radius-c);
+    border-radius: var(--radius-a);
     margin: 0.5rem;
 }
 
