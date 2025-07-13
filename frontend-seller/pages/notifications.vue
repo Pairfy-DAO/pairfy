@@ -39,8 +39,8 @@
                         message: '8rem',
                         type: '2rem',
                         data: '20rem',
-                        actions: '4rem',
                         created_at: '4rem',
+                        actions: '2rem',
                     }">
 
                     <template #col-data="{ value }">
