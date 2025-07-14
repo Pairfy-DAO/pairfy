@@ -1,80 +1,89 @@
+import { createEvent, getNotificationId } from "@pairfy/common";
+import { Connection } from "mysql2/promise.js";
+import { UtxoData } from "../lib/index.js";
+import { jobResponse } from "./index.js";
+import { redisState } from "../database/redis.js";
+import { saveStatus } from "../lib/order.js";
+import { updateOrder } from "../common/updateOrder.js";
 
-import { getNotificationId } from "@pairfy/common";
-import { HandlerParams } from "./types.js";
+export async function shipping(
+  connection: Connection,
+  timestamp: number,
+  orderData: any,
+  data: UtxoData
+): Promise<jobResponse> {
+  const newStatus = "shipping";
 
-async function handleShipping(params: HandlerParams) {
-  const updateQuery = `
-    UPDATE orders
-    SET scanned_at = ?,
-        status_log = ?,
-        contract_state = ?,
-        shipping_tx = ?,
-        shipping_block = ?,
-        shipping_metadata = ?
-    WHERE id = ?`;
+  if (!orderData.shipping_notified) {
+    const notifications = [
+      {
+        id: getNotificationId(),
+        type: "order",
+        title: "Package dispatched ✈️",
+        owner: orderData.buyer_pubkeyhash,
+        data: JSON.stringify({
+          id: orderData.id,
+          buyer_address: orderData.buyer_address,
+          buyer_wallet: orderData.buyer_wallet,
+          country: orderData.country,
+        }),
+        message: `The seller dispatched the package. - Order N° ${orderData.id.slice(
+          0,
+          10
+        )}...`,
+        created_at: timestamp,
+        updated_at: timestamp,
+      },
+      {
+        id: getNotificationId(),
+        type: "order",
+        title: "Package dispatched ✈️",
+        owner: orderData.seller_id,
+        data: JSON.stringify({
+          id: orderData.id,
+          seller_address: orderData.seller_address,
+          seller_wallet: orderData.seller_wallet,
+          country: orderData.country,
+        }),
+        message: `You have dispatched the package. - Order N° ${orderData.id.slice(
+          0,
+          10
+        )}...`,
+        created_at: timestamp,
+        updated_at: timestamp,
+      },
+    ];
 
-  const statusLog = "shipping";
-  
-  const txHash = params.utxo.txHash + "#" + params.utxo.outputIndex;
+    await createEvent(
+      connection,
+      timestamp,
+      "service-gateway",
+      "CreateNotifications",
+      JSON.stringify(notifications),
+      orderData.seller_id
+    );
+  }
 
-  await params.connection.execute(updateQuery, [
-    params.timestamp,
-    statusLog,
-    params.utxo.data.state,
-    txHash,
-    params.utxo.block_time,
-    params.utxo.metadata,
-    params.threadtoken,
-  ]);
+  const updateContent = {
+    status: newStatus,
+    contract_state: data.datum.state,
+    shipping_tx: data.txHash,
+    shipping_block: data.blockTime,
+    shipping_metadata: data.metadata,
+    shipping_notified: true,
+    scanned_at: timestamp,
+  };
 
-  /////////////////////////////////////////////////////////////////////
+  await updateOrder(
+    connection,
+    orderData.id,
+    orderData.schema_v,
+    updateContent
+  );
 
-  const notifications = [
-    {
-      id: getNotificationId(),
-      type: "order",
-      title: "Package Shipped",
-      owner: params.buyer_pubkeyhash,
-      data: JSON.stringify({
-        threadtoken: params.threadtoken,
-        buyer_address: params.buyer_address,
-        country: params.country,
-      }),
-      message: "The seller sent the package.",
-    },
-    {
-      id: getNotificationId(),
-      type: "order",
-      title: "Package Shipped",
-      owner: params.seller_id,
-      data: JSON.stringify({
-        threadtoken: params.threadtoken,
-        seller_address: params.seller_address,
-        country: params.country,
-      }),
-      message: "The package has been sent.",
-    },
-  ];
+  await saveStatus(redisState.client, orderData.id, newStatus);
 
-  const eventSchema = `
-    INSERT IGNORE INTO events (
-    id,
-    source,
-    type,
-    data,
-    spec_version
-    ) VALUES (?, ?, ?, ?, ?)
-  `;
+  await connection.commit();
 
-  const eventId = params.threadtoken + statusLog;
-
-  await params.connection.execute(eventSchema, [
-    eventId,
-    "gateway",
-    "CreateNotification",
-    JSON.stringify(notifications),
-    0,
-  ]);
+  return { id: orderData.id, finished: false };
 }
-
-export { handleShipping };

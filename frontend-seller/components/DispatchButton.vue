@@ -10,7 +10,7 @@ const { $gatewayClient } = useNuxtApp()
 const orderStore = useOrderStore()
 const walletStore = useWalletStore()
 
-const label = computed(() => 'Accept')
+const label = computed(() => 'Dispatch')
 
 const loading = ref(false)
 
@@ -19,7 +19,7 @@ const disabled = computed(() => {
         return true
     }
 
-    if (orderStore.state !== 0) {
+    if (orderStore.state !== 1) {
         return true
     }
 
@@ -33,9 +33,9 @@ const disabled = computed(() => {
 const onClick = async () => {
     if (!import.meta.client) return;
 
-    const LOCKING_ENDPOINT_MUTATION = gql`
-      mutation($lockingEndpointVariable: LockingEndpointInput!) {
-        lockingEndpoint(lockingEndpointInput: $lockingEndpointVariable) {
+    const SHIPPING_ENDPOINT_MUTATION = gql`
+      mutation($shippingEndpointVariable: ShippingEndpointInput!) {
+        shippingEndpoint(shippingEndpointInput: $shippingEndpointVariable) {
           success
           data {
             cbor
@@ -48,28 +48,36 @@ const onClick = async () => {
     try {
         loading.value = true
 
+        const deliveryDate = Date.now() + 1000
+
+        const scheme = {
+            order_id: orderStore.order.id,
+            guide: '8787878',
+            date: deliveryDate.toString(),
+            website: 'http',
+            notes: 'notes',
+        }
+
         const { data } = await $gatewayClient.mutate({
-            mutation: LOCKING_ENDPOINT_MUTATION,
+            mutation: SHIPPING_ENDPOINT_MUTATION,
             variables: {
-                lockingEndpointVariable: {
-                    order_id: orderStore.order.id
-                }
+                shippingEndpointVariable: scheme
             },
         });
 
-        const response = data.lockingEndpoint;
+        const response = data.shippingEndpoint;
 
         const txHash = await walletStore.balanceTx(response.data.cbor)
 
         console.log(txHash)
-
-        orderStore.showToast(`The transaction has been sent to the network. TxHash: ${txHash}`, 'success', 10_000)
         
+        orderStore.showToast(`The transaction has been sent to the network. TxHash: ${txHash}`, 'success', 10_000)
+
         await sleep(10_000)
         
         loading.value = false
     } catch (err) {
-        console.error('lockingEndpoint:', err);
+        console.error('shippingEndpoint:', err);
         orderStore.showToast(err, 'error', 10_000)
         loading.value = false
     } 

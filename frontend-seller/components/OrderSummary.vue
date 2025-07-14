@@ -6,7 +6,7 @@
                 {{ orderTitle }}
             </div>
 
-            <span v-if="!orderStore.finished">{{ globalCountdown }}</span>
+            <span v-if="!orderStore.finished">{{ formatCountdown(globalCountdown) }}</span>
 
             <FinishedIcon v-if="orderStore.finished" />
         </div>
@@ -108,15 +108,19 @@ const globalTimestamp = computed(() => {
         return orderData.value.shipping_until
     }
 
-    if (state === 2) {
-        return orderStore.value.shipping
-    }
-
-    if (state === 3) {
+    if (state === -2) {
         return Date.now()
     }
 
+    if (state === 2) {
+        return Number(orderStore.shipping?.public?.tolerance)
+    }
+
     if (state === -3) {
+        return Date.now()
+    }
+
+    if (state === 3) {
         return Date.now()
     }
 })
@@ -136,32 +140,13 @@ const globalCountdown = computed(() => {
     const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
     const seconds = (totalSeconds % 60).toString().padStart(2, '0');
 
-    return formatTime(`${minutes}:${seconds}`);
+    return `${minutes}:${seconds}`;
 });
 
 watch(globalCountdown, (e) => {
     orderStore.countdown = e
 }, { immediate: true })
 
-function formatTime(value) {
-    let [minutes, seconds] = value.split(":").map(Number);
-
-    const hours = Math.floor(minutes / 60);
-
-    const days = Math.floor(hours / 24);
-
-    const remainingHours = hours % 24;
-
-    minutes = minutes % 60;
-
-    minutes += Math.floor(seconds / 60);
-
-    seconds = seconds % 60;
-
-    minutes = Math.min(minutes, 99);
-
-    return `${days}d : ${remainingHours}h : ${minutes}m : ${seconds}s`;
-}
 
 function openExplorer() {
     if (!import.meta.client) return

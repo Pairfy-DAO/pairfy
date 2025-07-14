@@ -3,7 +3,7 @@ import { getUtxo, UtxoData, UtxoResponse } from "../lib/index.js";
 import { pending } from "./pending.js";
 import { returned } from "./returned.js";
 import { locking } from "./locking.js";
-import { handleShipping } from "./shipping.js";
+import { shipping } from "./shipping.js";
 import { handleReceived } from "./received.js";
 import { collected } from "./collected.js";
 import { canceled } from "./canceled.js";
@@ -81,6 +81,9 @@ export async function testHandler(job: any): Promise<jobResponse> {
         case 1n:
           response = await locking(connection, timestamp, ORDER, utxoData);
           break;
+        case 2n:
+          response = await shipping(connection, timestamp, ORDER, utxoData);
+          break;           
       }
     }
 

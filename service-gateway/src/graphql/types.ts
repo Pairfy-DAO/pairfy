@@ -250,7 +250,7 @@ input ShippingEndpointInput {
   guide: String!
   date: String!
   website: String!
-  notes: String!
+  notes: String
 } 
 
 input AppealEndpointInput {

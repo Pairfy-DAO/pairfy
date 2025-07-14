@@ -97,8 +97,8 @@ const sizeClass = computed(() => {
 }
 
 .btn-large {
-  padding: 12px 24px;
-  font-size: 16px;
+  padding: 1rem;
+  font-size: var(--text-size-1);
 }
 
 .loader {

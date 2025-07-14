@@ -40,7 +40,7 @@ const main = async () => {
       "PENDING_RANGE",
       "SHIPPING_RANGE",
       "APPEAL_RANGE",
-      "DELIVERY_RANGE",
+      "DELIVERY_TOLERANCE",
       "AGENT_JWT_KEY",
       "EXPIRING_RANGE",
       "FEE_PERCENT",

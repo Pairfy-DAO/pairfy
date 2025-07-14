@@ -127,7 +127,16 @@ const orderStore = useOrderStore()
 const orderData = computed(() => orderStore.order)
 
 const shippingData = ref(null);
-const deliveryDate = ref('none'); 
+
+const deliveryDate = computed(()=>{
+    const value = orderStore.shipping
+
+    if(!value) return 'none'
+
+    return formatDateYYMMDD(Number(value.public.tolerance))
+
+});
+
 const guideData = computed(() => {
     return {
         website: '',
@@ -152,7 +161,7 @@ const shippingStatus = computed(() => {
     }
 
     if (state === 2) {
-        return "package shipped"
+        return "dispatched"
     }
 
     if (state === 3) {

@@ -45,11 +45,24 @@ export const useOrderStore = defineStore("order", () => {
     finished.value = orderData.finished;
     pendingTx.value = orderData.pending_tx;
 
-    product.value = JSON.parse(productData);
     address.value = addressData;
-    shipping.value = shippingData;
     session.value = sessionData;
-    encryptedPrivateKey.value = JSON.parse(encrypted_private_key);
+
+    if (productData) {
+      product.value = JSON.parse(productData);
+    }
+
+    if (shippingData) {
+      const parsedData = JSON.parse(shippingData);
+
+      const unchunked = parsedData[0]?.json_metadata?.msg.join("");
+
+      shipping.value = JSON.parse(unchunked);
+    }
+
+    if (encrypted_private_key) {
+      encryptedPrivateKey.value = JSON.parse(encrypted_private_key);
+    }
   };
 
   function clear() {
@@ -70,6 +83,6 @@ export const useOrderStore = defineStore("order", () => {
     shipping,
     session,
     encryptedPrivateKey,
-    countdown
+    countdown,
   };
 });
