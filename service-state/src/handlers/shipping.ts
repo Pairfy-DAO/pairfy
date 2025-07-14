@@ -19,7 +19,7 @@ export async function shipping(
       {
         id: getNotificationId(),
         type: "order",
-        title: "Package dispatched ✈️",
+        title: "Package dispatched 📦✈️",
         owner: orderData.buyer_pubkeyhash,
         data: JSON.stringify({
           id: orderData.id,
@@ -37,7 +37,7 @@ export async function shipping(
       {
         id: getNotificationId(),
         type: "order",
-        title: "Package dispatched ✈️",
+        title: "Package dispatched 📦✈️",
         owner: orderData.seller_id,
         data: JSON.stringify({
           id: orderData.id,

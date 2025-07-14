@@ -62,8 +62,6 @@ export const lockingEndpoint = async (_: any, args: any, context: any) => {
       throw new Error("STATE_DIFF_ZERO");
     }
 
-    //////////////////////////////////////////////
-
     const BUILDER = await lockingTransactionBuilder(
       SELLER.address,
       ORDER.contract_params

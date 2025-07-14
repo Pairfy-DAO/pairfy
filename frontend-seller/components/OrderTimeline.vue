@@ -164,11 +164,11 @@ const shippingStatus = computed(() => {
     }
 
     if (state === 3) {
-        return "package received"
+        return "received"
     }
 
     if (state === 4) {
-        return "package received"
+        return "received"
     }
 
     return "-"

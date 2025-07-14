@@ -45,7 +45,7 @@ export async function locking(
           seller_wallet: orderData.seller_wallet,
           country: orderData.country,
         }),
-        message: `Please prepare the package before deadline. - Order N° ${orderData.id.slice(
+        message: `Prepare the package before deadline. - Order N° ${orderData.id.slice(
           0,
           10
         )}...`,

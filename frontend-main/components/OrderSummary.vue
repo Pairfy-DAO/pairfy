@@ -82,7 +82,7 @@ const orderTitle = computed(
         }
 
         if (state === 3) {
-            title = "The Package is Arriving, Time Remaining "
+            title = "The Package has Arrived, Time Remaining "
         }
 
         return title
