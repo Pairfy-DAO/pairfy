@@ -37,7 +37,7 @@ export async function returned(
       {
         id: getNotificationId(),
         type: "order",
-        title: "Order canceled ❌",
+        title: "Order returned ❌",
         owner: orderData.seller_id,
         data: JSON.stringify({
           id: orderData.id,
@@ -45,7 +45,7 @@ export async function returned(
           seller_wallet: orderData.seller_wallet,
           country: orderData.country,
         }),
-        message: `The buyer has canceled the order. - Order N° ${orderData.id.slice(
+        message: `The buyer has returned the order. - Order N° ${orderData.id.slice(
           0,
           10
         )}...`,
@@ -67,7 +67,6 @@ export async function returned(
 
   const updateContent = {
     status: newStatus,
-    contract_address: data.utxo.address,
     contract_state: data.datum.state,
     returned_tx: data.txHash,
     returned_block: data.blockTime,
