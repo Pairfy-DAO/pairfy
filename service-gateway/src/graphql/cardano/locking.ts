@@ -9,7 +9,7 @@ export const lockingEndpoint = async (_: any, args: any, context: any) => {
 
   try {
     if (!context.sellerData) {
-      throw new ApiGraphQLError(401, "Invalid Credentials", {
+      throw new ApiGraphQLError(401, "Invalid credentials", {
         code: ERROR_CODES.UNAUTHORIZED,
       });
     }

@@ -21,7 +21,7 @@ async function collectTransactionBuilder(
     throw new Error("NETWORK_ENV unset");
   }
 
-  if (process.env.NETWORK === "Mainnet") {
+  if (process.env.NETWORK_ENV === "Mainnet") {
     NETWORK = "Mainnet";
   }
 
@@ -31,9 +31,11 @@ async function collectTransactionBuilder(
 
   //////////////////////////////////////////////////
 
-  const now = BigInt(Date.now());
+  const timestamp = Date.now();
 
-  const validToMs = Number(now + BigInt(process.env.TX_VALID_TIME as string));
+  const validToMs = Number(
+    BigInt(timestamp) + BigInt(process.env.TX_VALID_TIME as string)
+  );
 
   //////////////////////////////////////////////////
   /**
@@ -93,11 +95,16 @@ async function collectTransactionBuilder(
 
   if (stateMachineUtxo.datum) {
     const data = Data.from(stateMachineUtxo.datum, StateMachineDatum);
-
     console.log(data);
+    
+    const ms_7_days = 604_800_000;
+    const appealUntil = Number(data.delivery) + ms_7_days;
 
-    if (data.state !== 3n && data.state !== 2n) {
-      throw new Error("WRONG_STATE");
+    const rule1 = data.state === 2n && timestamp > appealUntil;
+    const rule2 = data.state === 3n;
+
+    if (!rule1 && !rule2) {
+      throw new Error("WRONG_STATE OR DEADLINE");
     }
   }
 
@@ -182,7 +189,7 @@ async function collectTransactionBuilder(
     )
     .attach.SpendingValidator(stateMachineScript)
     .addSigner(externalWalletAddress)
-    .validFrom(Date.now())
+    .validFrom(timestamp)
     .validTo(validToMs)
     .complete({
       changeAddress: externalWalletAddress,

@@ -204,15 +204,6 @@ const timeline = ref([
     }
 ])
 
-
-function openExplorer() {
-    if (!import.meta.client) return
-
-    const cardanoNetwork = useRuntimeConfig().public.cardanoNetwork;
-
-    window.open(`https://${cardanoNetwork}.cexplorer.io/tx/${orderStore.pendingTx}`, '_blank');
-}
-
 </script>
 
 <style lang="css" scoped>

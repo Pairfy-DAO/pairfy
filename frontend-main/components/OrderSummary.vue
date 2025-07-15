@@ -6,9 +6,9 @@
                 {{ orderTitle }}
             </div>
 
-            <span v-if="!orderStore.finished">{{ formatCountdown(globalCountdown) }}</span>
+            <span v-if="visibleCountdown">{{ formatCountdown(globalCountdown) }}</span>
 
-            <FinishedIcon v-if="orderStore.finished"/>
+            <FinishedIcon v-if="visibleIcon"/>
         </div>
 
         <div class="OrderSummary-subtitle">
@@ -85,6 +85,10 @@ const orderTitle = computed(
             title = "The Package has Arrived, Time Remaining "
         }
 
+        if (state === 4) {
+            title = "The Package has Arrived, Time Remaining "
+        }
+
         return title
     }
 )
@@ -123,6 +127,24 @@ const globalTimestamp = computed(() => {
     if (state === 3) {
         return Date.now()
     }
+})
+
+const visibleCountdown = computed(() => {
+
+if (orderStore.finished || orderStore.order.completed) {
+    return false
+}
+
+return true
+})
+
+const visibleIcon = computed(() => {
+
+if (orderStore.finished || orderStore.order.completed) {
+    return true
+}
+
+return false
 })
 
 const now = ref(Date.now());
