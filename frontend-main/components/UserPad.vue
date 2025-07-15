@@ -1,5 +1,6 @@
 <template>
     <div class="UserPad">
+        <ReturnButton v-if="orderStore.state === 0"/>
         <ReceivedButton v-if="orderStore.state === 2" />
     </div>
 </template>
@@ -14,4 +15,3 @@ const orderStore = useOrderStore()
     display: flex;
 }
 </style>
-

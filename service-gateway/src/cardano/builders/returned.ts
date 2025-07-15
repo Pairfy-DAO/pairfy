@@ -13,7 +13,7 @@ import { DatumType, InputType, } from "./types.js";
 
 
 /**Generates a CBOR transaction to be signed and sent in the browser by the buyer to return funds after pending_until. */
-async function returnTransactionBuilder(
+async function returnedTransactionBuilder(
   externalWalletAddress: string,
   serializedParams: string
 ) {
@@ -25,7 +25,7 @@ async function returnTransactionBuilder(
     throw new Error("NETWORK_ENV unset");
   }
 
-  if (process.env.NETWORK === "Mainnet") {
+  if (process.env.NETWORK_ENV === "Mainnet") {
     NETWORK = "Mainnet";
   }
 
@@ -35,9 +35,9 @@ async function returnTransactionBuilder(
 
   //////////////////////////////////////////////////
 
-  const now = BigInt(Date.now());
+  const timestamp = Date.now();
 
-  const validToMs = Number(now + BigInt(process.env.TX_VALID_TIME as string));
+  const validToMs = Number(BigInt(timestamp) + BigInt(process.env.TX_VALID_TIME as string));
 
   //////////////////////////////////////////////////
   /**
@@ -56,7 +56,7 @@ async function returnTransactionBuilder(
 
   //////////////////////////////////////////////////
 
-  if (now < BigInt(stateMachineParams[6])) {
+  if (BigInt(timestamp) < BigInt(stateMachineParams[6])) {
     throw new Error("BEFORE_DEADLINE");
   }
 
@@ -159,7 +159,7 @@ async function returnTransactionBuilder(
     })
     .attach.SpendingValidator(stateMachineScript)
     .addSigner(externalWalletAddress)
-    .validFrom(Date.now())
+    .validFrom(timestamp)
     .validTo(validToMs)
     .complete({
       changeAddress: externalWalletAddress,
@@ -186,7 +186,7 @@ async function main() {
 
   console.log(deserializeParams(serializedParams));
 
-  const BUILDER = await returnTransactionBuilder(
+  const BUILDER = await returnedTransactionBuilder(
     externalWalletAddress,
     serializedParams
   );
@@ -204,6 +204,6 @@ async function main() {
 
 //main();
 
-export { returnTransactionBuilder };
+export { returnedTransactionBuilder };
 
 //two signature, collateral, validto, paramterice price, collateral, seller, buyer

@@ -188,7 +188,7 @@ type CancelEndpointResponse {
   data: CborData!
 }
 
-type ReturnEndpointResponse {
+type ReturnedEndpointResponse {
   success: Boolean!
   data: CborData!
 }
@@ -237,7 +237,7 @@ input CancelEndpointInput {
   order_id: String!
 } 
 
-input ReturnEndpointInput {
+input ReturnedEndpointInput {
   order_id: String!
 } 
 
@@ -269,7 +269,7 @@ type Mutation {
   editBook(editBookInput: EditBookInput!): EditBookResponse!
   pendingEndpoint(pendingEndpointInput: PendingEndpointInput!): PendingEndpointResponse!
   cancelEndpoint(cancelEndpointInput: CancelEndpointInput!): CancelEndpointResponse!
-  returnEndpoint(returnEndpointInput: ReturnEndpointInput!): ReturnEndpointResponse!
+  returnedEndpoint(returnedEndpointInput: ReturnedEndpointInput!): ReturnedEndpointResponse!
   lockingEndpoint(lockingEndpointInput: LockingEndpointInput!): LockingEndpointResponse!
   shippingEndpoint(shippingEndpointInput: ShippingEndpointInput!): ShippingEndpointResponse!
   appealEndpoint(appealEndpointInput: AppealEndpointInput!): AppealEndpointResponse!

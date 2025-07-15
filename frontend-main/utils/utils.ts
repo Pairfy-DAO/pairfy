@@ -13,8 +13,8 @@ export function sleep(ms: number) {
 export function formatDateYYMMDD(timestamp: number) {
   const date = new Date(timestamp);
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
 
@@ -90,7 +90,7 @@ export function timeAgo(timestamp: number) {
 }
 
 export function formatCountdown(value: string) {
-  if(!value) return;
+  if (!value) return;
 
   let [minutes, seconds] = value.split(":").map(Number);
 
@@ -109,4 +109,14 @@ export function formatCountdown(value: string) {
   minutes = Math.min(minutes, 99);
 
   return `${days}d : ${remainingHours}h : ${minutes}m : ${seconds}s`;
+}
+
+export function formatAssetQuantity(name: string, value: number) {
+  if (name === "ADA") {
+    const result = value / 1_000_000;
+
+    return result.toFixed(2) + " " + name;
+  }
+
+  return value
 }

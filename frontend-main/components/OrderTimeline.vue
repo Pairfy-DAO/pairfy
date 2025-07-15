@@ -64,7 +64,7 @@
                             </div>
                             <div class="template-item">
                                 <span>Asset Amount</span>
-                                <span>{{ orderData.contract_quote }} {{ orderData.asset_name }}</span>
+                                <span>{{ formatAssetQuantity(orderData.asset_name, orderData.contract_price) }}</span>
                             </div>
                             <div class="template-item">
                                 <span>Asset Price</span>

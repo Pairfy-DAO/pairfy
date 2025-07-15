@@ -75,6 +75,7 @@ const sizeClass = computed(() => {
 .ButtonSolid.disabled {
   pointer-events: none;
   background: var(--primary-b);
+  border: 1px solid var(--primary-b);
 }
 
 .ButtonSolid-body {

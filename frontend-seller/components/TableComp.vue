@@ -148,13 +148,15 @@ const nextPage = () => {
 .datatable {
   border: 1px solid var(--border-a);
   background: var(--background-a);
+  transition: var(--transition-a);
   border-radius: var(--radius-a);
   font-size: var(--text-size-1);
+  box-sizing: border-box;
   flex-direction: column;
   color: var(--text-a);
   min-height: 100vh;
-  transition: 0.2s;
   overflow: hidden;
+  padding: 0.5rem;
   width: 100%;
 }
 

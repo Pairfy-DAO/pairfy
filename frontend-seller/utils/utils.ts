@@ -104,3 +104,13 @@ export function formatCountdown(value: string) {
 
   return `${days}d : ${remainingHours}h : ${minutes}m : ${seconds}s`;
 }
+
+export function formatAssetQuantity(name: string, value: number) {
+  if (name === "ADA") {
+    const result = value / 1_000_000;
+
+    return result.toFixed(2) + " " + name;
+  }
+
+  return value
+}

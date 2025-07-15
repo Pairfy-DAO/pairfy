@@ -1,6 +1,6 @@
 import { pendingEndpoint } from "./cardano/pending.js";
 import { lockingEndpoint } from "./cardano/locking.js";
-import { returnEndpoint } from "./cardano/return.js";
+import { returnedEndpoint } from "./cardano/returned.js";
 import { shippingEndpoint } from "./cardano/shipping.js";
 import { receivedEndpoint } from "./cardano/received.js";
 import { collectEndpoint } from "./cardano/collect.js";
@@ -35,7 +35,7 @@ export const cardano = {
   Mutation: {
     pendingEndpoint,
     cancelEndpoint,
-    returnEndpoint,
+    returnedEndpoint,
     lockingEndpoint,
     shippingEndpoint,
     appealEndpoint,

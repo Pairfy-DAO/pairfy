@@ -10,12 +10,12 @@ const { $gatewayClient } = useNuxtApp()
 const orderStore = useOrderStore()
 const walletStore = useWalletStore()
 
-const label = computed(() => `Accept ${orderStore.countdown}`)
+const label = computed(() => `Return funds ${orderStore.countdown}`)
 
 const loading = ref(false)
 
 const disabled = computed(() => {
-    if (orderStore.countdown === '00:00') {
+    if (orderStore.countdown !== '00:00') {
         return true
     }
 
@@ -33,9 +33,9 @@ const disabled = computed(() => {
 const onClick = async () => {
     if (!import.meta.client) return;
 
-    const LOCKING_ENDPOINT_MUTATION = gql`
-      mutation($lockingEndpointVariable: LockingEndpointInput!) {
-        lockingEndpoint(lockingEndpointInput: $lockingEndpointVariable) {
+    const RETURNED_ENDPOINT_MUTATION = gql`
+      mutation($returnedEndpointVariable: ReturnedEndpointInput!) {
+        returnedEndpoint(returnedEndpointInput: $returnedEndpointVariable) {
           success
           data {
             cbor
@@ -49,27 +49,27 @@ const onClick = async () => {
         loading.value = true
 
         const { data } = await $gatewayClient.mutate({
-            mutation: LOCKING_ENDPOINT_MUTATION,
+            mutation: RETURNED_ENDPOINT_MUTATION,
             variables: {
-                lockingEndpointVariable: {
+                returnedEndpointVariable: {
                     order_id: orderStore.order.id
                 }
             },
         });
 
-        const response = data.lockingEndpoint;
+        const response = data.returnedEndpoint;
 
         const txHash = await walletStore.balanceTx(response.data.cbor)
 
         console.log(txHash)
 
-        orderStore.showToast(`The transaction has been sent to the network. TxHash: ${txHash}`, 'success', 10_000)
+        orderStore.showToast(`The transaction has been sent to the network. TxHash: ${txHash}`, 'success', 30_000)
         
         await sleep(30_000)
         
         loading.value = false
     } catch (err) {
-        console.error('lockingEndpoint:', err);
+        console.error('returnedEndpoint:', err);
         orderStore.showToast(err, 'error', 10_000)
         loading.value = false
     } 

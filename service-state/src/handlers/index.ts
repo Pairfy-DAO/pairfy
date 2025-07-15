@@ -75,6 +75,9 @@ export async function testHandler(job: any): Promise<jobResponse> {
         case 0n:
           response = await pending(connection, timestamp, ORDER, utxoData);
           break;
+        case -1n:
+          response = await returned(connection, timestamp, ORDER, utxoData);
+          break;
         case 1n:
           response = await locking(connection, timestamp, ORDER, utxoData);
           break;

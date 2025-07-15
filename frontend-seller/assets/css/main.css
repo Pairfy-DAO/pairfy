@@ -1,6 +1,5 @@
 * {
-  font-family: "IBM Plex Sans", sans-serif;
-  transition: 0.3s ease-in-out;
+  font-family: "Inter", sans-serif;
 }
 
 body {
@@ -132,4 +131,16 @@ textarea::placeholder {
 
 .center {
   justify-content: center;
+}
+
+.red{
+  color: var(--red-a);
+}
+
+.green{
+  color: var(--green-a);
+}
+
+.blue{
+  color: var(--blue-a);
 }
