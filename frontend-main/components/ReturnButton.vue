@@ -10,7 +10,7 @@ const { $gatewayClient } = useNuxtApp()
 const orderStore = useOrderStore()
 const walletStore = useWalletStore()
 
-const label = computed(() => `Return funds ${orderStore.countdown}`)
+const label = computed(() => `Return ${orderStore.countdown}`)
 
 const loading = ref(false)
 
