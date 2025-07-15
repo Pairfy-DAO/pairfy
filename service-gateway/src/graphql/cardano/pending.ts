@@ -5,7 +5,7 @@ import {
   getContractPrice,
   getContractQuote,
 } from "../../lib/index.js";
-import { pendingEndpointSchema } from "../../validators/orders.js";
+import { pendingEndpointSchema } from "../../validators/cardano/pending.js";
 import {
   ApiGraphQLError,
   ERROR_CODES,
@@ -43,11 +43,12 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
       );
     }
 
+    const params = validateParams.data;
+    console.log(params);
+
     const timestamp = Date.now();
 
     const { userData: USER } = context as { userData: UserToken };
-
-    const params = validateParams.data;
 
     connection = await database.client.getConnection();
 

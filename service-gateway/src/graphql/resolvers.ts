@@ -3,9 +3,9 @@ import { lockingEndpoint } from "./cardano/locking.js";
 import { returnedEndpoint } from "./cardano/returned.js";
 import { shippingEndpoint } from "./cardano/shipping.js";
 import { receivedEndpoint } from "./cardano/received.js";
-import { collectEndpoint } from "./cardano/collect.js";
-import { cancelEndpoint } from "./cardano/cancel.js";
-import { appealEndpoint } from "./cardano/appeal.js";
+import { collectedEndpoint } from "./cardano/collected.js";
+import { canceledEndpoint } from "./cardano/canceled.js";
+import { appealedEndpoint } from "./cardano/appealed.js";
 import { getBooks } from "./book/getBooks.js";
 import { editBook } from "./book/editBook.js";
 import { getOrder } from "./order/getOrder.js";
@@ -34,13 +34,13 @@ export const books = {
 export const cardano = {
   Mutation: {
     pendingEndpoint,
-    cancelEndpoint,
+    canceledEndpoint,
     returnedEndpoint,
     lockingEndpoint,
     shippingEndpoint,
-    appealEndpoint,
+    appealedEndpoint,
     receivedEndpoint,
-    collectEndpoint
+    collectedEndpoint
   },
 };
 

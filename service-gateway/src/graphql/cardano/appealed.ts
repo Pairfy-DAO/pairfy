@@ -1,10 +1,10 @@
 import database from "../../database/client.js";
-import { returnedTransactionBuilder } from "../../cardano/builders/returned.js";
 import { ApiGraphQLError, ERROR_CODES, UserToken } from "@pairfy/common";
+import { appealedTransactionBuilder } from "../../cardano/builders/appealed.js";
 import { findOrderByUser } from "../../common/findOrderByUser.js";
-import { returnedEndpointSchema } from "../../validators/cardano/returned.js";
+import { appealedEndpointSchema } from "../../validators/cardano/appealed.js";
 
-export const returnedEndpoint = async (_: any, args: any, context: any) => {
+export const appealedEndpoint = async (_: any, args: any, context: any) => {
   let connection = null;
 
   try {
@@ -14,8 +14,8 @@ export const returnedEndpoint = async (_: any, args: any, context: any) => {
       });
     }
 
-    const validateParams = returnedEndpointSchema.safeParse(
-      args.returnedEndpointInput
+    const validateParams = appealedEndpointSchema.safeParse(
+      args.appealedEndpointInput
     );
 
     if (!validateParams.success) {
@@ -51,15 +51,15 @@ export const returnedEndpoint = async (_: any, args: any, context: any) => {
       throw new Error("ORDER_FINISHED");
     }
 
-    if (ORDER.contract_state === -1) {
-      throw new Error("ALREADY_RETURNED");
+    if (ORDER.contract_state === -3) {
+      throw new Error("ALREADY_APPEAL");
     }
 
-    if (ORDER.contract_state !== 0) {
+    if (ORDER.contract_state !== 2) {
       throw new Error("WRONG_STATE");
     }
 
-    const BUILDER = await returnedTransactionBuilder(
+    const BUILDER = await appealedTransactionBuilder(
       USER.address,
       ORDER.contract_params
     );

@@ -2,7 +2,7 @@ import database from "../../database/client.js";
 import { ApiGraphQLError, ERROR_CODES, SellerToken } from "@pairfy/common";
 import { lockingTransactionBuilder } from "../../cardano/builders/locking.js";
 import { findOrderBySeller } from "../../common/findOrderBySeller.js";
-import { lockingEndpointSchema } from "../../validators/cardano/lockingEndpoint.js";
+import { lockingEndpointSchema } from "../../validators/cardano/locking.js";
 
 export const lockingEndpoint = async (_: any, args: any, context: any) => {
   let connection = null;

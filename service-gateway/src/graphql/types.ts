@@ -183,7 +183,7 @@ type PendingEndpointResponse {
   data: PendingEndpointPayload!
 }
 
-type CancelEndpointResponse {
+type CanceledEndpointResponse {
   success: Boolean!
   data: CborData!
 }
@@ -203,7 +203,7 @@ type ShippingEndpointResponse {
   data: CborData!
 }
 
-type AppealEndpointResponse {
+type AppealedEndpointResponse {
   success: Boolean!
   data: CborData!
 }
@@ -213,7 +213,7 @@ type ReceivedEndpointResponse {
   data: CborData!
 }
 
-type CollectEndpointResponse {
+type CollectedEndpointResponse {
   success: Boolean!
   data: CborData!
 }
@@ -233,7 +233,7 @@ input PendingEndpointInput {
   asset: String!
 } 
 
-input CancelEndpointInput {
+input CanceledEndpointInput {
   order_id: String!
 } 
 
@@ -253,7 +253,7 @@ input ShippingEndpointInput {
   notes: String
 } 
 
-input AppealEndpointInput {
+input AppealedEndpointInput {
   order_id: String!
 } 
 
@@ -261,20 +261,20 @@ input ReceivedEndpointInput {
   order_id: String!
 } 
 
-input CollectEndpointInput {
+input CollectedEndpointInput {
   order_id: String!
 } 
 
 type Mutation {
   editBook(editBookInput: EditBookInput!): EditBookResponse!
   pendingEndpoint(pendingEndpointInput: PendingEndpointInput!): PendingEndpointResponse!
-  cancelEndpoint(cancelEndpointInput: CancelEndpointInput!): CancelEndpointResponse!
+  canceledEndpoint(canceledEndpointInput: CanceledEndpointInput!): CanceledEndpointResponse!
   returnedEndpoint(returnedEndpointInput: ReturnedEndpointInput!): ReturnedEndpointResponse!
   lockingEndpoint(lockingEndpointInput: LockingEndpointInput!): LockingEndpointResponse!
   shippingEndpoint(shippingEndpointInput: ShippingEndpointInput!): ShippingEndpointResponse!
-  appealEndpoint(appealEndpointInput: AppealEndpointInput!): AppealEndpointResponse!
+  appealedEndpoint(appealedEndpointInput: AppealedEndpointInput!): AppealedEndpointResponse!
   receivedEndpoint(receivedEndpointInput: ReceivedEndpointInput!): ReceivedEndpointResponse!
-  collectEndpoint(collectEndpointInput: CollectEndpointInput!): CollectEndpointResponse!
+  collectedEndpoint(collectedEndpointInput: CollectedEndpointInput!): CollectedEndpointResponse!
 }
 
 `;

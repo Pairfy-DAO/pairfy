@@ -2,6 +2,7 @@ import database from "../../database/client.js";
 import { receivedTransactionBuilder } from "../../cardano/builders/received.js";
 import { ApiGraphQLError, ERROR_CODES, UserToken } from "@pairfy/common";
 import { findOrderByUser } from "../../common/findOrderByUser.js";
+import { receivedEndpointSchema } from "../../validators/cardano/received.js";
 
 export const receivedEndpoint = async (_: any, args: any, context: any) => {
   let connection = null;
@@ -12,7 +13,22 @@ export const receivedEndpoint = async (_: any, args: any, context: any) => {
         code: ERROR_CODES.UNAUTHORIZED,
       });
     }
-    const params = args.receivedEndpointInput;
+
+    const validateParams = receivedEndpointSchema.safeParse(
+      args.receivedEndpointInput
+    );
+
+    if (!validateParams.success) {
+      throw new ApiGraphQLError(
+        400,
+        `Invalid params ${JSON.stringify(validateParams.error.flatten())}`,
+        {
+          code: ERROR_CODES.VALIDATION_ERROR,
+        }
+      );
+    }
+
+    const params = validateParams.data;
 
     console.log(params);
 
@@ -63,4 +79,3 @@ export const receivedEndpoint = async (_: any, args: any, context: any) => {
     if (connection) connection.release();
   }
 };
-

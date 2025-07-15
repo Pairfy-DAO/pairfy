@@ -1,9 +1,10 @@
-import { ApiGraphQLError, ERROR_CODES, SellerToken } from "@pairfy/common";
-import { collectTransactionBuilder } from "../../cardano/builders/collect.js";
-import { findOrderBySeller } from "../../common/findOrderBySeller.js";
 import database from "../../database/client.js";
+import { ApiGraphQLError, ERROR_CODES, SellerToken } from "@pairfy/common";
+import { collectedTransactionBuilder } from "../../cardano/builders/collected.js";
+import { findOrderBySeller } from "../../common/findOrderBySeller.js";
+import { collectedEndpointSchema } from "../../validators/cardano/collected.js";
 
-export const collectEndpoint = async (_: any, args: any, context: any) => {
+export const collectedEndpoint = async (_: any, args: any, context: any) => {
   let connection = null;
 
   try {
@@ -13,8 +14,21 @@ export const collectEndpoint = async (_: any, args: any, context: any) => {
       });
     }
 
-    const params = args.collectEndpointInput;
+    const validateParams = collectedEndpointSchema.safeParse(
+      args.collectedEndpointInput
+    );
 
+    if (!validateParams.success) {
+      throw new ApiGraphQLError(
+        400,
+        `Invalid params ${JSON.stringify(validateParams.error.flatten())}`,
+        {
+          code: ERROR_CODES.VALIDATION_ERROR,
+        }
+      );
+    }
+
+    const params = validateParams.data;
     console.log(params);
 
     const { sellerData: SELLER } = context as {
@@ -47,7 +61,7 @@ export const collectEndpoint = async (_: any, args: any, context: any) => {
       throw new Error("WRONG_STATE");
     }
 
-    const BUILDER = await collectTransactionBuilder(
+    const BUILDER = await collectedTransactionBuilder(
       SELLER.address,
       ORDER.contract_params
     );

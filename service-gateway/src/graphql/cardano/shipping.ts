@@ -16,7 +16,7 @@ export const shippingEndpoint = async (_: any, args: any, context: any) => {
 
     const params = args.shippingEndpointInput;
 
-    console.log(params);
+    console.log(params); //zod
 
     const { sellerData: SELLER } = context as {
       sellerData: SellerToken;
