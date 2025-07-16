@@ -10,13 +10,11 @@ import {
 } from "@lucid-evolution/lucid";
 import { deserializeParams, provider, validators } from "./index.js";
 
-
 /**Generates a CBOR transaction to be signed and sent in the browser by the seller to take the order before pending_until. */
 async function lockingTransactionBuilder(
   externalWalletAddress: string,
   serializedParams: string
 ) {
-
   let NETWORK: Network = "Preprod";
 
   if (!process.env.NETWORK_ENV) {
@@ -30,12 +28,14 @@ async function lockingTransactionBuilder(
   //////////////////////////////////////////////////
 
   const lucid = await Lucid(provider, NETWORK);
-  
+
   //////////////////////////////////////////////////
 
-  const now = BigInt(Date.now());
+  const timestamp = Date.now();
 
-  const validToMs = Number(now + BigInt(process.env.TX_VALID_TIME as string));
+  const validToMs = Number(
+    BigInt(timestamp) + BigInt(process.env.TX_VALID_TIME as string)
+  );
 
   //////////////////////////////////////////////////
   /**
@@ -58,11 +58,11 @@ async function lockingTransactionBuilder(
 
   lucid.selectWallet.fromAddress(externalWalletAddress, externalWalletUtxos);
 
-   //////////////////////////////////////////////////
+  //////////////////////////////////////////////////
 
   const txCollateral = 2_000_000n;
 
-  const minLovelace = txCollateral
+  const minLovelace = txCollateral;
 
   const findIndex = externalWalletUtxos.findIndex(
     (item) => item.assets.lovelace > minLovelace
@@ -181,7 +181,7 @@ async function lockingTransactionBuilder(
     )
     .attach.SpendingValidator(stateMachineScript)
     .addSigner(externalWalletAddress)
-    .validFrom(Date.now())
+    .validFrom(timestamp)
     .validTo(validToMs)
     .complete({
       changeAddress: externalWalletAddress,

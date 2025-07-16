@@ -208,7 +208,7 @@ const encryptedMessage = ref(null)
 const store = computed(() => {
     return {
         date: timestampToDate(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        orderName: orderName.value || 'Henry Lancaster',
+        orderName: orderName.value || 'John Doe',
         orderAddress: orderAddress.value || '1234 Brickell Avenue, Suite 500, Miami, FL 33131',
         orderAsset: orderAsset.value || 'N/A'
     }
