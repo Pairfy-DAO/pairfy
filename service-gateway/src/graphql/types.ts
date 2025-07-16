@@ -147,16 +147,26 @@ input GetBooksInput {
   reverseCursor: String
 }  
 
-input GetOrdersInput {
-  id: String!
-} 
-
 input GetOrderInput {
   id: ID!
 } 
 
+type GetOrdersResponse {
+  orders: [Order]!
+  nextCursor: String
+  hasPrevMore: Boolean!
+  hasNextMore: Boolean!
+  totalCount: Int!
+}
+
+input GetOrdersInput {
+  cursor: String
+  reverseCursor: String
+}
+
 type Query {
   getOrder(getOrderInput: GetOrderInput!): getOrderResponse!
+  getOrders(getOrdersInput: GetOrdersInput!): GetOrdersResponse!
   getBooks(getBooksInput: GetBooksInput!): GetBooksResponse!
 }
 

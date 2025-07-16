@@ -9,12 +9,14 @@ import { appealedEndpoint } from "./cardano/appealed.js";
 import { getBooks } from "./book/getBooks.js";
 import { editBook } from "./book/editBook.js";
 import { getOrder } from "./order/getOrder.js";
+import { getOrders } from "./order/getOrders.js";
 
 ////////////////////////////////////////////////////////////////
 
 export const order = {
   Query: {
     getOrder,
+    getOrders
   },
 };
 

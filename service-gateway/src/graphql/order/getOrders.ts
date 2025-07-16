@@ -1,12 +1,12 @@
 import database from "../../database/client.js";
 import { ApiGraphQLError, ERROR_CODES, SellerToken } from "@pairfy/common";
-import { getProductsSchema } from "../../validators/getProducts.js";
+import { getOrdersSchema } from "../../validators/order/getOrders.js";
 
-export const getProducts = async (_: any, args: any, context: any) => {
+export const getOrders = async (_: any, args: any, context: any) => {
   let connection = null;
 
   try {
-    const verifyParams = getProductsSchema.safeParse(args.getProductsInput);
+    const verifyParams = getOrdersSchema.safeParse(args.getOrdersInput);
 
     if (!verifyParams.success) {
       throw new ApiGraphQLError(
@@ -56,7 +56,7 @@ export const getProducts = async (_: any, args: any, context: any) => {
     }
 
     const query = `
-      SELECT * FROM products
+      SELECT * FROM orders
       ${whereClause}
       ${orderClause}
       LIMIT ?
@@ -65,29 +65,28 @@ export const getProducts = async (_: any, args: any, context: any) => {
     queryParams.push(realLimit);
 
     connection = await database.client.getConnection();
+
     const [result] = await connection.query(query, queryParams);
 
     const hasMore = result.length > pageSize;
-    const products = hasMore ? result.slice(0, pageSize) : result;
+
+    const orders = hasMore ? result.slice(0, pageSize) : result;
 
     let nextCursor: string | null = null;
 
     if (hasMore) {
-      const item = isReversing
-        ? result[pageSize]
-        : products[products.length - 1];
+      const item = isReversing ? result[pageSize] : orders[orders.length - 1];
       nextCursor = `${item.created_at}_${item.id}`;
     }
 
-    const finalProducts = isReversing ? products.reverse() : products;
+    const finalOrders = isReversing ? orders.reverse() : orders;
 
     const [[{ total_count }]] = await connection.query(
-      "SELECT COUNT(*) AS total_count FROM products WHERE seller_id = ?",
+      "SELECT COUNT(*) AS total_count FROM orders WHERE seller_id = ?",
       [SELLER.id]
     );
 
     const resultLength = result.length;
-
     const isAdvancing = !!cursor;
 
     const isInitialLoad = !cursor && !reverseCursor;
@@ -101,7 +100,7 @@ export const getProducts = async (_: any, args: any, context: any) => {
       (isReversing && (isAdvancing || resultLength > 0));
 
     return {
-      products: finalProducts,
+      orders: finalOrders,
       nextCursor,
       hasPrevMore,
       hasNextMore,
