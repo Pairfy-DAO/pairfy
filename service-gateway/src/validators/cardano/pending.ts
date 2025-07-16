@@ -1,7 +1,7 @@
 import { productIdSchema } from "@pairfy/common";
 import { z } from "zod";
 
-export const pendingEndpointSchema = z.object({
+export const pendingEndpointSchema = z.strictObject({
   product_id: productIdSchema,
   order_units: z
     .number()
@@ -14,4 +14,4 @@ export const pendingEndpointSchema = z.object({
     .refine((val) => !!val, {
       message: "Asset must be one of ADA",
     })
-}).strict();
+});

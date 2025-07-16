@@ -46,7 +46,7 @@ export const getOrder = async (_: any, args: any, context: any) => {
 
       const address = null;
 
-      const shipping = null;
+      const shipping = order.shipping_metadata;
 
       const session = `${order.id}:${order.buyer_pubkeyhash}:${order.seller_id}`;
 
@@ -88,7 +88,7 @@ export const getOrder = async (_: any, args: any, context: any) => {
 
       const address = order.pending_metadata;
 
-      const shipping = null;
+      const shipping = order.shipping_metadata;
 
       const session = `${order.id}:${order.buyer_pubkeyhash}:${order.seller_id}`;
       

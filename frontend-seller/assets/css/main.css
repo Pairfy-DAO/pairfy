@@ -1,6 +1,5 @@
 * {
   font-family: "Inter", sans-serif;
-  transition: 0.3s ease-in-out;
 }
 
 body {
@@ -44,7 +43,7 @@ body {
   --primary-b: #3b82f6;
   --primary-b-base: 59, 130, 246;
 
-  --radius-a: 3px;
+  --radius-a: 4px;
   --radius-b: 6px;
   --radius-c: 12px;
   --radius-d: 18px;
@@ -132,4 +131,16 @@ textarea::placeholder {
 
 .center {
   justify-content: center;
+}
+
+.red{
+  color: var(--red-a);
+}
+
+.green{
+  color: var(--green-a);
+}
+
+.blue{
+  color: var(--blue-a);
 }

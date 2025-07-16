@@ -2,9 +2,9 @@ import { createEvent, getNotificationId } from "@pairfy/common";
 import { UtxoData } from "../lib/index.js";
 import { Connection } from "mysql2/promise";
 import { updateOrder } from "../common/updateOrder.js";
-import { jobResponse } from "./index.js";
 import { redisState } from "../database/redis.js";
 import { saveStatus } from "../lib/order.js";
+import { jobResponse } from "./index.js";
 
 export async function pending(
   connection: Connection,
@@ -19,36 +19,36 @@ export async function pending(
       {
         id: getNotificationId(),
         type: "order",
-        title: "Payment Detected ✅",
+        title: "Payment detected 💵",
         owner: orderData.buyer_pubkeyhash,
         data: JSON.stringify({
           id: orderData.id,
           buyer_address: orderData.buyer_address,
-          country: orderData.country,
           buyer_wallet: orderData.buyer_wallet,
+          country: orderData.country
         }),
-        message: `The payment is being processed on the network - Order N° ${orderData.id.slice(
+        message: `The payment is being processed on the network. - Order N° ${orderData.id.slice(
           0,
           10
-        )}`,
+        )}...`,
         created_at: timestamp,
         updated_at: timestamp,
       },
       {
         id: getNotificationId(),
         type: "order",
-        title: "New Purchase 🎉",
+        title: "New purchase 🎉",
         owner: orderData.seller_id,
         data: JSON.stringify({
           id: orderData.id,
           seller_address: orderData.seller_address,
-          country: orderData.country,
           seller_wallet: orderData.seller_wallet,
+          country: orderData.country,
         }),
-        message: `Verify payment and accept the order - Order N° ${orderData.id.slice(
+        message: `Verify payment and accept the order. - Order N° ${orderData.id.slice(
           0,
           10
-        )}`,
+        )}...`,
         created_at: timestamp,
         updated_at: timestamp,
       },

@@ -1,16 +1,13 @@
 import { database } from "../database/client.js";
-import { getUtxo, UtxoData, UtxoResponse } from "../lib/index.js";
+import { getUtxo, UtxoData } from "../lib/index.js";
 import { pending } from "./pending.js";
 import { returned } from "./returned.js";
 import { locking } from "./locking.js";
-import { handleShipping } from "./shipping.js";
-import { handleReceived } from "./received.js";
+import { shipping } from "./shipping.js";
+import { received } from "./received.js";
 import { collected } from "./collected.js";
 import { canceled } from "./canceled.js";
 import { appealed } from "./appealed.js";
-import { HandlerParams } from "./types.js";
-import { logger, sleep } from "@pairfy/common";
-import { updateOrder } from "../common/updateOrder.js";
 import { redisState } from "../database/redis.js";
 import { getSleepUntil } from "../lib/order.js";
 import { findOrderById } from "../common/findOrderById.js";
@@ -22,12 +19,12 @@ export type jobResponse = {
 };
 
 export async function testHandler(job: any): Promise<jobResponse> {
+  const { id } = job.data;
+
   let connection = null;
 
   try {
     const timestamp = Date.now();
-
-    const { id } = job.data;
 
     const sleepUntil = await getSleepUntil(redisState.client, id);
 
@@ -52,8 +49,7 @@ export async function testHandler(job: any): Promise<jobResponse> {
       return response;
     }
 
-    const result = await getUtxo(ORDER.id);
-    const { success, failed, ...utxoData } = result;
+    const { success, failed, ...data } = await getUtxo(ORDER.id);
 
     console.log(success, failed);
 
@@ -70,14 +66,36 @@ export async function testHandler(job: any): Promise<jobResponse> {
       }
     }
 
-    if (success && !failed && utxoData) {
-      const data: UtxoData = utxoData as UtxoData;
+    if (success && !failed && data) {
+      const utxoData: UtxoData = data as UtxoData;
 
-      switch (data.datum.state) {
+      switch (utxoData.datum.state) {
         case null:
           break;
         case 0n:
-          response = await pending(connection, timestamp, ORDER, data);
+          response = await pending(connection, timestamp, ORDER, utxoData);
+          break;
+        case -1n:
+          response = await returned(connection, timestamp, ORDER, utxoData);
+          break;
+        case 1n:
+          response = await locking(connection, timestamp, ORDER, utxoData);
+          break;
+        case -2n:
+          response = await canceled(connection, timestamp, ORDER, utxoData);
+          break;
+        case 2n:
+          response = await shipping(connection, timestamp, ORDER, utxoData);
+          break;
+        case -3n:
+          response = await appealed(connection, timestamp, ORDER, utxoData);
+          break;
+        case 3n:
+          response = await received(connection, timestamp, ORDER, utxoData);
+          break;
+        case 4n:
+          response = await collected(connection, timestamp, ORDER, utxoData);
+          break;
       }
     }
 
@@ -91,118 +109,3 @@ export async function testHandler(job: any): Promise<jobResponse> {
     if (connection) connection.release();
   }
 }
-
-/** 
-export async function threadtokenQueue(job: any) {
-  let connection = null;
-
-  try {
-    const {
-      threadtoken,
-      watch_until,
-      seller_id,
-      buyer_pubkeyhash,
-      buyer_address,
-      seller_address,
-      country,
-    } = job.data;
-
-    const { code, utxo } = await getUtxo(threadtoken);
-
-    console.log(code);
-
-    console.log(utxo);
-
-    const timestamp = Date.now();
-
-    let finished = false;
-
-    let status = "created";
-
-    if (timestamp > watch_until && code === 404) {
-      finished = true;
-      status = "expired";
-    }
-
-    connection = await database.client.getConnection();
-
-    ///////////////////////////////////////////////////////////////
-
-    await connection.beginTransaction();
-
-    if (code === 200) {
-      const handlerParams: HandlerParams = {
-        connection,
-        threadtoken,
-        timestamp,
-        utxo,
-        seller_id,
-        buyer_pubkeyhash,
-        buyer_address,
-        seller_address,
-        country,
-      };
-      switch (utxo.data.state) {
-        case null:
-          break;
-        case 0n:
-          await pending(handlerParams);
-          break;
-        case -1n:
-          await returned(handlerParams);
-          break;
-        case 1n:
-          await locking(handlerParams);
-          break;
-        case -2n:
-          await canceled(handlerParams);
-          break;
-        case 2n:
-          await handleShipping(handlerParams);
-          break;
-        case -3n:
-          await appealed(handlerParams);
-          break;
-        case 3n:
-          await handleReceived(handlerParams);
-          break;
-        case 4n:
-          await collected(handlerParams);
-          break;
-      }
-    } else {
-      const updateQuery = `
-        UPDATE orders
-        SET finished = ?,
-            scanned_at = ?,
-            status_log = ?
-        WHERE id = ?`;
-
-      await connection.execute(updateQuery, [
-        finished,
-        timestamp,
-        status,
-        threadtoken,
-      ]);
-    }
-
-    await connection.commit();
-
-    ///////////////////////////////////////////////////////////////
-
-    return {
-      threadtoken,
-      finished,
-      timestamp,
-    };
-  } catch (err) {
-    logger.error(err);
-
-    if (connection) await connection.rollback();
-
-    throw err;
-  } finally {
-    if (connection) connection.release();
-  }
-}
-*/

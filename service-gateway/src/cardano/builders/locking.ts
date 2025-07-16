@@ -23,7 +23,7 @@ async function lockingTransactionBuilder(
     throw new Error("NETWORK_ENV unset");
   }
 
-  if (process.env.NETWORK === "Mainnet") {
+  if (process.env.NETWORK_ENV === "Mainnet") {
     NETWORK = "Mainnet";
   }
 
@@ -61,7 +61,6 @@ async function lockingTransactionBuilder(
    //////////////////////////////////////////////////
 
   const txCollateral = 2_000_000n;
-
 
   const minLovelace = txCollateral
 

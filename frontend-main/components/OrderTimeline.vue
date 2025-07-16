@@ -64,7 +64,7 @@
                             </div>
                             <div class="template-item">
                                 <span>Asset Amount</span>
-                                <span>{{ orderData.contract_quote }} {{ orderData.asset_name }}</span>
+                                <span>{{ formatAssetQuantity(orderData.asset_name, orderData.contract_price) }}</span>
                             </div>
                             <div class="template-item">
                                 <span>Asset Price</span>
@@ -101,8 +101,8 @@
                                     <div class="flex" @click="">
                                         <i class="pi pi-globe" />
                                     </div>
-                                    <div class="flex" style="padding-right: initial; cursor: initial;"> 
-                                        {{guideData.guide }}
+                                    <div class="flex" style="padding-right: initial; cursor: initial;">
+                                        {{ guideData.guide }}
                                     </div>
                                 </span>
                                 <span v-else>None</span>
@@ -111,7 +111,7 @@
                     </template>
 
                     <template v-if="item.template === 'received'">
-                        x
+                        <UserPad />
                     </template>
                 </div>
             </div>
@@ -127,7 +127,16 @@ const orderStore = useOrderStore()
 const orderData = computed(() => orderStore.order)
 
 const shippingData = ref(null);
-const deliveryDate = ref('none'); 
+
+const deliveryDate = computed(() => {
+    const value = orderStore.shipping
+
+    if (!value) return 'none'
+
+    return formatDateYYMMDD(Number(value.public.tolerance))
+
+});
+
 const guideData = computed(() => {
     return {
         website: '',
@@ -137,7 +146,7 @@ const guideData = computed(() => {
 
 
 const shippingStatus = computed(() => {
-    const state = orderData.value.contract_state;
+    const state = orderStore.state;
 
     if (state === null) {
         return "pending"
@@ -148,19 +157,19 @@ const shippingStatus = computed(() => {
     }
 
     if (state === 1) {
-        return "preparing the package"
+        return "preparing"
     }
 
     if (state === 2) {
-        return "package shipped"
+        return "dispatched"
     }
 
     if (state === 3) {
-        return "package received"
+        return "received"
     }
 
     if (state === 4) {
-        return "package received"
+        return "received"
     }
 
     return "-"
@@ -195,15 +204,6 @@ const timeline = ref([
         line: false
     }
 ])
-
-
-function openExplorer() {
-    if (!import.meta.client) return
-
-    const cardanoNetwork = useRuntimeConfig().public.cardanoNetwork;
-
-    window.open(`https://${cardanoNetwork}.cexplorer.io/tx/${orderStore.pendingTx}`, '_blank');
-}
 
 </script>
 

@@ -1,40 +1,40 @@
 import { shippingTransactionBuilder } from "../../cardano/builders/shipping.js";
-import { chunkMetadata, encryptMetadata } from "../../lib/metadata.js";
+import { ApiGraphQLError, ERROR_CODES, SellerToken } from "@pairfy/common";
+import { findOrderBySeller } from "../../common/findOrderBySeller.js";
+import { chunkMetadata } from "../../lib/metadata.js";
 import database from "../../database/client.js";
-import { SellerToken } from "@pairfy/common";
 
-const shippingEndpoint = async (_: any, args: any, context: any) => {
-  if (!context.sellerData) {
-    throw new Error("CREDENTIALS");
-  }
-
-  const params = args.shippingEndpointInput;
-
-  console.log(params);
-
-  const SELLER = context.sellerData as SellerToken;
-
+export const shippingEndpoint = async (_: any, args: any, context: any) => {
   let connection = null;
 
   try {
-    connection = await database.client.getConnection();
-
-    const [row] = await connection.execute(
-      `SELECT
-             id,
-             finished,
-             contract_params,
-             contract_state
-       FROM orders          
-       WHERE id = ? AND seller_id = ?`,
-      [params.order_id, SELLER.id]
-    );
-
-    if (!row.length) {
-      throw new Error("NO_ORDER");
+    if (!context.sellerData) {
+      throw new ApiGraphQLError(401, "Invalid credentials", {
+        code: ERROR_CODES.UNAUTHORIZED,
+      });
     }
 
-    const ORDER = row[0];
+    const params = args.shippingEndpointInput;
+
+    console.log(params); //zod
+
+    const { sellerData: SELLER } = context as {
+      sellerData: SellerToken;
+    };
+
+    connection = await database.client.getConnection();
+
+    const ORDER = await findOrderBySeller(
+      connection,
+      params.order_id,
+      SELLER.id
+    );
+
+    if (!ORDER) {
+      throw new ApiGraphQLError(404, "Order not found", {
+        code: ERROR_CODES.NOT_FOUND,
+      });
+    }
 
     if (ORDER.finished) {
       throw new Error("ORDER_FINISHED");
@@ -48,67 +48,53 @@ const shippingEndpoint = async (_: any, args: any, context: any) => {
       throw new Error("STATE_DIFF");
     }
 
-    //////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////
 
     const deliveryDate = BigInt(params.date);
 
-    const extension =
-      deliveryDate + BigInt(process.env.DELIVERY_RANGE as string);
+    const deliveryTolerance =
+      deliveryDate + BigInt(process.env.DELIVERY_TOLERANCE as string);
 
     const appealUntil =
       deliveryDate + BigInt(process.env.APPEAL_RANGE as string);
 
-    //////////////////////////////////////////////
-
-    const PGPVersion = "1.0";
-
     const shippingData = {
-      order_id: params.order_id,
-      guide: params.guide,
-      date: deliveryDate.toString(),
-      extension: extension.toString(),
-      appeal_until: appealUntil.toString(),
-      website: params.website,
-      notes: params.notes,
-      version: PGPVersion,
+      public: {
+        id: ORDER.id,
+        date: deliveryDate.toString(),
+        tolerance: deliveryTolerance.toString(),
+        appeal_until: appealUntil.toString()
+      },
+      private: {
+        guide: params.guide,
+        notes: params.notes,
+        website: params.website
+      },
+      version: "1.0", //ENV VAR
     };
 
-    const encrypted = await encryptMetadata(
-      JSON.stringify(shippingData),
-      PGPVersion
-    );
+    const metadata = chunkMetadata(JSON.stringify(shippingData), 64); //move to @common
 
-    const metadata = {
-      version: PGPVersion,
-      msg: chunkMetadata(encrypted, 64),
-    };
-
-    //////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////
 
     const BUILDER = await shippingTransactionBuilder(
       SELLER.address,
       ORDER.contract_params,
-      deliveryDate,
+      deliveryTolerance,
       metadata
     );
 
     return {
       success: true,
-      payload: {
+      data: {
         cbor: BUILDER.cbor,
       },
     };
   } catch (err: any) {
-    if (connection) {
-      await connection.rollback();
-    }
+    if (connection) await connection.rollback();
 
-    throw new Error(err.message);
+    throw err;
   } finally {
-    if (connection) {
-      connection.release();
-    }
+    if (connection) connection.release();
   }
 };
-
-export { shippingEndpoint };

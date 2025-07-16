@@ -4,7 +4,7 @@
     "module": "es2022",               
     "outDir": "./dist",                
     "rootDir": "./src",                
-    "lib": ["es2023"],
+    "lib": ["es2023", "DOM"],
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,

@@ -620,17 +620,20 @@ function displayMessage(message, type, duration) {
 
 <style lang="css" scoped>
 .card {
-    width: 100%;
     display: flex;
     padding-top: 1rem;
     justify-content: center;
+    background-image: var(--gradient-a);
+    border: 1px solid var(--border-a);
+    border-radius: var(--radius-a);
+    margin: 0.5rem;
 }
 
 .grid {
     grid-template-columns: 1fr;
-    max-width: 1100px;
-    width: inherit;
+    max-width: 1000px;
     display: grid;
+    width: 100%;
     gap: 0rem;
 }
 
@@ -640,7 +643,6 @@ function displayMessage(message, type, duration) {
     font-weight: bold;
     display: flex;
 }
-
 
 .grid-subtitle {
     font-size: var(--text-size-1);
@@ -660,6 +662,7 @@ function displayMessage(message, type, duration) {
     background: var(--background-a);
     border-radius: var(--radius-b);
     box-shadow: var(--shadow-a);
+    box-sizing: border-box;
     margin-bottom: 1rem;
     padding: 1.5rem;
 }
@@ -671,10 +674,10 @@ function displayMessage(message, type, duration) {
 }
 
 .flag {
-    width: 1rem;
+  width: 1rem;
 }
 
 .big-flag {
-    width: 1.5rem;
+  width: 1.5rem;
 }
 </style>

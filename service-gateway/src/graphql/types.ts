@@ -147,16 +147,26 @@ input GetBooksInput {
   reverseCursor: String
 }  
 
-input GetOrdersInput {
-  id: String!
-} 
-
 input GetOrderInput {
   id: ID!
 } 
 
+type GetOrdersResponse {
+  orders: [Order]!
+  nextCursor: String
+  hasPrevMore: Boolean!
+  hasNextMore: Boolean!
+  totalCount: Int!
+}
+
+input GetOrdersInput {
+  cursor: String
+  reverseCursor: String
+}
+
 type Query {
   getOrder(getOrderInput: GetOrderInput!): getOrderResponse!
+  getOrders(getOrdersInput: GetOrdersInput!): GetOrdersResponse!
   getBooks(getBooksInput: GetBooksInput!): GetBooksResponse!
 }
 
@@ -167,7 +177,7 @@ type EditBookResponse {
   message: String!
 }
 
-type CborPayload {
+type CborData {
   cbor: String!
 }
 
@@ -183,39 +193,39 @@ type PendingEndpointResponse {
   data: PendingEndpointPayload!
 }
 
-type CancelEndpointResponse {
+type CanceledEndpointResponse {
   success: Boolean!
-  payload: CborPayload!
+  data: CborData!
 }
 
-type ReturnEndpointResponse {
+type ReturnedEndpointResponse {
   success: Boolean!
-  payload: CborPayload!
+  data: CborData!
 }
 
 type LockingEndpointResponse {
   success: Boolean!
-  payload: CborPayload!
+  data: CborData!
 }
 
 type ShippingEndpointResponse {
   success: Boolean!
-  payload: CborPayload!
+  data: CborData!
 }
 
-type AppealEndpointResponse {
+type AppealedEndpointResponse {
   success: Boolean!
-  payload: CborPayload!
+  data: CborData!
 }
 
 type ReceivedEndpointResponse {
   success: Boolean!
-  payload: CborPayload!
+  data: CborData!
 }
 
-type CollectEndpointResponse {
+type CollectedEndpointResponse {
   success: Boolean!
-  payload: CborPayload!
+  data: CborData!
 }
 
 input EditBookInput {
@@ -233,11 +243,11 @@ input PendingEndpointInput {
   asset: String!
 } 
 
-input CancelEndpointInput {
+input CanceledEndpointInput {
   order_id: String!
 } 
 
-input ReturnEndpointInput {
+input ReturnedEndpointInput {
   order_id: String!
 } 
 
@@ -250,10 +260,10 @@ input ShippingEndpointInput {
   guide: String!
   date: String!
   website: String!
-  notes: String!
+  notes: String
 } 
 
-input AppealEndpointInput {
+input AppealedEndpointInput {
   order_id: String!
 } 
 
@@ -261,20 +271,20 @@ input ReceivedEndpointInput {
   order_id: String!
 } 
 
-input CollectEndpointInput {
+input CollectedEndpointInput {
   order_id: String!
 } 
 
 type Mutation {
   editBook(editBookInput: EditBookInput!): EditBookResponse!
   pendingEndpoint(pendingEndpointInput: PendingEndpointInput!): PendingEndpointResponse!
-  cancelEndpoint(cancelEndpointInput: CancelEndpointInput!): CancelEndpointResponse!
-  returnEndpoint(returnEndpointInput: ReturnEndpointInput!): ReturnEndpointResponse!
+  canceledEndpoint(canceledEndpointInput: CanceledEndpointInput!): CanceledEndpointResponse!
+  returnedEndpoint(returnedEndpointInput: ReturnedEndpointInput!): ReturnedEndpointResponse!
   lockingEndpoint(lockingEndpointInput: LockingEndpointInput!): LockingEndpointResponse!
   shippingEndpoint(shippingEndpointInput: ShippingEndpointInput!): ShippingEndpointResponse!
-  appealEndpoint(appealEndpointInput: AppealEndpointInput!): AppealEndpointResponse!
+  appealedEndpoint(appealedEndpointInput: AppealedEndpointInput!): AppealedEndpointResponse!
   receivedEndpoint(receivedEndpointInput: ReceivedEndpointInput!): ReceivedEndpointResponse!
-  collectEndpoint(collectEndpointInput: CollectEndpointInput!): CollectEndpointResponse!
+  collectedEndpoint(collectedEndpointInput: CollectedEndpointInput!): CollectedEndpointResponse!
 }
 
 `;

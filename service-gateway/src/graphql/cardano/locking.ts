@@ -1,38 +1,54 @@
-import { SellerToken } from "@pairfy/common";
-import { lockingTransactionBuilder } from "../../cardano/builders/locking.js";
 import database from "../../database/client.js";
+import { ApiGraphQLError, ERROR_CODES, SellerToken } from "@pairfy/common";
+import { lockingTransactionBuilder } from "../../cardano/builders/locking.js";
+import { findOrderBySeller } from "../../common/findOrderBySeller.js";
+import { lockingEndpointSchema } from "../../validators/cardano/locking.js";
 
-const lockingEndpoint = async (_: any, args: any, context: any) => {
-  if (!context.sellerData) {
-    throw new Error("CREDENTIALS");
-  }
-  const params = args.lockingEndpointInput;
-
-  console.log(params);
-
-  const SELLER = context.sellerData as SellerToken;
-
+export const lockingEndpoint = async (_: any, args: any, context: any) => {
   let connection = null;
 
   try {
-    connection = await database.client.getConnection();
-
-    const [row] = await connection.execute(
-      `SELECT
-             id,
-             finished,
-             contract_params,
-             contract_state
-       FROM orders          
-       WHERE id = ? AND seller_id = ?`,
-      [params.order_id, SELLER.id]
-    );
-
-    if (!row.length) {
-      throw new Error("NO_ORDER");
+    if (!context.sellerData) {
+      throw new ApiGraphQLError(401, "Invalid credentials", {
+        code: ERROR_CODES.UNAUTHORIZED,
+      });
     }
 
-    const ORDER = row[0];
+    const validateParams = lockingEndpointSchema.safeParse(
+      args.lockingEndpointInput
+    );
+
+    if (!validateParams.success) {
+      throw new ApiGraphQLError(
+        400,
+        `Invalid params ${JSON.stringify(validateParams.error.flatten())}`,
+        {
+          code: ERROR_CODES.VALIDATION_ERROR,
+        }
+      );
+    }
+
+    const params = validateParams.data;
+
+    console.log(params);
+
+    const { sellerData: SELLER } = context as {
+      sellerData: SellerToken;
+    };
+
+    connection = await database.client.getConnection();
+
+    const ORDER = await findOrderBySeller(
+      connection,
+      params.order_id,
+      SELLER.id
+    );
+
+    if (!ORDER) {
+      throw new ApiGraphQLError(404, "Order not found", {
+        code: ERROR_CODES.NOT_FOUND,
+      });
+    }
 
     if (ORDER.finished) {
       throw new Error("ORDER_FINISHED");
@@ -46,8 +62,6 @@ const lockingEndpoint = async (_: any, args: any, context: any) => {
       throw new Error("STATE_DIFF_ZERO");
     }
 
-    //////////////////////////////////////////////
-
     const BUILDER = await lockingTransactionBuilder(
       SELLER.address,
       ORDER.contract_params
@@ -55,21 +69,15 @@ const lockingEndpoint = async (_: any, args: any, context: any) => {
 
     return {
       success: true,
-      payload: {
+      data: {
         cbor: BUILDER.cbor,
       },
     };
   } catch (err: any) {
-    if (connection) {
-      await connection.rollback();
-    }
+    if (connection) await connection.rollback();
 
-    throw new Error(err.message);
+    throw err;
   } finally {
-    if (connection) {
-      connection.release();
-    }
+    if (connection) connection.release();
   }
 };
-
-export { lockingEndpoint };
