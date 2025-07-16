@@ -10,20 +10,16 @@ const { $gatewayClient } = useNuxtApp()
 const orderStore = useOrderStore()
 const walletStore = useWalletStore()
 
-const label = computed(() => 'Collect')
+const label = computed(() => `Cancel ${orderStore.countdown}`)
 
 const loading = ref(false)
 
 const disabled = computed(() => {
-    const now = Date.now()
+    if (orderStore.countdown !== '00:00') {
+        return true
+    }
 
-    const appealUntil = orderStore.shipping?.public?.appeal_until
-
-    const rule1 = orderStore.state === 2 && now > Number(appealUntil)
-
-    const rule2 = orderStore.state === 3
-
-    if (!rule1 && !rule2) {
+    if (orderStore.state !== 1) {
         return true
     }
 
@@ -37,9 +33,9 @@ const disabled = computed(() => {
 const onClick = async () => {
     if (!import.meta.client) return;
 
-    const COLLECTED_ENDPOINT_MUTATION = gql`
-      mutation($collectedEndpointVariable: CollectedEndpointInput!) {
-        collectedEndpoint(collectedEndpointInput: $collectedEndpointVariable) {
+    const CANCELED_ENDPOINT_MUTATION = gql`
+      mutation($canceledEndpointVariable: CanceledEndpointInput!) {
+        canceledEndpoint(canceledEndpointInput: $canceledEndpointVariable) {
           success
           data {
             cbor
@@ -53,30 +49,30 @@ const onClick = async () => {
         loading.value = true
 
         const { data } = await $gatewayClient.mutate({
-            mutation: COLLECTED_ENDPOINT_MUTATION,
+            mutation: CANCELED_ENDPOINT_MUTATION,
             variables: {
-                collectedEndpointVariable: {
+                canceledEndpointVariable: {
                     order_id: orderStore.order.id
                 }
             },
         });
 
-        const response = data.collectedEndpoint;
+        const response = data.canceledEndpoint;
 
         const txHash = await walletStore.balanceTx(response.data.cbor)
 
         console.log(txHash)
 
-        orderStore.showToast(`The transaction has been sent to the network. TxHash: ${txHash}`, 'success', 10_000)
-
+        orderStore.showToast(`The transaction has been sent to the network. TxHash: ${txHash}`, 'success', 30_000)
+        
         await sleep(30_000)
-
+        
         loading.value = false
     } catch (err) {
-        console.error('collectedEndpoint:', err);
+        console.error('canceledEndpoint:', err);
         orderStore.showToast(err, 'error', 10_000)
         loading.value = false
-    }
+    } 
 
 }
 </script>
