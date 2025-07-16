@@ -46,6 +46,15 @@
             v-show="!isCollapsed || isHovering">Books</span>
         </NuxtLink>
 
+        <NuxtLink to="/order-list" :class="{ selected: currentPath === 'order-list' }">
+          <span class="sidebar-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-list-icon lucide-clipboard-list"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>
+          </span>
+          <span class="sidebar-label"
+            :class="{ collapsed: isCollapsed && !isHovering, selected: currentPath === 'order-list' }"
+            v-show="!isCollapsed || isHovering">Orders</span>
+        </NuxtLink>
+
         <NuxtLink to="/create-product" :class="{ selected: currentPath === 'create-product' }">
           <span class="sidebar-icon">
 
