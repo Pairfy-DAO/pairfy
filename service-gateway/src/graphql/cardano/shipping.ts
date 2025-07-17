@@ -1,8 +1,10 @@
 import { shippingTransactionBuilder } from "../../cardano/builders/shipping.js";
+import { shippingEndpoinSchema } from "../../validators/cardano/shipping.js";
 import { ApiGraphQLError, ERROR_CODES, SellerToken } from "@pairfy/common";
 import { findOrderBySeller } from "../../common/findOrderBySeller.js";
 import { chunkMetadata } from "../../lib/metadata.js";
 import database from "../../database/client.js";
+
 
 export const shippingEndpoint = async (_: any, args: any, context: any) => {
   let connection = null;
@@ -14,9 +16,22 @@ export const shippingEndpoint = async (_: any, args: any, context: any) => {
       });
     }
 
-    const params = args.shippingEndpointInput;
+    const validateParams = shippingEndpoinSchema.safeParse(
+      args.shippingEndpointInput
+    );
 
-    console.log(params); //zod
+    if (!validateParams.success) {
+      throw new ApiGraphQLError(
+        400,
+        `Invalid params ${JSON.stringify(validateParams.error.flatten())}`,
+        {
+          code: ERROR_CODES.VALIDATION_ERROR,
+        }
+      );
+    }
+
+    const params = validateParams.data;
+    console.log(params);
 
     const { sellerData: SELLER } = context as {
       sellerData: SellerToken;
@@ -58,22 +73,16 @@ export const shippingEndpoint = async (_: any, args: any, context: any) => {
     const appealUntil =
       deliveryDate + BigInt(process.env.APPEAL_RANGE as string);
 
-    const shippingData = {
+    const scheme = {
       public: {
-        id: ORDER.id,
         date: deliveryDate.toString(),
         tolerance: deliveryTolerance.toString(),
-        appeal_until: appealUntil.toString()
+        appeal_until: appealUntil.toString(),
       },
-      private: {
-        guide: params.guide,
-        website: params.website,
-        notes: params.notes
-      },
-      version: "1.0", //ENV VAR
+      private: params.metadata,
     };
 
-    const metadata = chunkMetadata(JSON.stringify(shippingData), 64); //move to @common
+    const metadata = chunkMetadata(JSON.stringify(scheme), 64); //move to @common
 
     ////////////////////////////////////////////////////////////////////////////////////////////
 

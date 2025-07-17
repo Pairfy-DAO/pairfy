@@ -1,5 +1,6 @@
 const typeDefs = `#graphql
 scalar BigInt
+scalar Timestamp
 
 type Product {
     id: String!
@@ -259,10 +260,8 @@ input LockingEndpointInput {
 
 input ShippingEndpointInput {
   order_id: String!
-  guide: String!
-  date: String!
-  website: String!
-  notes: String
+  date: Timestamp!
+  metadata: String!
 } 
 
 input AppealedEndpointInput {

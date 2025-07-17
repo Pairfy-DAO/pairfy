@@ -10,49 +10,67 @@
 
       <div class="form-group">
         <label for="guide">Guide number</label>
-        <input type="text" id="guide" v-model="form.guide" maxlength="30" />
-        <span v-if="errors.guide" class="error">{{ errors.guide }}</span>
+        <input type="text" id="guide" v-model="form.guide" maxlength="40" @beforeinput="onInput" />
       </div>
 
 
       <div class="form-group">
         <label for="website">Website</label>
-        <input type="text" id="website" v-model="form.website" maxlength="150" />
-        <span v-if="errors.website" class="error">{{ errors.website }}</span>
-      </div>
-
-
-      <div class="form-group">
-        <label for="notes">Notes</label>
-        <textarea id="notes" v-model="form.notes" maxlength="100"></textarea>
-        <span v-if="errors.notes" class="error">{{ errors.notes }}</span>
+        <input type="text" id="website" v-model="form.website" maxlength="110" @beforeinput="onInput" />
       </div>
 
       <div class="flex end">
-        <ButtonSolid label="Submit" size="mini" />
+        <ButtonSolid label="Submit" size="mini"  :loading="loading"/>
       </div>
     </form>
   </div>
 </template>
 
 <script setup>
+import { encryptMessageWithPublicKey } from '@pairfy/common-f'
+import { gql } from '@apollo/client/core'
+import { Buffer } from 'buffer';
 import { z } from "zod";
 
+const emit = defineEmits(['loading'])
+
+const { $gatewayClient } = useNuxtApp()
+
 const orderStore = useOrderStore()
+const walletStore = useWalletStore()
 
 const form = reactive({
   dateInput: '',
   date: null,
   guide: '',
-  website: '',
-  notes: ''
+  website: ''
 })
 
-const errors = reactive({
-  guide: '',
-  website: '',
-  notes: ''
+const loading = ref(false)
+
+watch(loading, (val) => {
+  emit('loading', val)
 })
+
+const totalBytes = computed(() => {
+
+  const metadata = {
+    d: JSON.stringify(form.date),
+    g: form.guide,
+    w: form.website
+  }
+
+  const compressed = JSON.stringify(metadata)
+  return Buffer.byteLength(compressed, "utf8") || 0
+})
+
+
+function onInput(event) {
+  const input = event.data ?? ''
+  if (!/^[\x00-\x7F]*$/.test(input)) {
+    event.preventDefault()
+  }
+}
 
 function convertToTimestamp() {
   const dt = new Date(form.dateInput)
@@ -61,40 +79,82 @@ function convertToTimestamp() {
 
 const shippingSchema = z.object({
   date: z.number().int().nonnegative(),
-  guide: z.string().min(1).max(30),
-  website: z.string().min(1).max(150),
-  notes: z.string().min(1).max(100),
+  guide: z.string().min(1).max(40),
+  website: z.string().min(1).max(110),
 });
 
-function validateForm() {
-  errors.guide = form.guide.length > 30 ? 'Máximo 30 caracteres' : ''
-  errors.website = form.website.length > 150 ? 'Máximo 150 caracteres' : ''
-  errors.notes = form.notes.length > 100 ? 'Máximo 100 caracteres' : ''
-  return !(errors.guide || errors.website || errors.notes)
-}
+async function submitForm() {
+  if (!import.meta.client) return;
 
-function submitForm() {
+  const SHIPPING_ENDPOINT_MUTATION = gql`
+      mutation($shippingEndpointVariable: ShippingEndpointInput!) {
+        shippingEndpoint(shippingEndpointInput: $shippingEndpointVariable) {
+          success
+          data {
+            cbor
+          }
+        }
+      }
+        
+`
+
   try {
-    if(!validateForm()){
-      return
+    loading.value = true
+
+    const validateParams = shippingSchema.safeParse(form);
+
+    if (!validateParams.success) {
+      throw new Error(`Invalid params ${JSON.stringify(z.treeifyError(validateParams.error))}`)
     }
 
-    const result = shippingSchema.safeParse(form);
+    const params = validateParams.data
 
-    if (!result.success) {
-      console.error("Validation error:", result.error.issues);
-      throw new Error(`Invalid params ${JSON.stringify(z.treeifyError(result.error))}`)
+    const metadata = {
+      d: JSON.stringify(params.date),
+      g: params.guide,
+      w: params.website
     }
 
+    const encrypted = encryptMessageWithPublicKey(orderStore.order.buyer_rsa_public_key, JSON.stringify(metadata));
+
+    console.log("✅ Encrypted metadata: ", encrypted);
+
+    const scheme = {
+      order_id: orderStore.order.id,
+      date: form.date,
+      metadata: encrypted
+    }
+
+    const { data } = await $gatewayClient.mutate({
+      mutation: SHIPPING_ENDPOINT_MUTATION,
+      variables: {
+        shippingEndpointVariable: scheme
+      },
+    });
+
+    const response = data.shippingEndpoint;
+
+    const txHash = await walletStore.balanceTx(response.data.cbor)
+
+    console.log(txHash)
+
+    orderStore.showToast(`The transaction has been sent to the network. TxHash: ${txHash}`, 'success', 10_000)
+
+    await sleep(120_000)
+
+    loading.value = false
   } catch (err) {
-    orderStore.showToast(err, 'error', 10_000)
+    console.error("shippingEndpoint:", err);
+    orderStore.showToast(err, 'error', 12_000)
+    loading.value = false
   }
 }
+
 </script>
 
 <style scoped>
 .DispatchView {
-  width: 325px;
+  width: 300px;
   padding: 1.5rem;
   padding-top: 0rem;
 }
