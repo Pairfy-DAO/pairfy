@@ -55,7 +55,7 @@ const passwordValueValid = ref(false)
 
 const disableButton = computed(() => !passwordValue.value || !passwordValueValid.value)
 
-const passwordVersion = computed(() => `Password v${orderStore.order?.rsa_version}`)
+const passwordVersion = computed(() => `Password v${orderStore.order?.seller_rsa_version}`)
 
 const base64Regex = /^[A-Za-z0-9+/]+={0,2}$/
 const metadataSchema = z.array(
