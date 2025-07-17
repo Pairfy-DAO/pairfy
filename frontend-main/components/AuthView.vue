@@ -57,10 +57,12 @@ const connectWallet = async (name) => {
             address,
             wallet_name: name,
             country: auth.country?.toUpperCase(),
-            terms_accepted: true
+            terms_accepted: true,
+            password: 'password1'
         })
 
         auth.authDrawer = false
+        window.location.reload()
     } catch (err) {
         console.error(err);
  

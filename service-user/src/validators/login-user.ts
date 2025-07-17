@@ -18,7 +18,7 @@ const signatureSchema = z.object({
     .max(2048, "Signature is too long"),
 }).strict(); 
 
-export const loginUserSchema = z.object({
+export const loginUserSchema = z.strictObject({
   signature: signatureSchema,
 
   address: z.string()
@@ -36,4 +36,6 @@ export const loginUserSchema = z.object({
   country: countryEnum,
 
   terms_accepted: z.literal(true),
-}).strict(); 
+
+  password: z.string()
+}); 

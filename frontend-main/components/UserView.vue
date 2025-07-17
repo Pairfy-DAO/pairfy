@@ -48,6 +48,7 @@ const auth = useAuthStore()
 const onLogout = async () => {
     try {
         await auth.logout()
+        window.location.reload()
     } catch (err) {
         console.error(err)
     }

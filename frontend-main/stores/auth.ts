@@ -92,6 +92,7 @@ export const useAuthStore = defineStore("auth", () => {
     wallet_name: string;
     country: string;
     terms_accepted: boolean;
+    password: string;
   }) => {
     if (!import.meta.client) return;
 
