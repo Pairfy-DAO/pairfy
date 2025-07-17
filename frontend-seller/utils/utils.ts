@@ -82,3 +82,35 @@ export function formatCompleteDate(timestamp: string | number, seg?: boolean) {
 export function timeAgo(timestamp: number) {
   return formatDistanceToNow(new Date(timestamp), { addSuffix: true });
 }
+
+export function formatCountdown(value: string) {
+  if(!value) return;
+
+  let [minutes, seconds] = value.split(":").map(Number);
+
+  const hours = Math.floor(minutes / 60);
+
+  const days = Math.floor(hours / 24);
+
+  const remainingHours = hours % 24;
+
+  minutes = minutes % 60;
+
+  minutes += Math.floor(seconds / 60);
+
+  seconds = seconds % 60;
+
+  minutes = Math.min(minutes, 99);
+
+  return `${days}d : ${remainingHours}h : ${minutes}m : ${seconds}s`;
+}
+
+export function formatAssetQuantity(name: string, value: number) {
+  if (name === "ADA") {
+    const result = value / 1_000_000;
+
+    return result.toFixed(2) + " " + name;
+  }
+
+  return value
+}

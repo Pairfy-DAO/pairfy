@@ -28,8 +28,8 @@
 const props = defineProps({
   id: { type: String, default: 'input-note' },
   modelValue: { type: [String, null], default: null },
-  label: { type: String, default: 'Note' },
-  placeholder: { type: String, default: 'Other indications...' },
+  label: { type: String, default: 'Notes' },
+  placeholder: { type: String, default: 'Notes' },
   focus: { type: Boolean, default: false },
   required: { type: Boolean, default: true },
   maxLength: { type: Number, default: 60 },

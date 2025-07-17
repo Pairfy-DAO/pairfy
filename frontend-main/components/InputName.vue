@@ -29,7 +29,7 @@ const props = defineProps({
   id: { type: String, default: 'input-name' },
   modelValue: { type: [String, null], default: null },
   label: { type: String, default: 'Name' },
-  placeholder: { type: String, default: 'Michael Brown' },
+  placeholder: { type: String, default: 'John Doe' },
   focus: { type: Boolean, default: false },
   required: { type: Boolean, default: true },
   maxLength: { type: Number, default: 30 },

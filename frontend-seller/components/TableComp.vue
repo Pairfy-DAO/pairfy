@@ -61,18 +61,18 @@
 
       <tbody>
         <tr class="rows" v-for="item in filteredItems" :key="item.id">
-          <td class="image" :style="{ width: columnWidths['image'] || 'auto' }" v-if="images">
+          <td class="image" :style="{ width: columnWidths['image'] || 'auto', maxWidth: columnWidths['image'] || 'fit-content' }" v-if="images">
             <slot name="image" :item="item" />
           </td>
 
           <td class="row" v-for="column in columns" :key="column.field"
-            :style="{ width: columnWidths[column.field] || 'auto' }">
+            :style="{ width: columnWidths[column.field] || 'auto', maxWidth: columnWidths[column.field] || 'fit-content' }">
             <slot :name="`col-${column.field}`" :value="item[column.field]" :item="item">
               {{ item[column.field] }}
             </slot>
           </td>
 
-          <td class="row" :style="{ width: columnWidths['actions'] || 'auto' }" v-if="actions">
+          <td class="row" :style="{ width: columnWidths['actions'] || 'auto', maxWidth: columnWidths['actions'] || 'fit-content' }" v-if="actions">
             <slot name="actions" :item="item" />
           </td>
         </tr>
@@ -148,13 +148,15 @@ const nextPage = () => {
 .datatable {
   border: 1px solid var(--border-a);
   background: var(--background-a);
+  transition: var(--transition-a);
   border-radius: var(--radius-a);
   font-size: var(--text-size-1);
+  box-sizing: border-box;
   flex-direction: column;
   color: var(--text-a);
   min-height: 100vh;
-  transition: 0.2s;
   overflow: hidden;
+  padding: 0.5rem;
   width: 100%;
 }
 
@@ -196,7 +198,7 @@ const nextPage = () => {
 
 .search input {
   background: transparent;
-  padding: 0.65rem 1rem;
+  padding: var(--input-padding);
   min-width: 300px;
   width: inherit;
   border: none;
@@ -270,7 +272,7 @@ const nextPage = () => {
   max-width: 15rem;
   text-align: left;
   overflow-wrap: break-word;
-  border-left: 1px solid var(--border-a);
+  border-right: 1px solid var(--border-a);
 }
 
 .row.hidden {

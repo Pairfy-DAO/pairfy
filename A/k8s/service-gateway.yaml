@@ -40,8 +40,8 @@ spec:
               value: "86400000"
             - name: APPEAL_RANGE
               value: "604800000"
-            - name: DELIVERY_RANGE
-              value: "864000000"              
+            - name: DELIVERY_TOLERANCE
+              value: "432000000"              
             - name: EXPIRING_RANGE
               value: "5184000000"
             - name: FEE_PERCENT

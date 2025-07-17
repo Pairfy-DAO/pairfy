@@ -4,7 +4,7 @@
             <!--HEADER START-->
             <div class="OrderChat-header">
                 <div class="avatar">
-                    <img src="https://api.dicebear.com/9.x/initials/svg?seed=Luis" alt="">
+                    <img :src="avatarImage" alt="">
                 </div>
                 <div class="name">
                     <span>{{ orderData.buyer_username }}</span>
@@ -83,6 +83,8 @@ const lastSeenTime = computed(() => {
 
     return null
 });
+
+const avatarImage = computed(() => `https://api.dicebear.com/9.x/initials/svg?seed=${orderData.value.buyer_username || 'UserName'}`)
 
 const textareaRef = ref(null);
 

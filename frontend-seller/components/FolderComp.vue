@@ -45,7 +45,8 @@ const onSelect = (index) => {
 .tab {
     border-top-right-radius: var(--radius-b);
     border-top-left-radius: var(--radius-b);
-    background: rgba(255,255,255, 0.5);
+    background: var(--background-b);
+    border: 1px solid var(--border-a);
     transition: var(--transition-a);
     font-size: var(--text-size-1);
     justify-content: flex-start;

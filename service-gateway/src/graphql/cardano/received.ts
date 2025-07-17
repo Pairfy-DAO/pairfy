@@ -1,38 +1,52 @@
-import { receivedTransactionBuilder } from "../../cardano/builders/received.js";
-import { UserToken } from "@pairfy/common";
 import database from "../../database/client.js";
+import { receivedTransactionBuilder } from "../../cardano/builders/received.js";
+import { ApiGraphQLError, ERROR_CODES, UserToken } from "@pairfy/common";
+import { findOrderByUser } from "../../common/findOrderByUser.js";
+import { receivedEndpointSchema } from "../../validators/cardano/received.js";
 
-const receivedEndpoint = async (_: any, args: any, context: any) => {
-  if (!context.userData) {
-    throw new Error("CREDENTIALS");
-  }
-  const params = args.receivedEndpointInput;
-
-  console.log(params);
-
-  const BUYER = context.userData as UserToken;
-
+export const receivedEndpoint = async (_: any, args: any, context: any) => {
   let connection = null;
 
   try {
-    connection = await database.client.getConnection();
-
-    const [row] = await connection.execute(
-      `SELECT
-             id,
-             finished,
-             contract_params,
-             contract_state
-       FROM orders          
-       WHERE id = ? AND buyer_pubkeyhash = ?`,
-      [params.order_id, BUYER.pubkeyhash]
-    );
-
-    if (!row.length) {
-      throw new Error("NO_ORDER");
+    if (!context.userData) {
+      throw new ApiGraphQLError(401, "Invalid credentials", {
+        code: ERROR_CODES.UNAUTHORIZED,
+      });
     }
 
-    const ORDER = row[0];
+    const validateParams = receivedEndpointSchema.safeParse(
+      args.receivedEndpointInput
+    );
+
+    if (!validateParams.success) {
+      throw new ApiGraphQLError(
+        400,
+        `Invalid params ${JSON.stringify(validateParams.error.flatten())}`,
+        {
+          code: ERROR_CODES.VALIDATION_ERROR,
+        }
+      );
+    }
+
+    const params = validateParams.data;
+
+    console.log(params);
+
+    const { userData: USER } = context as { userData: UserToken };
+
+    connection = await database.client.getConnection();
+
+    const ORDER = await findOrderByUser(
+      connection,
+      params.order_id,
+      USER.pubkeyhash
+    );
+
+    if (!ORDER) {
+      throw new ApiGraphQLError(404, "Order not found", {
+        code: ERROR_CODES.NOT_FOUND,
+      });
+    }
 
     if (ORDER.finished) {
       throw new Error("ORDER_FINISHED");
@@ -46,30 +60,22 @@ const receivedEndpoint = async (_: any, args: any, context: any) => {
       throw new Error("WRONG_STATE");
     }
 
-    //////////////////////////////////////////////
-
     const BUILDER = await receivedTransactionBuilder(
-      BUYER.address,
+      USER.address,
       ORDER.contract_params
     );
 
     return {
       success: true,
-      payload: {
+      data: {
         cbor: BUILDER.cbor,
       },
     };
   } catch (err: any) {
-    if (connection) {
-      await connection.rollback();
-    }
+    if (connection) await connection.rollback();
 
-    throw new Error(err.message);
+    throw err;
   } finally {
-    if (connection) {
-      connection.release();
-    }
+    if (connection) connection.release();
   }
 };
-
-export { receivedEndpoint };

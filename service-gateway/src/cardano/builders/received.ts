@@ -24,7 +24,7 @@ async function receivedTransactionBuilder(
     throw new Error("NETWORK_ENV unset");
   }
 
-  if (process.env.NETWORK === "Mainnet") {
+  if (process.env.NETWORK_ENV === "Mainnet") {
     NETWORK = "Mainnet";
   }
 

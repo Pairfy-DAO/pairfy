@@ -9,15 +9,14 @@ import {
   createEvent,
   insertSeller,
   createToken,
-  findSellerByEmail,
   findSellerById,
+  encryptAESGCM,
+  generateRSA
 } from "@pairfy/common";
 import {
   validateParams,
   RegistrationInput,
 } from "../validators/create-seller.js";
-import { generateRSA } from "../utils/rsa.js";
-import { encryptAESGCM } from "../utils/aes.js";
 
 export const createSellerMiddlewares: any = [validateParams];
 

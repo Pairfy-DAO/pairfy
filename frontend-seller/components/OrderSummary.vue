@@ -6,9 +6,9 @@
                 {{ orderTitle }}
             </div>
 
-            <span v-if="!orderStore.finished">{{ globalCountdown }}</span>
+            <span v-if="visibleCountdown">{{ formatCountdown(globalCountdown) }}</span>
 
-            <FinishedIcon v-if="orderStore.finished"/>
+            <FinishedIcon v-if="visibleIcon" />
         </div>
 
         <div class="OrderSummary-subtitle">
@@ -72,9 +72,17 @@ const orderTitle = computed(
         if (state === 0) {
             title = "Prepare the package, Time Remaining"
         }
+        
+        if (state === -1) {
+            title = "The order has been returned."
+        }
 
         if (state === 1) {
             title = "Prepare the package, Time Remaining "
+        }
+
+        if (state === -2) {
+            title = "The order has been cancelled."
         }
 
         if (state === 2) {
@@ -82,9 +90,12 @@ const orderTitle = computed(
         }
 
         if (state === 3) {
-            title = "The Package is Arriving, Time Remaining "
+            title = "The Package has Arrived, Time Remaining "
         }
 
+        if (state === 4) {
+            title = "The funds have been collected."
+        }
         return title
     }
 )
@@ -108,23 +119,46 @@ const globalTimestamp = computed(() => {
         return orderData.value.shipping_until
     }
 
-    if (state === 2) {
-        return orderStore.value.shipping
+    if (state === -2) {
+        return Date.now()
     }
 
-    if (state === 3) {
-        return Date.now()
+    if (state === 2) {
+        return Number(orderStore.shipping?.public?.tolerance)
     }
 
     if (state === -3) {
         return Date.now()
     }
+
+    if (state === 3) {
+        return Date.now()
+    }
+})
+
+
+const visibleCountdown = computed(() => {
+
+    if (orderStore.finished || orderStore.order.completed) {
+        return false
+    }
+
+    return true
+})
+
+const visibleIcon = computed(() => {
+
+    if (orderStore.finished || orderStore.order.completed) {
+        return true
+    }
+
+    return false
 })
 
 const now = ref(Date.now());
 
 const interval = setInterval(() => {
-  now.value = Date.now(); 
+    now.value = Date.now();
 }, 1000);
 
 const globalCountdown = computed(() => {
@@ -136,28 +170,13 @@ const globalCountdown = computed(() => {
     const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
     const seconds = (totalSeconds % 60).toString().padStart(2, '0');
 
-    return formatTime(`${minutes}:${seconds}`);
+    return `${minutes}:${seconds}`;
 });
 
-function formatTime(value) {
-    let [minutes, seconds] = value.split(":").map(Number);
+watch(globalCountdown, (e) => {
+    orderStore.countdown = e
+}, { immediate: true })
 
-    const hours = Math.floor(minutes / 60);
-
-    const days = Math.floor(hours / 24);
-
-    const remainingHours = hours % 24;
-
-    minutes = minutes % 60;
-
-    minutes += Math.floor(seconds / 60);
-
-    seconds = seconds % 60;
-
-    minutes = Math.min(minutes, 99);
-
-    return `${days}d : ${remainingHours}h : ${minutes}m : ${seconds}s`;
-}
 
 function openExplorer() {
     if (!import.meta.client) return
@@ -168,7 +187,7 @@ function openExplorer() {
 }
 
 onUnmounted(() => {
-  clearInterval(interval);
+    clearInterval(interval);
 });
 </script>
 

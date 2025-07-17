@@ -54,14 +54,11 @@ export async function saveStatus(
         const now = Date.now();
 
         if (iterations === 3) {
-          scanUntil = now + 5 * 60 * 1000;
-          console.log("🕛 Sleep 5m SET");
+          scanUntil = now + 1 * 60 * 1000;
         } else if (iterations === 4) {
-          scanUntil = now + 10 * 60 * 1000;
-          console.log("🕛 Sleep 10m SET");
+          scanUntil = now + 1 * 60 * 1000;
         } else if (iterations >= 5) {
-          scanUntil = now + 15 * 60 * 1000;
-          console.log("🕛 Sleep 15m SET");
+          scanUntil = now + 1 * 60 * 1000;
         }
 
         if (scanUntil) {

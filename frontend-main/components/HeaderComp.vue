@@ -83,6 +83,8 @@ query GetPrice {
 }
 
 const fetchNotifications = async () => {
+    if(!auth.user) return;
+
     const GET_NOTIFICATIONS_QUERY = gql`
 query GetNotifications {
     getNotifications {

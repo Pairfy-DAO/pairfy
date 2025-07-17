@@ -8,7 +8,7 @@ where they can vote on platform decisions, use a common repository of product ve
 It uses the collective intelligence of its DAO members to conduct market and product research for the benefit of the Cardano community.
 This makes it easy for any community member to become a seller and generate an ecosystem of value exchange.
 
-The trading process between the seller and the buyer is handled by individual Plutus scripts (Cardano smart-contract).
+The trading process between the seller and the buyer is handled by individual Plutus V3 scripts.
 Using a Cardano smart-contract allows to use **_ADA_**, **_stablecoin_** and **_native asset_** as a form of payment for the products.
 In addition, the implementation of other innovative and deterministic trading logics. It is also compatible with the **_midnight network._**
 
@@ -22,7 +22,7 @@ In addition, the implementation of other innovative and deterministic trading lo
 - Use of Cardano Network – Midnight Network 🔥.
 - Free shipping is always included.
 - ADA Guarantee as purchase protection.
-- Each trade is managed by an isolated smart-contract.
+- Each trade is managed by an isolated smart-contract (Important for high horizontal scalability).
 - Any member of the community can be a seller (DAO member).
 - Community repository of products, suppliers, marketing, landing pages templates.
 - Seller incentive program.
@@ -148,8 +148,6 @@ The open source community is a giant.
 It allows for the distribution of value based on merit and opportunity, enables transparency, and highlights the power of community governance.
 Closed source, telemetry, private data collection, will pass.
 
-#### License
-
 ## Apache License 2.0 Summary
 
 | Category               | Description                                                                                   |
@@ -158,85 +156,3 @@ Closed source, telemetry, private data collection, will pass.
 | 📌 Obligations         | - Keep original copyright notices<br>- Include the full Apache 2.0 license<br>- **Indicate if you made changes** (e.g., in file headers, README, or NOTICE)<br>- Include `NOTICE` file if present in the original<br>- Do not imply your version is the original<br>- Do not use trademarks without permission |
 | ❌ Restrictions        | - Do not remove or alter license/copyright notices<br>- Do not claim authorship of the original<br>- Do not use logos or names as if they were yours<br>- No liability or warranty: software is provided "as is" |
 | 🎯 Ideal For           | - Open source with commercial intent<br>- Integrating into proprietary products<br>- Legal clarity and patent protection<br>- Attribution without copyleft requirements |
-
-## Syntax Highlighting
-
-VitePress provides Syntax Highlighting powered by [Shiki](https://github.com/shikijs/shiki), with additional features like line-highlighting:
-
-**Input**
-
-````md
-```js{4}
-export default {
-  data () {
-    return {
-      msg: 'Highlighted!'
-    }
-  }
-}
-```
-````
-
-**Output**
-
-```js{4}
-export default {
-  data () {
-    return {
-      msg: 'Highlighted!'
-    }
-  }
-}
-```
-
-## Custom Containers
-
-**Input**
-
-```md
-::: info
-This is an info box.
-:::
-
-::: tip
-This is a tip.
-:::
-
-::: warning
-This is a warning.
-:::
-
-::: danger
-This is a dangerous warning.
-:::
-
-::: details
-This is a details block.
-:::
-```
-
-**Output**
-
-::: info
-This is an info box.
-:::
-
-::: tip
-This is a tip.
-:::
-
-::: warning
-This is a warning.
-:::
-
-::: danger
-This is a dangerous warning.
-:::
-
-::: details
-This is a details block.
-:::
-
-## More
-
-Check out the documentation for the [full list of markdown extensions](https://vitepress.dev/guide/markdown).

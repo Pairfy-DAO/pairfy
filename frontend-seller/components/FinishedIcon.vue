@@ -25,10 +25,10 @@ const orderStore = useOrderStore()
 
 const color = computed(() => {
 
-    if (orderStore.finished) {
+    if (orderStore.finished || orderStore.order.completed) {
         if ([-1, -2, null].includes(orderStore.state)) return 'red'
 
-        if ([3, 4].includes(orderStore.state)) return 'green'
+        if ([3,4].includes(orderStore.state)) return 'green'
     }
 
     return false

@@ -25,7 +25,7 @@
                         <div class="form-item">
 
                             <InputSelect v-model="orderUnits" :options="orderUnitOptions" label="Quantity"
-                                @valid="orderUnitsValid = $event.valid" id="order-units-select" placeholder="Units">
+                                @valid="orderUnitsValid = $event.valid" id="order-units-select" placeholder="Quantity">
                                 <template #option="{ option }">
                                     <span class="flex">
                                         <span>{{ option.label }}</span>
@@ -57,7 +57,7 @@
 
                 <div class="CardanoForm-section">
                     <div class="subtitle flex">
-                        <span> Encrypt Address (RSA-256)
+                        <span> Encrypt address (RSA-256)
                         </span>
                     </div>
 
@@ -208,7 +208,7 @@ const encryptedMessage = ref(null)
 const store = computed(() => {
     return {
         date: timestampToDate(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        orderName: orderName.value || 'Michael Brown',
+        orderName: orderName.value || 'John Doe',
         orderAddress: orderAddress.value || '1234 Brickell Avenue, Suite 500, Miami, FL 33131',
         orderAsset: orderAsset.value || 'N/A'
     }

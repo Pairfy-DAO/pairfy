@@ -635,10 +635,10 @@
   resolved "https://registry.npmjs.org/@oxc-project/types/-/types-0.60.0.tgz"
   integrity sha512-prhfNnb3ATFHOCv7mzKFfwLij5RzoUz6Y1n525ZhCEqfq5wreCXL+DyVoq3ShukPo7q45ZjYIdjFUgjj+WKzng==
 
-"@pairfy/common-f@^0.1.6":
-  version "0.1.6"
-  resolved "https://registry.npmjs.org/@pairfy/common-f/-/common-f-0.1.6.tgz"
-  integrity sha512-haGNfzvQM2gS5DWTs4KQdOfKXN7lCtm5Y1g7Ju574EuIMwfYn5FIMPTkt9TNdRtu/5KKQXHu0UtS+nK0khwCHw==
+"@pairfy/common-f@^0.1.15":
+  version "0.1.15"
+  resolved "https://registry.npmjs.org/@pairfy/common-f/-/common-f-0.1.15.tgz"
+  integrity sha512-KgXTFtFyQ2Ff/QNpXSYffzWPrhd8qRW54dVXqWT3Htdojpi5lQwDEtrkrDsUISa008y6zN0ahuOZTS5zo89ZwA==
   dependencies:
     buffer "^6.0.3"
     node-forge "^1.3.1"

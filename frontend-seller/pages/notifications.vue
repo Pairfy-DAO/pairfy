@@ -37,11 +37,10 @@
                     actions @onPrev="handleOnPrev" @onNext="handleOnNext" :columnWidths="{
                         title: '4rem',
                         message: '8rem',
-                        type: '4rem',
+                        type: '2rem',
                         data: '20rem',
-                        data: '20rem',
-                        actions: '4rem',
                         created_at: '4rem',
+                        actions: '2rem',
                     }">
 
                     <template #col-data="{ value }">
@@ -215,7 +214,10 @@ onBeforeUnmount(() => {
 
 <style lang="css" scoped>
 .card {
-    padding: 0.1rem;
-    padding-top: 1rem;
+    background-image: var(--gradient-a);
+    border: 1px solid var(--border-a);
+    border-radius: var(--radius-c);
+    margin: 0.5rem;
+    padding: 0.5rem;
 }
 </style>

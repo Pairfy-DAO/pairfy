@@ -5,7 +5,7 @@ const cursorSchema = z.string()
   .max(113, { message: "String must be at most 113 characters long" })
   .regex(/^[a-zA-Z0-9\-_]+$/, { message: "Only alphanumeric characters, '-' and '_' are allowed" });
 
-export const verifyParams = z.object({
+export const getProductsSchema = z.object({
   cursor: cursorSchema.optional(),
 
   reverseCursor: cursorSchema.optional(),

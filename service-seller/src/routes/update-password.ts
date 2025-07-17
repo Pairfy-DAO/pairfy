@@ -9,13 +9,13 @@ import {
   hashPassword,
   createEvent,
   findSellerById,
+  encryptAESGCM,
+  generateRSA
 } from "@pairfy/common";
 import {
   verifyParams,
   verifyTokenType,
 } from "../validators/update-password.js";
-import { generateRSA } from "../utils/rsa.js";
-import { encryptAESGCM } from "../utils/aes.js";
 
 export const updatePasswordMiddlewares: any = [];
 

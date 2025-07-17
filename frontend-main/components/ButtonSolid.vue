@@ -79,6 +79,7 @@ const sizeClass = computed(() => {
 .ButtonSolid.disabled {
   pointer-events: none;
   background: var(--primary-b);
+  border: 1px solid var(--primary-b);
 }
 
 .ButtonSolid-body {
@@ -97,8 +98,8 @@ const sizeClass = computed(() => {
 }
 
 .btn-large {
-  padding: 12px 24px;
-  font-size: 16px;
+  padding: 1rem;
+  font-size: var(--text-size-1);
 }
 
 .loader {

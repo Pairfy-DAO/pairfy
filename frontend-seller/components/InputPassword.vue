@@ -1,167 +1,174 @@
 <template>
     <div class="InputPassword">
-        <label class="title-text">{{ label }}</label>
-        <div class="InputPassword-wrap">
-            <input ref="inputRef" :type="isVisible ? 'text' : 'password'" :value="modelValue" @input="onInput"
-                placeholder="Enter your password" class="InputPassword-input"
-                :class="{ 'is-invalid': errorMessage }" />
-
-            <button class="toggle-btn" type="button" @click="toggleVisibility">
-
-
-                <svg v-if="!isVisible" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-eye-icon lucide-eye">
-                    <path
-                        d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
-                    <circle cx="12" cy="12" r="3" />
-                </svg>
-
-                <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-eye-closed-icon lucide-eye-closed">
-                    <path d="m15 18-.722-3.25" />
-                    <path d="M2 8a10.645 10.645 0 0 0 20 0" />
-                    <path d="m20 15-1.726-2.05" />
-                    <path d="m4 15 1.726-2.05" />
-                    <path d="m9 18 .722-3.25" />
-                </svg>
-            </button>
-        </div>
-        <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
+      <label class="InputPassword-label" :for="id">
+        <span>{{ label }}</span>
+        <span class="error-text" :class="{ visible: errorMessage }" :id="`${id}-error`">
+          {{ errorMessage || '-' }}
+        </span>
+      </label>
+  
+      <div class="InputPassword-wrap">
+        <input
+          ref="inputRef"
+          v-model="internalValue"
+          :id="id"
+          :type="isVisible ? 'text' : 'password'"
+          :placeholder="placeholder"
+          :class="{ 'is-invalid': errorMessage }"
+          :aria-invalid="!!errorMessage"
+          :aria-describedby="`${id}-error`"
+          class="InputPassword-input"
+          @drop.prevent
+        />
+  
+        <button
+          class="toggle-btn"
+          type="button"
+          @click="toggleVisibility"
+          :aria-label="isVisible ? 'Hide password' : 'Show password'"
+        >
+          <svg v-if="!isVisible" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-eye">
+            <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-eye-closed">
+            <path d="m15 18-.722-3.25" />
+            <path d="M2 8a10.645 10.645 0 0 0 20 0" />
+            <path d="m20 15-1.726-2.05" />
+            <path d="m4 15 1.726-2.05" />
+            <path d="m9 18 .722-3.25" />
+          </svg>
+        </button>
+      </div>
     </div>
-</template>
+  </template>
+  
+  <script setup>
+  const props = defineProps({
+    id: { type: String, default: 'input-password' },
+    modelValue: { type: [String, null], default: null },
+    label: { type: String, default: 'Password' },
+    placeholder: { type: String, default: 'Enter your password' },
+    focus: { type: Boolean, default: false },
+  })
+  
+  const emit = defineEmits(['update:modelValue', 'valid'])
+  
+  const MIN_LENGTH = 8
+  const MAX_LENGTH = 64
 
-<script setup>
-const props = defineProps({
-    modelValue: {
-        type: String,
-        default: ''
-    },
-    focus: {
-        type: Boolean,
-        default: false
-    },
-    label: {
-        type: String,
-        default: 'Password'
-    }
-})
-
-const emit = defineEmits(['update:modelValue', 'valid'])
-
-const inputRef = ref(null)
-const isVisible = ref(false)
-const errorMessage = ref('')
-
-
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,64}$/
-
-onMounted(() => {
-    if (props.focus) {
-        inputRef.value?.focus()
-    }
-})
-
-watch(() => props.focus, (newVal) => {
-    if (newVal) {
-        inputRef.value?.focus()
-    }
-})
-
-const toggleVisibility = () => {
+  const inputRef = ref(null)
+  const internalValue = ref(props.modelValue ?? '')
+  const errorMessage = ref('')
+  const isVisible = ref(false)
+  
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,64}$/
+  
+  const messages = {
+    required: '•',
+    minLength: `Password must be at least ${MIN_LENGTH} characters.`,
+    maxLength: `Password must be no more than ${MAX_LENGTH} characters.`,
+    invalid: 'Must include uppercase, lowercase, number, and symbol.',
+  }
+  
+  const isEmpty = (val) => val.trim() === ''
+  const emitValue = (val) => emit('update:modelValue', isEmpty(val) ? null : val)
+  
+  const validate = () => {
+    const val = internalValue.value
+    const trimmed = val.trim()
+  
+    const validators = [
+      { condition: isEmpty(val), message: messages.required },
+      { condition: val.length < MIN_LENGTH, message: messages.minLength },
+      { condition: val.length > MAX_LENGTH, message: messages.maxLength },
+      { condition: !isEmpty(val) && !passwordRegex.test(trimmed), message: messages.invalid },
+    ]
+  
+    const error = validators.find(v => v.condition)?.message
+    errorMessage.value = error || ''
+    emit('valid', { valid: !error, value: !error ? trimmed : null })
+  }
+  
+  watch(() => props.modelValue, (val) => {
+    if (val !== internalValue.value) internalValue.value = val ?? ''
+  })
+  
+  watch(internalValue, (val) => {
+    emitValue(val)
+    validate()
+  }, { immediate: true })
+  
+  watch(() => props.focus, (newVal) => {
+    if (newVal) inputRef.value?.focus()
+  }, { immediate: true })
+  
+  const toggleVisibility = () => {
     isVisible.value = !isVisible.value
-}
-
-const onInput = (e) => {
-    const value = e.target.value
-    emit('update:modelValue', value)
-    validatePassword(value)
-}
-
-const validatePassword = (password) => {
-    if (!password) {
-        errorMessage.value = 'Password is required.'
-        emit('valid', false)
-        return false
-    } else if (password.length < 8) {
-        errorMessage.value = 'Password must be at least 8 characters.'
-        emit('valid', false)
-        return false
-    } else if (password.length > 64) {
-        errorMessage.value = 'Password must be no more than 64 characters.'
-        emit('valid', false)
-        return false
-    } else if (!passwordRegex.test(password)) {
-        errorMessage.value = 'Password must include uppercase, lowercase, number, and symbol.'
-        emit('valid', false)
-        return false
-    }
-
-    errorMessage.value = ''
-    emit('valid', true)
-    return true
-}
-
-
-</script>
-
-<style scoped>
-.InputPassword {
+  }
+  </script>
+  
+  <style scoped>
+  .InputPassword {
     display: flex;
     flex-direction: column;
-    max-width: 300px;
-}
-
-.InputPassword-wrap {
+    width: 100%;
+  }
+  
+  .InputPassword-wrap {
     position: relative;
-}
-
-.InputPassword-input {
-    padding: 0.75rem 2.5rem 0.75rem 1rem;
+  }
+  
+  .InputPassword-input {
     border-radius: var(--input-radius);
     border: 1px solid var(--border-a);
+    transition: var(--transition-a);
     background: var(--background-b);
     box-sizing: border-box;
+    padding: var(--input-padding);
     outline: none;
     width: 100%;
-}
-
-input::placeholder {
-  opacity: var(--placeholder-opacity);
-  color: var(--text-b);
-}
-
-.InputPassword-input:focus-within {
+  }
+  
+  .InputPassword-input:focus {
     border: 1px solid var(--primary-a);
-}
-
-.InputPassword-input.is-invalid {
-    border-color: red;
-}
-
-.toggle-btn {
-    transform: translateY(-50%);
-    background: transparent;
-    align-items: center;
-    position: absolute;
-    display: flex;
-    top: 50%;
-    border: none;
-    right: 0.75rem;
-    font-size: 1.1rem;
-    cursor: pointer;
-}
-
-.title-text {
+  }
+  
+  .InputPassword-label {
+    justify-content: space-between;
     font-size: var(--text-size-0);
     margin-bottom: 0.75rem;
-    font-weight: 600;
-}
-
-.error-text {
+    white-space: nowrap;
+    align-items: center;
+    display: flex;
+  }
+  
+  .error-text {
     font-size: var(--text-size-0);
-    margin: 0.5rem 0;
+    color: transparent;
+    font-weight: 300;
+    opacity: 0;
+  }
+  
+  .error-text.visible {
+    opacity: 1;
     color: red;
-}
-</style>
+  }
+  
+  .toggle-btn {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  </style>
+  

@@ -187,7 +187,7 @@ const openNotification = (value) => {
   padding: 0.5rem;
   right: 0;
   top: 100%;
-  width: 375px;
+  width: 400px;
   z-index: 14000;
   overflow-y: auto;
   max-height: 600px;

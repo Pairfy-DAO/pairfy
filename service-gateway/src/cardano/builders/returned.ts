@@ -12,8 +12,8 @@ import { deserializeParams, provider, validators } from "./index.js";
 import { DatumType, InputType, } from "./types.js";
 
 
-/**Generates a CBOR transaction to be signed and sent in the browser by the buyer to return funds after shipping_until. */
-async function cancelTransactionBuilder(
+/**Generates a CBOR transaction to be signed and sent in the browser by the buyer to return funds after pending_until. */
+async function returnedTransactionBuilder(
   externalWalletAddress: string,
   serializedParams: string
 ) {
@@ -25,7 +25,7 @@ async function cancelTransactionBuilder(
     throw new Error("NETWORK_ENV unset");
   }
 
-  if (process.env.NETWORK === "Mainnet") {
+  if (process.env.NETWORK_ENV === "Mainnet") {
     NETWORK = "Mainnet";
   }
 
@@ -35,9 +35,9 @@ async function cancelTransactionBuilder(
 
   //////////////////////////////////////////////////
 
-  const now = BigInt(Date.now());
+  const timestamp = Date.now();
 
-  const validToMs = Number(now + BigInt(process.env.TX_VALID_TIME as string));
+  const validToMs = Number(BigInt(timestamp) + BigInt(process.env.TX_VALID_TIME as string));
 
   //////////////////////////////////////////////////
   /**
@@ -56,7 +56,7 @@ async function cancelTransactionBuilder(
 
   //////////////////////////////////////////////////
 
-  if (now < BigInt(stateMachineParams[7])) {
+  if (BigInt(timestamp) < BigInt(stateMachineParams[6])) {
     throw new Error("BEFORE_DEADLINE");
   }
 
@@ -95,7 +95,7 @@ async function cancelTransactionBuilder(
 
     console.log(data);
 
-    if (data.state !== 1n) {
+    if (data.state !== 0n) {
       throw new Error("WRONG_STATE");
     }
   }
@@ -124,12 +124,12 @@ async function cancelTransactionBuilder(
 
   ////////////////////////////////////////////
 
-  const stateMachineRedeemer = Data.to("Cancel", InputType);
+  const stateMachineRedeemer = Data.to("Return", InputType);
 
   ///////////////////////////////////////////
 
   const datumValues = {
-    state: BigInt(-2),
+    state: BigInt(-1),
     delivery: null,
   };
 
@@ -159,7 +159,7 @@ async function cancelTransactionBuilder(
     })
     .attach.SpendingValidator(stateMachineScript)
     .addSigner(externalWalletAddress)
-    .validFrom(Date.now())
+    .validFrom(timestamp)
     .validTo(validToMs)
     .complete({
       changeAddress: externalWalletAddress,
@@ -186,7 +186,7 @@ async function main() {
 
   console.log(deserializeParams(serializedParams));
 
-  const BUILDER = await cancelTransactionBuilder(
+  const BUILDER = await returnedTransactionBuilder(
     externalWalletAddress,
     serializedParams
   );
@@ -204,4 +204,6 @@ async function main() {
 
 //main();
 
-export { cancelTransactionBuilder };
+export { returnedTransactionBuilder };
+
+//two signature, collateral, validto, paramterice price, collateral, seller, buyer

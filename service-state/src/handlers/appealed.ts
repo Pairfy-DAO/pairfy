@@ -1,77 +1,90 @@
-import { getNotificationId } from "@pairfy/common";
-import { HandlerParams } from "./types.js";
+import { createEvent, getNotificationId } from "@pairfy/common";
+import { jobResponse } from "./index.js";
+import { Connection } from "mysql2/promise.js";
+import { UtxoData } from "../lib/index.js";
+import { saveStatus } from "../lib/order.js";
+import { redisState } from "../database/redis.js";
+import { updateOrder } from "../common/updateOrder.js";
 
-async function appealed(params: HandlerParams) {
-  const updateQuery = `
-    UPDATE orders
-    SET scanned_at = ?,
-        status_log = ?,
-        contract_state = ?,
-        appealed_tx = ?,
-        appealed_block = ?
-    WHERE id = ?`;
+export async function appealed(
+  connection: Connection,
+  timestamp: number,
+  orderData: any,
+  data: UtxoData
+): Promise<jobResponse> {
+  const newStatus = "appealed";
 
-  const statusLog = "appealed";
+  if (!orderData.appealed_notified) {
+    const notifications = [
+      {
+        id: getNotificationId(),
+        type: "order",
+        title: "Order appealed 📄⚖️",
+        owner: orderData.buyer_pubkeyhash,
+        data: JSON.stringify({
+          id: orderData.id,
+          buyer_address: orderData.buyer_address,
+          buyer_wallet: orderData.buyer_wallet,
+          country: orderData.country,
+        }),
+        message: `The order has been appealed. - Order N° ${orderData.id.slice(
+          0,
+          10
+        )}...`,
+        created_at: timestamp,
+        updated_at: timestamp,
+      },
+      {
+        id: getNotificationId(),
+        type: "order",
+        title: "Order appealed 📄⚖️",
+        owner: orderData.seller_id,
+        data: JSON.stringify({
+          id: orderData.id,
+          seller_address: orderData.seller_address,
+          seller_wallet: orderData.seller_wallet,
+          country: orderData.country,
+        }),
+        message: `The order has been appealed. - Order N° ${orderData.id.slice(
+          0,
+          10
+        )}...`,
+        created_at: timestamp,
+        updated_at: timestamp,
+      },
+    ];
 
-  const txHash = params.utxo.txHash + "#" + params.utxo.outputIndex;
+    await createEvent(
+      connection,
+      timestamp,
+      "service-gateway",
+      "CreateNotifications",
+      JSON.stringify(notifications),
+      orderData.buyer_pubkeyhash
+    );
+    
+  }
 
-  await params.connection.execute(updateQuery, [
-    params.timestamp,
-    statusLog,
-    params.utxo.data.state,
-    txHash,
-    params.utxo.block_time,
-    params.threadtoken,
-  ]);
+  const updateContent = {
+    status: newStatus,
+    contract_state: data.datum.state,
+    appealed_tx: data.txHash,
+    appealed_block: data.blockTime,
+    appealed_metadata: data.metadata,
+    appealed_notified: true,
+    scanned_at: timestamp,
+  };
 
-  /////////////////////////////////////////////////////////////////////
+  await updateOrder(
+    connection,
+    orderData.id,
+    orderData.schema_v,
+    updateContent
+  );
 
-  const notifications = [
-    {
-      id: getNotificationId(),
-      type: "order",
-      title: "Order Appealed",
-      owner: params.buyer_pubkeyhash,
-      data: JSON.stringify({
-        threadtoken: params.threadtoken,
-        buyer_address: params.buyer_address,
-        country: params.country,
-      }),
-      message: `The order has been appealed.`,
-    },
-    {
-      id: getNotificationId(),
-      type: "order",
-      title: "Order Appealed",
-      owner: params.seller_id,
-      data: JSON.stringify({
-        threadtoken: params.threadtoken,
-        seller_address: params.seller_address,
-        country: params.country,
-      }),
-      message: `The order has been appealed.`,
-    },
-  ];
+  await saveStatus(redisState.client, orderData.id, newStatus);
 
-  const eventSchema = `
-    INSERT IGNORE INTO events (
-    id,
-    source,
-    type,
-    data,
-    spec_version
-    ) VALUES (?, ?, ?, ?, ?)
-  `;
+  await connection.commit();
 
-  const eventId = params.threadtoken + statusLog;
-
-  await params.connection.execute(eventSchema, [
-    eventId,
-    "gateway",
-    "CreateNotification",
-    JSON.stringify(notifications),
-    0,
-  ]);
+  return { id: orderData.id, finished: false };
 }
-
-export { appealed };

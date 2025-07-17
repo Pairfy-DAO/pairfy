@@ -16,7 +16,7 @@ async function shippingTransactionBuilder(
   externalWalletAddress: string,
   serializedParams: string,
   deliveryDate: bigint,
-  metadata: any
+  metadata: string | string[]
 ) {
   let NETWORK: Network = "Preprod";
 
@@ -24,7 +24,7 @@ async function shippingTransactionBuilder(
     throw new Error("NETWORK_ENV unset");
   }
 
-  if (process.env.NETWORK === "Mainnet") {
+  if (process.env.NETWORK_ENV === "Mainnet") {
     NETWORK = "Mainnet";
   }
 
@@ -175,7 +175,7 @@ async function shippingTransactionBuilder(
     .addSigner(externalWalletAddress)
     .validFrom(Date.now())
     .validTo(validToMs)
-    .attachMetadata(777, metadata)
+    .attachMetadata(674, { msg: metadata })
     .complete({
       changeAddress: externalWalletAddress,
       setCollateral: txCollateral,
@@ -199,7 +199,7 @@ async function main() {
   const serializedParams =
     "0a09d13dacc36caa75855765930e3f93f840f7e07ea72b05fe31ece2,a239e6c2bbd6a9f3249d65afef89c28e1471ed07c529ec06848cc141,746bff9fb367bf3bb1b25fe24a272bb288d62a2cad1aad2e37a8173f,30000000,10000000,1734559401711";
 
-  const metadata = { msg: "what" };
+  const metadata = "test";
 
   const deliveryDate = BigInt(Date.now()); ///parametrized
 

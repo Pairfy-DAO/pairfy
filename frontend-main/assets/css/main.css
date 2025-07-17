@@ -93,6 +93,14 @@ body {
   display: flex;
 }
 
+.center {
+  justify-content: center;
+}
+
+.end {
+  justify-content: flex-end;
+}
+
 .flag {
   width: 1rem;
   height: 1rem;
@@ -118,14 +126,6 @@ textarea {
 textarea::placeholder {
   font-size: var(--text-size-1);
   color: var(--text-b);
-}
-
-.center {
-  justify-content: center;
-}
-
-.end {
-  justify-content: flex-end;
 }
 
 .fade-title {

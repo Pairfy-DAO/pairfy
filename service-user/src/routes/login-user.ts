@@ -8,25 +8,33 @@ import {
   ERROR_CODES,
   getUserNickname,
   isValidSignatureCIP30,
-  findUserByPubKeyhash,
+  generateRSA,
+  encryptAESGCM,
 } from "@pairfy/common";
 import { getPubKeyHash } from "../utils/crypto.js";
 import { loginUserSchema } from "../validators/login-user.js";
+import { findUserById } from "../common/findUserById.js";
+import { updateUser } from "../common/updateUser.js";
+import { insertUser } from "../common/insertUser.js";
 
 export const loginUserMiddlewares: any = [];
 
 export const loginUserHandler = async (req: Request, res: Response) => {
-  const timestamp = Date.now();
-
   let connection = null;
 
   try {
+    const timestamp = Date.now();
+
     const verifyParams = loginUserSchema.safeParse(req.body);
 
     if (!verifyParams.success) {
-      throw new ApiError(400, `Invalid Params ${JSON.stringify(verifyParams.error.flatten())}`, {
-        code: ERROR_CODES.VALIDATION_ERROR,
-      });
+      throw new ApiError(
+        400,
+        `Invalid Params ${JSON.stringify(verifyParams.error.flatten())}`,
+        {
+          code: ERROR_CODES.VALIDATION_ERROR,
+        }
+      );
     }
 
     const params = verifyParams.data;
@@ -56,68 +64,91 @@ export const loginUserHandler = async (req: Request, res: Response) => {
       });
     }
 
-    /////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////// START TRANSACTION
 
     connection = await database.client.getConnection();
 
     await connection.beginTransaction();
 
-    const schemeData = `
-    INSERT INTO users (
-      pubkeyhash,
-      username,
-      address,
-      country,
-      terms_accepted,
-      public_ip,
-      wallet_name,
-      created_at,
-      updated_at,
-      schema_v
-     ) 
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-     ON DUPLICATE KEY UPDATE
-      wallet_name = VALUES(wallet_name),
-      public_ip = VALUES(public_ip),
-      updated_at = VALUES(updated_at),
-      schema_v = schema_v + 1;
-     `;
-
-    const schemeValue = [
-      pubKeyHash,
-      username,
-      address32,
-      params.country,
-      params.terms_accepted,
-      req.publicAddress,
-      params.wallet_name,
-      timestamp,
-      timestamp,
-      0,
-    ];
-
-    await connection.execute(schemeData, schemeValue);
-
-    ///////////////////////////////////////////////////////////////////
-
-    const USER = await findUserByPubKeyhash(connection, pubKeyHash);
+    const USER = await findUserById(connection, pubKeyHash);
 
     if (!USER) {
-      throw new ApiError(500, "Internal signature verification error", {
+      const RSAkeys = await generateRSA();
+
+      const encriptedPrivateKey = await encryptAESGCM(
+        RSAkeys.privateKeyB64,
+        params.password
+      );
+
+      const createContent = {
+        id: pubKeyHash,
+        pubkeyhash: pubKeyHash,
+        username,
+        address: address32,
+        country: params.country,
+        terms_accepted: params.terms_accepted,
+        public_ip: req.publicAddress,
+        wallet_name: params.wallet_name,
+        rsa_version: 0,
+        rsa_public_key: RSAkeys.publicKeyB64,
+        rsa_private_key: [encriptedPrivateKey],
+        created_at: timestamp,
+        updated_at: timestamp,
+        schema_v: 0,
+      };
+
+      const insertResult = await insertUser(connection, createContent);
+
+      if (insertResult?.affectedRows !== 1) {
+        throw new ApiError(500, "Internal error insert", {
+          code: ERROR_CODES.INTERNAL_ERROR,
+        });
+      }
+    } else {
+      const updateContent = {
+        address: address32,
+        public_ip: req.publicAddress,
+        wallet_name: params.wallet_name,
+        updated_at: timestamp,
+        schema_v: USER.schema_v + 1,
+      };
+
+      const updateResult = await updateUser(
+        connection,
+        USER.id,
+        USER.schema_v,
+        updateContent
+      );
+
+      if (updateResult?.affectedRows !== 1) {
+        throw new ApiError(500, "Internal error update", {
+          code: ERROR_CODES.INTERNAL_ERROR,
+        });
+      }
+
+    }
+
+    /////////////////////////////////////////////////////////////////// END TRANSACTION
+
+    const findUser = await findUserById(connection, pubKeyHash);
+
+    if (!findUser) {
+      throw new ApiError(500, "Internal signature verification", {
         code: ERROR_CODES.INTERNAL_ERROR,
       });
     }
 
     const tokenData: UserToken = {
-      pubkeyhash: USER.pubkeyhash,
+      id: findUser.id,
       role: "USER",
-      address: USER.address,
-      wallet_name: params.wallet_name,
-      country: USER.country,
-      username: USER.username,
+      pubkeyhash: findUser.pubkeyhash,
+      address: findUser.address,
+      wallet_name: findUser.wallet_name,
+      country: findUser.country,
+      username: findUser.username,
+      rsa_version: findUser.rsa_version,
+      rsa_public_key: findUser.rsa_public_key
     };
-
-    console.log(schemeValue);
 
     const token = createToken(
       tokenData,
@@ -131,11 +162,9 @@ export const loginUserHandler = async (req: Request, res: Response) => {
       jwt: token,
     };
 
-    const userData = tokenData
-
     await connection.commit();
 
-    res.status(200).send({ success: true, data: userData });
+    res.status(200).send({ success: true, data: tokenData });
   } catch (err: any) {
     if (connection) await connection.rollback();
 
