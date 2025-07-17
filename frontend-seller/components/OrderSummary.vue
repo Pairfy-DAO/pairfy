@@ -72,9 +72,17 @@ const orderTitle = computed(
         if (state === 0) {
             title = "Prepare the package, Time Remaining"
         }
+        
+        if (state === -1) {
+            title = "The order has been returned."
+        }
 
         if (state === 1) {
             title = "Prepare the package, Time Remaining "
+        }
+
+        if (state === -2) {
+            title = "The order has been cancelled."
         }
 
         if (state === 2) {

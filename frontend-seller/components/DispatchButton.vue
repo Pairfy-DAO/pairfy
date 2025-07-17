@@ -1,4 +1,8 @@
 <template>
+    <DialogComp v-model="dialogView" @update:modelValue="dialogView = $event" :modalClose="true">
+        <DispatchView />
+    </DialogComp>
+
     <ButtonSolid :label="label" :disabled="disabled" :loading="loading" @click="onClick" />
 </template>
 
@@ -13,6 +17,8 @@ const walletStore = useWalletStore()
 const label = computed(() => 'Dispatch')
 
 const loading = ref(false)
+
+const dialogView = ref(true)
 
 const disabled = computed(() => {
     if (orderStore.countdown === '00:00') {
@@ -30,7 +36,11 @@ const disabled = computed(() => {
     return false
 })
 
-const onClick = async () => {
+const onClick = () => {
+    dialogView.value = !dialogView.value
+}
+
+const onSubmit = async () => {
     if (!import.meta.client) return;
 
     const SHIPPING_ENDPOINT_MUTATION = gql`
@@ -52,8 +62,8 @@ const onClick = async () => {
 
         const scheme = {
             order_id: orderStore.order.id,
-            guide: '8787878',
             date: deliveryDate.toString(),
+            guide: '8787878',
             website: 'http',
             notes: 'notes',
         }
@@ -70,17 +80,17 @@ const onClick = async () => {
         const txHash = await walletStore.balanceTx(response.data.cbor)
 
         console.log(txHash)
-        
+
         orderStore.showToast(`The transaction has been sent to the network. TxHash: ${txHash}`, 'success', 10_000)
 
         await sleep(10_000)
-        
+
         loading.value = false
     } catch (err) {
         console.error('shippingEndpoint:', err);
         orderStore.showToast(err, 'error', 10_000)
         loading.value = false
-    } 
+    }
 
 }
 </script>

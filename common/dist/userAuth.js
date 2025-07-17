@@ -15,8 +15,7 @@ const userMiddleware = (req, res, next) => {
         const sessionData = jsonwebtoken_1.default.verify(req.session.jwt, privateKey);
         if (sessionData.role === "USER") {
             const scheme = {
-                ...sessionData,
-                token: req.session.jwt,
+                ...sessionData
             };
             req.userData = scheme;
         }

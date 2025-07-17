@@ -67,8 +67,8 @@ export const shippingEndpoint = async (_: any, args: any, context: any) => {
       },
       private: {
         guide: params.guide,
-        notes: params.notes,
-        website: params.website
+        website: params.website,
+        notes: params.notes
       },
       version: "1.0", //ENV VAR
     };

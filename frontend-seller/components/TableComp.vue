@@ -61,18 +61,18 @@
 
       <tbody>
         <tr class="rows" v-for="item in filteredItems" :key="item.id">
-          <td class="image" :style="{ width: columnWidths['image'] || 'auto' }" v-if="images">
+          <td class="image" :style="{ width: columnWidths['image'] || 'auto', maxWidth: columnWidths['image'] || 'fit-content' }" v-if="images">
             <slot name="image" :item="item" />
           </td>
 
           <td class="row" v-for="column in columns" :key="column.field"
-            :style="{ width: columnWidths[column.field] || 'auto' }">
+            :style="{ width: columnWidths[column.field] || 'auto', maxWidth: columnWidths[column.field] || 'fit-content' }">
             <slot :name="`col-${column.field}`" :value="item[column.field]" :item="item">
               {{ item[column.field] }}
             </slot>
           </td>
 
-          <td class="row" :style="{ width: columnWidths['actions'] || 'auto' }" v-if="actions">
+          <td class="row" :style="{ width: columnWidths['actions'] || 'auto', maxWidth: columnWidths['actions'] || 'fit-content' }" v-if="actions">
             <slot name="actions" :item="item" />
           </td>
         </tr>

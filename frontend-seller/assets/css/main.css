@@ -107,6 +107,14 @@ body {
   display: flex;
 }
 
+.center {
+  justify-content: center;
+}
+
+.end {
+  justify-content: flex-end;
+}
+
 input {
   font-size: var(--text-size-1);
 }
@@ -143,4 +151,22 @@ textarea::placeholder {
 
 .blue{
   color: var(--blue-a);
+}
+
+/* Transición fade + slide */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-5px);
+}
+
+.fade-slide-enter-to,
+.fade-slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
 }
