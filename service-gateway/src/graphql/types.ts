@@ -70,13 +70,15 @@ type Order {
   buyer_address: String!
   buyer_wallet: String!
   buyer_username: String!
+  buyer_rsa_version: Int!
+  buyer_rsa_public_key: String!
 
   seller_id: ID!
   seller_pubkeyhash: String!
   seller_address: String!
   seller_wallet: String!
   seller_username: String!
-  rsa_version: Int!
+  seller_rsa_version: Int!
 
   product_id: ID!
   product_snapshot: String!

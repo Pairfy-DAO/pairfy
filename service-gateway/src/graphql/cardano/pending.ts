@@ -127,11 +127,13 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
       buyer_address: USER.address,
       buyer_wallet: USER.wallet_name,
       buyer_username: USER.username,
+      buyer_rsa_version: USER.rsa_version,
+      buyer_rsa_public_key: USER.rsa_public_key,
       seller_pubkeyhash: findSeller.pubkeyhash,
       seller_address: findSeller.address,
       seller_wallet: findSeller.wallet_name,
       seller_username: findSeller.username,
-      rsa_version: findSeller.rsa_version,
+      seller_rsa_version: findSeller.rsa_version,
       product_id: findProduct.id,
       product_snapshot: compress(findProduct),
       contract_address: BUILDER.stateMachineAddress,
@@ -150,7 +152,7 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
       updated_at: timestamp,
       schema_v: 0,
     };
-
+    
     const [insert1] = await insertOrder(connection, orderContent);
 
     if (insert1.affectedRows !== 1) {

@@ -10,5 +10,5 @@ export async function findSellerPrivateKey(
     [sellerId]
   );
 
-  return rows?.[0] || null
+  return rows?.[0]?.rsa_private_key || null
 }

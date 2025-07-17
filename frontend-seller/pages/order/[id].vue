@@ -54,7 +54,7 @@ query ($getOrderVariable: GetOrderInput!) {
             seller_address
             seller_wallet
             seller_username
-            rsa_version
+            seller_rsa_version
             product_id
             product_snapshot
             contract_address
