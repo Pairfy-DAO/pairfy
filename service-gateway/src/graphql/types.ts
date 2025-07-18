@@ -142,7 +142,6 @@ type getOrderResponse {
   address: String
   shipping: String
   session: String!
-  encrypted_private_key: String!
 }
 
 input GetBooksInput {
@@ -187,7 +186,7 @@ type CborData {
 type PendingEndpointPayload {
   cbor: String!
   order: String!
-  spk: String!
+  seller_public_key: String!
 }
 
 type PendingEndpointResponse {

@@ -105,7 +105,6 @@ query ($getOrderVariable: GetOrderInput!) {
        address
        shipping
        session
-       encrypted_private_key
     }
 }
 

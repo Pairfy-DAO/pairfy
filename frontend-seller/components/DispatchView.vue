@@ -110,13 +110,12 @@ async function submitForm() {
     const params = validateParams.data
 
     const metadata = {
-      d: JSON.stringify(params.date),
+      v: "1.0",
       g: params.guide,
       w: params.website
     }
 
     const encrypted = encryptMessageWithPublicKey(orderStore.order.buyer_rsa_public_key, JSON.stringify(metadata));
-
     console.log("✅ Encrypted metadata: ", encrypted);
 
     const scheme = {

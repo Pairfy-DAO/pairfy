@@ -15,8 +15,7 @@ const sellerMiddleware = (req, res, next) => {
         const sessionData = jsonwebtoken_1.default.verify(req.session.jwt, privateKey);
         if (sessionData.role === "SELLER") {
             const scheme = {
-                ...sessionData,
-                token: req.session.jwt,
+                ...sessionData
             };
             req.sellerData = scheme;
         }

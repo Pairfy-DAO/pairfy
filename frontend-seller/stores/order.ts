@@ -18,8 +18,6 @@ export const useOrderStore = defineStore("order", () => {
   const address = ref(null);
   const shipping = ref(null);
   const session = ref(null);
-  const encryptedPrivateKey = ref(null);
-
   const countdown = ref(null);
 
   const showToast = (message: string, type: ToastType, duration: number) => {
@@ -45,11 +43,18 @@ export const useOrderStore = defineStore("order", () => {
     finished.value = orderData.finished;
     pendingTx.value = orderData.pending_tx;
 
-    address.value = addressData;
     session.value = sessionData;
 
     if (productData) {
       product.value = JSON.parse(productData);
+    }
+    
+    if (addressData) {
+      const parsedData = JSON.parse(addressData);
+
+      const unchunked = parsedData[0]?.json_metadata?.msg.join("");
+
+      address.value = JSON.parse(unchunked);
     }
 
     if (shippingData) {
@@ -60,9 +65,6 @@ export const useOrderStore = defineStore("order", () => {
       shipping.value = JSON.parse(unchunked);
     }
 
-    if (encrypted_private_key) {
-      encryptedPrivateKey.value = JSON.parse(encrypted_private_key);
-    }
   };
 
   function clear() {
@@ -82,7 +84,6 @@ export const useOrderStore = defineStore("order", () => {
     address,
     shipping,
     session,
-    encryptedPrivateKey,
     countdown,
   };
 });
