@@ -15,9 +15,9 @@ import {
   findSellerById,
 } from "@pairfy/common";
 import { getPubKeyHash } from "../utils/blockchain.js";
-import { LoginInput, validateParams } from "../validators/login-seller.js";
+import { loginSellerSchema } from "../validators/login-seller.js";
 
-export const loginSellerMiddlewares: any = [sellerMiddleware, validateParams];
+export const loginSellerMiddlewares: any = [sellerMiddleware];
 
 export const loginSellerHandler = async (req: Request, res: Response) => {
   let connection = null;
@@ -25,7 +25,17 @@ export const loginSellerHandler = async (req: Request, res: Response) => {
   try {
     const timestamp = Date.now();
 
-    let params = req.body as LoginInput;
+    const validateParams = loginSellerSchema.safeParse(req.body);
+
+    if (!validateParams.success) {
+      throw new ApiError(
+        401,
+        `Invalid credentials ${JSON.stringify(validateParams.error.flatten())}`,
+        { code: ERROR_CODES.INVALID_CREDENTIALS }
+      );
+    }
+
+    const params = validateParams.data;
 
     const hexAddress = Cardano.Address.from_hex(params.address);
 
@@ -94,7 +104,7 @@ export const loginSellerHandler = async (req: Request, res: Response) => {
       pubkeyhash: pubKeyHash,
       wallet_name: params.wallet_name,
       rsa_version: SELLER.rsa_version,
-      rsa_public_key: SELLER.rsa_public_key
+      rsa_public_key: SELLER.rsa_public_key,
     };
 
     const updateResult = await updateSeller(

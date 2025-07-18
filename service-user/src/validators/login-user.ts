@@ -1,12 +1,11 @@
+import { passwordSchema, hexRegex } from "@pairfy/common";
 import { z } from "zod";
 
 const allowedCountries = ["US"] as const;
 
 const countryEnum = z.enum(allowedCountries);
 
-const hexRegex = /^[a-fA-F0-9]+$/;
-
-const signatureSchema = z.object({
+const signatureSchema = z.strictObject({
   key: z.string()
     .regex(hexRegex, { message: "Key must be a valid hexadecimal string" })
     .min(64, "Key is too short")
@@ -16,7 +15,7 @@ const signatureSchema = z.object({
     .regex(hexRegex, { message: "Signature must be a valid hexadecimal string" })
     .min(64, "Signature is too short")
     .max(2048, "Signature is too long"),
-}).strict(); 
+}); 
 
 export const loginUserSchema = z.strictObject({
   signature: signatureSchema,
@@ -37,5 +36,5 @@ export const loginUserSchema = z.strictObject({
 
   terms_accepted: z.literal(true),
 
-  password: z.string()
+  password: passwordSchema
 }); 

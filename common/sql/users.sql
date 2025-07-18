@@ -5,6 +5,7 @@ create table if not exists users(
   address VARCHAR(200) NOT NULL,
   country varchar(10) NOT NULL,
   terms_accepted boolean NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
   public_ip varchar(100) NOT NULL,
   wallet_name varchar(50) NOT NULL,
   rsa_version INT UNSIGNED NOT NULL,

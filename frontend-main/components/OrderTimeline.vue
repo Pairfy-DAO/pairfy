@@ -92,21 +92,6 @@
                                 <span>Delivery date</span>
                                 <span>{{ deliveryDate }}</span>
                             </div>
-                            <div class="template-item">
-                                <span>Guide</span>
-                                <span class="template-guide" v-if="shippingData">
-                                    <div class="flex" @click="">
-                                        <i class="pi pi-envelope" />
-                                    </div>
-                                    <div class="flex" @click="">
-                                        <i class="pi pi-globe" />
-                                    </div>
-                                    <div class="flex" style="padding-right: initial; cursor: initial;">
-                                        {{ guideData.guide }}
-                                    </div>
-                                </span>
-                                <span v-else>None</span>
-                            </div>
                         </div>
                     </template>
 
@@ -136,14 +121,6 @@ const deliveryDate = computed(() => {
     return formatDateYYMMDD(Number(value.public.tolerance))
 
 });
-
-const guideData = computed(() => {
-    return {
-        website: '',
-        guide: ''
-    }
-})
-
 
 const shippingStatus = computed(() => {
     const state = orderStore.state;
@@ -327,9 +304,4 @@ const timeline = ref([
     color: var(--text-b);
 }
 
-.template-guide div {
-    height: 2rem;
-    cursor: pointer;
-    padding: 0 0.5rem;
-}
 </style>

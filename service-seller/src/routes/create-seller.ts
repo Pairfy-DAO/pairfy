@@ -11,14 +11,11 @@ import {
   createToken,
   findSellerById,
   encryptAESGCM,
-  generateRSA
+  generateRSA,
 } from "@pairfy/common";
-import {
-  validateParams,
-  RegistrationInput,
-} from "../validators/create-seller.js";
+import { createSellerSchema } from "../validators/create-seller.js";
 
-export const createSellerMiddlewares: any = [validateParams];
+export const createSellerMiddlewares: any = [];
 
 export const createSellerHandler = async (req: Request, res: Response) => {
   let connection = null;
@@ -26,9 +23,18 @@ export const createSellerHandler = async (req: Request, res: Response) => {
   try {
     const timestamp = Date.now();
 
-    const params = req.body as RegistrationInput;
+    const validateParams = createSellerSchema.safeParse(req.body);
 
-    console.log(params); //TEST
+    if (!validateParams.success) {
+      throw new ApiError(
+        401,
+        `Invalid credentials ${JSON.stringify(validateParams.error.flatten())}`,
+        { code: ERROR_CODES.INVALID_CREDENTIALS }
+      );
+    }
+
+    const params = validateParams.data;
+    console.log(params); 
 
     connection = await database.client.getConnection();
 
@@ -59,21 +65,6 @@ export const createSellerHandler = async (req: Request, res: Response) => {
       params.password
     );
 
-    const tokenContent = {
-      source: "service-seller",
-      role: "SELLER",
-      email: params.email,
-      username: params.username,
-    };
-
-    const token = createToken(
-      tokenContent,
-      process.env.AGENT_JWT_KEY as string,
-      "1h",
-      "service-seller",
-      ["register"]
-    );
-
     const sellerScheme = {
       id: sellerId,
       username: params.username,
@@ -95,9 +86,9 @@ export const createSellerHandler = async (req: Request, res: Response) => {
 
     console.log(sellerScheme);
 
-    const [insertSellerResult] = await insertSeller(connection, sellerScheme);
+    const [insertResult] = await insertSeller(connection, sellerScheme);
 
-    if (insertSellerResult.affectedRows !== 1) {
+    if (insertResult.affectedRows !== 1) {
       throw new ApiError(500, "Unexpected error while creating seller.", {
         code: ERROR_CODES.INTERNAL_ERROR,
       });
@@ -105,13 +96,19 @@ export const createSellerHandler = async (req: Request, res: Response) => {
 
     const findSeller = await findSellerById(connection, sellerScheme.id);
 
-    await createEvent(
-      connection,
-      timestamp,
+    const tokenContent = {
+      source: "service-seller",
+      role: "SELLER",
+      email: params.email,
+      username: params.username,
+    };
+
+    const token = createToken(
+      tokenContent,
+      process.env.AGENT_JWT_KEY as string,
+      "1h",
       "service-seller",
-      "CreateSeller",
-      JSON.stringify(findSeller),
-      sellerId
+      ["register"]
     );
 
     const emailEvent = {
@@ -121,6 +118,15 @@ export const createSellerHandler = async (req: Request, res: Response) => {
       token,
     };
 
+    await createEvent(
+      connection,
+      timestamp,
+      "service-seller",
+      "CreateSeller",
+      JSON.stringify(findSeller),
+      sellerId
+    );
+    
     await createEvent(
       connection,
       timestamp,
@@ -136,7 +142,7 @@ export const createSellerHandler = async (req: Request, res: Response) => {
 
     res.status(200).send({
       success: true,
-      message: "Successfully registered. Please check your email inbox."
+      message: "Successfully registered. Please check your email inbox.",
     });
   } catch (err) {
     if (connection) await connection.rollback();

@@ -23,7 +23,7 @@ const emit = defineEmits(['update:modelValue', 'valid'])
 const inputRef = ref(null)
 const errorMessage = ref('')
 
-const emailRegex = /^(?=.{1,254}$)[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const emailRegex = /^[^'"`\\\x00@\s]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$/;
 
 onMounted(() => {
     if (props.focus) {

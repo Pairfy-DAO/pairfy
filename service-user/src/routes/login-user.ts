@@ -10,6 +10,8 @@ import {
   isValidSignatureCIP30,
   generateRSA,
   encryptAESGCM,
+  hashPassword,
+  comparePassword,
 } from "@pairfy/common";
 import { getPubKeyHash } from "../utils/crypto.js";
 import { loginUserSchema } from "../validators/login-user.js";
@@ -73,8 +75,10 @@ export const loginUserHandler = async (req: Request, res: Response) => {
     const USER = await findUserById(connection, pubKeyHash);
 
     if (!USER) {
-      const RSAkeys = await generateRSA();
+      const password = await hashPassword(params.password);
 
+      const RSAkeys = await generateRSA();
+      
       const encriptedPrivateKey = await encryptAESGCM(
         RSAkeys.privateKeyB64,
         params.password
@@ -87,6 +91,7 @@ export const loginUserHandler = async (req: Request, res: Response) => {
         address: address32,
         country: params.country,
         terms_accepted: params.terms_accepted,
+        password_hash: password,
         public_ip: req.publicAddress,
         wallet_name: params.wallet_name,
         rsa_version: 0,
@@ -105,6 +110,18 @@ export const loginUserHandler = async (req: Request, res: Response) => {
         });
       }
     } else {
+
+      const passwordsMatch = await comparePassword(
+        USER.password_hash,
+        params.password
+      );
+  
+      if (!passwordsMatch) {
+        throw new ApiError(401, "Invalid Credentials", {
+          code: ERROR_CODES.INVALID_CREDENTIALS,
+        });
+      }
+  
       const updateContent = {
         address: address32,
         public_ip: req.publicAddress,

@@ -1,22 +1,26 @@
 <template>
     <div class="AuthView">
 
-        <p class="title">
-            Login Wallet
-        </p>
+        <span class="title">
+            Login
+        </span>
 
-        <div class="AuthView-wallets">
-            <button class="AuthView-wallet" v-for="item in walletIcons" :key="item.name" type="submit"
-                @click="connectWallet(item.name)">
+        <div class="AuthView-icons">
+            <button class="AuthView-wallet" :class="{ disabled: disableSubmit }" v-for="item in walletIcons"
+                :key="item.name" type="submit" :disabled="disableSubmit" @click="connectWallet(item.name)">
 
                 <img :src="item.src" :alt="item.name" />
 
                 <span>{{ item.name }} </span>
             </button>
 
+            <div class="AuthView-password">
+                <InputPassword label="RSA password" v-model="password" @valid="passwordValid = $event.valid" />
+            </div>
+
             <span class="terms">
-                By logging in with your wallet you accept the usage policy of the dapp and understand the CIP-30
-                standard.
+                By logging in with your wallet, you acknowledge and accept the DApp's usage policy and confirm your
+                understanding of the CIP-30 standard.
             </span>
         </div>
 
@@ -46,27 +50,31 @@ const walletIcons = validWallets.map(name => ({
     src: walletMap[name] ?? ''
 }))
 
+const password = ref(null)
+const passwordValid = ref(false)
+
+const disableSubmit = computed(() => !passwordValid.value)
+
 const connectWallet = async (name) => {
     try {
         await wallet.connect(name)
 
         const [signature, address] = await wallet.sign()
-
+        
         await auth.login({
             signature,
             address,
             wallet_name: name,
             country: auth.country?.toUpperCase(),
             terms_accepted: true,
-            password: 'password1'
+            password: password.value
         })
 
         auth.authDrawer = false
         window.location.reload()
     } catch (err) {
         console.error(err);
- 
-        auth.showToast(err.message, 'error', 10_000) 
+        auth.showToast(err.message, 'error', 10_000)
     }
 }
 </script>
@@ -76,7 +84,7 @@ const connectWallet = async (name) => {
     padding: 1.25rem;
 }
 
-.AuthView-wallets {
+.AuthView-icons {
     display: flex;
     flex-direction: column;
 }
@@ -95,6 +103,11 @@ const connectWallet = async (name) => {
 
 .AuthView-wallet:hover {
     border: 1px solid var(--primary-a);
+}
+
+.AuthView-wallet.disabled {
+    pointer-events: none;
+    cursor: default;
 }
 
 .AuthView-wallet img {
@@ -116,8 +129,12 @@ const connectWallet = async (name) => {
 .terms {
     font-size: var(--text-size-0);
     color: var(--text-b);
-    text-align: center;
+    text-align: left;
     margin-top: 1rem;
     font-weight: 300;
+}
+
+.AuthView-password {
+    margin-top: 1rem;
 }
 </style>
