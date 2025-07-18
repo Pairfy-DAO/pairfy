@@ -186,7 +186,7 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
       data: {
         cbor: BUILDER.cbor,
         order: BUILDER.threadTokenPolicyId,
-        seller_public_key: findSeller.rsa_public_key,
+        seller_rsa_public_key: findSeller.rsa_public_key,
       },
     };
   } catch (err: any) {

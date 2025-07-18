@@ -186,7 +186,7 @@ type CborData {
 type PendingEndpointPayload {
   cbor: String!
   order: String!
-  seller_public_key: String!
+  seller_rsa_public_key: String!
 }
 
 type PendingEndpointResponse {

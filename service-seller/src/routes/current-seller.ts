@@ -9,13 +9,13 @@ export const currentSellerHandler = async (req: Request, res: Response) => {
   let connection = null;
 
   try {
-    connection = await database.client.getConnection();
-
     if (!req.sellerData) {
       throw new ApiError(401, "Invalid credentials", {
         code: ERROR_CODES.INVALID_CREDENTIALS,
       });
     }
+    
+    connection = await database.client.getConnection();
 
     const encryptedPrivateKey = await findSellerPrivateKey(
       connection,

@@ -247,7 +247,7 @@ mutation PendingEndpoint($pendingEndpointVariable: PendingEndpointInput!) {
        data {
         order
         cbor
-        seller_public_key
+        seller_rsa_public_key
        }
     }
 }
@@ -292,7 +292,7 @@ const onSubmit = async () => {
             return;
         }
 
-        const { order, seller_public_key, cbor } = await createOrder()
+        const { order, seller_rsa_public_key, cbor } = await createOrder()
 
         const privateMetadata = {
             v: "1.0",
@@ -301,7 +301,7 @@ const onSubmit = async () => {
             p: orderProvider.value
         };
 
-        const encrypted = encryptMessageWithPublicKey(seller_public_key, JSON.stringify(privateMetadata));
+        const encrypted = encryptMessageWithPublicKey(seller_rsa_public_key, JSON.stringify(privateMetadata));
 
         console.log("✅Encrypted destination: ", encrypted);
 

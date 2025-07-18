@@ -1,6 +1,6 @@
 import database from "../database/index.js";
 import { Request, Response } from "express";
-import { userMiddleware } from "@pairfy/common";
+import { ApiError, ERROR_CODES, userMiddleware } from "@pairfy/common";
 import { findUserPrivateKey } from "../common/findUserPrivateKey.js";
 
 export const currentUserMiddlewares: any = [userMiddleware];
@@ -9,6 +9,12 @@ export const currentUserHandler = async (req: Request, res: Response) => {
   let connection = null;
 
   try {
+    if (!req.userData) {
+      throw new ApiError(401, "Invalid credentials", {
+        code: ERROR_CODES.INVALID_CREDENTIALS,
+      });
+    }
+    
     connection = await database.client.getConnection();
 
     const encryptedPrivateKey = await findUserPrivateKey(
