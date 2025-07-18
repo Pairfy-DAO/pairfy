@@ -1,5 +1,6 @@
 const typeDefs = `#graphql
 scalar BigInt
+scalar Timestamp
 
 type Product {
     id: String!
@@ -141,7 +142,6 @@ type getOrderResponse {
   address: String
   shipping: String
   session: String!
-  encrypted_private_key: String!
 }
 
 input GetBooksInput {
@@ -186,7 +186,7 @@ type CborData {
 type PendingEndpointPayload {
   cbor: String!
   order: String!
-  spk: String!
+  seller_rsa_public_key: String!
 }
 
 type PendingEndpointResponse {
@@ -259,10 +259,8 @@ input LockingEndpointInput {
 
 input ShippingEndpointInput {
   order_id: String!
-  guide: String!
-  date: String!
-  website: String!
-  notes: String
+  date: Timestamp!
+  metadata: String!
 } 
 
 input AppealedEndpointInput {

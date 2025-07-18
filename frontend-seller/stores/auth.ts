@@ -64,7 +64,7 @@ export const useAuthStore = defineStore("auth", () => {
           throw new Error(JSON.stringify(response._data.data));
         },
       });
-      const sellerData = response.sellerData;
+      const sellerData = response.data;
 
       if (sellerData) {
         seller.value = sellerData;

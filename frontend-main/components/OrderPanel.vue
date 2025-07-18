@@ -1,7 +1,7 @@
 <template>
     <div class="OrderPanel">
         <OrderChat />
-        <OrderMetadata v-if="orderStore.address"/>
+        <OrderMetadata v-if="orderStore.shipping"/>
     </div>
 </template>
 

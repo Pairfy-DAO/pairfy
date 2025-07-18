@@ -11,7 +11,7 @@
                 <OrderSummary v-if="currentNav === 0" />
                 <OrderProduct v-if="currentNav === 1" />
                 <OrderTxs v-if="currentNav === 2" />
-                <OrderChat />
+                <OrderPanel />
             </div>
 
         </div>
@@ -49,6 +49,7 @@ query ($getOrderVariable: GetOrderInput!) {
             buyer_address
             buyer_wallet
             buyer_username
+            buyer_rsa_version
             seller_id
             seller_pubkeyhash
             seller_address

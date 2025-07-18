@@ -40,7 +40,7 @@
                         status: '2rem',
                         seller_wallet: '2rem',
                         seller_address: '8rem',
-                        rsa_version: '2rem',
+                        seller_rsa_version: '2rem',
                         contract_price: '4rem',
                         contract_units: '2rem',
                         asset_name: '2rem',
@@ -100,7 +100,7 @@ const columns = ref([
     { label: "Status", field: "status" },
     { label: "Wallet", field: "seller_wallet" },
     { label: "Address", field: "seller_address" },
-    { label: "Rsa", field: "rsa_version" },
+    { label: "Rsa", field: "seller_rsa_version" },
     { label: "Price", field: "contract_price" },
     { label: "Units", field: "contract_units" },
     { label: "Asset", field: "asset_name" },
@@ -155,7 +155,7 @@ query GetOrders($getOrdersVariable: GetOrdersInput!) {
             created_at
             seller_address
             seller_wallet
-            rsa_version
+            seller_rsa_version
             product_id
             product_snapshot
             contract_state

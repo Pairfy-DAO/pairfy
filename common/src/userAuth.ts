@@ -40,11 +40,8 @@ export const userMiddleware = (
     ) as UserToken;
 
     if (sessionData.role === "USER") {
-      const scheme = {
-        ...sessionData
-      };
 
-      req.userData = scheme;
+      req.userData = sessionData;
     }
   } catch (err) {
     logger.error(err);

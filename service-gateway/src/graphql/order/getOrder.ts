@@ -3,7 +3,6 @@ import { findOrderByUser } from "../../common/findOrderByUser.js";
 import { ApiGraphQLError, ERROR_CODES, decompress } from "@pairfy/common";
 import { getOrderSchema } from "../../validators/getOrder.js";
 import { findOrderBySeller } from "../../common/findOrderBySeller.js";
-import { findSellerPrivateKey } from "../../common/findSellerPrivateKey.js";
 
 export const getOrder = async (_: any, args: any, context: any) => {
   let connection = null;
@@ -50,15 +49,12 @@ export const getOrder = async (_: any, args: any, context: any) => {
 
       const session = `${ORDER.id}:${ORDER.buyer_pubkeyhash}:${ORDER.seller_id}`;
 
-      const encrypted_private_key = "none";
-
       return {
         order: ORDER,
         product,
         address,
         shipping,
-        session,
-        encrypted_private_key,
+        session
       };
     }
 
@@ -73,17 +69,6 @@ export const getOrder = async (_: any, args: any, context: any) => {
         });
       }
 
-      const sellerPrivateKey = await findSellerPrivateKey(
-        connection,
-        SELLER.id
-      );
-
-      if (!sellerPrivateKey || sellerPrivateKey.length < 1) {
-        throw new ApiGraphQLError(505, "Internal Error", {
-          code: ERROR_CODES.NOT_FOUND,
-        });
-      }
-
       const product = decompress(ORDER.product_snapshot);
 
       const address = ORDER.pending_metadata;
@@ -91,10 +76,6 @@ export const getOrder = async (_: any, args: any, context: any) => {
       const shipping = ORDER.shipping_metadata;
 
       const session = `${ORDER.id}:${ORDER.buyer_pubkeyhash}:${ORDER.seller_id}`;
-      
-      const encrypted_private_key = JSON.stringify(
-        sellerPrivateKey[ORDER.seller_rsa_version]
-      );
 
       return {
         order: ORDER,
@@ -102,7 +83,6 @@ export const getOrder = async (_: any, args: any, context: any) => {
         address,
         shipping,
         session,
-        encrypted_private_key,
       };
     }
   } catch (err: any) {

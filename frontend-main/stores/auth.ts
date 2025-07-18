@@ -128,7 +128,7 @@ export const useAuthStore = defineStore("auth", () => {
         },
       });
 
-      const userData = response.userData;
+      const userData = response.data;
 
       if (userData) {
         user.value = userData;

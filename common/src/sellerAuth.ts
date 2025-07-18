@@ -12,6 +12,8 @@ export interface SellerToken {
   username: string;
   pubkeyhash: string;
   wallet_name: string;
+  rsa_version: string;
+  rsa_public_key: string;
 }
 
 export const sellerMiddleware = (
@@ -32,12 +34,7 @@ export const sellerMiddleware = (
     ) as SellerToken;
 
     if (sessionData.role === "SELLER") {
-      const scheme = {
-        ...sessionData,
-        token: req.session.jwt,
-      };
-
-      req.sellerData = scheme;
+      req.sellerData = sessionData;
     }
   } catch (err) {
     logger.error(err);

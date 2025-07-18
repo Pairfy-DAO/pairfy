@@ -49,6 +49,7 @@ query ($getOrderVariable: GetOrderInput!) {
             buyer_address
             buyer_wallet
             buyer_username
+            buyer_rsa_public_key
             seller_id
             seller_pubkeyhash
             seller_address
@@ -104,7 +105,6 @@ query ($getOrderVariable: GetOrderInput!) {
        address
        shipping
        session
-       encrypted_private_key
     }
 }
 

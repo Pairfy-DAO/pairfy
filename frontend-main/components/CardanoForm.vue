@@ -49,20 +49,16 @@
                     <div class="form-item">
                         <InputName v-model="orderName" @valid="orderNameValid = $event.valid" label="Receiver Alias" />
                     </div>
-
-                    <div class="form-item">
-                        <InputNote v-model="orderNote" @valid="orderNoteValid = $event.valid" />
-                    </div>
                 </div>
 
                 <div class="CardanoForm-section">
                     <div class="subtitle flex">
-                        <span> Encrypt address (RSA-256)
+                        <span> Encrypt destination (RSA-256)
                         </span>
                     </div>
 
                     <div class="form-item">
-                        <InputAddress v-model="orderAddress" @valid="orderAddressValid = $event.valid" />
+                        <InputDestination v-model="orderDestination" @valid="orderDestinationValid = $event.valid" />
                     </div>
 
                     <div class="form-item">
@@ -94,8 +90,8 @@
                         <label for="receiver">Receiver alias</label>
                         <p id="receiver">{{ store.orderName }}</p>
 
-                        <label for="address">Address</label>
-                        <p id="address">{{ store.orderAddress }}</p>
+                        <label for="destination">Destination</label>
+                        <p id="destination">{{ store.orderDestination }}</p>
 
                         <label for="payment">Payment in</label>
                         <p id="payment">{{ store.orderAsset }}</p>
@@ -195,11 +191,8 @@ const orderAssetOptions = computed(() => [
 const orderName = ref(null)
 const orderNameValid = ref(false)
 
-const orderNote = ref(null)
-const orderNoteValid = ref(null)
-
-const orderAddress = ref(null)
-const orderAddressValid = ref(false)
+const orderDestination = ref(null)
+const orderDestinationValid = ref(false)
 
 const orderProvider = ref(null)
 
@@ -209,7 +202,7 @@ const store = computed(() => {
     return {
         date: timestampToDate(Date.now() + 7 * 24 * 60 * 60 * 1000),
         orderName: orderName.value || 'John Doe',
-        orderAddress: orderAddress.value || '1234 Brickell Avenue, Suite 500, Miami, FL 33131',
+        orderDestination: orderDestination.value || '1234 Brickell Avenue, Suite 500, Miami, FL 33131',
         orderAsset: orderAsset.value || 'N/A'
     }
 })
@@ -254,7 +247,7 @@ mutation PendingEndpoint($pendingEndpointVariable: PendingEndpointInput!) {
        data {
         order
         cbor
-        spk
+        seller_rsa_public_key
        }
     }
 }
@@ -285,7 +278,7 @@ mutation PendingEndpoint($pendingEndpointVariable: PendingEndpointInput!) {
 }
 
 const isValidParams = () => {
-    const values = [orderUnitsValid.value, orderAssetValid.value, orderNameValid.value, orderNoteValid.value, orderAddressValid.value]
+    const values = [orderUnitsValid.value, orderAssetValid.value, orderNameValid.value, orderDestinationValid.value]
 
     console.log(values)
 
@@ -299,27 +292,27 @@ const onSubmit = async () => {
             return;
         }
 
-        const { order, spk, cbor } = await createOrder()
+        const { order, seller_rsa_public_key, cbor } = await createOrder()
 
-        const message = {
+        const privateMetadata = {
+            v: "1.0",
             r: orderName.value,
-            n: orderNote.value,
-            a: orderAddress.value,
+            d: orderDestination.value,
             p: orderProvider.value
         };
 
-        const compressed = compress(message)
+        const encrypted = encryptMessageWithPublicKey(seller_rsa_public_key, JSON.stringify(privateMetadata));
 
-        console.log(compressed.length);
-
-        const encrypted = encryptMessageWithPublicKey(spk, compressed);
-
-        console.log(encrypted.length);
-        console.log("✅Encrypted Address: ", encrypted);
+        console.log("✅Encrypted destination: ", encrypted);
 
         encryptedMessage.value = encrypted;
 
-        const metadata = chunkMetadata(encrypted, 64)
+        const scheme = {
+           public: {},
+           private: encrypted
+        }
+
+        const metadata = chunkMetadata(JSON.stringify(scheme), 64)
 
         const txHash = await wallet.balanceTx(cbor, metadata)
         console.log(txHash)
