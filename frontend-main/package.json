@@ -24,6 +24,7 @@
     "@vueuse/nuxt": "^13.5.0",
     "cross-fetch": "^4.1.0",
     "date-fns": "^4.1.0",
+    "dompurify": "^3.2.6",
     "form-data": "^4.0.2",
     "graphql": "^16.10.0",
     "gsap": "^3.13.0",
@@ -37,7 +38,7 @@
     "vite-plugin-wasm": "^3.4.1",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0",
-    "zod": "^3.25.32"
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

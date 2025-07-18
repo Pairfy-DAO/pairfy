@@ -1,17 +1,18 @@
 <template>
-    <div class="OrderDestination">
+    <div class="OrderMetada">
 
-        <div class="OrderDestination-body">
+        <div class="OrderMetada-body">
             <div class="title">
                 <span>Destination address</span>
             </div>
 
-            <template v-if="!display">
+            <template v-if="!visible">
                 <div class="password-input">
-                    <InputPassword v-model="passwordValue" @valid="passwordValueValid = $event.valid" :label="passwordVersion"/>
+                    <InputPassword v-model="passwordValue" @valid="passwordValueValid = $event.valid"
+                        :label="passwordVersion" />
                 </div>
 
-                <ButtonSolid label="Unlock" outlined @click="onShow" :disabled="disableButton" size="mini" icon
+                <ButtonSolid label="Unlock" outlined @click="onDecrypt" :disabled="disableButton" size="mini" icon
                     style="margin-top: 1rem;">
                     <template #icon>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -23,14 +24,13 @@
                     </template>
                 </ButtonSolid>
             </template>
-            <template v-if="display">
+            <template v-if="visible">
                 <div class="destination-layout">
                     <div class="card">
-                        <span class="card-title">{{ destination.r }}</span>
+                        <span class="card-title">{{ parsedData.r }}</span>
                         <DividerComp margin="1rem 0px" />
-                        <p class="card-field"><strong>Destination:</strong> {{ destination.a }}</p>
-                        <p class="card-field"><strong>Preference:</strong> {{ destination.p }}</p>
-                        <p class="card-field"><strong>Notes:</strong> {{ destination.n }}</p>
+                        <p class="card-field"><strong>Destination:</strong> {{ parsedData.d }}</p>
+                        <p class="card-field"><strong>Preference:</strong> {{ parsedData.p }}</p>
                     </div>
                 </div>
             </template>
@@ -41,40 +41,34 @@
 
 <script setup>
 import DOMPurify from 'dompurify';
-import { decryptMessageWithPrivateKey, decryptAESGCM, decompress } from '@pairfy/common-f';
+import { decryptMessageWithPrivateKey, decryptAESGCM } from '@pairfy/common-f';
 import { z } from 'zod';
 
 const orderStore = useOrderStore()
+const authStore = useAuthStore()
 
-const display = ref(false)
+const visible = ref(false)
 
-const destination = ref({})
+const parsedData = ref({})
 
 const passwordValue = ref(null)
 const passwordValueValid = ref(false)
 
 const disableButton = computed(() => !passwordValue.value || !passwordValueValid.value)
 
-const passwordVersion = computed(() => `Password v${orderStore.order?.rsa_version}`)
+const passwordVersion = computed(() => `Password v${orderStore.order?.seller_rsa_version}`)
 
-const base64Regex = /^[A-Za-z0-9+/]+={0,2}$/
-const metadataSchema = z.array(
-    z.object({
-        label: z.literal("674"),
-        json_metadata: z.object({
-            msg: z
-                .array(
-                    z
-                        .string()
-                        .max(100, { message: "Each chunk must be at most 100 characters long." })
-                        .refine((str) => base64Regex.test(str), {
-                            message: "The chunk is not a valid base64 string.",
-                        })
-                )
-                .nonempty({ message: "msg must not be empty." })
-        })
-    })
-)
+/////////////////////////////////////////////////////////////////////
+
+const base64Regex = /^[A-Za-z0-9+/=]+$/;
+
+const metadataSchema = z.strictObject({
+    public: z.object({}),
+    private: z
+        .string()
+        .length(344, { message: "Must be exactly 344 characters long" })
+        .regex(base64Regex, { message: "Must be a valid Base64-encoded string" }),
+});
 
 const sanitizedString = z
     .string()
@@ -85,42 +79,49 @@ const sanitizedString = z
         ALLOWED_ATTR: [],
     }));
 
-const addressSchema = z.strictObject({
+const encryptedSchema = z.object({
+    v: z.enum(["1.0"]),
     r: sanitizedString,
-    n: sanitizedString.optional(),
-    a: sanitizedString,
+    d: sanitizedString,
     p: sanitizedString.optional(),
 });
 
-const onShow = async () => {
+/////////////////////////////////////////////////////////////////////
+
+const onDecrypt = async () => {
     try {
         if (!orderStore.address) {
             throw new Error('Empty address')
         }
 
-        const validation1 = metadataSchema.safeParse(JSON.parse(orderStore.address))
+        if (!authStore.seller) {
+            throw new Error('Empty seller data')
+        }
+
+        const validation1 = metadataSchema.safeParse(orderStore.address)
 
         if (!validation1.success) {
-            throw new Error(`Invalid metadata format ${z.treeifyError(validation1.error)}`)
+            throw new Error(`Invalid metadata format 1 ${JSON.stringify(z.treeifyError(validation1.error))}`)
         }
 
-        const unchunked = validation1.data[0].json_metadata.msg.join('')
+        const address = validation1.data
 
-        const privateKeyB64 = await decryptAESGCM(orderStore.encryptedPrivateKey, passwordValue.value)
+        const sellerPrivateKey = authStore.seller.rsa_private_key[authStore.seller.rsa_version]
+        const privateKeyB64 = await decryptAESGCM(sellerPrivateKey, passwordValue.value)
 
-        const compressed = decryptMessageWithPrivateKey(privateKeyB64, unchunked)
+        const decrypted = decryptMessageWithPrivateKey(privateKeyB64, address.private)
 
-        const decompressed = decompress(compressed)
+        console.log(decrypted)
 
-        const validation2 = addressSchema.safeParse(JSON.parse(decompressed))
+        const validation2 = encryptedSchema.safeParse(JSON.parse(decrypted))
 
         if (!validation2.success) {
-            throw new Error(`Invalid metadata format ${z.treeifyError(validation2.error)}`)
+            throw new Error(`Invalid metadata format 2${JSON.stringify(z.treeifyError(validation2.error))}`)
         }
 
-        destination.value = validation2.data
+        parsedData.value = validation2.data
 
-        display.value = true
+        visible.value = true
 
     } catch (err) {
         console.error(err)
@@ -130,11 +131,11 @@ const onShow = async () => {
 </script>
 
 <style lang="css" scoped>
-.OrderDestination {
+.OrderMetada {
     width: 100%;
 }
 
-.OrderDestination-body {
+.OrderMetada-body {
     width: 428px;
     padding: 1rem;
     display: flex;

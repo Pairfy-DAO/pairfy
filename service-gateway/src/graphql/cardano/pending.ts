@@ -105,7 +105,12 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    const metadata = chunkMetadata("x".repeat(344), 64);
+    const scheme = {
+      public: {},
+      private: "x".repeat(344),
+    };
+
+    const metadata = chunkMetadata(JSON.stringify(scheme), 64);
 
     const BUILDER = await pendingTransactionBuilder(
       operatorWallet,
@@ -152,7 +157,7 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
       updated_at: timestamp,
       schema_v: 0,
     };
-    
+
     const [insert1] = await insertOrder(connection, orderContent);
 
     if (insert1.affectedRows !== 1) {
@@ -181,7 +186,7 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
       data: {
         cbor: BUILDER.cbor,
         order: BUILDER.threadTokenPolicyId,
-        spk: findSeller.rsa_public_key,
+        seller_rsa_public_key: findSeller.rsa_public_key,
       },
     };
   } catch (err: any) {

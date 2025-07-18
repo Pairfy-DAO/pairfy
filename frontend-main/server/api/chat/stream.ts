@@ -41,7 +41,7 @@ export default defineEventHandler(async (event) => {
       }
     );
 
-    const { userData } = result;
+    const userData = result.data;
 
     if (userData) {
       const CHANNEL = channel.split(":");

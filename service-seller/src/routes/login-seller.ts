@@ -92,7 +92,9 @@ export const loginSellerHandler = async (req: Request, res: Response) => {
       country: SELLER.country,
       username: SELLER.username,
       pubkeyhash: pubKeyHash,
-      wallet_name: params.wallet_name
+      wallet_name: params.wallet_name,
+      rsa_version: SELLER.rsa_version,
+      rsa_public_key: SELLER.rsa_public_key
     };
 
     const updateResult = await updateSeller(
