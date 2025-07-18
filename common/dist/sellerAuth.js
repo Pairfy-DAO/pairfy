@@ -14,10 +14,7 @@ const sellerMiddleware = (req, res, next) => {
         const privateKey = Buffer.from(process.env.AGENT_JWT_KEY, 'base64').toString('utf-8');
         const sessionData = jsonwebtoken_1.default.verify(req.session.jwt, privateKey);
         if (sessionData.role === "SELLER") {
-            const scheme = {
-                ...sessionData
-            };
-            req.sellerData = scheme;
+            req.sellerData = sessionData;
         }
     }
     catch (err) {

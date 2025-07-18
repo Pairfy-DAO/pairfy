@@ -34,11 +34,7 @@ export const sellerMiddleware = (
     ) as SellerToken;
 
     if (sessionData.role === "SELLER") {
-      const scheme = {
-        ...sessionData
-      };
-
-      req.sellerData = scheme;
+      req.sellerData = sessionData;
     }
   } catch (err) {
     logger.error(err);

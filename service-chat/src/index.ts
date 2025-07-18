@@ -129,8 +129,6 @@ const main = async () => {
         context: async ({ req }) => {
           const { sellerData, userData } = req;
 
-          console.log(sellerData, userData);
-
           if (!sellerData && !userData) {
             throw new ApiGraphQLError(401, "Unauthorized", {
               code: ERROR_CODES.UNAUTHORIZED,
