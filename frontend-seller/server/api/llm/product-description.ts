@@ -5,12 +5,18 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
   try {
-    const response = await fetch(config.serviceLlmBase + "/api/llm/product-description", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-      credentials: 'include'
-    });
+    const response = await fetch(
+      config.serviceLlmBase + "/api/llm/product-description",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-forwarded-for": event.context.clientIP,
+        },
+        body: JSON.stringify(body),
+        credentials: "include",
+      }
+    );
 
     if (!response.ok || !response.body) {
       const text = await response.text();

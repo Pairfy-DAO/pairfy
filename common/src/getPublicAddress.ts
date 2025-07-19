@@ -35,7 +35,8 @@ export const getPublicAddress = (
       method: req.method
     });
 
-    return res.status(403).json({ error: 'Public IP not detected' });
+    res.status(403).json({ error: 'Public IP not detected' });
+    return;
   }
 
   const cleanedIp = ip.replace(/^::ffff:/, '');

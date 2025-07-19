@@ -10,6 +10,9 @@ export default defineEventHandler(async (event) => {
       config.serviceSellerBase + "/api/seller/verify-seller",
       {
         method: "POST",
+        headers: {
+          "x-forwarded-for": event.context.clientIP,
+        },
         body,
         async onResponseError({ response }) {
           throw new Error(JSON.stringify(response._data));

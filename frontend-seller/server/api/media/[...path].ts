@@ -37,6 +37,7 @@ export default defineEventHandler(async (event) => {
     headers: {
       "Content-Type": contentType,
       "Cache-Control": "public, max-age=31536000, immutable",
+      'x-forwarded-for': event.context.clientIP
     },
   });
 });

@@ -34,7 +34,8 @@ export default defineEventHandler(async (event) => {
       method: "POST",
       body: form,
       headers: {
-        cookie: sessionCookie ? `session=${sessionCookie}` : "",
+        'x-forwarded-for': event.context.clientIP,
+        'cookie': sessionCookie ? `session=${sessionCookie}` : "",
       },
       async onResponseError({ response }) {
         throw new Error(
