@@ -20,6 +20,8 @@ spec:
           ports:
             - containerPort: 3000
           env:
+            - name: NODE_ENV
+              value: "production"
             - name: NUXT_SERVICE_MEDIA_BASE
               value: http://service-media.default.svc.cluster.local:8003
             - name: NUXT_SERVICE_QUERY_BASE
