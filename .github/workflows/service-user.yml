@@ -3,7 +3,7 @@ name: service-user
 on:
   push:
     branches:
-      - prod
+      - main
     paths:
       - 'service-user/**'
 
