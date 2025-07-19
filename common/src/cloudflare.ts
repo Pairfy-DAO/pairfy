@@ -60,11 +60,14 @@ export const getPublicAddress: RequestHandler = (
     }
 
     const ip = proxyaddr(req, CLOUDFLARE_IP_RANGES);
+    const allIps = proxyaddr.all(req);
 
-    const remoteAddr = req.socket.remoteAddress || "";
+    const cameThroughCloudflare = allIps.some((addr) =>
+      isTrustedProxy(addr, 0)
+    );
 
-    if (!isTrustedProxy(remoteAddr, 0)) {
-      console.warn(`Access blocked: not Cloudflare: ${remoteAddr}`);
+    if (!cameThroughCloudflare) {
+      console.warn(`Access blocked: not Cloudflare. IP chain: ${allIps.join(", ")}`);
       res.status(403).json({ error: "Access denied: not from Cloudflare" });
       return;
     }
