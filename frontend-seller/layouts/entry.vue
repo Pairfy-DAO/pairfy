@@ -8,6 +8,8 @@
 
 
 <script setup>
+//entry
+
 const auth = useAuthStore()
 
 await auth.fetchUser()
