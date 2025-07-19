@@ -19,7 +19,7 @@ spec:
             - name: NODE_ENV
               value: development
             - name: NETWORK_ENV
-              value: "Preprod"              
+              value: Preprod              
             - name: REDIS_RATELIMIT_HOST
               value: redis://redis-limiter:6379              
             - name: REDIS_BOOKS_HOST

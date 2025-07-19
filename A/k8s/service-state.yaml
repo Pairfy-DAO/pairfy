@@ -16,6 +16,8 @@ spec:
         - name: service-state
           image: pairfy/service-state
           env:
+            - name: NETWORK_ENV
+              value: Preprod
             - name: DATABASE_NAME
               value: service_gateway       
             - name: DATABASE_USER
@@ -29,7 +31,9 @@ spec:
             - name: QUERY_INTERVAL
               value: "60000"       
             - name: SCAN_RANGE
-              value: "300000"           
+              value: "300000"    
+            - name: BLOCKFROST_HOST
+              value: https://cardano-preprod.blockfrost.io/api/v0       
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -49,7 +53,7 @@ spec:
                 secretKeyRef:
                   name: database-password-secret
                   key: password                       
-            - name: PROJECT_ID
+            - name: BLOCKFROST_KEY
               valueFrom:
                 secretKeyRef:
                   name: blockfrost-key

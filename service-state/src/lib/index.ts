@@ -7,7 +7,7 @@ import {
   TransactionSchema,
 } from "./types.js";
 import { blockFrostAPI } from "../api/index.js";
-import { Data, fromText, Kupmios, Lucid, UTxO } from "@lucid-evolution/lucid";
+import { Data, fromText, Kupmios, Lucid, Network, UTxO } from "@lucid-evolution/lucid";
 import { logger } from "@pairfy/common";
 
 const provider = new Kupmios(
@@ -15,7 +15,13 @@ const provider = new Kupmios(
   process.env.OGMIOS_KEY as string
 );
 
-const lucid = await Lucid(provider, "Preprod");
+let NETWORK: Network = "Preprod";
+
+if (process.env.NETWORK_ENV === "Mainnet") {
+  NETWORK = "Mainnet";
+}
+
+const lucid = await Lucid(provider, NETWORK);
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -61,18 +67,20 @@ export type UtxoResponseFailed = {
 };
 
 export type UtxoData = {
-  utxo: UTxO,
-  txInfo: Transaction
+  utxo: UTxO;
+  txInfo: Transaction;
   txMetadata: MetadataList;
   blockTime: number;
   datum: DatumType;
   metadata: string;
-  txHash: string
-}
+  txHash: string;
+};
 
 export type UtxoResponse = UtxoResponseFailed & UtxoData;
 
-async function getUtxo(threadtoken: string): Promise<UtxoResponse | UtxoResponseFailed> {
+async function getUtxo(
+  threadtoken: string
+): Promise<UtxoResponse | UtxoResponseFailed> {
   try {
     const assetUnit = threadtoken + fromText("threadtoken");
 
@@ -81,7 +89,7 @@ async function getUtxo(threadtoken: string): Promise<UtxoResponse | UtxoResponse
     if (!getUtxo) {
       return {
         success: false,
-        failed: false
+        failed: false,
       };
     }
 
@@ -98,7 +106,7 @@ async function getUtxo(threadtoken: string): Promise<UtxoResponse | UtxoResponse
       blockTime: txInfo.block_time,
       datum: Data.from(getUtxo.datum!, StateMachineDatum),
       metadata: JSON.stringify(txMetadata),
-      txHash: getUtxo.txHash + "#" + getUtxo.outputIndex
+      txHash: getUtxo.txHash + "#" + getUtxo.outputIndex,
     };
 
     return response;
@@ -112,7 +120,7 @@ async function getUtxo(threadtoken: string): Promise<UtxoResponse | UtxoResponse
 
     const response = {
       success: false,
-      failed: true
+      failed: true,
     };
 
     return response;
