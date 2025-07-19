@@ -19,7 +19,7 @@ jobs:
           token: ${{ secrets.MARKETPLACE_CLOUD_API }}
 
       - name: Set up kubeconfig
-        run: doctl kubernetes cluster kubeconfig save marketplace-k8
+        run: doctl kubernetes cluster kubeconfig save pairfy
 
       - name: Deploy manifests to Kubernetes
         run: kubectl apply -f A/k8s-prod
