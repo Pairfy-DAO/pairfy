@@ -33,7 +33,8 @@ export default defineEventHandler(async (event) => {
         method: "GET",
         credentials: "include",
         headers: {
-          Cookie: sessionCookie ? `session=${sessionCookie}` : "",
+          'x-forwarded-for': event.context.clientIP,
+          'Cookie': sessionCookie ? `session=${sessionCookie}` : "",
         },
         async onResponseError({ response }) {
           throw new Error(JSON.stringify(response._data));

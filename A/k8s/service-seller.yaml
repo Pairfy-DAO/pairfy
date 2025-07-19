@@ -29,8 +29,8 @@ spec:
             - name: AGENT_JWT_KEY
               valueFrom:
                 secretKeyRef:
-                  name: agent-token-secret
-                  key: AGENT_TOKEN_KEY             
+                  name: agent-key-secret
+                  key: key             
             - name: DATABASE_HOST  
               valueFrom:
                 configMapKeyRef:
@@ -48,10 +48,12 @@ spec:
                   key: password
 
           resources:
-            limits:
-              memory: "500Mi"
             requests:
-              memory: "256Mi"       
+              cpu: "50m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"        
 ---
 apiVersion: v1
 kind: Service

@@ -1,36 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: service-user
+  name: service-seller
 spec:
   replicas: 1
   selector:
     matchLabels:
-      role: service-user
+      role: service-seller
   template:
     metadata:
       labels:
-        role: service-user
+        role: service-seller
     spec:
       containers:
-        - name: service-user
-          image: pairfy/service-user
+        - name: service-seller
+          image: pairfy/service-seller
           env:
             - name: NODE_ENV
-              value: development      
+              value: "production"                                                                                                                
             - name: DATABASE_NAME
-              value: service_user       
+              value: service_seller       
             - name: DATABASE_USER
-              value: marketplace                                                                                   
+              value: marketplace 
             - name: TOKEN_EXPIRATION
-              value: "7d"
+              value: "7d" 
             - name : REDIS_RATELIMIT_URL
-              value: "redis://redis-limiter:6379"                  
+              value: "redis://redis-limiter:6379"
             - name: AGENT_JWT_KEY
               valueFrom:
                 secretKeyRef:
                   name: agent-key-secret
-                  key: key                                                                                                                                          
+                  key: key             
             - name: DATABASE_HOST  
               valueFrom:
                 configMapKeyRef:
@@ -45,25 +45,25 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: database-password-secret
-                  key: password       
+                  key: password
 
           resources:
             requests:
-              cpu: "50m"
+              cpu: "250m"
               memory: "256Mi"
             limits:
               cpu: "500m"
-              memory: "512Mi"      
+              memory: "512Mi"        
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-user
+  name: service-seller
 spec:
   selector:
-    role: service-user
+    role: service-seller
   ports:
-    - name: service-user
+    - name: service-seller
       protocol: TCP
-      port: 8005
-      targetPort: 8005
+      port: 8000
+      targetPort: 8000

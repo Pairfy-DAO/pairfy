@@ -11,6 +11,9 @@ export default defineEventHandler(async (event) => {
       {
         method: "POST",
         body,
+        headers: {
+          "x-forwarded-for": event.context.clientIP,
+        },
         async onResponseError({ response }) {
           throw new Error(JSON.stringify(response._data));
         },

@@ -11,7 +11,8 @@ export default defineEventHandler(async (event) => {
         body,
         credentials: "include",
         headers: {
-          cookie: getHeader(event, "cookie") || "",
+          'x-forwarded-for': event.context.clientIP,
+          'cookie': getHeader(event, "cookie") || "",
         },
         async onResponseError({ response }) {
           throw new Error(JSON.stringify(response._data));

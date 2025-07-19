@@ -12,8 +12,8 @@ const appConfig = useAppConfig()
 useHead({
   title: appConfig.title,
   meta: [
-    { name: 'description', content: 'A cool Nuxt 3 app' },
-    { property: 'og:title', content: 'Nuxt App' }
+    { name: 'description', content: 'Pairfy seller dashboard' },
+    { property: 'og:title', content: 'Pairfy seller dashboard' }
   ],
   link: [
     { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
