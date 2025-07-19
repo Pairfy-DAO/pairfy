@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { SellerToken, UserToken } from "@pairfy/common";
+import { logger, SellerToken, UserToken } from "./index.js";
 import requestIp from 'request-ip';
 
 declare global {
@@ -26,17 +26,26 @@ export const getPublicAddress = (
   next: NextFunction
 ) => {
   let ip = requestIp.getClientIp(req);
-  
-  console.log(ip)
 
   if (!ip) {
-    console.warn('IP no detectada');
-    return res.status(403).json({ error: 'IP no detectada' });
+    logger.warn({
+      message: 'Public IP not detected',
+      service: req.originalUrl,
+      method: req.method
+    });
+
+    return res.status(403).json({ error: 'IP not detected' });
   }
 
-  // Limpiar IP embebida en IPv6
-  ip = ip.replace(/^::ffff:/, '');
+  const cleanedIp = ip.replace(/^::ffff:/, '');
+  req.publicAddress = cleanedIp;
 
-  req.publicAddress = ip;
+  logger.info({
+    message: 'Public IP detected',
+    service: req.originalUrl,
+    method: req.method,
+    ip: cleanedIp
+  });
+
   next();
 };

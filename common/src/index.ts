@@ -5,7 +5,7 @@ export * from "./consumeEvent";
 export * from "./loadSql";
 export * from "./errorHandler";
 export * from "./logger";
-export * from "./cloudflare";
+export * from "./getPublicAddress";
 export * from "./rateLimiter";
 export * from "./token";
 export * from "./findSellerByEmail";
