@@ -8,10 +8,10 @@
           d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
         <circle cx="12" cy="10" r="3" />
       </svg>
-      <span>Choose your country</span>
+      <span>Choose a country.</span>
     </div>
     <div class="subtitle">
-      <span>Select your country or region to continue. Service availability will be expanded in accordance with DAO
+      <span>Hello! Service availability will be expanded in accordance with DAO
         governance. Thank you for your understanding.</span>
     </div>
     <div class="button-group">
@@ -44,6 +44,8 @@ const selectCountry = (code) => {
     params: { country: code },
     query: { ...route.query }
   })
+
+  window.location.reload()
 };
 </script>
 
@@ -101,7 +103,7 @@ const selectCountry = (code) => {
 
 .subtitle {
   font-size: var(--text-size-1);
-  line-height: 1.25rem;
+  line-height: 1.5rem;
   color: var(--text-b);
   margin: 1rem 0;
 }
