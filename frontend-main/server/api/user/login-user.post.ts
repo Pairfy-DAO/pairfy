@@ -7,6 +7,9 @@ export default defineEventHandler(async (event) => {
     const response = await $fetch(config.serviceUserBase + "/api/user/login-user", {
       method: "POST",
       body,
+      headers:{
+         'x-forwarded-for': event.context.clientIP,
+      },
       credentials: "include",
       async onResponse({ response }) {
         const setCookies = response.headers.getSetCookie?.();
