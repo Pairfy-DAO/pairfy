@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { passwordRegex } from "./index.js";
+import { passwordSchema } from "@pairfy/common";
 
 export const verifyParams = z.object({
   token: z
@@ -10,10 +10,7 @@ export const verifyParams = z.object({
       message: "Invalid JWT format",
     }),
 
-  password: z.string().regex(passwordRegex, {
-    message:
-      "Password must be 8–64 characters and include lowercase, uppercase, number, and special character",
-  }),
+  password: passwordSchema
 });
 
 export const verifyTokenType = z.object({

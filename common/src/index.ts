@@ -48,3 +48,4 @@ export * from "./compress";
 export * from "./decompress";
 export * from "./aes";
 export * from "./rsa";
+export * from "./zod";

@@ -1,26 +1,10 @@
-import { Request, Response, NextFunction } from "express";
 import { z } from "zod";
+import { emailSchema, passwordSchema, hexRegex } from "@pairfy/common";
 
-// HEX string validator
-const hexRegex = /^[a-fA-F0-9]+$/;
+export const loginSellerSchema = z.strictObject({
+  email:emailSchema,
 
-// Email validator OWASP-compliant
-const emailRegex =
-  /^(?=.{1,254}$)[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-// Password policy: 8–64 chars, 1 lowercase, 1 uppercase, 1 digit, 1 special
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,64}$/;
-
-export const loginSchema = z.object({
-  email: z
-    .string()
-    .email("Invalid email format")
-    .regex(emailRegex, { message: "Invalid email format (OWASP-compliant)" }),
-
-  password: z.string().regex(passwordRegex, {
-    message:
-      "Password must be 8–64 characters and include uppercase, lowercase, number, and special character",
-  }),
+  password: passwordSchema,
 
   signature: z.object({
     key: z
@@ -49,26 +33,4 @@ export const loginSchema = z.object({
       message:
         "Wallet name must contain only letters, numbers, hyphens, or underscores",
     })
-}).strict();
-
-export type LoginInput = z.infer<typeof loginSchema>;
-
-export const validateParams = (
-  req: Request<{}, {}, LoginInput>,
-  res: Response,
-  next: NextFunction
-) => {
-  const result = loginSchema.safeParse(req.body);
-
-  if (!result.success) {
-    const { fieldErrors, formErrors } = result.error.flatten();
-    return res.status(400).json({
-      message: "Validation failed",
-      fieldErrors,
-      formErrors,
-    });
-  }
-
-  req.body = result.data;
-  next();
-};
+})

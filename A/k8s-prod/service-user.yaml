@@ -16,26 +16,21 @@ spec:
         - name: service-user
           image: pairfy/service-user
           env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name                                       
+            - name: NODE_ENV
+              value: production      
+            - name: DATABASE_NAME
+              value: service_user       
+            - name: DATABASE_USER
+              value: marketplace                                                                                   
+            - name: TOKEN_EXPIRATION
+              value: "7d"
+            - name : REDIS_RATELIMIT_URL
+              value: "redis://redis-limiter:6379"                  
             - name: AGENT_JWT_KEY
               valueFrom:
                 secretKeyRef:
                   name: agent-token-secret
-                  key: AGENT_TOKEN_KEY 
-            - name: ADMIN_JWT_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: admin-token-secret
-                  key: ADMIN_TOKEN_KEY                                         
-            - name: POD_TIMEOUT
-              value: '120000'   
-            - name: EXPRESS_PORT
-              value: "8000"
-            - name: EXPRESS_TIMEOUT
-              value: "120000"                                                                  
+                  key: AGENT_TOKEN_KEY                                                                                                                                          
             - name: DATABASE_HOST  
               valueFrom:
                 configMapKeyRef:
@@ -50,20 +45,15 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: database-password-secret
-                  key: password   
-            - name: DATABASE_NAME
-              value: service_user       
-            - name: DATABASE_USER
-              value: marketplace                                                                                   
-            - name: TOKEN_EXPIRATION
-              value: "7d"
-            - name: CORS_DOMAINS
-              value: "pairfy.store"                                                  
+                  key: password       
+                
           resources:
-            limits:
-              memory: "500Mi"
             requests:
-              memory: "256Mi"       
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"  
 ---
 apiVersion: v1
 kind: Service
@@ -75,5 +65,5 @@ spec:
   ports:
     - name: service-user
       protocol: TCP
-      port: 8000
-      targetPort: 8000
+      port: 8005
+      targetPort: 8005

@@ -27,8 +27,6 @@
             <template v-if="visible">
                 <div class="destination-layout">
                     <div class="card">
-                        <span class="card-title">{{ parsedData.r }}</span>
-                        <DividerComp margin="1rem 0px" />
                         <p class="card-field"><strong>Guide:</strong> {{ parsedData.g }}</p>
                         <p class="card-field"><strong>Website:</strong> {{ parsedData.w }}</p>
                     </div>

@@ -9,7 +9,7 @@
 
 
       <div class="form-group">
-        <label for="guide">Guide number</label>
+        <label for="guide">Guide</label>
         <input type="text" id="guide" v-model="form.guide" maxlength="40" @beforeinput="onInput" />
       </div>
 

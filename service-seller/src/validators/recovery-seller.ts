@@ -1,8 +1,6 @@
 import { z } from "zod";
-import { emailRegex } from "./index.js";
+import { emailSchema } from "@pairfy/common";
 
-export const verifyParams = z.object({
-  email: z.string().email("Invalid email format").regex(emailRegex, {
-    message: "Invalid email format",
-  })
+export const recoverySellerSchema = z.object({
+  email: emailSchema
 });

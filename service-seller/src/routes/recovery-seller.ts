@@ -7,7 +7,7 @@ import {
   createToken,
   findSellerByEmail,
 } from "@pairfy/common";
-import { verifyParams } from "../validators/recovery-seller.js";
+import { recoverySellerSchema } from "../validators/recovery-seller.js";
 
 export const recoverySellerMiddlewares: any = [];
 
@@ -17,18 +17,17 @@ export const recoverySellerHandler = async (req: Request, res: Response) => {
   try {
     const timestamp = Date.now();
 
-    const validateParams = verifyParams.safeParse(req.body);
+    const validateParams = recoverySellerSchema.safeParse(req.body);
 
     if (!validateParams.success) {
-      const errors = JSON.stringify(validateParams.error.flatten());
-      throw new ApiError(400, `Validation failed: ${errors}`, {
-        code: ERROR_CODES.VALIDATION_ERROR,
-      });
+      throw new ApiError(
+        401,
+        `Invalid credentials ${JSON.stringify(validateParams.error.flatten())}`,
+        { code: ERROR_CODES.INVALID_CREDENTIALS }
+      );
     }
 
     const params = validateParams.data;
-
-    console.log(params);
 
     connection = await database.client.getConnection();
 

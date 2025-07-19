@@ -2,24 +2,42 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend-main
+  labels:
+    app: frontend-main
 spec:
   replicas: 1
   selector:
     matchLabels:
-      role: frontend-main
+      app: frontend-main
   template:
     metadata:
       labels:
-        role: frontend-main
+        app: frontend-main
     spec:
       containers:
         - name: frontend-main
           image: pairfy/frontend-main
-          resources:
-            limits:
-              memory: "500Mi"
-            requests:
-              memory: "256Mi"               
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NUXT_SERVICE_MEDIA_BASE
+              value: http://service-media.default.svc.cluster.local:8003
+            - name: NUXT_SERVICE_QUERY_BASE
+              value: http://service-query.default.svc.cluster.local:8004          
+            - name: NUXT_SERVICE_USER_BASE
+              value: http://service-user.default.svc.cluster.local:8005
+            - name: NUXT_SERVICE_GATEWAY_BASE
+              value: http://service-gateway.default.svc.cluster.local:8006   
+            - name: NUXT_SERVICE_NOTIFICATION_BASE
+              value: http://service-notification.default.svc.cluster.local:8009   
+            - name: NUXT_SERVICE_CHAT_BASE
+              value: http://service-chat.default.svc.cluster.local:8010           
+            - name: NUXT_REDIS_CHAT_BASE
+              value: redis://redis-chat.default.svc.cluster.local:6379                            
+            - name: NUXT_PUBLIC_MEDIA_CDN
+              value: /api/media
+            - name: NUXT_PUBLIC_CARDANO_NETWORK
+              value: mainnet
 ---
 apiVersion: v1
 kind: Service
@@ -27,9 +45,9 @@ metadata:
   name: frontend-main
 spec:
   selector:
-    role: frontend-main
+    app: frontend-main
   ports:
-    - name: frontend-main
-      protocol: TCP
-      port: 8000
-      targetPort: 80
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: ClusterIP

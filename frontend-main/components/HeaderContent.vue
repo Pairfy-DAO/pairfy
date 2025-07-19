@@ -1,5 +1,5 @@
 <template>
-  <nav class="HeaderContent flex">
+  <nav class="HeaderContent">
     <div class="HeaderContent-body">
 
       <div class="left-column flex">
@@ -62,6 +62,8 @@ watch(() => route.path, (newPath) => {
   justify-content: center;
   box-sizing: border-box;
   color: var(--text-w);
+  align-items: center;
+  display: flex;
   width: 100%;
   top: 2rem;
   position: initial;

@@ -3,7 +3,7 @@
 
         <div class="OrderMetada-body">
             <div class="title">
-                <span>Destination address</span>
+                <span>Shipping Information</span>
             </div>
 
             <template v-if="!visible">

@@ -151,7 +151,10 @@ function openExplorer(txHash) {
 
     const cardanoNetwork = useRuntimeConfig().public.cardanoNetwork;
 
-    window.open(`https://${cardanoNetwork}.cexplorer.io/tx/${txHash}`, '_blank');
+    if (cardanoNetwork === 'mainnet' || cardanoNetwork === 'preprod') {
+        const prefix = cardanoNetwork === 'mainnet' ? '' : `${cardanoNetwork}.`;
+        window.open(`https://${prefix}cexplorer.io/tx/${txHash}`, '_blank');
+    }
 }
 
 </script>
