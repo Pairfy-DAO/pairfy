@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: service-user
+  template:
+    metadata:
+      labels:
+        role: service-user
+    spec:
+      containers:
+        - name: service-user
+          image: pairfy/service-user
+          env:
+            - name: NODE_ENV
+              value: production      
+            - name: DATABASE_NAME
+              value: service_user       
+            - name: DATABASE_USER
+              value: marketplace                                                                                   
+            - name: TOKEN_EXPIRATION
+              value: "7d"
+            - name : REDIS_RATELIMIT_URL
+              value: "redis://redis-limiter:6379"                  
+            - name: AGENT_JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: agent-token-secret
+                  key: AGENT_TOKEN_KEY                                                                                                                                          
+            - name: DATABASE_HOST  
+              valueFrom:
+                configMapKeyRef:
+                  name: database-config
+                  key: master  
+            - name: DATABASE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: database-config
+                  key: port                                     
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-password-secret
+                  key: password       
+                
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-user
+spec:
+  selector:
+    role: service-user
+  ports:
+    - name: service-user
+      protocol: TCP
+      port: 8005
+      targetPort: 8005
