@@ -26,7 +26,7 @@ export const sellerMiddleware = (
   }
 
   try {
-    const privateKey = Buffer.from(process.env.AGENT_JWT_KEY!, 'base64').toString('utf-8');
+    const privateKey = process.env.AGENT_JWT_KEY as string
 
     const sessionData = jwt.verify(
       req.session.jwt,
