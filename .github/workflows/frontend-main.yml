@@ -3,7 +3,7 @@ name: frontend-main
 on:
   push:
     branches:
-      - prod
+      - main
     paths:
       - 'frontend-main/**'
 
