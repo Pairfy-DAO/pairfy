@@ -7,7 +7,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 60Gi
+      storage: 50Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -62,39 +62,38 @@ metadata:
 data:
   my.cnf: |
     [mysqld]
+
     bind-address = 0.0.0.0
 
-    innodb_buffer_pool_size = 5368709120 
-    innodb_buffer_pool_instances = 4       
-    innodb_io_capacity = 2000             
-    innodb_io_capacity_max = 4000
+    innodb_buffer_pool_size = 512M
+    innodb_buffer_pool_instances = 1
+    innodb_io_capacity = 1000
+    innodb_io_capacity_max = 2000
 
-    tmp_table_size = 134217728            
-    max_heap_table_size = 134217728       
-    sort_buffer_size = 4194304            
-    join_buffer_size = 4194304            
+    tmp_table_size = 67108864
+    max_heap_table_size = 67108864
+    sort_buffer_size = 2097152
+    join_buffer_size = 2097152
 
+    max_connections = 100
+    wait_timeout = 300
+    interactive_timeout = 300
 
-    max_connections = 200                 
-    wait_timeout = 600                   
-    interactive_timeout = 600             
+    thread_cache_size = 64
 
-
-    thread_cache_size = 256   
-    
     max_allowed_packet = 67108864
 
-    innodb_flush_log_at_trx_commit = 1            
-    innodb_log_buffer_size = 134217728            
-    innodb_redo_log_capacity = 1073741824
-    innodb_flush_method = O_DIRECT                
-    innodb_file_per_table = 1                    
-    transaction-isolation = REPEATABLE-READ       
-    innodb_thread_concurrency = 8                 
-    innodb_lock_wait_timeout = 100                
-    innodb_flush_log_at_timeout = 1             
-    sync_binlog = 1                              
-    innodb_autoinc_lock_mode = 2                    
+    innodb_flush_log_at_trx_commit = 1
+    innodb_log_buffer_size = 33554432
+    innodb_redo_log_capacity = 268435456
+    innodb_flush_method = O_DIRECT
+    innodb_file_per_table = 1
+    transaction-isolation = REPEATABLE-READ
+    innodb_thread_concurrency = 4
+    innodb_lock_wait_timeout = 50
+    innodb_flush_log_at_timeout = 1
+    sync_binlog = 1
+    innodb_autoinc_lock_mode = 2               
 
 ---
 apiVersion: v1
