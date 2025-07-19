@@ -10,7 +10,7 @@ const sessionOptions: object = {
   name: 'session',
   maxAge: 7 * 24 * 60 * 60 * 1000, 
   signed: false,
-  secure: process.env.NODE_ENV === 'production',
+  secure: false,
   httpOnly: true,
   sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax'
 };
