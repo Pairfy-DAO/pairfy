@@ -12,7 +12,7 @@ const appConfig = useAppConfig()
 useHead({
   title: appConfig.title,
   meta: [
-    { name: 'description', content: 'Pairfy Cardano Marketplace' },
+    { name: 'description', content: 'Pairfy Cardano e-commerce' },
     { property: 'og:title', content: 'Pairfy Cardano Marketplace' }
   ],
   link: [
