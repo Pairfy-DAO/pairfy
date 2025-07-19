@@ -30,6 +30,7 @@ export const getPublicAddress = (
   if (!ip) {
     logger.warn({
       message: 'Public IP not detected',
+      event: 'operational',
       service: req.originalUrl,
       method: req.method
     });
@@ -42,6 +43,7 @@ export const getPublicAddress = (
 
   logger.info({
     message: 'Public IP detected',
+    event: 'operational',
     service: req.originalUrl,
     method: req.method,
     ip: cleanedIp
