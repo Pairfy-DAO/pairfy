@@ -61,6 +61,7 @@ export const getPublicAddress: RequestHandler = (
     const ip = proxyaddr(req, CLOUDFLARE_IP_RANGES);
     const allIps = proxyaddr.all(req);
     
+    console.log(req.headers);
     console.log(ip, allIps);
 
     const cameThroughCloudflare = allIps.some((addr: string) =>
