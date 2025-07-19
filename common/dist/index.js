@@ -21,7 +21,7 @@ __exportStar(require("./consumeEvent"), exports);
 __exportStar(require("./loadSql"), exports);
 __exportStar(require("./errorHandler"), exports);
 __exportStar(require("./logger"), exports);
-__exportStar(require("./cloudflare"), exports);
+__exportStar(require("./getPublicAddress"), exports);
 __exportStar(require("./rateLimiter"), exports);
 __exportStar(require("./token"), exports);
 __exportStar(require("./findSellerByEmail"), exports);
