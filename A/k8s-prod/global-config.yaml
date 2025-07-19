@@ -14,3 +14,24 @@ metadata:
   name: streaming-config
 data:
   redis: redis://redis-streaming-srv:6379
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nats-cluster-config
+data:
+  hosts: nats://nats-0.nats-headless.default.svc.cluster.local:4222,nats://nats-1.nats-headless.default.svc.cluster.local:4222,nats://nats-2.nats-headless.default.svc.cluster.local:4222
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: weaviate-config
+data:
+  host: weaviate.default.svc.cluster.local:8080 
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: embedding-config
+data:
+  host: ollama.default.svc.cluster.local:11434/api/embeddings

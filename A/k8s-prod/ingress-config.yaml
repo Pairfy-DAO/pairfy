@@ -10,50 +10,27 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "https://*.pairfy.store, https://pairfy.store"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://*.pairfy.io, https://pairfy.io"
     nginx.ingress.kubernetes.io/cors-expose-headers: "Set-Cookie"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+    nginx.ingress.kubernetes.io/websocket-services: "service-chat"
 
 
 spec:
   tls:
     - hosts:
         - pairfy.io
-        - '*.pairfy.store'
-      secretName: cloudflare-origin-cert
+        - '*.pairfy.io'
+      secretName: cloudflare-origin-secret
   rules:
     - host: pairfy.io
-      http:
-        paths:
-          - path: /?(.*)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: frontend-main
-                port:
-                  number: 8000
-          - path: /api/location/?(.*)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: service-location
-                port:
-                  number: 8000                  
-          - path: /api/user/?(.*)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: service-user
-                port:
-                  number: 8000
-    - host: seller.pairfy.store
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: frontend-seller
+                name: frontend-main
                 port:
                   number: 80

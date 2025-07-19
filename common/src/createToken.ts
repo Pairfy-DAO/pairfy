@@ -13,12 +13,9 @@ export function createToken(
 
   const options: jwt.SignOptions = {
     expiresIn,
-    algorithm: "RS256",
     issuer,
     audience
   };
 
-  const key = Buffer.from(privateKey, 'base64').toString('utf-8');
-
-  return jwt.sign(params, key, options);
+  return jwt.sign(params, privateKey, options);
 }

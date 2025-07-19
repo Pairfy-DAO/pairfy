@@ -9,10 +9,8 @@ function createToken(params, privateKey, expires, issuer, audience) {
     const expiresIn = expires;
     const options = {
         expiresIn,
-        algorithm: "RS256",
         issuer,
         audience
     };
-    const key = Buffer.from(privateKey, 'base64').toString('utf-8');
-    return jsonwebtoken_1.default.sign(params, key, options);
+    return jsonwebtoken_1.default.sign(params, privateKey, options);
 }
