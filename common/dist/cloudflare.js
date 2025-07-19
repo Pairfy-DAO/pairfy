@@ -38,10 +38,11 @@ const getPublicAddress = (req, res, next) => {
             return next();
         }
         const ip = (0, proxy_addr_1.default)(req, exports.CLOUDFLARE_IP_RANGES);
-        const remoteAddr = req.socket.remoteAddress || "";
-        if (!isTrustedProxy(remoteAddr, 0)) {
-            console.warn(`Access blocked: not Cloudflare: ${remoteAddr}`);
-            res.status(403).json({ error: "Access denied: not from Cloudflare" });
+        const allIps = proxy_addr_1.default.all(req);
+        const cameThroughCloudflare = allIps.some((addr) => isTrustedProxy(addr, 0));
+        if (!cameThroughCloudflare) {
+            console.warn(`Access blocked`);
+            res.status(403).json({ error: "Access denied" });
             return;
         }
         req.publicAddress = ip;

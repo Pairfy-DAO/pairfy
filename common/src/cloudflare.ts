@@ -67,8 +67,8 @@ export const getPublicAddress: RequestHandler = (
     );
 
     if (!cameThroughCloudflare) {
-      console.warn(`Access blocked: not Cloudflare. IP chain: ${allIps.join(", ")}`);
-      res.status(403).json({ error: "Access denied: not from Cloudflare" });
+      console.warn(`Access blocked`);
+      res.status(403).json({ error: "Access denied" });
       return;
     }
 
