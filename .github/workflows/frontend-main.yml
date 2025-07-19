@@ -33,7 +33,7 @@ jobs:
           token: ${{ secrets.MARKETPLACE_CLOUD_API }}
 
       - name: Set up kubeconfig
-        run: doctl kubernetes cluster kubeconfig save marketplace-k8
+        run: doctl kubernetes cluster kubeconfig save pairfy
 
       - name: Restart Kubernetes deployment
         run: kubectl rollout restart deployment frontend-main
