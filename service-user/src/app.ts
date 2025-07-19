@@ -2,7 +2,7 @@ import "express-async-errors";
 import express from "express";
 import helmet from "helmet";
 import cookieSession from "cookie-session";
-import { getPublicAddress } from "./common/cloudflare";
+import { getPublicAddress } from "./common/cloudflare.js";
 
 const app = express();
 
