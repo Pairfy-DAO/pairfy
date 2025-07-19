@@ -11,7 +11,7 @@ const userMiddleware = (req, res, next) => {
         return next();
     }
     try {
-        const privateKey = Buffer.from(process.env.AGENT_JWT_KEY, 'base64').toString('utf-8');
+        const privateKey = process.env.AGENT_JWT_KEY;
         const sessionData = jsonwebtoken_1.default.verify(req.session.jwt, privateKey);
         if (sessionData.role === "USER") {
             req.userData = sessionData;
