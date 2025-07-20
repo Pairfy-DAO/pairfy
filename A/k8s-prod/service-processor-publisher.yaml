@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: service-media-publisher
+  name: service-processor-publisher
 spec:
   replicas: 1
   selector:
     matchLabels:
-      role: service-media-publisher
+      role: service-processor-publisher
   template:
     metadata:
       labels:
-        role: service-media-publisher
+        role: service-processor-publisher
     spec:
       containers:
-        - name: service-media-publisher
+        - name: service-processor-publisher
           image: pairfy/base-publisher
           env:
             - name: DATABASE_NAME
-              value: service_media                 
+              value: service_processor               
             - name: DATABASE_USER
               value: marketplace                                                                                                                                                                         
             - name: STREAM_NAME
-              value: service-media
+              value: service-processor
             - name: STREAM_SUBJECT
-              value: service-media.*              
+              value: service-processor.*              
             - name: QUERY_INTERVAL
               value: "10000"    
             - name: QUERY_LIMIT
@@ -55,8 +55,8 @@ spec:
 
           resources:
             requests:
-              cpu: "10m"
-              memory: "100Mi"
+              cpu: "50m"
+              memory: "256Mi"
             limits:
               cpu: "500m"
               memory: "512Mi"       

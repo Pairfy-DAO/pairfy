@@ -47,7 +47,11 @@ spec:
                 configMapKeyRef:
                   name: database-config
                   key: master  
-
+            - name: NATS_SERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: nats-cluster-config
+                  key: hosts 
                   
           resources:
             requests:

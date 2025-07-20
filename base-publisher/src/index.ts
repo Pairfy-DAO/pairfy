@@ -22,6 +22,7 @@ const main = async () => {
       "STREAM_SUBJECT",
       "QUERY_INTERVAL",
       "QUERY_LIMIT",
+      "NATS_SERVERS"
     ];
 
     for (const key of requiredEnvVars) {
@@ -56,8 +57,8 @@ const main = async () => {
     });
 
     const natsClient = await connect({
-      name: process.env.POD_NAME,
-      servers: ["nats:4222"],
+      name: process.env.POD_NAME as string,
+      servers: (process.env.NATS_SERVERS as string).split(","),
       reconnect: true,
       pingInterval: 20 * 1000,
       maxPingOut: 5,
