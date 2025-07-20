@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-seller-publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: service-seller-publisher
+  template:
+    metadata:
+      labels:
+        role: service-seller-publisher
+    spec:
+      containers:
+        - name: service-seller-publisher
+          image: pairfy/base-publisher
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name                                                             
+            - name: DATABASE_HOST  
+              valueFrom:
+                configMapKeyRef:
+                  name: database-config
+                  key: master     
+            - name: DATABASE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: database-config
+                  key: port                            
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-password-secret
+                  key: password
+            - name: DATABASE_NAME
+              value: service_seller                 
+            - name: DATABASE_USER
+              value: marketplace                                                                                                                                                                         
+            - name: STREAM_NAME
+              value: service-seller
+            - name: STREAM_SUBJECT
+              value: service-seller.*              
+            - name: QUERY_INTERVAL
+              value: "30000"    
+            - name: QUERY_LIMIT
+              value: "100"    
+                                             
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"       
