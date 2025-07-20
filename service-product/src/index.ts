@@ -17,6 +17,7 @@ import {
   ApiGraphQLError,
   ERROR_CODES,
   SellerToken,
+  ERROR_EVENTS,
 } from "@pairfy/common";
 
 const main = async () => {
@@ -29,7 +30,7 @@ const main = async () => {
       "DATABASE_USER",
       "DATABASE_PASSWORD",
       "DATABASE_NAME",
-      "REDIS_RATELIMIT_URL",
+      "REDIS_RATELIMIT_HOST",
       "INTERNAL_ENDPOINT_SECRET",
     ];
 
@@ -39,18 +40,7 @@ const main = async () => {
       }
     }
 
-    const errorEvents: string[] = [
-      "exit",
-      "SIGINT",
-      "SIGTERM",
-      "SIGQUIT",
-      "uncaughtException",
-      "unhandledRejection",
-      "SIGHUP",
-      "SIGCONT",
-    ];
-
-    errorEvents.forEach((e: string) => process.on(e, (err) => catchError(err)));
+    ERROR_EVENTS.forEach((e: string) => process.on(e, (err) => catchError(err)));
 
     ///////////////////////////////////////////////////////////////////////////////////
 
@@ -97,7 +87,7 @@ const main = async () => {
 
     const rateLimiter = new RateLimiter({
       source: "service-product",
-      redisUrl: process.env.REDIS_RATELIMIT_URL as string,
+      redisUrl: process.env.REDIS_RATELIMIT_HOST as string,
       jwtSecret: process.env.AGENT_JWT_KEY as string,
       maxRequests: 100,
       windowSeconds: 60,
@@ -107,9 +97,9 @@ const main = async () => {
       name: "session",
       maxAge: 7 * 24 * 60 * 60 * 1000,
       signed: false,
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
       httpOnly: true,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "lax" : "lax",
     };
 
     app.set("trust proxy", 1);
