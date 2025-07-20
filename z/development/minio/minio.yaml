@@ -35,7 +35,10 @@ spec:
             - name: MINIO_ROOT_USER
               value: "minioadmin"
             - name: MINIO_ROOT_PASSWORD
-              value: "minioadmin123"
+              valueFrom:
+                secretKeyRef:
+                  name: minio-password-secret
+                  key: password 
           ports:
             - containerPort: 9000
             - containerPort: 9001 # console
@@ -54,7 +57,7 @@ metadata:
 spec:
   selector:
     app: minio
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: 9000
       targetPort: 9000
