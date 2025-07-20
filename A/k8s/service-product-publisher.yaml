@@ -27,7 +27,7 @@ spec:
             - name: QUERY_INTERVAL
               value: "10000"    
             - name: QUERY_LIMIT
-              value: "500"    
+              value: "100"    
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -49,7 +49,9 @@ spec:
                   key: password
 
           resources:
-            limits:
-              memory: "500Mi"
             requests:
-              memory: "256Mi"       
+              cpu: "50m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"   

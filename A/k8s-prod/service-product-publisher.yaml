@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: service-seller-publisher
+  name: service-product-publisher
 spec:
   replicas: 1
   selector:
     matchLabels:
-      role: service-seller-publisher
+      role: service-product-publisher
   template:
     metadata:
       labels:
-        role: service-seller-publisher
+        role: service-product-publisher
     spec:
       containers:
-        - name: service-seller-publisher
+        - name: service-product-publisher
           image: pairfy/base-publisher
           env:
             - name: DATABASE_NAME
-              value: service_seller                 
+              value: service_product                 
             - name: DATABASE_USER
               value: marketplace                                                                                                                                                                         
             - name: STREAM_NAME
-              value: service-seller
+              value: service-product
             - name: STREAM_SUBJECT
-              value: service-seller.*              
+              value: service-product.*              
             - name: QUERY_INTERVAL
               value: "10000"    
             - name: QUERY_LIMIT
@@ -46,12 +46,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: database-password-secret
-                  key: password          
-                                             
+                  key: password
+
           resources:
             requests:
-              cpu: "50m"
+              cpu: "250m"
               memory: "256Mi"
             limits:
               cpu: "500m"
-              memory: "512Mi"       
+              memory: "512Mi"   
