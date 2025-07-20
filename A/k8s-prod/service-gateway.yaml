@@ -17,9 +17,9 @@ spec:
           image: pairfy/service-gateway
           env:
             - name: NODE_ENV
-              value: "development"
+              value: "production"
             - name: NETWORK_ENV
-              value: Preprod              
+              value: Mainnet              
             - name: REDIS_RATELIMIT_HOST
               value: redis://redis-limiter:6379              
             - name: REDIS_BOOKS_HOST
@@ -47,7 +47,7 @@ spec:
             - name: FEE_PERCENT
               value: "10" 
             - name: BLOCKFROST_HOST
-              value: https://cardano-preprod.blockfrost.io/api/v0               
+              value: https://cardano-mainnet.blockfrost.io/api/v0               
             - name: DATABASE_NAME
               value: service_gateway
             - name: DATABASE_USER
@@ -96,11 +96,11 @@ spec:
 
           resources:
             requests:
-              cpu: "50m"
+              cpu: "250m"
               memory: "256Mi"
             limits:
-              cpu: "500m"
-              memory: "512Mi" 
+              cpu: "1000m"
+              memory: "1Gi" 
 ---
 apiVersion: v1
 kind: Service

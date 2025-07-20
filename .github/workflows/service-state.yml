@@ -1,0 +1,39 @@
+name: service-state
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'service-state/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.MARKETPLACE_DOCKER_USER }}
+          password: ${{ secrets.MARKETPLACE_DOCKER_PASSWORD }}
+
+      - name: Build Docker image
+        run: docker build -t pairfy/service-state ./service-state
+
+      - name: Push Docker image
+        run: docker push pairfy/service-state
+
+      - name: Set up DigitalOcean CLI
+        uses: digitalocean/action-doctl@v2.3.0
+        with:
+          token: ${{ secrets.MARKETPLACE_CLOUD_API }}
+
+      - name: Set up kubeconfig
+        run: doctl kubernetes cluster kubeconfig save pairfy
+
+      - name: Restart Kubernetes deployment
+        run: kubectl rollout restart deployment service-state
