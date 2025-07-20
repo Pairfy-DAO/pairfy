@@ -49,7 +49,6 @@ const main = async () => {
       "DATABASE_HOST",
       "DATABASE_PORT",
       "DATABASE_PASSWORD",
-      "PROJECT_ID",
       "KUPO_KEY",
       "OGMIOS_KEY",
       "WEAVIATE_HOST",
