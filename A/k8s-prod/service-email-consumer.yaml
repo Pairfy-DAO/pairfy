@@ -20,7 +20,7 @@ spec:
             - containerPort: 3000
           env:
             - name: NODE_ENV
-              value: "development"                  
+              value: "production"                  
             - name: SERVICE_NAME
               value: service-email
             - name: CONSUMER_GROUP
@@ -36,7 +36,7 @@ spec:
             - name: DATABASE_USER
               value: marketplace
             - name: HANDLER_SELLER_URL
-              value: https://seller.pairfy.dev
+              value: https://seller.pairfy.io
 
             - name: POD_NAME
               valueFrom:
