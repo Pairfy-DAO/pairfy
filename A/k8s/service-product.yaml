@@ -17,12 +17,18 @@ spec:
           image: pairfy/service-product
           env:
             - name: NODE_ENV
-              value: development                                                
+              value: development                                                         
+            - name: DATABASE_NAME
+              value: service_product        
+            - name: DATABASE_USER
+              value: marketplace  
+            - name : REDIS_RATELIMIT_HOST
+              value: "redis://redis-limiter:6379"
             - name: AGENT_JWT_KEY
               valueFrom:
                 secretKeyRef:
-                  name: agent-token-secret
-                  key: AGENT_TOKEN_KEY                      
+                  name: agent-key-secret
+                  key: key                      
             - name: DATABASE_HOST  
               valueFrom:
                 configMapKeyRef:
@@ -42,19 +48,17 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: internal-endpoint-secret
-                  key: key                   
-            - name: DATABASE_NAME
-              value: service_product        
-            - name: DATABASE_USER
-              value: marketplace  
-            - name : REDIS_RATELIMIT_URL
-              value: "redis://redis-limiter:6379"
-                                                                                                                                                                                                     
+                  key: key          
+
+
           resources:
-            limits:
-              memory: "500Mi"
             requests:
-              memory: "256Mi"       
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"  
+
 ---
 apiVersion: v1
 kind: Service
