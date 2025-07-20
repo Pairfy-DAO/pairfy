@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-product
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: service-product
+  template:
+    metadata:
+      labels:
+        role: service-product
+    spec:
+      containers:
+        - name: service-product
+          image: pairfy/service-product
+          env:
+            - name: NODE_ENV
+              value: "production"                                                         
+            - name: DATABASE_NAME
+              value: service_product        
+            - name: DATABASE_USER
+              value: marketplace  
+            - name : REDIS_RATELIMIT_HOST
+              value: "redis://redis-limiter:6379"
+            - name: AGENT_JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: agent-key-secret
+                  key: key                      
+            - name: DATABASE_HOST  
+              valueFrom:
+                configMapKeyRef:
+                  name: database-config
+                  key: master  
+            - name: DATABASE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: database-config
+                  key: port                                     
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-password-secret
+                  key: password  
+            - name: INTERNAL_ENDPOINT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: internal-endpoint-secret
+                  key: key          
+
+
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"  
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-product
+spec:
+  selector:
+    role: service-product
+  ports:
+    - name: service-product
+      protocol: TCP
+      port: 8001
+      targetPort: 8001
