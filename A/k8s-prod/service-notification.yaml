@@ -17,7 +17,7 @@ spec:
           image: pairfy/service-notification
           env:
             - name: NODE_ENV
-              value: "development"                                                                                                                                                    
+              value: "production"                                                                                                                                                    
             - name: DATABASE_NAME
               value: service_notification       
             - name: DATABASE_USER
