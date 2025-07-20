@@ -45,9 +45,7 @@ spec:
             - name: EXPIRING_RANGE
               value: "5184000000"
             - name: FEE_PERCENT
-              value: "10" 
-            - name: BLOCKFROST_HOST
-              value: https://cardano-preprod.blockfrost.io/api/v0               
+              value: "10"              
             - name: DATABASE_NAME
               value: service_gateway
             - name: DATABASE_USER
@@ -67,11 +65,6 @@ spec:
                 secretKeyRef:
                   name: database-password-secret
                   key: password              
-            - name: BLOCKFROST_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: blockfrost-key
-                  key: key
             - name: KUPO_KEY
               valueFrom:
                 secretKeyRef:
@@ -96,7 +89,7 @@ spec:
 
           resources:
             requests:
-              cpu: "50m"
+              cpu: "100m"
               memory: "256Mi"
             limits:
               cpu: "500m"
