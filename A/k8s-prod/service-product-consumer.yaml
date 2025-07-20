@@ -20,7 +20,7 @@ spec:
             - containerPort: 3000
           env:       
             - name: NODE_ENV
-              value: "development"
+              value: "production"
             - name: SERVICE_NAME
               value: service-product
             - name: CONSUMER_GROUP
@@ -60,9 +60,10 @@ spec:
                   name: nats-cluster-config
                   key: hosts 
 
-
           resources:
-            limits:
-              memory: "500Mi"
             requests:
+              cpu: "10m"
               memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"   
