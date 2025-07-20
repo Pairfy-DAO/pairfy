@@ -17,17 +17,17 @@ spec:
           image: pairfy/service-media
           env:                                  
             - name: NODE_ENV
-              value: "development"
+              value: "production"
             - name: DATABASE_NAME
               value: service_media 
             - name: DATABASE_USER
               value: marketplace 
             - name : REDIS_RATELIMIT_URL
-              value: "redis://redis-limiter:6379" 
+              value: "redis://redis-limiter:6379"   
             - name : MINIO_USE_SSL
-              value: "false"
+              value: "true"
             - name : MINIO_PORT
-              value: "9000" 
+              value: "443" 
 
             - name: MINIO_HOST
               valueFrom:
@@ -51,7 +51,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: agent-key-secret
-                  key: key                     
+                  key: key                   
                                                         
             - name: DATABASE_HOST  
               valueFrom:
