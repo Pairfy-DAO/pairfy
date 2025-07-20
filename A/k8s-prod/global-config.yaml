@@ -25,7 +25,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: weaviate-config
+  name: weaviate-cluster-config
 data:
   host: weaviate.default.svc.cluster.local:8080 
 ---

@@ -1,19 +1,4 @@
 apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: redis-price-pvc
-  namespace: default
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 250Mi
-  storageClassName: standard
-
----
-
-apiVersion: v1
 kind: Service
 metadata:
   name: redis-price
@@ -60,7 +45,6 @@ spec:
         name: redis-price-data
       spec:
         accessModes: [ "ReadWriteOnce" ]
-        storageClassName: standard
         resources:
           requests:
             storage: 250Mi

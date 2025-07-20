@@ -2,18 +2,17 @@ replicaCount: 2
 
 persistence:
   enabled: true
-  storageClassName: "standard"
   size: 15Gi
   accessModes:
     - ReadWriteOnce
 
-resources:
-  requests:
-    memory: "1Gi"
-    cpu: "500m"
-  limits:
-    memory: "2Gi"
-    cpu: "1000m"
+#resources:
+#  requests:
+#    memory: "1Gi"
+#    cpu: "500m"
+#  limits:
+#    memory: "2Gi"
+#    cpu: "1000m"
 
 weaviate:
   config:
@@ -35,7 +34,7 @@ weaviate:
         port: 2112
 
 service:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - name: http
       port: 8080
