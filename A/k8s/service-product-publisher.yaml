@@ -47,7 +47,13 @@ spec:
                 secretKeyRef:
                   name: database-password-secret
                   key: password
+            - name: NATS_SERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: nats-cluster-config
+                  key: hosts 
 
+                  
           resources:
             requests:
               cpu: "50m"
