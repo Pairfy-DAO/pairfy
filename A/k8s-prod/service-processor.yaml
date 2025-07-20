@@ -17,7 +17,7 @@ spec:
           image: pairfy/service-processor
           env:
             - name: NODE_ENV
-              value: "development"
+              value: "production"
             - name: DATABASE_NAME
               value: service_processor        
             - name: DATABASE_USER
@@ -64,7 +64,7 @@ spec:
                 secretKeyRef:
                   name: database-password-secret
                   key: password               
-
+                
           resources:
             requests:
               cpu: "50m"

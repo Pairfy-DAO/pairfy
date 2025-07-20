@@ -11,12 +11,12 @@ export function main() {
       'DATABASE_USER',
       'DATABASE_PASSWORD',
       'DATABASE_NAME',
-      'REDIS_HOST',
-      'MINIO_HOST_URL',
+      'REDIS_PROCESSOR_HOST',
+      'MINIO_HOST',
       'MINIO_PORT',
       'MINIO_USE_SSL',
-      'MINIO_ACCESS_KEY',
-      'MINIO_SECRET_KEY',
+      'MINIO_ROOT_USER',
+      'MINIO_ROOT_PASSWORD',
     ];
   
     const missing = requiredVars.filter((key) => !process.env[key]);
@@ -34,11 +34,11 @@ export function main() {
     });
 
     minioClient.connect({
-      endPoint: process.env.MINIO_HOST_URL as string,
+      endPoint: process.env.MINIO_HOST as string,
       port: parseInt(process.env.MINIO_PORT as string, 10),
       useSSL: process.env.MINIO_USE_SSL === "true",
-      accessKey: process.env.MINIO_ACCESS_KEY as string,
-      secretKey: process.env.MINIO_SECRET_KEY as string,
+      accessKey: process.env.MINIO_ROOT_USER as string,
+      secretKey: process.env.MINIO_ROOT_PASSWORD as string,
     });
 
     

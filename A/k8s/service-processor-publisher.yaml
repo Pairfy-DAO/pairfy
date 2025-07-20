@@ -16,6 +16,18 @@ spec:
         - name: service-processor-publisher
           image: pairfy/base-publisher
           env:
+            - name: DATABASE_NAME
+              value: service_processor               
+            - name: DATABASE_USER
+              value: marketplace                                                                                                                                                                         
+            - name: STREAM_NAME
+              value: service-processor
+            - name: STREAM_SUBJECT
+              value: service-processor.*              
+            - name: QUERY_INTERVAL
+              value: "10000"    
+            - name: QUERY_LIMIT
+              value: "100"    
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -35,21 +47,12 @@ spec:
                 secretKeyRef:
                   name: database-password-secret
                   key: password
-            - name: DATABASE_NAME
-              value: service_processor               
-            - name: DATABASE_USER
-              value: marketplace                                                                                                                                                                         
-            - name: STREAM_NAME
-              value: service-processor
-            - name: STREAM_SUBJECT
-              value: service-processor.*              
-            - name: QUERY_INTERVAL
-              value: "30000"    
-            - name: QUERY_LIMIT
-              value: "500"    
-                                             
+
+
           resources:
-            limits:
-              memory: "500Mi"
             requests:
-              memory: "256Mi"       
+              cpu: "50m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"       
