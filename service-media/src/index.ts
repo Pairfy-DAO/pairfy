@@ -1,29 +1,29 @@
 import compression from "compression";
 import database from "./database/index.js";
 import * as route from "./routes/index.js";
-import { catchError, errorEvents } from "./utils/index.js";
+import { catchError } from "./utils/index.js";
 import { ensureBucketExists, minioClient } from "./database/minio.js";
 import { Request, Response } from "express";
 import { app } from "./app.js";
 import {
   ApiError,
   ERROR_CODES,
+  ERROR_EVENTS,
   errorHandler,
   logger,
   RateLimiter,
 } from "@pairfy/common";
-
 
 const main = async () => {
   try {
     const requiredEnv = [
       "NODE_ENV",
       "AGENT_JWT_KEY",
-      "MINIO_HOST_URL",
+      "MINIO_HOST",
       "MINIO_PORT",
       "MINIO_USE_SSL",
-      "MINIO_ACCESS_KEY",
-      "MINIO_SECRET_KEY",
+      "MINIO_ROOT_USER",
+      "MINIO_ROOT_PASSWORD",
       "INTERNAL_ENDPOINT_SECRET",
     ];
 
@@ -33,14 +33,16 @@ const main = async () => {
       }
     }
 
-    errorEvents.forEach((e: string) => process.on(e, (err) => catchError(err)));
+    ERROR_EVENTS.forEach((e: string) =>
+      process.on(e, (err) => catchError(err))
+    );
 
     minioClient.connect({
-      endPoint: process.env.MINIO_HOST_URL as string,
+      endPoint: process.env.MINIO_HOST as string,
       port: parseInt(process.env.MINIO_PORT as string, 10),
       useSSL: process.env.MINIO_USE_SSL === "true",
-      accessKey: process.env.MINIO_ACCESS_KEY as string,
-      secretKey: process.env.MINIO_SECRET_KEY as string,
+      accessKey: process.env.MINIO_ROOT_USER as string,
+      secretKey: process.env.MINIO_ROOT_PASSWORD as string,
     });
 
     ensureBucketExists(minioClient.client, "media");
@@ -100,7 +102,9 @@ const main = async () => {
       "/api/media/ping",
       rateLimiter.middlewareIp(),
       (req: Request, res: Response) => {
-        res.status(200).json({ success: true, data: { message: "Test OK" } });
+        res
+          .status(200)
+          .json({ success: true, message: "Test OK", data: { ok: 1 } });
       }
     );
 
