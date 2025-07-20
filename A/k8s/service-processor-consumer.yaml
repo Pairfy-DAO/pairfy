@@ -19,6 +19,22 @@ spec:
           ports:
             - containerPort: 3000
           env:
+            - name: SERVICE_NAME
+              value: service-processor
+            - name: CONSUMER_GROUP
+              value: service-processor-group
+            - name: DURABLE_NAME
+              value: service-processor-consumer
+            - name: STREAM_LIST
+              value: service-media
+            - name: FILTER_SUBJECTS
+              value: "service-media.CreateFile"
+            - name: DATABASE_NAME
+              value: service_processor
+            - name: DATABASE_USER
+              value: marketplace
+            - name: HANDLER_REDIS_HOST
+              value: redis-processor.default.svc.cluster.local
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -38,27 +54,16 @@ spec:
                 secretKeyRef:
                   name: database-password-secret
                   key: password
-            - name: SERVICE_NAME
-              value: service-processor
-            - name: CONSUMER_GROUP
-              value: service-processor-group
-            - name: DURABLE_NAME
-              value: service-processor-consumer
-            - name: STREAM_LIST
-              value: service-media
-            - name: FILTER_SUBJECTS
-              value: "service-media.CreateFile"
-            - name: DATABASE_NAME
-              value: service_processor
-            - name: DATABASE_USER
-              value: marketplace
             - name: NATS_SERVERS
-              value: "nats://nats-0.nats-headless.default.svc.cluster.local:4222,nats://nats-1.nats-headless.default.svc.cluster.local:4222,nats://nats-2.nats-headless.default.svc.cluster.local:4222"
-            - name: HANDLER_REDIS_HOST
-              value: redis-processor.default.svc.cluster.local
-          
+              valueFrom:
+                configMapKeyRef:
+                  name: nats-cluster-config
+                  key: hosts 
+
           resources:
-            limits:
-              memory: "500Mi"
             requests:
+              cpu: "10m"
               memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"   
