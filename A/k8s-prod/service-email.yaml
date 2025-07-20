@@ -17,7 +17,7 @@ spec:
           image: pairfy/service-email
           env:
             - name: NODE_ENV
-              value: "development"  
+              value: "production"  
             - name: DATABASE_NAME
               value: service_email      
             - name: DATABASE_USER
