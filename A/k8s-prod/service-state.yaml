@@ -17,9 +17,9 @@ spec:
           image: pairfy/service-state
           env:
             - name: NODE_ENV
-              value: "development"
+              value: "production"
             - name: NETWORK_ENV
-              value: Preprod
+              value: Mainnet
             - name: DATABASE_NAME
               value: service_gateway       
             - name: DATABASE_USER
@@ -35,7 +35,7 @@ spec:
             - name: SCAN_RANGE
               value: "300000"    
             - name: BLOCKFROST_HOST
-              value: https://cardano-preprod.blockfrost.io/api/v0       
+              value: https://cardano-mainnet.blockfrost.io/api/v0       
             - name: POD_NAME
               valueFrom:
                 fieldRef:
