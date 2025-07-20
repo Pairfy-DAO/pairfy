@@ -20,8 +20,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name                                                             
-            - name: POD_TIMEOUT
-              value: '120000'   
             - name: DATABASE_HOST  
               valueFrom:
                 configMapKeyRef:
@@ -48,10 +46,12 @@ spec:
             - name: QUERY_INTERVAL
               value: "30000"    
             - name: QUERY_LIMIT
-              value: "500"    
+              value: "100"    
                                              
           resources:
-            limits:
-              memory: "500Mi"
             requests:
-              memory: "256Mi"       
+              cpu: "50m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"       
