@@ -1,19 +1,4 @@
 apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: redis-feed-pvc
-  namespace: default
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 250Mi
-  storageClassName: standard
-
----
-
-apiVersion: v1
 kind: Service
 metadata:
   name: redis-feed
@@ -60,7 +45,6 @@ spec:
         name: redis-feed-data
       spec:
         accessModes: [ "ReadWriteOnce" ]
-        storageClassName: standard
         resources:
           requests:
             storage: 250Mi
