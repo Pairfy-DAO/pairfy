@@ -37,6 +37,8 @@ spec:
               value: marketplace
             - name: HANDLER_REDIS_HOST
               value: redis-processor.default.svc.cluster.local
+            - name: HANDLER_MINIO_BUCKET
+              value: pairfy-media-prod
             - name: POD_NAME
               valueFrom:
                 fieldRef:

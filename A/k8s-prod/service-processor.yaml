@@ -24,6 +24,8 @@ spec:
               value: marketplace              
             - name: REDIS_PROCESSOR_HOST
               value: redis-processor.default.svc.cluster.local
+            - name: MINIO_BUCKET
+              value: pairfy-media-prod
             - name : MINIO_USE_SSL
               value: "true"              
             - name : MINIO_PORT

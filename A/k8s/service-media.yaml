@@ -24,6 +24,8 @@ spec:
               value: marketplace 
             - name : REDIS_RATELIMIT_URL
               value: "redis://redis-limiter:6379" 
+            - name: MINIO_BUCKET
+              value: media
             - name : MINIO_USE_SSL
               value: "false"
             - name : MINIO_PORT

@@ -28,7 +28,7 @@ export async function processFile(event: MediaEvent): Promise<boolean> {
     const job = await mediaQueue.add(
       type,
       {
-        bucket: "media",
+        bucket: process.env.HANDLER_MINIO_BUCKET,
         file: event,
       },
       {
