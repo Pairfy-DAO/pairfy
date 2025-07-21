@@ -173,7 +173,7 @@ build:
             dest: . 
 
 deploy:
-  statusCheckDeadlineSeconds: 6000
+  statusCheckDeadlineSeconds: 600
   kubectl:
     manifests:
       - ./A/k8s/*

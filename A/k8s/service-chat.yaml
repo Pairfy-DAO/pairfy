@@ -29,10 +29,12 @@ spec:
                   key: AGENT_TOKEN_KEY
 
           resources:
-            limits:
-              memory: "500Mi"
             requests:
+              cpu: "50m"
               memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"      
 ---
 apiVersion: v1
 kind: Service

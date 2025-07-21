@@ -20,11 +20,14 @@ spec:
               value: development
             - name: REDIS_PRICE_HOST
               value: redis://redis-price:6379
+              
           resources:
-            limits:
-              memory: "300Mi"
             requests:
+              cpu: "10m"
               memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"  
 ---
 apiVersion: v1
 kind: Service
