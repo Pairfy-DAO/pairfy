@@ -14,7 +14,7 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     nginx.ingress.kubernetes.io/websocket-services: "service-chat"
-
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
 
 spec:
   ingressClassName: nginx
