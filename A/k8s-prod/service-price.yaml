@@ -17,7 +17,7 @@ spec:
           image: pairfy/service-price 
           env:
             - name: NODE_ENV
-              value: "development"
+              value: "production"
             - name: REDIS_PRICE_HOST
               value: redis://redis-price:6379
               
