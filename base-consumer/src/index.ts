@@ -100,26 +100,41 @@ const main = async () => {
         )
       );
 
-      streamList.forEach(async (stream) => {
+      const startStreamConsumer = async (stream: string) => {
         const consumer = await jetStream.consumers.get(
           stream,
           process.env.DURABLE_NAME
         );
 
-        console.log(`🕒 Waiting for events on stream: ${stream}`);
+        if (!consumer) {
+          throw new Error(`🚨 There is no consumer: ${stream}`);
+        }
 
         while (true) {
+          console.log(`🕒 Waiting for events on stream: ${stream}`);
+
           const message = await consumer.next();
 
           if (message) {
-            const success = await MODU.processEvent(message);
-            await (success ? message.ack() : message.nak(30_000));
-          } else {
-            await sleep(10_000)
+            const processed = await MODU.processEvent(message); //returns always boolean
+
+            if (processed) {
+              await message.ack();
+            } else {
+              await message.nak(30_000);
+            }
+          }
+
+          if (!message) {
+            await sleep(500);
             console.log(`❌ Empty queue for stream: ${stream}`);
           }
         }
-      });
+      };
+
+      for (const stream of streamList) {
+        startStreamConsumer(stream);
+      }
     } catch (err: any) {
       logger.error({
         service: process.env.SERVICE_NAME,
