@@ -51,8 +51,7 @@ class RateLimiter {
         }
         this.addListeners();
         this.source = options.source;
-        const privateKey = Buffer.from(options.jwtSecret, 'base64').toString('utf-8');
-        this.jwtSecret = privateKey;
+        this.jwtSecret = options.jwtSecret;
         this.maxRequests = options.maxRequests ?? 100;
         this.windowSeconds = options.windowSeconds ?? 60;
         this.middlewareJwt = this.middlewareJwt.bind(this);
