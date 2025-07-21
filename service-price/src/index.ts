@@ -51,11 +51,6 @@ const main = async () => {
           every: 30000,
         },
         attempts: 0,
-        backoff: {
-          type: "fixed",
-          delay: 1000,
-          jitter: 0.5,
-        },
         removeOnComplete: true,
         removeOnFail: true,
         jobId: "ADAUSDT",
@@ -66,41 +61,45 @@ const main = async () => {
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    const priceWorker = new Worker("getAssetPrice", getAssetPriceHandler, {
-      removeOnComplete: false,
-      removeOnFail: false,
+    const worker = new Worker("getAssetPrice", getAssetPriceHandler, {
       autorun: true,
-      drainDelay: 1000,
-      concurrency: 2,
+      drainDelay: 10,
+      settings: {
+        backoffStrategy: () => -1,
+      },
       connection: { url: process.env.REDIS_PRICE_HOST },
+      concurrency: 1,
+      lockDuration: 120_000,
+      stalledInterval: 120_000,
+      maxStalledCount: 1
     } as any);
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    priceWorker.on("failed", (job: any, err) => {
+    worker.on("failed", (job: any, err) => {
       logger.error("FAILED", job.id, err);
     });
 
-    priceWorker.on("completed", (job: any, result) => {
+    worker.on("completed", (job: any, result) => {
       logger.info("COMPLETED", job.id, result);
     });
 
-    priceWorker.on("error", (err) => {
+    worker.on("error", (err) => {
       logger.error(err);
     });
 
-    priceWorker.on("stalled", (job: any) => {
+    worker.on("stalled", (job: any) => {
       logger.info("STALLED", job.id);
     });
 
-    priceWorker.on("drained", () => {
+    worker.on("drained", () => {
       logger.info("DRAINED");
     });
 
     ERROR_EVENTS.forEach((e: string) =>
       process.on(e, async (err) => {
         logger.error(err);
-        await priceWorker.close();
+        await worker.close();
         await redisClient.client.close();
         process.exit(1);
       })
