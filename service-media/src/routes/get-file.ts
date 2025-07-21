@@ -36,7 +36,7 @@ export const getFileHandler = async (
 
     const mediaPath = `groups/${groupId}/${filename}`;
 
-    const stream = await minioClient.client.getObject("media", mediaPath);
+    const stream = await minioClient.client.getObject(process.env.MINIO_BUCKET as string, mediaPath);
 
     res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
 
