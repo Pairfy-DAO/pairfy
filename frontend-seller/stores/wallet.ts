@@ -40,8 +40,8 @@ export const useWalletStore = defineStore("wallet", () => {
     if (!name) return;
 
     try {
-      console.log("WALLET", name)
-      
+      console.log("WALLET", name);
+
       walletApi.value = await window.cardano[name]?.enable();
 
       const networkId = await walletApi.value?.getNetworkId(); // 0 = testnet, 1 = mainnet
@@ -49,6 +49,8 @@ export const useWalletStore = defineStore("wallet", () => {
       const cardanoNetwork = useRuntimeConfig().public.cardanoNetwork;
 
       const networkNumber = cardanoNetwork === "mainnet" ? 1 : 0;
+
+      console.log(networkId);
 
       if (networkId !== networkNumber) {
         throw new Error(
@@ -178,6 +180,6 @@ export const useWalletStore = defineStore("wallet", () => {
     connect,
     sign,
     disconnect,
-    balanceTx
+    balanceTx,
   };
 });
