@@ -70,7 +70,7 @@ const updateFilesHandler = async (
       const mediaPath = `groups/${mediaGroupId}/${fileId}-${file.originalname}`;
 
       await minioClient.client.putObject(
-        "media",
+        process.env.MINIO_BUCKET as string,
         mediaPath,
         file.buffer,
         file.size,
