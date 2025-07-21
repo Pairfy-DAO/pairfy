@@ -75,6 +75,8 @@
 import { formatCompleteDate } from "@/utils/utils"
 import { gql } from 'graphql-tag'
 
+const authStore = useAuthStore()
+
 const { $notificationClient } = useNuxtApp()
 
 const router = useRouter()
@@ -129,6 +131,8 @@ let subscription1;
 
 const fetchNotifications = async (getCursorVariable) => {
     if (!import.meta.client) return;
+
+    if (!authStore.seller) return;
 
     const GET_CURSOR_QUERY = gql`
 query GetCursor($getCursorVariable: GetCursorInput!) {

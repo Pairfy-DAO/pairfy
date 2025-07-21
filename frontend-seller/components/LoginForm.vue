@@ -93,8 +93,7 @@ const connectWallet = async (name) => {
     router.push({ path: '/home', query: {} })
   } catch (err) {
     console.error(err);
-
-    displayMessage(err, 'error', 20_000)
+    displayMessage(err.message, 'error', 20_000)
 
   }
 }
