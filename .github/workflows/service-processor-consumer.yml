@@ -1,4 +1,4 @@
-name: service-product-consumer
+name: service-processor-consumer
 
 on:
   push:
@@ -36,4 +36,4 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save pairfy
 
       - name: Restart Kubernetes deployment
-        run: kubectl rollout restart deployment service-product-consumer
+        run: kubectl rollout restart deployment service-processor-consumer
