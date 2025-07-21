@@ -25,6 +25,8 @@ export async function handleImageJob(job: Job) {
 
     const { id, media_group_id, filename, media_path, agent_id } = file;
 
+    console.log(bucket, media_path)
+
     connection = await database.client.getConnection();
 
     await connection.beginTransaction();
