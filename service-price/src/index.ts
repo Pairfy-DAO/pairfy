@@ -50,7 +50,11 @@ const main = async () => {
         repeat: {
           every: 30000,
         },
-        attempts: 0,
+        attempts: 1,
+        backoff: {
+          type: 'fixed',
+          delay: 1000, 
+        },
         removeOnComplete: true,
         removeOnFail: true,
         jobId: "ADAUSDT",
