@@ -39,6 +39,8 @@ export function main() {
       useSSL: process.env.MINIO_USE_SSL === "true",
       accessKey: process.env.MINIO_ROOT_USER as string,
       secretKey: process.env.MINIO_ROOT_PASSWORD as string,
+      region: 'nyc3',
+      pathStyle: true
     });
 
     
