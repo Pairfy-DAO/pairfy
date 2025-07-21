@@ -43,6 +43,20 @@ service:
       port: 50051
       targetPort: 50051
 
+grpcService:
+  enabled: false
+  name: weaviate-grpc
+  ports:
+    - name: grpc
+      protocol: TCP
+      port: 50051
+
+  type: clusterIP
+  loadBalancerSourceRanges: []
+  # optionally set cluster IP if you want to set a static IP
+  clusterIP:
+  annotations: {}
+
 livenessProbe:
   httpGet:
     path: /v1/.well-known/ready

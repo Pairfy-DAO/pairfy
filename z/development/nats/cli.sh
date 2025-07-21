@@ -10,6 +10,7 @@ nats stream delete service-media
 nats stream delete service-processor
 nats stream delete service-seller
 nats stream delete service-product
+nats stream delete service-gateway
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 
