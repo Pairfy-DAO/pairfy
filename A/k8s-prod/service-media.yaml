@@ -24,6 +24,8 @@ spec:
               value: marketplace 
             - name : REDIS_RATELIMIT_URL
               value: "redis://redis-limiter:6379"   
+            - name: MINIO_BUCKET
+              value: pairfy-media-prod
             - name : MINIO_USE_SSL
               value: "true"
             - name : MINIO_PORT

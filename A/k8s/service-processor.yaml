@@ -24,6 +24,8 @@ spec:
               value: marketplace              
             - name: REDIS_PROCESSOR_HOST
               value: redis-processor.default.svc.cluster.local
+            - name: MINIO_BUCKET
+              value: media
             - name : MINIO_USE_SSL
               value: "false"              
             - name : MINIO_PORT

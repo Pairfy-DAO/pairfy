@@ -24,6 +24,7 @@ const main = async () => {
       "MINIO_USE_SSL",
       "MINIO_ROOT_USER",
       "MINIO_ROOT_PASSWORD",
+      "MINIO_BUCKET",
       "INTERNAL_ENDPOINT_SECRET",
     ];
 
@@ -43,11 +44,11 @@ const main = async () => {
       useSSL: process.env.MINIO_USE_SSL === "true",
       accessKey: process.env.MINIO_ROOT_USER as string,
       secretKey: process.env.MINIO_ROOT_PASSWORD as string,
-      region: 'nyc3',
-      pathStyle: true
+      region: "nyc3",
+      pathStyle: true,
     });
 
-    ensureBucketExists(minioClient.client, "media");
+    ensureBucketExists(minioClient.client, process.env.MINIO_BUCKET as string);
 
     const databasePort = parseInt(process.env.DATABASE_PORT as string);
 

@@ -17,6 +17,7 @@ export function main() {
       'MINIO_USE_SSL',
       'MINIO_ROOT_USER',
       'MINIO_ROOT_PASSWORD',
+      'MINIO_BUCKET'
     ];
   
     const missing = requiredVars.filter((key) => !process.env[key]);

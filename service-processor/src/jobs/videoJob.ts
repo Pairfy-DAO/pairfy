@@ -62,7 +62,7 @@ export async function handleVideoJob(job: Job) {
       const destKey = `products/videos/${userId}/${baseName}-${label}.mp4`;
 
       urls[label] = await uploadToSpaces({
-        bucket: 'media',
+        bucket,
         key: destKey,
         body: stream,
         contentType: 'video/mp4',
