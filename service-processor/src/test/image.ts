@@ -2,7 +2,7 @@ import { connection } from '../database/redis.js';
 import { Queue } from 'bullmq';
 
 const mediaQueue = new Queue('media-processing', { connection });
-
+/** 
 (async () => {
   await mediaQueue.add('image', {
     bucket: 'media',
@@ -19,3 +19,4 @@ const mediaQueue = new Queue('media-processing', { connection });
   console.log('Job enviado exitosamente.');
   process.exit(0);
 })();
+*/
