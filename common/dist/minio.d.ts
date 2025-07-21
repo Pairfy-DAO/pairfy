@@ -1,14 +1,6 @@
-import { Client as MinioClient } from "minio";
-interface MinioOptions {
-    endPoint: string;
-    port: number;
-    useSSL: boolean;
-    accessKey: string;
-    secretKey: string;
-}
+import { Client as MinioClient, ClientOptions } from "minio";
 export declare class MinioWrap {
     private _client?;
     get client(): MinioClient;
-    connect(options: MinioOptions): MinioClient;
+    connect(options: ClientOptions): MinioClient;
 }
-export {};
