@@ -22,8 +22,10 @@ interface MediaEvent {
 export async function processFile(event: MediaEvent): Promise<boolean> {
   try {
     const isVideo = event.mime_type.startsWith("video/");
-    
+
     const type = isVideo ? "video" : "image";
+    
+    console.log(process.env.HANDLER_MINIO_BUCKET);
 
     const job = await mediaQueue.add(
       type,
@@ -59,7 +61,7 @@ export async function processFile(event: MediaEvent): Promise<boolean> {
       event: "job.failed",
       message: "Job failed during processing",
       error: error.message,
-      stack: error.stack
+      stack: error.stack,
     });
 
     return false;
