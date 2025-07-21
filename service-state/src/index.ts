@@ -91,7 +91,7 @@ const main = async () => {
         backoffStrategy: () => -1,
       },
       connection: { url: process.env.REDIS_STATE_HOST },
-      concurrency: 2, //TEST
+      concurrency: 100, //TEST
       lockDuration: 120_000,
       stalledInterval: 120_000,
       maxStalledCount: 1,

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: service-price
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       role: service-price 
