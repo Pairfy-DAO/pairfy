@@ -50,14 +50,14 @@ const main = async () => {
         repeat: {
           every: 30000,
         },
-        attempts: 99999,
+        attempts: 0,
         backoff: {
           type: "fixed",
           delay: 1000,
           jitter: 0.5,
         },
-        removeOnComplete: { age: 600 },
-        removeOnFail: { age: 3600 },
+        removeOnComplete: true,
+        removeOnFail: true,
         jobId: "ADAUSDT",
       }
     );
