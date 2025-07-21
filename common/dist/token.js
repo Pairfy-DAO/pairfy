@@ -8,8 +8,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 /**Verifies JWT token, without error handler*/
 function verifyToken(token, privateKey) {
     try {
-        const key = Buffer.from(privateKey, 'base64').toString('utf-8');
-        return jsonwebtoken_1.default.verify(token, key);
+        return jsonwebtoken_1.default.verify(token, privateKey);
     }
     catch (err) {
         return null;
