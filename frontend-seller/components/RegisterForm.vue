@@ -77,7 +77,7 @@ const register = async () => {
 
     displayMessage(response.message, 'success', 20_000)
 
-    await sleep(3_000)
+    await sleep(1_000)
 
     router.replace({ path: '/entry', query: { m: 'email' } })
   } catch (err) {

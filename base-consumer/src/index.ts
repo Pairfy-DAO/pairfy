@@ -7,7 +7,7 @@ import {
 } from "./utils/index.js";
 import { connect } from "@nats-io/transport-node";
 import database from "./database/client.js";
-import { ERROR_EVENTS, logger } from "@pairfy/common";
+import { ERROR_EVENTS, logger, sleep } from "@pairfy/common";
 
 const main = async () => {
   try {
@@ -115,6 +115,7 @@ const main = async () => {
             const success = await MODU.processEvent(message);
             await (success ? message.ack() : message.nak(30_000));
           } else {
+            await sleep(10_000)
             console.log(`❌ Empty queue for stream: ${stream}`);
           }
         }
