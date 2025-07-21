@@ -25,7 +25,7 @@ export async function processFile(event: MediaEvent): Promise<boolean> {
 
     const type = isVideo ? "video" : "image";
     
-    console.log(process.env.HANDLER_MINIO_BUCKET);
+    console.log(process.env.HANDLER_MINIO_BUCKET); //TEST
 
     const job = await mediaQueue.add(
       type,
