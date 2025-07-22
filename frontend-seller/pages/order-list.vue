@@ -95,8 +95,8 @@ const tabIndex = ref(0)
 const toastRef = ref(null);
 
 const columns = ref([
-    { label: "Id", field: "id" },
     { label: "Type", field: "type" },
+    { label: "Id", field: "id" },
     { label: "Status", field: "status" },
     { label: "Wallet", field: "seller_wallet" },
     { label: "Address", field: "seller_address" },

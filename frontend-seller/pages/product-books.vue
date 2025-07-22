@@ -3,37 +3,26 @@
         <ToastComp ref="toastRef" />
 
         <DialogComp ref="editDialogRef" v-model="editDialog" title="Edit book">
-            <template #icon>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-settings2-icon lucide-settings-2">
-                    <path d="M14 17H5" />
-                    <path d="M19 7h-9" />
-                    <circle cx="17" cy="17" r="3" />
-                    <circle cx="7" cy="7" r="3" />
-                </svg>
-            </template>
-            <template #content>
-                <div class="edit-form">
-                    <InputSwitch v-model="stopPurchases" label="Stop purchases" />
-                    <InputSwitch v-model="purchaseLimit" label="Purchase limit" />
 
-                    <InputInteger v-model="purchaseLimitValue" label="Purchase limit value" :min="0" :max="999999"
-                        placeholder="Ready" @valid="purchaseLimitValueValid = $event.valid" v-if="purchaseLimit" />
+            <div class="edit-form">
+                <InputSwitch v-model="stopPurchases" label="Stop purchases" />
+                <InputSwitch v-model="purchaseLimit" label="Purchase limit" />
 
-                    <InputInteger v-model="readyStock" label="Ready stock" :min="0" :max="999999" placeholder="Ready"
-                        @valid="readyStockValid = $event.valid" />
-                    <InputInteger v-model="keepingStock" label="Keeping stock" :min="0" :max="999999"
-                        placeholder="Keeping" @valid="keepingStockValid = $event.valid" />
+                <InputInteger v-model="purchaseLimitValue" label="Purchase limit value" :min="0" :max="999999"
+                    placeholder="Ready" @valid="purchaseLimitValueValid = $event.valid" v-if="purchaseLimit" />
+
+                <InputInteger v-model="readyStock" label="Ready stock" :min="0" :max="999999" placeholder="Ready"
+                    @valid="readyStockValid = $event.valid" />
+                <InputInteger v-model="keepingStock" label="Keeping stock" :min="0" :max="999999" placeholder="Keeping"
+                    @valid="keepingStockValid = $event.valid" />
 
 
-                    <div class="edit-form-bottom">
-                        <ButtonSolid label="Cancel" size="mini" @click="editDialog = false" outlined />
-                        <ButtonSolid label="Save" size="mini" @click="onEditBook" style="margin-left: 1rem;"
-                            :loading="loading" />
-                    </div>
+                <div class="edit-form-bottom">
+                    <ButtonSolid label="Cancel" size="mini" @click="editDialog = false" outlined />
+                    <ButtonSolid label="Save" size="mini" @click="onEditBook" style="margin-left: 1rem;"
+                        :loading="loading" />
                 </div>
-            </template>
+            </div>
         </DialogComp>
 
         <FolderComp :tabs="['Books', 'Statistics']" v-model="tabIndex">
@@ -63,8 +52,8 @@
                 <div v-if="!books.length"></div>
 
                 <TableComp v-if="books.length" :columns="columns" :items="books" :limit="limit"
-                    :hasNextPage="hasNextPage" :hasPrevPage="hasPrevPage" :range="range" :page="page" :count="bookCount" actions
-                    images @onPrev="handleOnPrev" @onNext="handleOnNext" :columnWidths="{
+                    :hasNextPage="hasNextPage" :hasPrevPage="hasPrevPage" :range="range" :page="page" :count="bookCount"
+                    actions images @onPrev="handleOnPrev" @onNext="handleOnNext" :columnWidths="{
                         image: '6rem',
                         id: '8rem',
                         product_sku: '8rem',
@@ -219,15 +208,6 @@ const fetchBooks = async (getBooksVariable) => {
     }
 }
 
-fetchBooks({})
-
-onMounted(() => {
-    if (getBooksError.value) {
-        console.error('Error fetching the books:', getBooksError.value)
-        displayMessage('The books could not be loaded. Please try again later.' + getBooksError.value, 'error', 10_000)
-    }
-})
-
 const handleOnNext = async (item) => {
     if (!hasNextPage.value) return
     const cursor = `${item.created_at}_${item.id}`
@@ -312,6 +292,16 @@ function displayMessage(message, type, duration) {
 function getImageSrc(item) {
     return item.thumbnail_url ? useMediaUrl(item.thumbnail_url) : placeholderImage
 }
+
+fetchBooks({})
+
+onMounted(() => {
+    if (getBooksError.value) {
+        console.error('Error fetching the books:', getBooksError.value)
+        displayMessage('The books could not be loaded. Please try again later.' + getBooksError.value, 'error', 10_000)
+    }
+})
+
 </script>
 
 <style lang="css" scoped>
