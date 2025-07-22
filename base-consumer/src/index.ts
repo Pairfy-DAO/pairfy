@@ -126,7 +126,7 @@ const main = async () => {
           }
 
           if (!message) {
-            await sleep(500);
+            await sleep(30_000);
             console.log(`❌ Empty queue for stream: ${stream}`);
           }
         }
