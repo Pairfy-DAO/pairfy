@@ -93,6 +93,8 @@ import placeholderImage from '@/assets/placeholder/image.svg'
 import { formatDateYYMMDD } from "@/utils/utils"
 import { gql } from 'graphql-tag'
 
+const config = useRuntimeConfig().public
+
 const router = useRouter()
 
 const toastRef = ref(null);
@@ -228,11 +230,9 @@ const handleDottedMenu = async (event, value) => {
     }
 
     if (event === 'open') {
-        const config = useRuntimeConfig()
-        
-        console.log(config.public)
+        console.log(config)
 
-        window.open(`https://${config.public.domain0}/${value.country.toLowerCase()}/p/${value.id}`, '_blank')
+        window.open(`https://${config.domain0}/${value.country.toLowerCase()}/p/${value.id}`, '_blank')
     }
 
 }
