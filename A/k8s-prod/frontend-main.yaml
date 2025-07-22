@@ -40,8 +40,8 @@ spec:
               value: /api/media
             - name: NUXT_PUBLIC_CARDANO_NETWORK
               value: mainnet
-            - name: NUXT_PUBLIC_DOMAIN_0
-              value: pairfy.io              
+            - name: NUXT_PUBLIC_PAIRFY_BASE
+              value: "pairfy.io"           
 ---
 apiVersion: v1
 kind: Service
