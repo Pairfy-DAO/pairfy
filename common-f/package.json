@@ -1,43 +1,39 @@
 {
-    "name": "@pairfy/common-f",
-    "version": "0.1.16",
-    "description": "Common for frontend Vue/Nuxt",
-    "main": "dist/common-f.umd.js",
-    "module": "dist/common-f.es.js",
-    "types": "dist/index.d.ts",
-    "files": [
-        "dist",
-        "public"
-    ],
-    "scripts": {
-        "build": "vite build"
+  "name": "@pairfy/common-f",
+  "version": "0.1.21",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     },
-    "peerDependencies": {
-        "vue": "^3.0.0"
-    },
-    "devDependencies": {
-        "@types/node-forge": "^1.3.12",
-        "@types/pako": "^2.0.3",
-        "@vitejs/plugin-vue": "^4.0.0",
-        "typescript": "^5.0.0",
-        "vite": "^4.0.0",
-        "vue": "^3.0.0"
-    },
-    "keywords": [
-        "vue",
-        "nuxt",
-        "frontend",
-        "common",
-        "shared",
-        "utilities"
-    ],
-    "author": "Pairfy",
-    "publishConfig": {
-        "access": "public"
-    },
-    "dependencies": {
-        "buffer": "^6.0.3",
-        "node-forge": "^1.3.1",
-        "pako": "^2.1.0"
-    }
+    "./public/*": "./public/*"
+  },
+  "files": [
+    "dist",
+    "public"
+  ],
+  "keywords": [
+    "nuxt",
+    "utils",
+    "composables",
+    "vue3",
+    "ssr"
+  ],
+  "dependencies": {
+    "buffer": "^6.0.3",
+    "node-forge": "^1.3.1",
+    "pako": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/node-forge": "^1.3.13",
+    "@types/pako": "^2.0.3",
+    "tsup": "^7.2.0",
+    "typescript": "^5.8.3"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --out-dir dist"
+  }
 }

@@ -4,12 +4,10 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "strict": true,
+    "esModuleInterop": true,
     "declaration": true,
     "outDir": "dist",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "jsx": "preserve",
-    "types": ["vite/client"]
+    "baseUrl": "."
   },
   "include": ["src"]
 }
