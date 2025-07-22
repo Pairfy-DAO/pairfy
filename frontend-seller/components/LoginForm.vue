@@ -63,12 +63,10 @@ const emailValid = ref(false)
 const passwordValid = ref(false)
 
 const onValidEmail = (event) => {
-  console.log("emailhandler", event)
   emailValid.value = event
 }
 
 const onValidPassword = (event) => {
-  console.log("passwordhandler", event)
   passwordValid.value = event
 }
 
