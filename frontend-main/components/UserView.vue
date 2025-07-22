@@ -97,6 +97,10 @@ const onLogout = async () => {
     word-break: break-all;
 }
 
+.wallet img{
+    width: 2rem;
+}
+
 .wallet span {
     text-transform: capitalize;
     margin-left: 0.5rem;

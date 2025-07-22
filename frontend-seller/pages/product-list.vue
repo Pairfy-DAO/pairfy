@@ -5,11 +5,23 @@
         <FolderComp :tabs="['Products', 'Statistics']" v-model="tabIndex">
 
             <template #icon-0>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-inbox-icon lucide-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-inbox-icon lucide-inbox">
+                    <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+                    <path
+                        d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+                </svg>
             </template>
 
             <template #icon-1>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-no-axes-column-icon lucide-chart-no-axes-column"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-chart-no-axes-column-icon lucide-chart-no-axes-column">
+                    <line x1="18" x2="18" y1="20" y2="10" />
+                    <line x1="12" x2="12" y1="20" y2="4" />
+                    <line x1="6" x2="6" y1="20" y2="14" />
+                </svg>
             </template>
 
             <template #content="{ index }">
@@ -18,22 +30,21 @@
 
                 <TableComp v-if="products.length" :columns="columns" :items="products" :limit="limit"
                     :hasNextPage="hasNextPage" :hasPrevPage="hasPrevPage" :range="range" :page="page"
-                    :count="productCount" images actions @onPrev="handleOnPrev" @onNext="handleOnNext"
-                    :columnWidths="{ 
-                    image: '6rem',
-                    id: '10rem',
-                    sku: '8rem',
-                    price: '6rem',
-                    model: '8rem',
-                    discount: '4rem',
-                    category: '10rem',
-                    created_at: '6rem',
-                    moderated: '4rem',
-                    actions: '4rem'
+                    :count="productCount" images actions @onPrev="handleOnPrev" @onNext="handleOnNext" :columnWidths="{
+                        image: '6rem',
+                        id: '10rem',
+                        sku: '8rem',
+                        price: '6rem',
+                        model: '8rem',
+                        discount: '4rem',
+                        category: '10rem',
+                        created_at: '6rem',
+                        moderated: '4rem',
+                        actions: '4rem'
                     }">
 
                     <template #image="{ item }">
-                        <ImageComp :src="getImageSrc(item)"  :image-style="{ width: '4rem' }"/>
+                        <ImageComp :src="getImageSrc(item)" :image-style="{ width: '4rem' }" />
                     </template>
 
                     <template #col-id="{ value }">
@@ -136,6 +147,7 @@ const GET_PRODUCTS_QUERY = gql`
         status
         moderated
         thumbnail_url
+        country
         name
         price
         sku
@@ -214,6 +226,12 @@ const handleDottedMenu = async (event, value) => {
     if (event === 'edit') {
         router.push({ name: 'edit-product', query: { id: value.id } })
     }
+
+    if (event === 'open') {
+        const domain0 = useRuntimeConfig().public.domain0
+        window.open(`https://${domain0}/${value.country.toLowerCase()}/p/${value.id}`, '_blank')
+    }
+
 }
 const DELETE_PRODUCT_MUTATION = gql`
   mutation DeleteProduct($deleteProductVariable: DeleteProductInput!) {
@@ -239,7 +257,7 @@ async function onDeleteProduct(productId) {
 
         const response = data.deleteProduct
         displayMessage(response.message, 'success', 10_000)
-    } catch (err) { 
+    } catch (err) {
         console.error('onDeleteProductError: ', err)
         displayMessage(err.message, 'error', 10_000)
     }

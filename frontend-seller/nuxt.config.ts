@@ -20,6 +20,7 @@ export default defineNuxtConfig({
       validWallets: ["lace", "nami", "eternl"],
       mediaCDNBase: process.env.NUXT_PUBLIC_MEDIA_CDN, //build-arg actions secret
       cardanoNetwork: process.env.NUXT_PUBLIC_CARDANO_NETWORK,
+      domain0: process.env.NUXT_PUBLIC_DOMAIN_0,
     },
   },
   css: [
