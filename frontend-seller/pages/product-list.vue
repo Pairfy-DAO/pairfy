@@ -228,10 +228,11 @@ const handleDottedMenu = async (event, value) => {
     }
 
     if (event === 'open') {
-        const domain0 = useRuntimeConfig().public.domain0
-        console.log(domain0)
+        const pairfyBase = useRuntimeConfig().public.pairfyBase
         
-        window.open(`https://${domain0}/${value.country.toLowerCase()}/p/${value.id}`, '_blank')
+        console.log(puseRuntimeConfig().public)
+        
+        window.open(`https://${pairfyBase}/${value.country.toLowerCase()}/p/${value.id}`, '_blank')
     }
 
 }

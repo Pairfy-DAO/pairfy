@@ -39,9 +39,9 @@ spec:
             - name: NUXT_REDIS_CHAT_BASE
               value: redis://redis-chat.default.svc.cluster.local:6379                                             
             - name: NUXT_PUBLIC_MEDIA_CDN
-              value: /api/media
-            - name: NUXT_PUBLIC_DOMAIN_0
-              value: pairfy.dev
+              value: "/api/media"
+            - name: NUXT_PUBLIC_PAIRFY_BASE
+              value: "pairfy.dev"
 ---
 apiVersion: v1
 kind: Service
