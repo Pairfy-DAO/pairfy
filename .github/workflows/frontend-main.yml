@@ -21,8 +21,11 @@ jobs:
           username: ${{ secrets.MARKETPLACE_DOCKER_USER }}
           password: ${{ secrets.MARKETPLACE_DOCKER_PASSWORD }}
 
-      - name: Build Docker image
-        run: docker build -t pairfy/frontend-main ./frontend-main
+      - name: Build Docker image with CDN variable
+        run: |
+          docker build \
+            --build-arg NUXT_PUBLIC_MEDIA_CDN=${{ secrets.NUXT_PUBLIC_MEDIA_CDN }} \
+            -t pairfy/frontend-main ./frontend-main
 
       - name: Push Docker image
         run: docker push pairfy/frontend-main
