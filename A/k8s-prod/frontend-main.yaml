@@ -37,7 +37,7 @@ spec:
             - name: NUXT_REDIS_CHAT_BASE
               value: redis://redis-chat.default.svc.cluster.local:6379                            
             - name: NUXT_PUBLIC_MEDIA_CDN
-              value: pairfy-media-prod.nyc3.cdn.digitaloceanspaces.com
+              value: /api/media
             - name: NUXT_PUBLIC_CARDANO_NETWORK
               value: mainnet
 ---
