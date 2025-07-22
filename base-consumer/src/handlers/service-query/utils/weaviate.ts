@@ -91,7 +91,7 @@ export async function updateProductIndex(product: any): Promise<boolean> {
       .join(" ");
 
     const { data } = await axios.post<{ embedding: number[] }>(
-      `http://${process.env.HANDLER_EMBEDDINGS_HOST as string}/api/embeddings`,
+      `http://${process.env.HANDLER_EMBEDDING_HOST as string}`,
       {
         model: "nomic-embed-text",
         prompt,
