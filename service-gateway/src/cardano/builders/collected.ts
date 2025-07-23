@@ -57,7 +57,7 @@ async function collectedTransactionBuilder(
   //////////////////////////////////////////////////
 
   const externalWalletUtxos = await lucid.utxosAt(externalWalletAddress);
-
+  console.log(externalWalletUtxos)
   lucid.selectWallet.fromAddress(externalWalletAddress, externalWalletUtxos);
 
   //////////////////////////////////////////////////
@@ -191,7 +191,7 @@ async function collectedTransactionBuilder(
     )
     .attach.SpendingValidator(stateMachineScript)
     .addSigner(externalWalletAddress)
-    .validFrom(validFrom)
+    .validFrom(timestamp)
     .validTo(validToMs)
     .complete({
       changeAddress: externalWalletAddress,

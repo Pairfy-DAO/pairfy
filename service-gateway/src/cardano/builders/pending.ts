@@ -75,7 +75,7 @@ async function pendingTransactionBuilder(
   //////////////////////////////////////////////////
 
   const externalWalletUtxos = await lucid.utxosAt(externalWalletAddress);
-
+  console.log(externalWalletUtxos)
   lucid.selectWallet.fromAddress(externalWalletAddress, externalWalletUtxos);
 
   const buyerPubKeyHash = paymentCredentialOf(externalWalletAddress).hash;
