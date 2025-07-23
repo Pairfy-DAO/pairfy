@@ -30,7 +30,7 @@ const props = defineProps({
   id: { type: String, default: 'input-address' },
   modelValue: { type: [String, null], default: null },
   label: { type: String, default: 'Address' },
-  placeholder: { type: String, default: '1234 Brickell Avenue, Suite 500, Miami, FL 33131' },
+  placeholder: { type: String, default: 'e.g. 1234 Brickell Avenue, Suite 500, Miami, FL 33131' },
   focus: { type: Boolean, default: false },
   required: { type: Boolean, default: true },
   maxLength: { type: Number, default: 70 },

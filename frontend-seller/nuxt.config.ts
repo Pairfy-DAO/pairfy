@@ -17,7 +17,7 @@ export default defineNuxtConfig({
     redisChatBase: process.env.NUXT_REDIS_CHAT_BASE,
     public: {
       apiBaseBrowser: "",
-      validWallets: ["lace", "nami", "eternl"],
+      validWallets: ["lace", "eternl"],
       mediaCDNBase: process.env.NUXT_PUBLIC_MEDIA_CDN, //build-arg actions secret
       cardanoNetwork: process.env.NUXT_PUBLIC_CARDANO_NETWORK,
       pairfyBase: process.env.NUXT_PUBLIC_PAIRFY_BASE,

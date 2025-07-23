@@ -26,7 +26,6 @@ import { useAuthStore } from '@/stores/auth'
 import { useWalletStore } from '@/stores/wallet'
 import eternl from '@/assets/icon/eternl.png'
 import lace from '@/assets/icon/lace.svg'
-import nami from '@/assets/icon/nami.svg'
 
 const config = useRuntimeConfig()
 
@@ -44,8 +43,7 @@ const displayMessage = (message, type, duration) => {
 
 const walletMap = {
   eternl,
-  lace,
-  nami
+  lace
 }
 
 const validWallets = config.public.validWallets
