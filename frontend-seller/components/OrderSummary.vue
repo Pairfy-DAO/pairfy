@@ -183,7 +183,10 @@ function openExplorer() {
 
     const cardanoNetwork = useRuntimeConfig().public.cardanoNetwork;
 
-    window.open(`https://${cardanoNetwork}.cexplorer.io/tx/${orderStore.pendingTx}`, '_blank');
+    if (cardanoNetwork === 'mainnet' || cardanoNetwork === 'preprod') {
+        const prefix = cardanoNetwork === 'mainnet' ? '' : `${cardanoNetwork}.`;
+        window.open(`https://${prefix}cexplorer.io/tx/${orderStore.pendingTx}`, '_blank');
+    }
 }
 
 onUnmounted(() => {
