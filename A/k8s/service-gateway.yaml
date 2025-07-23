@@ -85,7 +85,11 @@ spec:
                 secretKeyRef:
                   name: agent-key-secret
                   key: key
-
+            - name: OPERATOR_PKH
+              valueFrom:
+                secretKeyRef:
+                  name: operator-pkh-secret
+                  key: pkh
 
           resources:
             requests:
