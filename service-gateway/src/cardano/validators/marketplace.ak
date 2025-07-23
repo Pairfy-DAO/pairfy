@@ -374,7 +374,7 @@ validator statemachine(threadtoken: PolicyId, operator: VerificationKeyHash, sel
             let must_be_policy = list.has(assets.policies(sm_output.value), threadtoken)
 
             //The fee is immutable in the state machine.
-            let must_be_value = fee == fee                //DEBUGING warning fee > minutxolovelace
+            let must_be_value = assets.lovelace_of(sm_output.value) >= fee                //WARNING fee > minutxolovelace
 
             //verification of the new datum.
             let new_data: Data = StateMachineDatum {

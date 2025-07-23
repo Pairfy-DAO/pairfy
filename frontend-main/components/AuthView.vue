@@ -30,17 +30,15 @@
 <script setup>
 import eternl from '@/assets/icon/eternl.png'
 import lace from '@/assets/icon/lace.svg'
-import nami from '@/assets/icon/nami.svg'
 
 const config = useRuntimeConfig()
 
-const auth = useAuthStore()
-const wallet = useWalletStore()
+const authStore = useAuthStore()
+const walletStore = useWalletStore()
 
 const walletMap = {
     eternl,
-    lace,
-    nami
+    lace
 }
 
 const validWallets = config.public.validWallets
@@ -57,24 +55,24 @@ const disableSubmit = computed(() => !passwordValid.value)
 
 const connectWallet = async (name) => {
     try {
-        await wallet.connect(name)
+        await walletStore.connect(name)
 
-        const [signature, address] = await wallet.sign()
+        const [signature, address] = await walletStore.sign()
         
-        await auth.login({
+        await authStore.login({
             signature,
             address,
             wallet_name: name,
-            country: auth.country?.toUpperCase(),
+            country: authStore.country?.toUpperCase(),
             terms_accepted: true,
             password: password.value
         })
 
-        auth.authDrawer = false
+        authStore.authDrawer = false       
         window.location.reload()
     } catch (err) {
         console.error(err);
-        auth.showToast(err.message, 'error', 10_000)
+        authStore.showToast(err.message, 'error', 10_000)
     }
 }
 </script>

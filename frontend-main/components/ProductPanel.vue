@@ -1,62 +1,73 @@
 <template>
-    <div class="ProductPanel">
-        <div class="ProductPanel-brand">
-            {{ productData.brand }}
-        </div>
-
-        <div class="ProductPanel-name">
-            {{ productData.name }}
-        </div>
-
-        <div class="ProductPanel-sku">
-            <span>SKU {{ productData.sku }}</span>
-        </div>
-
-        <div class="ProductPanel-rating">
-            <RatingComp :rating="4" />
-            <span>4.3</span>
-            <span>(384 reviews)</span>
-        </div>
-
-        <div class="ProductPanel-price">
-            <span>{{ formatUSD(product.price) }}</span>
-            <span>USD</span>
-        </div>
-
-        <div class="subtitle">
-            Model. <span>Check variations.</span>
-        </div>
-
-        <ProductModel v-for="n in 1" :key="n" :id="productData.id" :model="productData.model"
-            :condition="productData.condition_" :color="productData.color" :price="productData.price"
-            :discount="productData.discount" :discountPercent="productData.discount_percent"
-            :discountValue="productData.discount_value" />
-
-        <div class="subtitle">
-            Finish. <span>Choose your network.</span>
-        </div>
-
-        <BuyButton @click="product.showCardanoDialog(true)">
-            <template #icon>
-                <img class="icon" src="@/assets/icon/cardano.svg" alt="">
-            </template>
-            Cardano Network
-        </BuyButton>
-
-        <BuyButton style="margin-top: 1rem;">
-            <template #icon>
-                <img class="icon" src="@/assets/icon/midnight.svg" alt="">
-            </template>
-            Midnight Network
-        </BuyButton>
-
-        <div class="busy-box" />
+  <div class="ProductPanel">
+    <div class="ProductPanel-brand">
+      {{ productData.brand }}
     </div>
+
+    <div class="ProductPanel-name">
+      {{ productData.name }}
+    </div>
+
+    <div class="ProductPanel-sku">
+      <span>SKU {{ productData.sku }}</span>
+    </div>
+
+    <div class="ProductPanel-rating">
+      <RatingComp :rating="4" />
+      <span>4.3</span>
+      <span>(384 reviews)</span>
+    </div>
+
+    <div class="ProductPanel-price">
+      <span>{{ formatUSD(productStore.price) }}</span>
+      <span>USD</span>
+    </div>
+
+    <div class="subtitle">
+      Model. <span>Check variations.</span>
+    </div>
+
+    <ProductModel v-for="n in 1" :key="n" :id="productData.id" :model="productData.model"
+      :condition="productData.condition_" :color="productData.color" :price="productData.price"
+      :discount="productData.discount" :discountPercent="productData.discount_percent"
+      :discountValue="productData.discount_value" />
+
+    <div class="subtitle">
+      Finish. <span>Choose your network.</span>
+    </div>
+
+    <BuyButton @click="onCardanoClick">
+      <template #icon>
+        <img class="icon" src="@/assets/icon/cardano.svg" alt="">
+      </template>
+      Cardano Network
+    </BuyButton>
+
+    <BuyButton style="margin-top: 1rem;">
+      <template #icon>
+        <img class="icon" src="@/assets/icon/midnight.svg" alt="">
+      </template>
+      Midnight Network
+    </BuyButton>
+
+    <div class="busy-box" />
+  </div>
 </template>
 
 <script setup>
-const product = useProductStore()
-const productData = computed(() => product.product)
+const productStore = useProductStore()
+
+const productData = computed(() => productStore.product)
+
+const authStore = useAuthStore()
+
+const onCardanoClick = () => {
+  if (!authStore.user) {
+    authStore.authDrawer = true
+  } else {
+    productStore.showCardanoDialog(true)
+  }
+}
 </script>
 
 <style lang="css" scoped>
@@ -130,6 +141,7 @@ const productData = computed(() => product.product)
 .busy-box {
   height: 150px;
 }
+
 .icon {
   width: 2rem;
   height: 2rem;

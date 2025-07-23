@@ -33,12 +33,10 @@
 <script setup>
 import eternl from '@/assets/icon/eternl.png'
 import lace from '@/assets/icon/lace.svg'
-import nami from '@/assets/icon/nami.svg'
 
 const walletMap = {
     eternl,
-    lace,
-    nami
+    lace
 }
 
 const router = useRouter()
