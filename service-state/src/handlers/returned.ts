@@ -12,6 +12,8 @@ export async function returned(
   orderData: any,
   data: UtxoData
 ): Promise<jobResponse> {
+  await connection.beginTransaction();
+  
   const newStatus = "returned";
 
   if (!orderData.returned_notified) {

@@ -12,6 +12,8 @@ export async function shipping(
   orderData: any,
   data: UtxoData
 ): Promise<jobResponse> {
+  await connection.beginTransaction();
+  
   const newStatus = "shipping";
 
   if (!orderData.shipping_notified) {

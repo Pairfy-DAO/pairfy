@@ -12,6 +12,8 @@ export async function received(
   orderData: any,
   data: UtxoData
 ): Promise<jobResponse> {
+  await connection.beginTransaction();
+  
   const newStatus = "received";
 
   if (!orderData.received_notified) {

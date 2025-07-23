@@ -63,8 +63,8 @@ async function collectedTransactionBuilder(
 
   //////////////////////////////////////////////////
 
-  const totalLovelace = sumLovelaceFromUtxos(externalWalletUtxos)
-  
+  const totalLovelace = sumLovelaceFromUtxos(externalWalletUtxos);
+
   const txCollateral = 2_000_000n;
 
   const minLovelace = txCollateral;
@@ -95,7 +95,7 @@ async function collectedTransactionBuilder(
   if (stateMachineUtxo.datum) {
     const data = Data.from(stateMachineUtxo.datum, StateMachineDatum);
     console.log(data);
-    
+
     const ms_7_days = 604_800_000;
     const appealUntil = Number(data.delivery) + ms_7_days;
 
@@ -166,7 +166,7 @@ async function collectedTransactionBuilder(
   const stateMachineDatum = Data.to(datumValues, DatumType);
 
   ///////////////////////////////////////////
-
+  
   const lovelaceToSM = BigInt(stateMachineParams[5]);
 
   console.log(lovelaceToSM);
@@ -208,10 +208,10 @@ async function collectedTransactionBuilder(
 
 async function main() {
   const externalWalletAddress =
-    "addr_test1qz3rnekzh0t2nueyn4j6lmufc28pgu0dqlzjnmqxsjxvzs24qtjuxnphyqxz46t40nudnm3kxu8hkau2mq6nw7svg7jswruwy3";
+    "addr_test1qp6xhlulkdnm7wa3kf07yj389weg34329jk34tfwx75pw0urvzxsjpchzgnhfmvz35ap356vg3a2c2af34zl4va7cfzqtyf6jn";
 
   const serializedParams =
-    "0a09d13dacc36caa75855765930e3f93f840f7e07ea72b05fe31ece2,a239e6c2bbd6a9f3249d65afef89c28e1471ed07c529ec06848cc141,746bff9fb367bf3bb1b25fe24a272bb288d62a2cad1aad2e37a8173f,30000000,10000000,1734559401711";
+    "27e0b4077ef7653c4468a16a27d957738fea64127bb76c4eff7e38bc,e6e9941e21500bbd678105b569e815197e9f8de6e7ba858c6626ec31,746bff9fb367bf3bb1b25fe24a272bb288d62a2cad1aad2e37a8173f,a239e6c2bbd6a9f3249d65afef89c28e1471ed07c529ec06848cc141,10843373,1084337,1753284604629,1753371004629,1758555004629";
 
   const BUILDER = await collectedTransactionBuilder(
     externalWalletAddress,

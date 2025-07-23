@@ -12,6 +12,8 @@ export async function appealed(
   orderData: any,
   data: UtxoData
 ): Promise<jobResponse> {
+  await connection.beginTransaction();
+  
   const newStatus = "appealed";
 
   if (!orderData.appealed_notified) {
