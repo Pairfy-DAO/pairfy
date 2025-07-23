@@ -1,11 +1,11 @@
-name: service-price
+name: service-chat
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'service-price/**'
+      - 'service-chat/**'
 
 jobs:
   build-and-deploy:
@@ -22,10 +22,10 @@ jobs:
           password: ${{ secrets.MARKETPLACE_DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build -t pairfy/service-price ./service-price
+        run: docker build -t pairfy/service-chat ./service-chat
 
       - name: Push Docker image
-        run: docker push pairfy/service-price
+        run: docker push pairfy/service-chat
 
       - name: Set up DigitalOcean CLI
         uses: digitalocean/action-doctl@v2.3.0
@@ -36,4 +36,4 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save pairfy
 
       - name: Restart Kubernetes deployment
-        run: kubectl rollout restart deployment service-price
+        run: kubectl rollout restart deployment service-chat
