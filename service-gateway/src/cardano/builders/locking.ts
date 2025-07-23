@@ -33,6 +33,8 @@ async function lockingTransactionBuilder(
 
   const timestamp = Date.now();
 
+  const validFrom = timestamp - 1 * 60 * 1000;
+
   const validToMs = Number(
     BigInt(timestamp) + BigInt(process.env.TX_VALID_TIME as string)
   );
@@ -181,7 +183,7 @@ async function lockingTransactionBuilder(
     )
     .attach.SpendingValidator(stateMachineScript)
     .addSigner(externalWalletAddress)
-    .validFrom(timestamp)
+    .validFrom(validFrom)
     .validTo(validToMs)
     .complete({
       changeAddress: externalWalletAddress,
