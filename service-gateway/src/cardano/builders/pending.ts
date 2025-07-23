@@ -13,6 +13,7 @@ import {
   Network,
 } from "@lucid-evolution/lucid";
 import { provider, serializeParams, validators } from "./index.js";
+import { sumLovelaceFromUtxos } from "./utils.js";
 
 /**Generates a CBOR transaction to be signed and sent in the browser by the buyer. */
 async function pendingTransactionBuilder(
@@ -75,26 +76,26 @@ async function pendingTransactionBuilder(
   //////////////////////////////////////////////////
 
   const externalWalletUtxos = await lucid.utxosAt(externalWalletAddress);
-  console.log(externalWalletUtxos)
+
   lucid.selectWallet.fromAddress(externalWalletAddress, externalWalletUtxos);
 
   const buyerPubKeyHash = paymentCredentialOf(externalWalletAddress).hash;
 
   //////////////////////////////////////////////////
 
+  console.log(externalWalletUtxos)
+
+  const totalLovelace = sumLovelaceFromUtxos(externalWalletUtxos)
+  
   const txCollateral = 2_000_000n;
 
   const minLovelace = contractPrice + txCollateral;
 
-  const findIndex = externalWalletUtxos.findIndex(
-    (item) => item.assets.lovelace > minLovelace
-  );
-
-  const utxo = externalWalletUtxos[findIndex];
-
-  if (!utxo) {
+  if (totalLovelace < minLovelace) {
     throw new Error("MIN_LOVELACE");
   }
+
+  const utxo = externalWalletUtxos[0];
 
   const utxoRef = new Constr(0, [
     String(utxo.txHash),
@@ -165,7 +166,7 @@ async function pendingTransactionBuilder(
 
   const transaction = await lucid
     .newTx()
-    .collectFrom([utxo])
+    .collectFrom(externalWalletUtxos)
     .mintAssets(
       {
         [assetUnit]: 1n,
