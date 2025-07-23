@@ -9,6 +9,7 @@ import {
   Network,
 } from "@lucid-evolution/lucid";
 import { deserializeParams, provider, validators } from "./index.js";
+import { sumLovelaceFromUtxos } from "./utils.js";
 
 /**Generates a CBOR transaction to be signed and sent in the browser by the seller*/
 async function collectedTransactionBuilder(
@@ -57,22 +58,18 @@ async function collectedTransactionBuilder(
   //////////////////////////////////////////////////
 
   const externalWalletUtxos = await lucid.utxosAt(externalWalletAddress);
-  console.log(externalWalletUtxos)
+
   lucid.selectWallet.fromAddress(externalWalletAddress, externalWalletUtxos);
 
   //////////////////////////////////////////////////
 
+  const totalLovelace = sumLovelaceFromUtxos(externalWalletUtxos)
+  
   const txCollateral = 2_000_000n;
 
   const minLovelace = txCollateral;
 
-  const findIndex = externalWalletUtxos.findIndex(
-    (item) => item.assets.lovelace > minLovelace
-  );
-
-  const externalWalletUtxo = externalWalletUtxos[findIndex];
-
-  if (!externalWalletUtxo) {
+  if (totalLovelace < minLovelace) {
     throw new Error("MIN_LOVELACE");
   }
 
@@ -177,7 +174,7 @@ async function collectedTransactionBuilder(
   const transaction = await lucid
     .newTx()
     .collectFrom([stateMachineUtxo], stateMachineRedeemer)
-    .collectFrom([externalWalletUtxo])
+    .collectFrom(externalWalletUtxos)
     .pay.ToAddressWithData(
       stateMachineAddress,
       {
@@ -191,7 +188,7 @@ async function collectedTransactionBuilder(
     )
     .attach.SpendingValidator(stateMachineScript)
     .addSigner(externalWalletAddress)
-    .validFrom(timestamp)
+    .validFrom(validFrom)
     .validTo(validToMs)
     .complete({
       changeAddress: externalWalletAddress,
