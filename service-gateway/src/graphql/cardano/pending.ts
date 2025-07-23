@@ -100,8 +100,9 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
 
     const contractFee: number = getContractFee(contractPrice, 10);
 
-    const operatorWallet =
-      "a239e6c2bbd6a9f3249d65afef89c28e1471ed07c529ec06848cc141";
+    const operatorPkh = process.env.OPERATOR_PKH as string;
+
+    console.log(operatorPkh);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -113,7 +114,7 @@ export const pendingEndpoint = async (_: any, args: any, context: any) => {
     const metadata = chunkMetadata(JSON.stringify(scheme), 64);
 
     const BUILDER = await pendingTransactionBuilder(
-      operatorWallet,
+      operatorPkh,
       USER.address,
       findSeller.pubkeyhash,
       BigInt(contractPrice),

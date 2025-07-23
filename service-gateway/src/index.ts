@@ -52,6 +52,7 @@ const main = async () => {
       "KUPO_KEY",
       "OGMIOS_KEY",
       "WEAVIATE_HOST",
+      "OPERATOR_PKH"
     ];
 
     for (const varName of requiredEnvVars) {
