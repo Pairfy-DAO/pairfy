@@ -139,7 +139,7 @@ async function submitForm() {
 
     orderStore.showToast(`The transaction has been sent to the network. TxHash: ${txHash}`, 'success', 10_000)
 
-    await sleep(120_000)
+    await sleep(240_000)
 
     loading.value = false
   } catch (err) {

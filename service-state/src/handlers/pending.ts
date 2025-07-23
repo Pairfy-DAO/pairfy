@@ -12,6 +12,8 @@ export async function pending(
   orderData: any,
   data: UtxoData
 ): Promise<jobResponse> {
+  await connection.beginTransaction();
+  
   const newStatus = "pending";
 
   if (!orderData.pending_notified) {

@@ -12,6 +12,8 @@ export async function locking(
   orderData: any,
   data: UtxoData
 ): Promise<jobResponse> {
+  await connection.beginTransaction();
+  
   const newStatus = "locking";
 
   if (!orderData.locking_notified) {

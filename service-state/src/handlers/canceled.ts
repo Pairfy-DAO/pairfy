@@ -12,6 +12,8 @@ export async function canceled(
   orderData: any,
   data: UtxoData
 ): Promise<jobResponse> {
+  await connection.beginTransaction();
+  
   const newStatus = "canceled";
 
   if (!orderData.canceled_notified) { 

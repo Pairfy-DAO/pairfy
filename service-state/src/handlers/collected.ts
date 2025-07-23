@@ -12,6 +12,8 @@ export async function collected(
   orderData: any,
   data: UtxoData
 ): Promise<jobResponse> {
+  await connection.beginTransaction();
+  
   const newStatus = "collected";
 
   if (!orderData.collected_notified) {

@@ -7,6 +7,8 @@ export async function expired(
   timestamp: number,
   orderData: any
 ): Promise<jobResponse> {
+  await connection.beginTransaction();
+
   await updateOrder(connection, orderData.id, orderData.schema_v, {
     status: "expired",
     finished: true,

@@ -19,11 +19,11 @@ export type jobResponse = {
 };
 
 export async function testHandler(job: any): Promise<jobResponse> {
-  const { id } = job.data;
-
   let connection = null;
 
   try {
+    const { id } = job.data;
+
     const timestamp = Date.now();
 
     const sleepUntil = await getSleepUntil(redisState.client, id);
@@ -55,8 +55,6 @@ export async function testHandler(job: any): Promise<jobResponse> {
 
     //////////////////////////////////////////////////////////// START TRANSACTION
 
-    await connection.beginTransaction();
-
     if (!success && !failed && ORDER.status === "created") {
       if (timestamp > ORDER.watch_until) {
         console.log("🕒 Expired", ORDER.id);
@@ -68,7 +66,7 @@ export async function testHandler(job: any): Promise<jobResponse> {
 
     if (success && !failed && data) {
       const utxoData: UtxoData = data as UtxoData;
-
+      console.log("STATE", utxoData.datum.state);
       switch (utxoData.datum.state) {
         case null:
           break;
