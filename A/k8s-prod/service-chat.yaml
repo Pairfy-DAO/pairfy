@@ -17,7 +17,7 @@ spec:
           image: pairfy/service-chat
           env:
             - name: NODE_ENV
-              value: "development"                       
+              value: "production"                       
             - name: REDIS_CHAT_HOST
               value: redis://redis-chat:6379
             - name: REDIS_RATELIMIT_HOST

@@ -2,8 +2,6 @@ import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { logger, SellerToken, UserToken } from "@pairfy/common";
 
-
-
 declare global {
   interface Request {
     sellerData?: SellerToken;
@@ -16,34 +14,28 @@ declare global {
   }
 }
 
-
-export const agentMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const agentMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   if (!req.session?.jwt) {
     return next();
   }
 
   try {
-    const privateKey = Buffer.from(process.env.AGENT_JWT_KEY!, 'base64').toString('utf-8');
+    const privateKey = process.env.AGENT_JWT_KEY as string;
 
-    const sessionData = jwt.verify(
-      req.session.jwt,
-      privateKey
-    ) as any;
+    const sessionData = jwt.verify(req.session.jwt, privateKey) as any;
 
     if (sessionData.role === "SELLER") {
-      req.sellerData = {
-        ...sessionData,
-        token: req.session.jwt,
-      };
+      req.sellerData = sessionData;
 
       return next();
     }
 
     if (sessionData.role === "USER") {
-      req.userData = {
-        ...sessionData,
-        token: req.session.jwt,
-      };
+      req.userData = sessionData;
 
       return next();
     }
@@ -51,6 +43,5 @@ export const agentMiddleware = (req: Request, res: Response, next: NextFunction)
     logger.error(err);
   }
 
- return next();
+  return next();
 };
-
