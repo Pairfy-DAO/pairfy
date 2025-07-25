@@ -2,7 +2,7 @@
   <div class="layout">
     <HeaderComp />
     <main class="content">
-      <slot />
+      <NuxtPage :key="$route.fullPath" />
     </main>
   </div>
 </template>

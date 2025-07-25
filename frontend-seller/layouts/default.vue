@@ -91,7 +91,7 @@
     </aside>
 
     <main class="layout-content">
-      <slot />
+      <NuxtPage :key="$route.fullPath" />
     </main>
   </div>
 </template>

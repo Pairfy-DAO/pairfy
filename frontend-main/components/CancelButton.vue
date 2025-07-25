@@ -65,7 +65,7 @@ const onClick = async () => {
 
         orderStore.showToast(`The transaction has been sent to the network. TxHash: ${txHash}`, 'success', 30_000)
         
-        await sleep(60_000)
+        await sleep(240_000)
         
         loading.value = false
     } catch (err) {

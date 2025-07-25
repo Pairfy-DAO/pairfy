@@ -1,7 +1,7 @@
 <template>
   <div class="layout-entry">
     <main class="layout-entry-content">
-      <slot />
+      <NuxtPage :key="$route.fullPath" />
     </main>
   </div>
 </template>
