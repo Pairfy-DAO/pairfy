@@ -397,7 +397,7 @@ validator statemachine(threadtoken: PolicyId, operator: VerificationKeyHash, sel
 
           (StateMachineDatum{ state, .. }, Finish) -> {
             //Must be after collected or appeal state.
-            let must_be_state = state == 4 || state == -3
+            let must_be_state = state == -1 || state == -2 || state == -3 || state == 4 
 
             let must_be_signed = list.has(self.extra_signatories, operator)
 
