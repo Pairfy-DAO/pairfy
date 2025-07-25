@@ -8,6 +8,7 @@
     "return": "node --loader ts-node/esm return.ts",
     "locking": "node --loader ts-node/esm locking.ts",
     "collected": "node --loader ts-node/esm collected.ts",
+    "finished": "node --loader ts-node/esm finished.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
