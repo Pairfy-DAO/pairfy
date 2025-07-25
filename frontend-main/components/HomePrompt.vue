@@ -81,7 +81,7 @@ function submitPrompt() {
         name: 'country-s',
         params: { country: auth.country },
         query: {
-            prompt: trimmed,
+            prompt: trimmed + "new",
             vectorized: true
         }
     })
