@@ -1,5 +1,5 @@
 import database from "../../database/client.js";
-import { ApiGraphQLError, ERROR_CODES } from "@pairfy/common";
+import { ApiGraphQLError, ERROR_CODES, SellerToken } from "@pairfy/common";
 import { getBooksSchema } from "../../validators/getBooks.js";
 
 export const getBooks = async (_: any, args: any, context: any) => {
@@ -19,7 +19,9 @@ export const getBooks = async (_: any, args: any, context: any) => {
     }
   
     const { cursor, reverseCursor } = validation.data;
-    const { sellerData: SELLER } = context;
+    
+    const { sellerData: SELLER } = context as { sellerData: SellerToken };
+
   
     if (cursor && reverseCursor) {
       throw new ApiGraphQLError(400, "Cannot use both cursor and reverseCursor", {
@@ -31,21 +33,22 @@ export const getBooks = async (_: any, args: any, context: any) => {
     const realLimit = pageSize + 1;
   
     const queryParams: any[] = [SELLER.id];
+    
     let whereClause = "WHERE books.seller_id = ?";
-    let orderClause = "ORDER BY created_at DESC, id DESC";
+    let orderClause = "ORDER BY books.created_at DESC, books.id DESC";
     let isReversing = false;
   
     if (cursor) {
       const [createdAt, id] = cursor.split("_");
-      whereClause += " AND (created_at < ? OR (created_at = ? AND id < ?))";
+      whereClause += " AND (books.created_at < ? OR (books.created_at = ? AND books.id < ?))";
       queryParams.push(createdAt, createdAt, id);
     }
   
     if (reverseCursor) {
       const [createdAt, id] = reverseCursor.split("_");
-      whereClause += " AND (created_at > ? OR (created_at = ? AND id > ?))";
+      whereClause += " AND (books.created_at > ? OR (books.created_at = ? AND books.id > ?))";
       queryParams.push(createdAt, createdAt, id);
-      orderClause = "ORDER BY created_at ASC, id ASC";
+      orderClause = "ORDER BY books.created_at ASC, books.id ASC";
       isReversing = true;
     }
   
@@ -79,8 +82,8 @@ export const getBooks = async (_: any, args: any, context: any) => {
 
     const finalBooks = isReversing ? books.reverse() : books;
 
-    const [[{ total_books }]] = await connection.query(
-      "SELECT COUNT(*) AS total_books FROM books WHERE seller_id = ?",
+    const [[{ total_count }]] = await connection.query(
+      "SELECT COUNT(*) AS total_count FROM books WHERE seller_id = ?",
       [SELLER.id]
     );
 
@@ -103,10 +106,9 @@ export const getBooks = async (_: any, args: any, context: any) => {
       nextCursor,
       hasPrevMore,
       hasNextMore,
-      totalCount: total_books,
+      totalCount: total_count,
     };
   } catch (err) {
-    if (connection) await connection.rollback();
     throw err;
   } finally {
     if (connection) connection.release();
