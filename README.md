@@ -16,6 +16,8 @@ These features empower any community member to become a seller and launch their 
 
 [Pairfy's Website](https://pairfy.io)
 
+[Docs Website](https://docs.pairfy.io)
+
 ## Differential factors
 
 - Community-governed with chain vote – DAO constitutional model.
