@@ -129,8 +129,20 @@ Copyright © 2025
 
 ---
 
-### 3\. Contact
+### Contact
 
-Juan Caballero R. - sudo.delete.evil@gmail.com
+- **GitHub:** [rey-sudo](https://github.com/rey-sudo)
+- **Email:** [pairfy.dao@gmail.com](mailto:pairfy.dao@gmail.com)  
+- **Discord:** [Join our server](https://discord.gg/qEdn9m3VUJ)  
+- **X (Twitter):** [@pairfydao](https://x.com/pairfydao)  
+- **LinkedIn:** [Rey Sudo](https://www.linkedin.com/in/rey-sudo)
 
-GitHub: [https://github.com/rey-sudo](https://github.com/rey-sudo)
+---
+
+### Get Involved
+
+- [Become a Seller](https://seller.pairfy.io)  
+- [Become a Mediator](https://discord.gg/qEdn9m3VUJ)  
+- [Become an Administrative](https://discord.gg/qEdn9m3VUJ)  
+- [Become a Developer](https://discord.gg/qEdn9m3VUJ)  
+- [Become a Mod](https://discord.gg/qEdn9m3VUJ)
