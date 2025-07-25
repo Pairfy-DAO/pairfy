@@ -99,12 +99,14 @@ async function searchProducts(prompt) {
 
         console.log(filters, "filters")
 
+        const isVectorized = route.query?.vectorized === 'true'
+
         const { data } = await $queryClient.query({
             query: SEARCH_PRODUCTS_QUERY,
             variables: {
                 searchProductsVariable: {
-                    prompt,
-                    vectorized: route.query?.vectorized === 'true',
+                    prompt: isVectorized ? prompt + " new" : prompt,
+                    vectorized: isVectorized,
                     filters
                 }
             },
@@ -136,9 +138,9 @@ onMounted(() => {
 })
 
 useHead({
-  title: 'Pairfy - Cardano marketplace',
-  meta: [
-    { name: 'description', content: 'Buy and sell products on Cardano blockchain.' }
-  ]
+    title: 'Pairfy - Cardano marketplace',
+    meta: [
+        { name: 'description', content: 'Buy and sell products on Cardano blockchain.' }
+    ]
 })
 </script>
