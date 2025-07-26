@@ -13,8 +13,8 @@
             </div>
 
             <div class="ProductCard-rating">
-                <RatingComp :rating="4" />
-                <span>(1562)</span>
+                <RatingComp :rating="0" />
+                <span>(0)</span>
             </div>
 
             <div class="ProductCard-price">
