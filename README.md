@@ -146,3 +146,19 @@ Copyright © 2025
 - [Become an Administrative](https://discord.gg/qEdn9m3VUJ)  
 - [Become a Developer](https://discord.gg/qEdn9m3VUJ)  
 - [Become a Mod](https://discord.gg/qEdn9m3VUJ)
+
+---
+
+🚀 Call for Contributors: Catalyst Fund 14 🚀
+
+We're looking for dedicated contributors to join us for Catalyst Fund 14.
+
+Be part of shaping the future of Cardano.
+
+---
+
+### Video
+
+[![Video](https://img.youtube.com/vi/f1lCRxHEJlY/0.jpg)](https://www.youtube.com/watch?v=f1lCRxHEJlY)
+
+👉 Prototype RC v1.0.1 mainnet video
