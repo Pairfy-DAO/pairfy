@@ -3,11 +3,11 @@
         <nav class="HeaderNav-body">
             <div>
                 <ul class="navigator">
-                    <li><a href="#">How to sell</a></li>
-                    <li><a href="#">How it works</a></li>
-                    <li><a href="#">Governance</a></li>
-                    <li><a href="#">Community</a></li>
-                    <li><a href="#">I need Help</a></li>
+                    <li><a href="https://docs.pairfy.io/DAO.html">How to sell</a></li>
+                    <li><a href="https://docs.pairfy.io/architecture.html">How it works</a></li>
+                    <li><a href="https://docs.pairfy.io/DAO.html">Governance</a></li>
+                    <li><a href="https://discord.com/invite/qEdn9m3VUJ">Community</a></li>
+                    <li><a href="https://discord.com/invite/qEdn9m3VUJ">I need Help</a></li>
                 </ul>
             </div>
 

@@ -13,9 +13,9 @@
     </div>
 
     <div class="ProductPanel-rating">
-      <RatingComp :rating="4" />
-      <span>4.3</span>
-      <span>(384 reviews)</span>
+      <RatingComp :rating="0" />
+      <span>0.0</span>
+      <span>(0 reviews)</span>
     </div>
 
     <div class="ProductPanel-price">

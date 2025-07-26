@@ -6,7 +6,7 @@
         <img class="icon" src="@/assets/brand/icon-white.svg" alt="" @click="navigateTo('/')">
 
         <ul class="HeaderContent-nav">
-          <li v-for="item in items" :key="item.label" @click="navigateTo(item.route)">
+          <li v-for="item in items" :key="item.label" @click="navigateTo(item.route, item.external)">
             {{ item.label }}
           </li>
         </ul>
@@ -32,20 +32,26 @@
 const auth = useAuthStore()
 
 const items = ref([
-  { label: 'Trending', route: '/docs' },
-  { label: 'Categories', route: '/categories' },
-  { label: 'Docs', route: '/docs' },
-  { label: 'Sellers', route: '/sell' }
+  { label: 'Github', route: 'https://github.com/Pairfy-DAO/pairfy', external: true },
+  { label: 'Discord', route: 'https://discord.gg/qEdn9m3VUJ', external: true },
+  { label: 'Docs', route: 'https://docs.pairfy.io/', external: true },
+  { label: 'Sellers', route: 'https://seller.pairfy.io/', external: true }
 ])
 
 const router = useRouter()
 const route = useRoute()
 const activeRoute = ref(route.path)
 
-const navigateTo = (path: string) => {
+const navigateTo = (path: string, external?: boolean) => {
+  if (external) {
+    window.open(path, '_blank', 'noopener,noreferrer');
+    return
+  }
+
   if (path !== route.path) {
     router.push(path)
   }
+
 }
 
 watch(() => route.path, (newPath) => {
@@ -117,7 +123,7 @@ watch(() => route.path, (newPath) => {
     display: none;
   }
 
-  .HeaderContent-body{
+  .HeaderContent-body {
     padding: 0.5rem;
     grid-template-columns: 0.1fr 1fr 0.1fr;
   }

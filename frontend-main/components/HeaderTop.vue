@@ -8,8 +8,8 @@
             </div>
 
             <nav class="flex">
-                <span class="HeaderTop-price">Discount liquidity: 834.000 ADA</span>
-                <span class="HeaderTop-price">Volume 24h: 253.894 ADA</span>
+                <span class="HeaderTop-price">Discount liquidity: 0 ADA</span>
+                <span class="HeaderTop-price">Volume 24h: 23 ADA</span>
 
                 <span class="HeaderTop-price" v-for="(price, symbol) in auth.prices" :key="symbol">
                     {{ symbol }} {{ price.toFixed(2) }}

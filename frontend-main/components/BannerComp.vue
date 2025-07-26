@@ -18,9 +18,9 @@
                     </div>
 
                     <div class="Banner-header-right">
-                        <p><strong>5M+</strong> Factory direct supply</p>
-                        <p><strong>10</strong> Local warehouses worldwide</p>
-                        <p><strong>20M+</strong> Value dropshipping items</p>
+                        <p><strong>0M+</strong> Factory direct supply</p>
+                        <p><strong>1</strong> Local warehouses worldwide</p>
+                        <p><strong>0M+</strong> Value dropshipping items</p>
                         <p><strong>24H</strong> Personalized sourcing service</p>
                     </div>
                 </div>
@@ -29,15 +29,15 @@
                 <div class="Banner-cards">
                     <div class="box">
                         <h2>Discount pool</h2>
-                        <div class="cards">834.372 ADA / 53%</div>
+                        <div class="cards">0 ADA / 0%</div>
                     </div>
                     <div class="box">
                         <h2>Discount airdrop</h2>
-                        <div class="cards">43 days left</div>
+                        <div class="cards">0 days left</div>
                     </div>
                     <div class="box">
                         <h2>Benefited users</h2>
-                        <div class="cards">1753 wallets</div>
+                        <div class="cards">0 wallets</div>
                     </div>
                 </div>
 
