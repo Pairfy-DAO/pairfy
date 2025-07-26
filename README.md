@@ -149,6 +149,14 @@ Copyright © 2025
 
 ---
 
+🚀 Call for Contributors: Catalyst Fund 14 🚀
+
+We're looking for dedicated contributors to join us for Catalyst Fund 14.
+
+Be part of shaping the future of Cardano.
+
+---
+
 ### Video
 
 [![Video](https://img.youtube.com/vi/f1lCRxHEJlY/0.jpg)](https://www.youtube.com/watch?v=f1lCRxHEJlY)
