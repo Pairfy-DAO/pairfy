@@ -6,7 +6,7 @@
         <section class="top-section">
             <h1 class="title fade-title">Welcome to your Cardano store</h1>
             <p class="subtitle ">Save with liquidity pool discounts.</p>
-            <button class="action-button" @click="onExplore">Explore</button>
+            <button class="action-button" @click="onExplore">Explore products</button>
         </section>
 
         <section class="card-section">
@@ -91,7 +91,7 @@ onMounted(async () => {
     margin-top: 1rem;
     color: var(--text-w);
     background: var(--gradient-a);
-    font-size: var(--text-size-a);
+    font-size: var(--text-size-1);
     padding: var(--button-padding);
     border-radius: var(--radius-c);
     transition: var(--transition-a);
