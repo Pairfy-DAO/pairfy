@@ -89,11 +89,12 @@ onMounted(async () => {
     border: none;
     cursor: pointer;
     margin-top: 1rem;
+    font-weight: bold;
     color: var(--text-w);
     background: var(--gradient-a);
     font-size: var(--text-size-1);
     padding: var(--button-padding);
-    border-radius: var(--radius-c);
+    border-radius: var(--radius-5);
     transition: var(--transition-a);
 }
 

@@ -24,14 +24,14 @@
      inkscape:pagecheckerboard="0"
      inkscape:document-units="px"
      showgrid="false"
-     inkscape:zoom="0.52410024"
-     inkscape:cx="416.90498"
-     inkscape:cy="555.2373"
-     inkscape:window-width="1920"
-     inkscape:window-height="1048"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
+     inkscape:zoom="0.26205012"
+     inkscape:cx="933.02762"
+     inkscape:cy="-251.86022"
+     inkscape:window-width="1488"
+     inkscape:window-height="778"
+     inkscape:window-x="2163"
+     inkscape:window-y="200"
+     inkscape:window-maximized="0"
      inkscape:current-layer="layer1" />
   <defs
      id="defs824">
@@ -67,7 +67,8 @@
        y1="0.21816316"
        x2="1618.6523"
        y2="1079.4373"
-       gradientUnits="userSpaceOnUse" />
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(0,79.781837)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient1392"
@@ -76,24 +77,25 @@
        y1="0.79575837"
        x2="302.27164"
        y2="1080.0149"
-       gradientUnits="userSpaceOnUse" />
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(0,79.781837)" />
   </defs>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
     <g
-       id="g833"
-       transform="translate(0,79.781837)">
+       id="g851"
+       transform="translate(0,-36)">
       <path
          id="rect1087"
          style="fill:url(#linearGradient1394);fill-opacity:1;stroke:none;stroke-width:0.299475;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke markers fill"
-         d="M 1.046745,0.79575838 C 186.57754,2.3171461 183.23338,729.81964 302.27163,1080.0149 L 0,1079.9805 Z"
+         d="M 1.046745,80.577595 C 186.57754,82.098983 183.23338,809.60148 302.27163,1159.7967 L 0,1159.7623 Z"
          sodipodi:nodetypes="cccc" />
       <path
          id="rect1087-7"
          style="fill:url(#linearGradient1212);fill-opacity:1;stroke:none;stroke-width:0.299475;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke markers fill"
-         d="M 1919.8773,0.21816316 C 1734.3465,1.7395512 1737.6907,729.24206 1618.6524,1079.4372 l 302.2716,-0.034 z"
+         d="m 1919.8773,80 c -185.5308,1.521388 -182.1866,729.0239 -301.2249,1079.219 l 302.2716,-0.034 z"
          sodipodi:nodetypes="cccc" />
     </g>
   </g>

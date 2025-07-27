@@ -58,7 +58,7 @@ const network = useRuntimeConfig().public.cardanoNetwork
 }
 
 .home {
-    background: var(--background-a);
+    background: transparent;
     color: var(--text-a);
     position: initial;
 }
