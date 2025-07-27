@@ -16,9 +16,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger)
 
 const cards = [
-  { title: 'Velocidad', text: 'Desarrolla rápido con Vue 3 y Nuxt' },
-  { title: 'Escalabilidad', text: 'Componentes modulares y reutilizables' },
-  { title: 'Animaciones', text: 'Haz tu landing más dinámica con GSAP' }
+  { title: 'Staking pool', text: 'Earn $PAIRFY tokens' },
+  { title: 'DAO community', text: 'Discord' },
+  { title: 'Trending', text: 'Best sellers' }
 ]
 
 const cardRefs = ref([])

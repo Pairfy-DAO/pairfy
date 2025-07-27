@@ -3,11 +3,11 @@
 
         <img src="/assets/images/drawing.svg" alt="wave" class="wave-svg" />
 
-        <header class="header">
+        <section class="top-section">
             <h1 class="title fade-title">Welcome to your Cardano store</h1>
             <p class="subtitle ">Save with liquidity pool discounts.</p>
-            <button class="action-button">Go Explore</button>
-        </header>
+            <button class="action-button">Go explore</button>
+        </section>
 
         <section class="card-section">
             <HomePrompt />
@@ -22,19 +22,21 @@ import { gsap } from 'gsap'
 
 onMounted(async () => {
     await nextTick()
-    
+    document.body.style.overflow = 'hidden';
     gsap.from('.wave-svg', {
         y: 1000,
         opacity: 0,
         duration: 2,
-        ease: 'power3.out'
+        ease: 'power3.out',
+        onComplete: () => {
+            document.body.style.overflow = 'auto';
+        }
     })
 })
 </script>
 
 <style scoped>
 .HomeSection1 {
-    height: calc(100vh - 2.5rem);
     box-sizing: border-box;
 
 }
@@ -42,17 +44,11 @@ onMounted(async () => {
 .wave-svg {
     position: absolute;
     left: 0;
-    top: 2.5rem;
     bottom: 0;
     object-fit: cover;
     z-index: 10;
     width: 100%;
-}
-
-.header {
-    text-align: center;
-    margin-top: 8rem;
-    padding: 0 1rem;
+    height: 100%;
 }
 
 .title {
@@ -61,6 +57,7 @@ onMounted(async () => {
     -webkit-background-clip: text;
     font-size: var(--text-size-9);
     background-clip: text;
+    margin-top: 8rem;
     font-weight: bold;
     color: transparent;
 }
@@ -85,6 +82,11 @@ onMounted(async () => {
 
 .action-button:hover {
     opacity: 0.9;
+}
+
+.top-section {
+
+    text-align: center;
 }
 
 .card-section {
