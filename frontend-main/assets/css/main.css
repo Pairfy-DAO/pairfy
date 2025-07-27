@@ -50,6 +50,13 @@ body {
   --radius-e: 24px;   
   --radius-f: 999px;   
 
+  --radius-0: 4px;     
+  --radius-1: 8px;    
+  --radius-2: 12px;   
+  --radius-3: 16px;    
+  --radius-4: 24px;   
+  --radius-5: 999px;   
+
   --shadow-a: 0 6px 20px rgba(0, 0, 0, 0.08);
   --shadow-b: 0 1px 2px 0 rgba(0, 0, 0, 0.12);
   --shadow-c: 0 4px 12px rgba(0, 0, 0, 0.1);
