@@ -43,12 +43,12 @@ body {
   --primary-b: #3b82f6;
   --primary-b-base: 59, 130, 246;
 
-  --radius-a: 4px;
-  --radius-b: 6px;
-  --radius-c: 12px;
-  --radius-d: 18px;
-  --radius-e: 28px;
-  --radius-f: 999px;
+  --radius-a: 4px;     
+  --radius-b: 8px;    
+  --radius-c: 12px;   
+  --radius-d: 16px;    
+  --radius-e: 24px;   
+  --radius-f: 999px;   
 
   --shadow-a: 0 6px 20px rgba(0, 0, 0, 0.08);
   --shadow-b: 0 1px 2px 0 rgba(0, 0, 0, 0.12);
@@ -58,6 +58,8 @@ body {
 
   --transition-a: 0.2s ease-in-out;
   --placeholder-opacity: 0.9;
+
+  --gradient-a : linear-gradient(90deg, var(--primary-a),  var(--primary-b));
 }
 
 :root {
@@ -87,6 +89,7 @@ body {
   --input-radius: var(--radius-b);
   --button-radius: var(--radius-b);
   --input-padding: 0.7rem 1rem; 
+  --button-padding: 0.75rem 1.5rem;
 }
 
 .flex {
@@ -131,7 +134,7 @@ textarea::placeholder {
 
 .fade-title {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(-20px);
   animation: fadeUp 0.6s ease-out forwards;
 }
 
@@ -143,7 +146,7 @@ textarea::placeholder {
 }
 
 .text-gradient {
-  background: linear-gradient(90deg, #3BAA57, #0D7744);
+  background: var(--gradient-a);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

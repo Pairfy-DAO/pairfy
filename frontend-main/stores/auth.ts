@@ -140,7 +140,6 @@ export const useAuthStore = defineStore("auth", () => {
     } catch (err: any) {
       console.error(err);
 
-      showToast(err.message, "error", 10_000);
       isAuthenticated.value = false;
       user.value = null;
     }

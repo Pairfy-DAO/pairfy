@@ -1,6 +1,6 @@
 <template>
     <div class="HomePrompt flex center">
-        <form class="chat-form" @submit.prevent="submitPrompt">
+        <form class="HomePrompt-form" @submit.prevent="submitPrompt">
             <div class="input-wrapper flex">
                 <textarea v-model="prompt" aria-label="Prompt" @keydown.enter.exact.prevent="submitPrompt"
                     class="chat-input" rows="1" @focus="onFocusOrClick" @click="onFocusOrClick"></textarea>
@@ -32,8 +32,8 @@ const placeholderVisible = ref(true)
 const animationActive = ref(true)
 
 const suggestions = [
-    "I want to buy some comfortable sneakers for walking long distances, that aren't too expensive.",
-    "I'm looking for a lightweight laptop to work from home, with a good battery life, and that isn't too expensive.",
+    "I want to buy some comfortable sneakers.",
+    "I'm looking for a lightweight laptop to work from home.",
     'Type your prompt here.'
 ]
 
@@ -56,7 +56,7 @@ function typeText() {
             charIndex = 0
             typedPlaceholder.value = ''
             typeText()
-        }, 2000)
+        }, 5000)
     }
 }
 
@@ -112,27 +112,25 @@ onBeforeUnmount(() => {
     box-sizing: border-box;
 }
 
-.chat-form {
+.HomePrompt-form {
     width: inherit;
     display: flex;
     padding: 1rem;
     overflow: hidden;
-    margin: 20px auto;
-    margin-top: 4rem;
+    margin-top: 1rem;
     position: relative;
     align-items: center;
     box-sizing: border-box;
     background: transparent;
     border-radius: var(--radius-d);
     transition: var(--transition-a);
-    max-width: calc(var(--body-a) - 20rem);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
-    border: 2px solid rgba(255, 255, 255, 80%);
+    max-width: 600px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-a);
 }
 
-.chat-form:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-color: #888;
+.HomePrompt-form:hover {
+    border: 1px solid var(--border-b);
 }
 
 .input-wrapper {
@@ -151,7 +149,7 @@ onBeforeUnmount(() => {
     height: 4rem;
     line-height: 2rem;
     position: relative;
-    color: var(--text-w);
+    color: var(--text-a);
     background: transparent;
     font-size: var(--text-size-2);
 }
@@ -165,8 +163,8 @@ onBeforeUnmount(() => {
     white-space: normal;
     padding-right: 1rem;
     pointer-events: none;
+    color: var(--text-b);
     font-size: var(--text-size-2);
-    color: rgba(255, 255, 255, 90%);
 }
 
 .send-button {
@@ -198,7 +196,7 @@ onBeforeUnmount(() => {
         padding: 1rem;
     }
 
-    .chat-form {
+    .HomePrompt-form {
         margin: 0rem;
     }
 
