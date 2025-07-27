@@ -6,7 +6,7 @@
         <section class="top-section">
             <h1 class="title fade-title">Welcome to your Cardano store</h1>
             <p class="subtitle ">Save with liquidity pool discounts.</p>
-            <button class="action-button">Go explore</button>
+            <button class="action-button" @click="onExplore">Explore</button>
         </section>
 
         <section class="card-section">
@@ -19,6 +19,22 @@
 
 <script setup>
 import { gsap } from 'gsap'
+
+const authStore = useAuthStore()
+
+const router = useRouter()
+
+const onExplore = () => {
+    router.push({
+        name: 'country-s',
+        params: { country: authStore.country },
+        query: {
+            prompt: "product",
+            vectorized: true
+        }
+    })
+}
+
 
 onMounted(async () => {
     await nextTick()
@@ -33,6 +49,7 @@ onMounted(async () => {
         }
     })
 })
+
 </script>
 
 <style scoped>
@@ -46,7 +63,7 @@ onMounted(async () => {
     left: 0;
     bottom: 0;
     object-fit: cover;
-    z-index: 10;
+    z-index: -1;
     width: 100%;
     height: 100%;
 }
@@ -90,8 +107,12 @@ onMounted(async () => {
 }
 
 .card-section {
-    margin-top: 3rem;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
+    margin-top: 3rem;
+    display: flex;
 }
 
 .section-title {

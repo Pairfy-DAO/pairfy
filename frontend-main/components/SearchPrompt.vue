@@ -111,11 +111,7 @@ function submitPrompt() {
     min-height: 25rem;
     flex-direction: column;
     box-sizing: border-box;
-    background-size: cover;
     justify-content: flex-end;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-image: url('@/assets/banner/1.png');
     background: var(--blue-c);
 }
 

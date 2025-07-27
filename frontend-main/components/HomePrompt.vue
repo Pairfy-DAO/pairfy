@@ -159,6 +159,7 @@ onBeforeUnmount(() => {
     top: 6px;
     left: 8px;
     z-index: 1;
+    opacity: 0.6;
     position: absolute;
     white-space: normal;
     padding-right: 1rem;
