@@ -104,7 +104,13 @@ minikube addons enable metrics-server
 Clone this repository in the work directory
 
 ```
-git clone https://github.com/rey-sudo/core.git
+git clone https://github.com/Pairfy-DAO/pairfy.git
+```
+
+Install kubectl
+
+```
+https://kubernetes.io/docs/tasks/tools/install-kubectl-linux
 ```
 
 Install skafold dev
@@ -112,12 +118,6 @@ Install skafold dev
 
 ```
 ./skaffold.sh
-```
-
-Install kubectl
-
-```
-https://kubernetes.io/docs/tasks/tools/install-kubectl-linux
 ```
 
 ### 2\. License
@@ -161,4 +161,5 @@ Be part of shaping the future of Cardano.
 
 [![Video](https://img.youtube.com/vi/f1lCRxHEJlY/0.jpg)](https://www.youtube.com/watch?v=f1lCRxHEJlY)
 
-👉 Prototype RC v1.0.1 mainnet video
+[👉 Prototype RC v1.0.1 mainnet video](https://www.youtube.com/watch?v=f1lCRxHEJlY)
+
