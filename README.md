@@ -129,6 +129,9 @@ Copyright © 2025
 
 ---
 
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FPairfy-DAO%2Fpairfy.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FPairfy-DAO%2Fpairfy?ref=badge_large)
+
 ### Contact
 
 - **GitHub:** [rey-sudo](https://github.com/rey-sudo)
@@ -160,6 +163,6 @@ Be part of shaping the future of Cardano.
 ### Video
 
 [![Video](https://img.youtube.com/vi/f1lCRxHEJlY/0.jpg)](https://www.youtube.com/watch?v=f1lCRxHEJlY)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FPairfy-DAO%2Fpairfy.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FPairfy-DAO%2Fpairfy?ref=badge_shield)
 
 [👉 Prototype RC v1.0.1 mainnet video](https://www.youtube.com/watch?v=f1lCRxHEJlY)
-
