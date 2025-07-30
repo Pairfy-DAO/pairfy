@@ -243,7 +243,6 @@ function getImageSrc(item) {
 .ProductMedia-image img {
   transition: opacity 0.3s ease;
   width: 100%;
-  height: 100%;
 }
 
 .btn-nav {
