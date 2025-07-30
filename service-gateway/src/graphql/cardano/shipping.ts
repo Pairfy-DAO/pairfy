@@ -5,7 +5,6 @@ import { findOrderBySeller } from "../../common/findOrderBySeller.js";
 import { chunkMetadata } from "../../lib/metadata.js";
 import database from "../../database/client.js";
 
-
 export const shippingEndpoint = async (_: any, args: any, context: any) => {
   let connection = null;
 
@@ -71,7 +70,7 @@ export const shippingEndpoint = async (_: any, args: any, context: any) => {
       deliveryDate + BigInt(process.env.DELIVERY_TOLERANCE as string);
 
     const appealUntil =
-      deliveryDate + BigInt(process.env.APPEAL_RANGE as string);
+      deliveryTolerance + BigInt(process.env.APPEAL_RANGE as string);
 
     const scheme = {
       public: {

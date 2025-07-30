@@ -10,11 +10,14 @@ const { $gatewayClient } = useNuxtApp()
 const orderStore = useOrderStore()
 const walletStore = useWalletStore()
 
-const label = computed(() => 'Received')
+const label = computed(() => `Appeal ${orderStore.countdown}`)
 
 const loading = ref(false)
 
 const disabled = computed(() => {
+    if (orderStore.countdown !== '00:00') {
+        return true
+    }
 
     if (orderStore.state !== 2) {
         return true
@@ -30,9 +33,9 @@ const disabled = computed(() => {
 const onClick = async () => {
     if (!import.meta.client) return;
 
-    const RECEIVED_ENDPOINT_MUTATION = gql`
-      mutation($receivedEndpointVariable: ReceivedEndpointInput!) {
-        receivedEndpoint(receivedEndpointInput: $receivedEndpointVariable) {
+    const APPEALED_ENDPOINT_MUTATION = gql`
+      mutation($appealedEndpointVariable: AppealedEndpointInput!) {
+        appealedEndpoint(appealedEndpointInput: $appealedEndpointVariable) {
           success
           data {
             cbor
@@ -46,15 +49,15 @@ const onClick = async () => {
         loading.value = true
 
         const { data } = await $gatewayClient.mutate({
-            mutation: RECEIVED_ENDPOINT_MUTATION,
+            mutation: APPEALED_ENDPOINT_MUTATION,
             variables: {
-                receivedEndpointVariable: {
+                appealedEndpointVariable: {
                     order_id: orderStore.order.id
                 }
             },
         });
 
-        const response = data.receivedEndpoint;
+        const response = data.appealedEndpoint;
 
         const txHash = await walletStore.balanceTx(response.data.cbor)
 
@@ -66,7 +69,7 @@ const onClick = async () => {
         
         loading.value = false
     } catch (err) {
-        console.error('receivedEndpoint:', err);
+        console.error('appealedEndpoint:', err);
         orderStore.showToast(err, 'error', 10_000)
         loading.value = false
     } 
