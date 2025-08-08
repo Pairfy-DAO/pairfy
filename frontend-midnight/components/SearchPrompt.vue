@@ -108,11 +108,11 @@ function submitPrompt() {
     width: 100%;
     display: flex;
     padding: 1rem;
-    min-height: 25rem;
+    min-height: 24rem;
     flex-direction: column;
     box-sizing: border-box;
     justify-content: flex-end;
-    background: black;
+    background: var(--black-a);
 }
 
 .controls {
@@ -135,7 +135,7 @@ function submitPrompt() {
     width: inherit;
     display: flex;
     padding: 1rem;
-    max-width: 50%;
+    max-width: 45%;
     margin: auto auto;
     padding-top: 1rem;
     position: relative;
@@ -188,7 +188,7 @@ function submitPrompt() {
 
 
 .send-button {
-    background: black;
+    background: var(--black-a);
     color: var(--text-w);
     border: none;
     width: 36px;
@@ -203,7 +203,7 @@ function submitPrompt() {
 }
 
 .send-button:disabled {
-    background: black;
+    background: var(--black-a);
     pointer-events: none;
 }
 

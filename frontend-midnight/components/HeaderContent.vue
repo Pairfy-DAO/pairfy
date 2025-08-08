@@ -62,11 +62,11 @@ watch(() => route.path, (newPath) => {
 <style scoped>
 
 .HeaderContent {
+  background: var(--black-a);
   justify-content: center;
   box-sizing: border-box;
   color: var(--text-w);
   align-items: center;
-  background: black;
   display: flex;
   width: 100%;
   top: 2rem;
@@ -89,7 +89,6 @@ watch(() => route.path, (newPath) => {
 .HeaderContent-nav {
   align-items: center;
   list-style: none;
-  padding: 0 1rem;
   width: inherit;
   display: flex;
   gap: 1rem;
