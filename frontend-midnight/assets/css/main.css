@@ -73,7 +73,7 @@ body {
   --green-a: #22c55e;
   --purple-a: #8b5cf6; /* Info / Highlighted elements */
   --gray-a: #1e293b;
-  --black-a: #000000;
+  --black-a: #0a0a0a;
   --blue-a: rgb(0 0 254);
 
   --red-bg: rgba(239, 68, 68, 0.1); /* Soft background for error states */

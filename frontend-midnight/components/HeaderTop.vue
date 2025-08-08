@@ -49,10 +49,10 @@ const network = useRuntimeConfig().public.cardanoNetwork
 .HeaderTop {
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     font-size: var(--text-size-0);
+    background: var(--black-a);
     justify-content: center;
     box-sizing: border-box;
     color: var(--text-w);
-    background: black;
     font-weight: 500;
     height: 2.5rem;
     width: 100%;
