@@ -39,6 +39,21 @@ build:
           - src: 'nuxt.config.*'
             dest: .
 
+    - image: pairfy/frontend-midnight
+      context: frontend-midnight
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'pages/**/*'
+            dest: pages
+          - src: 'components/**/*'
+            dest: components
+          - src: 'app.vue'
+            dest: .
+          - src: 'nuxt.config.*'
+            dest: .
+
     - image: pairfy/service-seller
       context: service-seller
       docker:
