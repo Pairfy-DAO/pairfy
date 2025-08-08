@@ -89,7 +89,6 @@ watch(() => route.path, (newPath) => {
 .HeaderContent-nav {
   align-items: center;
   list-style: none;
-  padding: 0 1rem;
   width: inherit;
   display: flex;
   gap: 1rem;

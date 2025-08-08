@@ -44,3 +44,13 @@ spec:
                 name: frontend-seller
                 port:
                   number: 81                
+    - host: opencardano.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-midnight
+                port:
+                  number: 82                  

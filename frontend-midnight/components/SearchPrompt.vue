@@ -135,7 +135,7 @@ function submitPrompt() {
     width: inherit;
     display: flex;
     padding: 1rem;
-    max-width: 50%;
+    max-width: 45%;
     margin: auto auto;
     padding-top: 1rem;
     position: relative;
