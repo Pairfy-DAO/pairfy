@@ -36,18 +36,18 @@
       Finish. <span>Choose your network.</span>
     </div>
 
-    <BuyButton @click="onCardanoClick">
-      <template #icon>
-        <img class="icon" src="@/assets/icon/cardano.svg" alt="">
-      </template>
-      Cardano Network
-    </BuyButton>
-
-    <BuyButton style="margin-top: 1rem;">
+    <BuyButton @click="onMidnight">
       <template #icon>
         <img class="icon" src="@/assets/icon/midnight.svg" alt="">
       </template>
       Midnight Network
+    </BuyButton>
+
+    <BuyButton @click="onMidnight" style="margin-top: 1rem;">
+      <template #icon>
+        <img class="icon" src="@/assets/icon/cardano.svg" alt="">
+      </template>
+      Cardano Network
     </BuyButton>
 
     <div class="busy-box" />
@@ -61,7 +61,7 @@ const productData = computed(() => productStore.product)
 
 const authStore = useAuthStore()
 
-const onCardanoClick = () => {
+const onMidnight = () => {
   if (!authStore.user) {
     authStore.authDrawer = true
   } else {

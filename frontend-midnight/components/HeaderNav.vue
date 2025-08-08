@@ -99,9 +99,9 @@ const isOpen = ref(false);
 
 .notification div{
     border-radius: var(--radius-f);
+    background: var(--red-a);
     justify-content: center;
     align-items: center;
-    background: black;
     margin-left: 0.5rem;
     font-size: 10px;
     height: 1.25rem;
