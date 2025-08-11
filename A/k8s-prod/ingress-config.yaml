@@ -9,7 +9,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "https://*.pairfy.io, https://pairfy.io"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://*.pairfy.io, https://pairfy.io, https://*.opencardano.com, https://opencardano.com"
     nginx.ingress.kubernetes.io/cors-expose-headers: "Set-Cookie"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
@@ -23,6 +23,10 @@ spec:
         - pairfy.io
         - '*.pairfy.io'
       secretName: cloudflare-origin-secret
+    - hosts:
+        - opencardano.com
+        - '*.opencardano.com'
+      secretName: opencardano-origin-secret 
   rules:
     - host: pairfy.io
       http:

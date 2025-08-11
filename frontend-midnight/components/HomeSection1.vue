@@ -6,7 +6,7 @@
 
             <section class="top-section">
                 <h1 class="title fade-title">Shopping Reinvented by Midnight</h1>
-                <p class="subtitle ">Save with liquidity pool discounts.</p>
+                <p class="subtitle ">Pay less with the discount liquidity pool.</p>
                 <button class="action-button" @click="onExplore">Explore products</button>
             </section>
 
